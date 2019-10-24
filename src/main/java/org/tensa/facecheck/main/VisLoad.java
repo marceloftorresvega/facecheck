@@ -35,7 +35,7 @@ public class VisLoad extends javax.swing.JFrame {
     private ComboBoxModel comboModel;
     private BufferedImage buffImage ;
     private BufferedImage destBuffImage ;
-    private final int kwidth = 9;
+    private final int kwidth = 27;
     private float[] data;
 
     /**
