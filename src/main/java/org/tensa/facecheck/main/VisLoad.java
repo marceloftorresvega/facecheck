@@ -5,18 +5,17 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorConvertOp;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JPanel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.filter.MaskOp;
 
 /**
@@ -25,13 +24,14 @@ import org.tensa.facecheck.filter.MaskOp;
  */
 public class VisLoad extends javax.swing.JFrame {
 
-    private final String baseUrl = "C:\\Users\\lorenzo\\Pictures\\camp de invierno\\";
-    private final String testBaseUrl = "C:\\Users\\lorenzo\\Pictures\\procesadas\\";
+    private final Logger log = LoggerFactory.getLogger(VisLoad.class);
+
+    private final String baseUrl = "\\img\\originales\\";
+    private final String testBaseUrl = "\\img\\procesadas\\";
 //"IMG_2853", "IMG_2854", "IMG_2855", 
     private final String[] imageName = {"IMG_2869", "IMG_2918","IMG_3071","IMG_3076","IMG_3078","IMG_3079"};
 
     private final String sufxType = ".jpg";
-
     private ComboBoxModel comboModel;
     private BufferedImage buffImage ;
     private BufferedImage destBuffImage ;
@@ -206,10 +206,12 @@ public class VisLoad extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        String _filename = baseUrl + (String)jComboBox1.getSelectedItem() + sufxType;
-        String _filename2 = testBaseUrl + (String)jComboBox1.getSelectedItem() + sufxType;
+        String _filename1 = System.getProperty("user.dir") + baseUrl + (String)jComboBox1.getSelectedItem() + sufxType;
+        String _filename2 = System.getProperty("user.dir") + testBaseUrl + (String)jComboBox1.getSelectedItem() + sufxType;
+        log.info("directorio user <{}>",System.getProperty("user.dir"));
+        
         try {
-            buffImage = ImageIO.read(new File(_filename));
+            buffImage = ImageIO.read(new File(_filename1));
             
             destBuffImage = ImageIO.read(new File(_filename2));
             
@@ -217,7 +219,7 @@ public class VisLoad extends javax.swing.JFrame {
                 vista.repaint();
             });
         } catch (IOException ex) {
-            Logger.getLogger(VisLoad.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("error de archivo <{}>", _filename1, ex);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
