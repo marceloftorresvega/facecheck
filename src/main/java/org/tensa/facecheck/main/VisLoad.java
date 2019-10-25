@@ -28,7 +28,7 @@ public class VisLoad extends javax.swing.JFrame {
 
     private final String baseUrl = "\\img\\originales\\";
     private final String testBaseUrl = "\\img\\procesadas\\";
-//"IMG_2853", "IMG_2854", "IMG_2855", 
+    
     private final String[] imageName = {"IMG_2869", "IMG_2918","IMG_3071","IMG_3076","IMG_3078","IMG_3079"};
 
     private final String sufxType = ".jpg";
@@ -37,6 +37,7 @@ public class VisLoad extends javax.swing.JFrame {
     private BufferedImage destBuffImage ;
     private final int kwidth = 27;
     private float[] data;
+    private BufferedImage bufferImageFiltered;
 
     /**
      * Get the value of comboModel
@@ -116,7 +117,9 @@ public class VisLoad extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jComboBox1 = new javax.swing.JComboBox();
         jButton3 = new javax.swing.JButton();
+        jSplitPane1 = new javax.swing.JSplitPane();
         vista = getNuevaVista();
+        respuesta = getNuevaRespuesta();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Vista de carga");
@@ -176,12 +179,29 @@ public class VisLoad extends javax.swing.JFrame {
         vista.setLayout(vistaLayout);
         vistaLayout.setHorizontalGroup(
             vistaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 316, Short.MAX_VALUE)
         );
         vistaLayout.setVerticalGroup(
             vistaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 209, Short.MAX_VALUE)
+            .addGap(0, 229, Short.MAX_VALUE)
         );
+
+        jSplitPane1.setLeftComponent(vista);
+
+        respuesta.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+
+        javax.swing.GroupLayout respuestaLayout = new javax.swing.GroupLayout(respuesta);
+        respuesta.setLayout(respuestaLayout);
+        respuestaLayout.setHorizontalGroup(
+            respuestaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 277, Short.MAX_VALUE)
+        );
+        respuestaLayout.setVerticalGroup(
+            respuestaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 229, Short.MAX_VALUE)
+        );
+
+        jSplitPane1.setRightComponent(respuesta);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -189,17 +209,17 @@ public class VisLoad extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addComponent(vista, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(15, 15, 15)
+                .addComponent(jSplitPane1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(vista, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(33, 33, 33))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jSplitPane1)
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
         pack();
@@ -227,12 +247,13 @@ public class VisLoad extends javax.swing.JFrame {
         
         
         ConvolveOp conv = new ConvolveOp(new Kernel(kwidth, kwidth, data));
-        BufferedImage bufferImageFiltered = conv.filter(buffImage, null);
+        bufferImageFiltered = conv.filter(buffImage, null);
         buffImage.flush();
         buffImage = bufferImageFiltered;
         
         java.awt.EventQueue.invokeLater(() -> {
             vista.repaint();
+            respuesta.repaint();
         });
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -241,12 +262,12 @@ public class VisLoad extends javax.swing.JFrame {
         MaskOp conv = new MaskOp();
         conv.setOtherSrc(destBuffImage);
         
-        BufferedImage bufferImageFiltered = conv.filter(buffImage, null);
+        bufferImageFiltered = conv.filter(buffImage, null);
         buffImage.flush();
-        buffImage = bufferImageFiltered;
         
         java.awt.EventQueue.invokeLater(() -> {
             vista.repaint();
+            respuesta.repaint();
         });
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -282,6 +303,26 @@ public class VisLoad extends javax.swing.JFrame {
                     AffineTransform xforM = AffineTransform.getScaleInstance(escala, escala);
                     AffineTransformOp rop = new AffineTransformOp(xforM, AffineTransformOp.TYPE_BILINEAR);
                     localg.drawImage(buffImage, rop, 0     , 0);
+                    
+                }
+            }
+
+            
+        };
+    }
+    
+    private javax.swing.JPanel getNuevaRespuesta(){
+        return new JPanel(true){
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if(Objects.nonNull(bufferImageFiltered)){
+                    Graphics2D localg = (Graphics2D)g;
+                    float escala = (float)respuesta.getBounds().width / (float)bufferImageFiltered.getWidth();
+                    AffineTransform xforM = AffineTransform.getScaleInstance(escala, escala);
+                    AffineTransformOp rop = new AffineTransformOp(xforM, AffineTransformOp.TYPE_BILINEAR);
+                    localg.drawImage(bufferImageFiltered, rop, 0     , 0);
                     
                 }
             }
@@ -333,6 +374,8 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JButton jButton3;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JPanel respuesta;
     private javax.swing.JPanel vista;
     // End of variables declaration//GEN-END:variables
 }
