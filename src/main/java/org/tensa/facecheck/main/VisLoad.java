@@ -183,7 +183,7 @@ public class VisLoad extends javax.swing.JFrame {
         );
         vistaLayout.setVerticalGroup(
             vistaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 229, Short.MAX_VALUE)
+            .addGap(0, 240, Short.MAX_VALUE)
         );
 
         jSplitPane1.setLeftComponent(vista);
@@ -194,11 +194,11 @@ public class VisLoad extends javax.swing.JFrame {
         respuesta.setLayout(respuestaLayout);
         respuestaLayout.setHorizontalGroup(
             respuestaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 277, Short.MAX_VALUE)
+            .addGap(0, 281, Short.MAX_VALUE)
         );
         respuestaLayout.setVerticalGroup(
             respuestaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 229, Short.MAX_VALUE)
+            .addGap(0, 240, Short.MAX_VALUE)
         );
 
         jSplitPane1.setRightComponent(respuesta);
@@ -211,15 +211,15 @@ public class VisLoad extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(15, 15, 15)
                 .addComponent(jSplitPane1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jSplitPane1)
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
@@ -247,12 +247,10 @@ public class VisLoad extends javax.swing.JFrame {
         
         
         ConvolveOp conv = new ConvolveOp(new Kernel(kwidth, kwidth, data));
+        bufferImageFiltered.flush();
         bufferImageFiltered = conv.filter(buffImage, null);
-        buffImage.flush();
-        buffImage = bufferImageFiltered;
         
         java.awt.EventQueue.invokeLater(() -> {
-            vista.repaint();
             respuesta.repaint();
         });
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -261,9 +259,8 @@ public class VisLoad extends javax.swing.JFrame {
         
         MaskOp conv = new MaskOp();
         conv.setOtherSrc(destBuffImage);
-        
+        bufferImageFiltered.flush();
         bufferImageFiltered = conv.filter(buffImage, null);
-        buffImage.flush();
         
         java.awt.EventQueue.invokeLater(() -> {
             vista.repaint();
