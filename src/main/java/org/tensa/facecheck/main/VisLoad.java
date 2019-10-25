@@ -247,7 +247,9 @@ public class VisLoad extends javax.swing.JFrame {
         
         
         ConvolveOp conv = new ConvolveOp(new Kernel(kwidth, kwidth, data));
-        bufferImageFiltered.flush();
+        if(Objects.nonNull(bufferImageFiltered))
+            bufferImageFiltered.flush();
+        
         bufferImageFiltered = conv.filter(buffImage, null);
         
         java.awt.EventQueue.invokeLater(() -> {
@@ -259,7 +261,9 @@ public class VisLoad extends javax.swing.JFrame {
         
         MaskOp conv = new MaskOp();
         conv.setOtherSrc(destBuffImage);
-        bufferImageFiltered.flush();
+        if(Objects.nonNull(bufferImageFiltered))
+            bufferImageFiltered.flush();
+        
         bufferImageFiltered = conv.filter(buffImage, null);
         
         java.awt.EventQueue.invokeLater(() -> {

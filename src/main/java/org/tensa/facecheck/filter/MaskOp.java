@@ -98,11 +98,10 @@ public class MaskOp implements BufferedImageOp{
         
         IntStream.iterate(0, s -> s + step)
                 .limit(width / step)
-                .filter(i -> i < width).parallel()
+                .parallel()
                 .forEach(i -> {
                     IntStream.iterate(0, s -> s + step)
                             .limit(height / step)
-                            .filter( j -> j < height)
                             .forEach( j -> {
                                 double[] srcPixels = srcRaster.getPixels(i, j, step, step, (double[]) null);
                                 double[] otherPixels = otherRaster.getPixels(i, j, step, step, (double[]) null);
