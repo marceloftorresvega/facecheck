@@ -44,9 +44,8 @@ public class PixelsOutputLayer implements LayerConsumer {
     
     private BufferedImage dest;
 
-    public PixelsOutputLayer(DoubleMatriz weights, BufferedImage dest) {
+    public PixelsOutputLayer(DoubleMatriz weights) {
         this.weights = weights;
-        this.dest = dest;
     }
 
     @Override
@@ -84,6 +83,14 @@ public class PixelsOutputLayer implements LayerConsumer {
             dest.getRaster().setPixels(0, 0, width, height, pixels);
             
         }
+    }
+
+    public BufferedImage getDest() {
+        return dest;
+    }
+
+    public void setDest(BufferedImage dest) {
+        this.dest = dest;
     }
 
 }
