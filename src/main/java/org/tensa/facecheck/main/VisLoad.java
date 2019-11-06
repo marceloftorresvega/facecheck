@@ -293,16 +293,20 @@ public class VisLoad extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void entrenarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_entrenarActionPerformed
+            log.info("iniciando 0...");
         int step = 501;
-        DoubleMatriz weightsH = new DoubleMatriz(new Dominio(256, 51*51*3));
-        DoubleMatriz weightsO = new DoubleMatriz(new Dominio(256, 501*501*3));
+        DoubleMatriz weightsH = (DoubleMatriz)new DoubleMatriz(new Dominio(256, 51*51*3)).matrizUno();
+            log.info("iniciando 1...");
+        DoubleMatriz weightsO = (DoubleMatriz)new DoubleMatriz(new Dominio(256, 501*501*3));
+            log.info("iniciando 2...");
         bufferImageFiltered = createCompatibleDestImage(buffImage, null);
+            log.info("iniciando 3...");
         
         SimplePixelsInputLayer simplePixelsInputLayer = new SimplePixelsInputLayer();
         SimplePixelsInputLayer simplePixelsCompareLayer = new SimplePixelsInputLayer();
         PixelLeanringLayer pixelLeanringLayer = new PixelLeanringLayer(weightsO, 0.01);
         HiddenLayer hiddenLayer = new HiddenLayer(weightsH, 0.001);
-        PixelsOutputLayer pixelsOutputLayer = new PixelsOutputLayer(weightsO, bufferImageFiltered);
+        PixelsOutputLayer pixelsOutputLayer = new PixelsOutputLayer(weightsO);
         
         
         simplePixelsInputLayer.getConsumers().add(hiddenLayer);
@@ -312,16 +316,23 @@ public class VisLoad extends javax.swing.JFrame {
         int width = buffImage.getWidth();
         int height = buffImage.getHeight();
         
+            log.info("procesando...");
         for(int i=0;i<width;i+=step) {
             log.info("bloque <{}>", i);
             
-            for(int j=0;j<height;j+=step) {
+//            for(int j=0;j<height;j+=step) {
+            for(int j=0;j<step+1;j+=step) {
+            log.info("sub bloque <{}>", j);
                 
+            log.info("cargando bloque comparacion <{}><{}>", i, j);
                 BufferedImage comp = destBuffImage.getSubimage(i, j, step, step);
                 simplePixelsCompareLayer.setSrc(comp);
                 simplePixelsCompareLayer.startProduction();
                 pixelLeanringLayer.setCompareToLayer(simplePixelsCompareLayer.getOutputLayer());
                 
+                pixelsOutputLayer.setDest(bufferImageFiltered.getSubimage(i, j, step, step));
+                
+            log.info("cargando bloque ejecucion <{}><{}>", i, j);
                 BufferedImage src = buffImage.getSubimage(i, j, step, step);
                 simplePixelsInputLayer.setSrc(src);
                 simplePixelsInputLayer.startProduction();
