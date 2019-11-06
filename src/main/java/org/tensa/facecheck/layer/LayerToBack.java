@@ -23,6 +23,7 @@
  */
 package org.tensa.facecheck.layer;
 
+import java.util.List;
 import org.tensa.tensada.matrix.DoubleMatriz;
 
 /**
@@ -40,4 +41,6 @@ public interface LayerToBack {
     void setCompareToLayer(DoubleMatriz compare);
     
     void adjustBack();
+    
+    List<LayerToBack> getProducers();
 }

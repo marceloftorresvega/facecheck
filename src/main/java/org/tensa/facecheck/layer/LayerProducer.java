@@ -30,10 +30,12 @@ import org.tensa.tensada.matrix.DoubleMatriz;
  *
  * @author Marcelo
  */
-public interface LayerProducer extends List<LayerConsumer> {
+public interface LayerProducer {
     
     DoubleMatriz getOutputLayer();
     
     void startProduction();
+    
+    List<LayerConsumer> getConsumers();
     
 }
