@@ -48,10 +48,10 @@ public class HiddenLayer extends ArrayList<LayerConsumer> implements LayerToBack
     private DoubleMatriz compareToLayer;
     private DoubleMatriz error;
     private Double learningStep;
-            
 
-    public HiddenLayer(DoubleMatriz weights) {
+    public HiddenLayer(DoubleMatriz weights, Double learningStep) {
         this.weights = weights;
+        this.learningStep = learningStep;
     }
 
     @Override

@@ -47,6 +47,11 @@ public class PixelLeanringLayer extends ArrayList<LayerToBack> implements LayerC
     private DoubleMatriz error;
     private Double learningStep;
 
+    public PixelLeanringLayer(DoubleMatriz weights, Double learningStep) {
+        this.weights = weights;
+        this.learningStep = learningStep;
+    }
+
     @Override
     public DoubleMatriz seInputLayer(DoubleMatriz inputLayer) {
         this.inputLayer = inputLayer;
