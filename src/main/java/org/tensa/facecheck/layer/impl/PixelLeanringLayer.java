@@ -88,8 +88,8 @@ public class PixelLeanringLayer implements LayerConsumer, LayerToBack {
         
         toBackLayer = (DoubleMatriz) weights.productoPunto(error);
         
-        NumericMatriz<Double> delta = error.productoTensorial(outputLayer).productoEscalar(learningStep).transpuesta();
-        weights.replaceAll((i,v) -> v+ delta.get(i));
+        NumericMatriz<Double> delta = error.productoTensorial(inputLayer).productoEscalar(learningStep).transpuesta();
+        weights.replaceAll((i,v) -> v + delta.get(i));
         
     }
 

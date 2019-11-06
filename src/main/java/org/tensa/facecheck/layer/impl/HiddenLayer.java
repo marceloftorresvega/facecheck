@@ -29,6 +29,7 @@ import org.tensa.facecheck.layer.LayerProducer;
 import org.tensa.facecheck.layer.LayerToBack;
 import org.tensa.tensada.matrix.DoubleMatriz;
 import org.tensa.tensada.matrix.Indice;
+import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
  *
@@ -96,9 +97,13 @@ public class HiddenLayer extends ArrayList<LayerConsumer> implements LayerToBack
 
     @Override
     public void adjustBack() {
-        error = (DoubleMatriz) inputLayer.matrizUno().substraccion(inputLayer).productoTensorial(inputLayer).transpuesta();
+        error = (DoubleMatriz) outputLayer.matrizUno().substraccion(outputLayer);
+        error.replaceAll((i,v) -> v * outputLayer.get(i) * compareToLayer.get(i));
         
         toBackLayer = (DoubleMatriz) weights.productoPunto(error);
+        
+        NumericMatriz<Double> delta = error.productoTensorial(inputLayer).productoEscalar(learningStep).transpuesta();
+        weights.replaceAll((i,v) -> v + delta.get(i));
     }
 
     @Override
