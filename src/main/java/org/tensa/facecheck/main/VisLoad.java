@@ -5,8 +5,11 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.ConvolveOp;
+import java.awt.image.IndexColorModel;
 import java.awt.image.Kernel;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
@@ -17,6 +20,12 @@ import javax.swing.JPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.filter.MaskOp;
+import org.tensa.facecheck.layer.impl.HiddenLayer;
+import org.tensa.facecheck.layer.impl.PixelLeanringLayer;
+import org.tensa.facecheck.layer.impl.PixelsOutputLayer;
+import org.tensa.facecheck.layer.impl.SimplePixelsInputLayer;
+import org.tensa.tensada.matrix.Dominio;
+import org.tensa.tensada.matrix.DoubleMatriz;
 
 /**
  *
@@ -117,6 +126,7 @@ public class VisLoad extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jComboBox1 = new javax.swing.JComboBox();
         jButton3 = new javax.swing.JButton();
+        entrenar = new javax.swing.JButton();
         jSplitPane1 = new javax.swing.JSplitPane();
         vista = getNuevaVista();
         respuesta = getNuevaRespuesta();
@@ -147,6 +157,13 @@ public class VisLoad extends javax.swing.JFrame {
             }
         });
 
+        entrenar.setText("entrena");
+        entrenar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                entrenarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -156,11 +173,13 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jButton1)
                 .addGap(18, 18, 18)
                 .addComponent(jButton2)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton3)
-                .addGap(30, 30, 30)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(entrenar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(185, Short.MAX_VALUE))
+                .addGap(90, 90, 90))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -169,7 +188,8 @@ public class VisLoad extends javax.swing.JFrame {
                     .addComponent(jButton1)
                     .addComponent(jButton2)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton3))
+                    .addComponent(jButton3)
+                    .addComponent(entrenar))
                 .addGap(0, 6, Short.MAX_VALUE))
         );
 
@@ -218,7 +238,7 @@ public class VisLoad extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
+                .addComponent(jSplitPane1)
                 .addContainerGap())
         );
 
@@ -272,6 +292,85 @@ public class VisLoad extends javax.swing.JFrame {
         });
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void entrenarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_entrenarActionPerformed
+        int step = 501;
+        DoubleMatriz weightsH = new DoubleMatriz(new Dominio(256, 51*51*3));
+        DoubleMatriz weightsO = new DoubleMatriz(new Dominio(256, 501*501*3));
+        bufferImageFiltered = createCompatibleDestImage(buffImage, null);
+        
+        SimplePixelsInputLayer simplePixelsInputLayer = new SimplePixelsInputLayer();
+        SimplePixelsInputLayer simplePixelsCompareLayer = new SimplePixelsInputLayer();
+        PixelLeanringLayer pixelLeanringLayer = new PixelLeanringLayer(weightsO, 0.01);
+        HiddenLayer hiddenLayer = new HiddenLayer(weightsH, 0.001);
+        PixelsOutputLayer pixelsOutputLayer = new PixelsOutputLayer(weightsO, bufferImageFiltered);
+        
+        
+        simplePixelsInputLayer.getConsumers().add(hiddenLayer);
+        hiddenLayer.getConsumers().add(pixelLeanringLayer);
+        hiddenLayer.getConsumers().add(pixelsOutputLayer);
+        
+        int width = buffImage.getWidth();
+        int height = buffImage.getHeight();
+        
+        for(int i=0;i<width;i+=step) {
+            log.info("bloque <{}>", i);
+            
+            for(int j=0;j<height;j+=step) {
+                
+                BufferedImage comp = destBuffImage.getSubimage(i, j, step, step);
+                simplePixelsCompareLayer.setSrc(comp);
+                simplePixelsCompareLayer.startProduction();
+                pixelLeanringLayer.setCompareToLayer(simplePixelsCompareLayer.getOutputLayer());
+                
+                BufferedImage src = buffImage.getSubimage(i, j, step, step);
+                simplePixelsInputLayer.setSrc(src);
+                simplePixelsInputLayer.startProduction();
+                
+            }
+            java.awt.EventQueue.invokeLater(() -> {
+                vista.repaint();
+                respuesta.repaint();
+            });
+        }
+    }//GEN-LAST:event_entrenarActionPerformed
+
+    public BufferedImage createCompatibleDestImage(BufferedImage src, ColorModel destCM) {
+        BufferedImage image;
+
+        int w = src.getWidth();
+        int h = src.getHeight();
+
+        WritableRaster wr = null;
+
+        if (destCM == null) {
+            destCM = src.getColorModel();
+            // Not much support for ICM
+            if (destCM instanceof IndexColorModel) {
+                destCM = ColorModel.getRGBdefault();
+            } else {
+                /* Create destination image as similar to the source
+                 *  as it possible...
+                 */
+                wr = src.getData().createCompatibleWritableRaster(w, h);
+            }
+        }
+
+        if (wr == null) {
+            /* This is the case when destination color model
+             * was explicitly specified (and it may be not compatible
+             * with source raster structure) or source is indexed image.
+             * We should use destination color model to create compatible
+             * destination raster here.
+             */
+            wr = destCM.createCompatibleWritableRaster(w, h);
+        }
+
+        image = new BufferedImage (destCM, wr,
+                                   destCM.isAlphaPremultiplied(), null);
+
+        return image;
+    }
+    
     private float calculaMatriz(int i, int j){
         float retorno;
         float half = (float)kwidth / 2;
@@ -370,6 +469,7 @@ public class VisLoad extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton entrenar;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
