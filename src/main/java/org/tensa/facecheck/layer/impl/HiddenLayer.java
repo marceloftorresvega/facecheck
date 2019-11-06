@@ -24,6 +24,8 @@
 package org.tensa.facecheck.layer.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerProducer;
 import org.tensa.facecheck.layer.LayerToBack;
@@ -78,9 +80,13 @@ public class HiddenLayer extends ArrayList<LayerConsumer> implements LayerToBack
                     .productoEscalar( 1 / Math.sqrt(distanciaE2.get(Indice.D1)));
             outputLayer.replaceAll((i,v) -> 1/(1 + Math.exp( - v )));
             
-            for(LayerConsumer lc : this){
+            for(LayerConsumer lc : this) {
                 lc.seInputLayer(outputLayer);
                 lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
+                
+                if(lc instanceof LayerToBack) {
+                    ((LayerToBack)lc).getProducers().add(this);
+                }
             }
         }
     }
@@ -104,6 +110,13 @@ public class HiddenLayer extends ArrayList<LayerConsumer> implements LayerToBack
         
         NumericMatriz<Double> delta = error.productoTensorial(inputLayer).productoEscalar(learningStep).transpuesta();
         weights.replaceAll((i,v) -> v + delta.get(i));
+        
+        
+        for(LayerToBack back : getProducers()) {
+            back.setCompareToLayer(toBackLayer);
+            back.adjustBack();
+        }
+        getProducers().clear();
     }
 
     @Override
@@ -113,12 +126,22 @@ public class HiddenLayer extends ArrayList<LayerConsumer> implements LayerToBack
 
     @Override
     public DoubleMatriz getError() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return (DoubleMatriz)error.distanciaE2().productoEscalar(1.0/2);
     }
 
     @Override
     public Double getLeanringStep() {
         return learningStep;
+    }
+
+    @Override
+    public List<LayerToBack> getProducers() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<LayerConsumer> getConsumers() {
+       return this;
     }
     
 }

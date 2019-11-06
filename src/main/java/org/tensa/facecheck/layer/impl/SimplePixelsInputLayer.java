@@ -25,6 +25,7 @@ package org.tensa.facecheck.layer.impl;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.List;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerProducer;
 import org.tensa.tensada.matrix.Dominio;
@@ -37,15 +38,8 @@ import org.tensa.tensada.matrix.NumericMatriz;
  */
 public class SimplePixelsInputLayer extends ArrayList<LayerConsumer> implements LayerProducer {
     
-    private int step;
     private BufferedImage src;
     private DoubleMatriz outputLayer;
-
-    public SimplePixelsInputLayer(int step, BufferedImage src) {
-        super();
-        this.step = step;
-        this.src = src;
-    }
     
     private DoubleMatriz scanInput(){
         
@@ -81,6 +75,15 @@ public class SimplePixelsInputLayer extends ArrayList<LayerConsumer> implements 
             lc.seInputLayer(outputLayer);
             lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
         }
+    }
+
+    @Override
+    public List<LayerConsumer> getConsumers() {
+        return this;
+    }
+
+    public void setSrc(BufferedImage src) {
+        this.src = src;
     }
     
 }

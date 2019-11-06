@@ -25,6 +25,7 @@ package org.tensa.facecheck.layer.impl;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerProducer;
@@ -90,6 +91,11 @@ public class PixelsInputLayer extends ArrayList<LayerConsumer> implements LayerP
             lc.seInputLayer(outputLayer);
             lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
         }
+    }
+
+    @Override
+    public List<LayerConsumer> getConsumers() {
+        return this;
     }
     
 }

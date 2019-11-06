@@ -23,6 +23,8 @@
  */
 package org.tensa.facecheck.layer.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerToBack;
 import org.tensa.tensada.matrix.DoubleMatriz;
@@ -33,7 +35,7 @@ import org.tensa.tensada.matrix.NumericMatriz;
  *
  * @author Marcelo
  */
-public class PixelLeanringLayer implements LayerConsumer, LayerToBack {
+public class PixelLeanringLayer extends ArrayList<LayerToBack> implements LayerConsumer, LayerToBack {
     
     private DoubleMatriz weights;
     private int status;
@@ -91,6 +93,12 @@ public class PixelLeanringLayer implements LayerConsumer, LayerToBack {
         NumericMatriz<Double> delta = error.productoTensorial(inputLayer).productoEscalar(learningStep).transpuesta();
         weights.replaceAll((i,v) -> v + delta.get(i));
         
+        for(LayerToBack back : this) {
+            back.setCompareToLayer(toBackLayer);
+            back.adjustBack();
+        }
+        this.clear();
+        
     }
 
     @Override
@@ -101,6 +109,11 @@ public class PixelLeanringLayer implements LayerConsumer, LayerToBack {
     @Override
     public Double getLeanringStep() {
         return learningStep;
+    }
+
+    @Override
+    public List<LayerToBack> getProducers() {
+        return this;
     }
     
     
