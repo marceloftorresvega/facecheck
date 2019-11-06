@@ -24,7 +24,10 @@
 package org.tensa.facecheck.layer.impl;
 
 import java.awt.image.BufferedImage;
+import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 import org.tensa.facecheck.layer.LayerConsumer;
+import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
 import org.tensa.tensada.matrix.Indice;
 
@@ -67,7 +70,18 @@ public class PixelsOutputLayer implements LayerConsumer {
                     .productoEscalar( 1 / Math.sqrt(distanciaE2.get(Indice.D1)));
             outputLayer.replaceAll((i,v) -> 1/(1 + Math.exp( - v )));
             
+            DoubleMatriz pointMatriz = new DoubleMatriz(new Dominio(256, 1), DoubleStream.iterate(1.0, (i) -> i + 1.0).limit(256)
+                    .boxed()
+                    .collect(Collectors.toMap( d -> new Indice((int)d.intValue(), 1), d -> d-1.0)));
+            DoubleMatriz pixMatriz = outputLayer.producto(pointMatriz);
+            int[] pixels = new int[pixMatriz.getDominio().getFila()];
+            for( int i =0; i< pixels.length; i++) {
+                pixels[i] = pixMatriz.get(new Indice(i + 1, 1)).intValue();
+            }
             
+            int width = dest.getWidth();
+            int height = dest.getHeight();
+            dest.getRaster().setPixels(0, 0, width, height, pixels);
             
         }
     }
