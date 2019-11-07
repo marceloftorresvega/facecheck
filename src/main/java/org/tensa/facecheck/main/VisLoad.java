@@ -22,8 +22,11 @@ import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.filter.MaskOp;
 import org.tensa.facecheck.layer.impl.HiddenLayer;
 import org.tensa.facecheck.layer.impl.PixelByteExpandedLeanringLayer;
+import org.tensa.facecheck.layer.impl.PixelDirectLeanringLayer;
 import org.tensa.facecheck.layer.impl.PixelsByteExpandedOutputLayer;
+import org.tensa.facecheck.layer.impl.PixelsDirectOutputLayer;
 import org.tensa.facecheck.layer.impl.SimplePixelsByteExpandedInputLayer;
+import org.tensa.facecheck.layer.impl.SimplePixelsDirectInputLayer;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
 
@@ -295,18 +298,18 @@ public class VisLoad extends javax.swing.JFrame {
     private void entrenarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_entrenarActionPerformed
             log.info("iniciando 0...");
         int step = 501;
-        DoubleMatriz weightsH = (DoubleMatriz)new DoubleMatriz(new Dominio(256, 51*51*3)).matrizUno();
+        DoubleMatriz weightsH = (DoubleMatriz)new DoubleMatriz(new Dominio(501*501*3, 51*51*3)).matrizUno();
             log.info("iniciando 1...");
-        DoubleMatriz weightsO = (DoubleMatriz)new DoubleMatriz(new Dominio(256, 501*501*3));
+        DoubleMatriz weightsO = (DoubleMatriz)new DoubleMatriz(new Dominio(51*51*3, 501*501*3));
             log.info("iniciando 2...");
         bufferImageFiltered = createCompatibleDestImage(buffImage, null);
             log.info("iniciando 3...");
         
-        SimplePixelsByteExpandedInputLayer simplePixelsInputLayer = new SimplePixelsByteExpandedInputLayer();
-        SimplePixelsByteExpandedInputLayer simplePixelsCompareLayer = new SimplePixelsByteExpandedInputLayer();
-        PixelByteExpandedLeanringLayer pixelLeanringLayer = new PixelByteExpandedLeanringLayer(weightsO, 0.01);
+        SimplePixelsDirectInputLayer simplePixelsInputLayer = new SimplePixelsDirectInputLayer();
+        SimplePixelsDirectInputLayer simplePixelsCompareLayer = new SimplePixelsDirectInputLayer();
+        PixelDirectLeanringLayer pixelLeanringLayer = new PixelDirectLeanringLayer(weightsO, 0.01);
         HiddenLayer hiddenLayer = new HiddenLayer(weightsH, 0.001);
-        PixelsByteExpandedOutputLayer pixelsOutputLayer = new PixelsByteExpandedOutputLayer(weightsO);
+        PixelsDirectOutputLayer pixelsOutputLayer = new PixelsDirectOutputLayer(weightsO);
         
         
         simplePixelsInputLayer.getConsumers().add(hiddenLayer);
