@@ -341,11 +341,11 @@ public class VisLoad extends javax.swing.JFrame {
                 simplePixelsInputLayer.startProduction();
                 
             }
+        }
             java.awt.EventQueue.invokeLater(() -> {
                 vista.repaint();
                 respuesta.repaint();
             });
-        }
     }//GEN-LAST:event_entrenarActionPerformed
 
     public BufferedImage createCompatibleDestImage(BufferedImage src, ColorModel destCM) {
