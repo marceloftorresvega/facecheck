@@ -35,7 +35,7 @@ import org.tensa.tensada.matrix.NumericMatriz;
  *
  * @author Marcelo
  */
-public class PixelLeanringLayer extends ArrayList<LayerToBack> implements LayerConsumer, LayerToBack {
+public class PixelByteExpandedLeanringLayer extends ArrayList<LayerToBack> implements LayerConsumer, LayerToBack {
     
     private DoubleMatriz weights;
     private int status;
@@ -47,7 +47,7 @@ public class PixelLeanringLayer extends ArrayList<LayerToBack> implements LayerC
     private DoubleMatriz error;
     private Double learningStep;
 
-    public PixelLeanringLayer(DoubleMatriz weights, Double learningStep) {
+    public PixelByteExpandedLeanringLayer(DoubleMatriz weights, Double learningStep) {
         this.weights = weights;
         this.learningStep = learningStep;
     }

@@ -26,10 +26,8 @@ package org.tensa.facecheck.layer.impl;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerProducer;
-import org.tensa.tensada.matrix.BlockMatriz;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
 import org.tensa.tensada.matrix.NumericMatriz;
@@ -38,17 +36,10 @@ import org.tensa.tensada.matrix.NumericMatriz;
  *
  * @author Marcelo
  */
-public class PixelsInputLayer extends ArrayList<LayerConsumer> implements LayerProducer {
+public class SimplePixelsByteExpandedInputLayer extends ArrayList<LayerConsumer> implements LayerProducer {
     
-    private int step;
     private BufferedImage src;
     private DoubleMatriz outputLayer;
-
-    public PixelsInputLayer(int step, BufferedImage src) {
-        super();
-        this.step = step;
-        this.src = src;
-    }
     
     private DoubleMatriz scanInput(){
         
@@ -58,15 +49,8 @@ public class PixelsInputLayer extends ArrayList<LayerConsumer> implements LayerP
         
         int width = src.getWidth();
         int height = src.getHeight();
-        Dominio newDominio = new Dominio(width/step, height/step);
         
-        BlockMatriz<Double> collect = newDominio.stream().parallel()
-                .collect(Collectors.toMap(i -> i, i -> scanSubInput(src.getSubimage(i.getFila() * step, i.getColumna() * step, step, step)), (m1,m2) -> m1,() -> new BlockMatriz<>(newDominio)));
-        return (DoubleMatriz) collect.build();
-    }
-    
-    private DoubleMatriz scanSubInput(BufferedImage subImage){
-        int[] pixels = subImage.getRaster().getPixels(0, 0, step, step, (int[])null);
+        int[] pixels = src.getRaster().getPixels(0, 0, width, height, (int[])null);
         DoubleMatriz dm = new DoubleMatriz(new Dominio(pixels.length, 256));
         for(int k=0;k<pixels.length;k++){
             dm.indexa(k + 1, pixels[k] + 1, 1.0);
@@ -74,10 +58,10 @@ public class PixelsInputLayer extends ArrayList<LayerConsumer> implements LayerP
         }
         NumericMatriz<Double> d = dm.distanciaE2();
         d.replaceAll((k, v) -> 1/ Math.sqrt(v));
+        
 
-        return dm = (DoubleMatriz)d.productoKronecker(dm);
+        return (DoubleMatriz)d.productoKronecker(dm);
     }
-    
 
     @Override
     public DoubleMatriz getOutputLayer() {
@@ -96,6 +80,10 @@ public class PixelsInputLayer extends ArrayList<LayerConsumer> implements LayerP
     @Override
     public List<LayerConsumer> getConsumers() {
         return this;
+    }
+
+    public void setSrc(BufferedImage src) {
+        this.src = src;
     }
     
 }

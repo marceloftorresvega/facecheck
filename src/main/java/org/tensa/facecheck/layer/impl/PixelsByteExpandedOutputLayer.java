@@ -35,7 +35,7 @@ import org.tensa.tensada.matrix.Indice;
  *
  * @author Marcelo
  */
-public class PixelsOutputLayer implements LayerConsumer {
+public class PixelsByteExpandedOutputLayer implements LayerConsumer {
     
     private DoubleMatriz weights;
     private int status;
@@ -44,7 +44,7 @@ public class PixelsOutputLayer implements LayerConsumer {
     
     private BufferedImage dest;
 
-    public PixelsOutputLayer(DoubleMatriz weights) {
+    public PixelsByteExpandedOutputLayer(DoubleMatriz weights) {
         this.weights = weights;
     }
 

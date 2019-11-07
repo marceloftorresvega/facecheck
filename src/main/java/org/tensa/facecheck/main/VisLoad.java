@@ -21,9 +21,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.filter.MaskOp;
 import org.tensa.facecheck.layer.impl.HiddenLayer;
-import org.tensa.facecheck.layer.impl.PixelLeanringLayer;
-import org.tensa.facecheck.layer.impl.PixelsOutputLayer;
-import org.tensa.facecheck.layer.impl.SimplePixelsInputLayer;
+import org.tensa.facecheck.layer.impl.PixelByteExpandedLeanringLayer;
+import org.tensa.facecheck.layer.impl.PixelsByteExpandedOutputLayer;
+import org.tensa.facecheck.layer.impl.SimplePixelsByteExpandedInputLayer;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
 
@@ -302,11 +302,11 @@ public class VisLoad extends javax.swing.JFrame {
         bufferImageFiltered = createCompatibleDestImage(buffImage, null);
             log.info("iniciando 3...");
         
-        SimplePixelsInputLayer simplePixelsInputLayer = new SimplePixelsInputLayer();
-        SimplePixelsInputLayer simplePixelsCompareLayer = new SimplePixelsInputLayer();
-        PixelLeanringLayer pixelLeanringLayer = new PixelLeanringLayer(weightsO, 0.01);
+        SimplePixelsByteExpandedInputLayer simplePixelsInputLayer = new SimplePixelsByteExpandedInputLayer();
+        SimplePixelsByteExpandedInputLayer simplePixelsCompareLayer = new SimplePixelsByteExpandedInputLayer();
+        PixelByteExpandedLeanringLayer pixelLeanringLayer = new PixelByteExpandedLeanringLayer(weightsO, 0.01);
         HiddenLayer hiddenLayer = new HiddenLayer(weightsH, 0.001);
-        PixelsOutputLayer pixelsOutputLayer = new PixelsOutputLayer(weightsO);
+        PixelsByteExpandedOutputLayer pixelsOutputLayer = new PixelsByteExpandedOutputLayer(weightsO);
         
         
         simplePixelsInputLayer.getConsumers().add(hiddenLayer);
