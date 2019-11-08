@@ -78,7 +78,7 @@ public class PixelDirectLeanringLayer extends ArrayList<LayerToBack> implements 
             DoubleMatriz producto = weights.producto(inputLayer);
             DoubleMatriz distanciaE2 = (DoubleMatriz)producto.distanciaE2();
             outputLayer = (DoubleMatriz)producto
-                    .productoEscalar( 255 / Math.sqrt(distanciaE2.get(Indice.D1)));
+                    .productoEscalar( 1 / Math.sqrt(distanciaE2.get(Indice.D1)));
             adjustBack();
         }
     }
