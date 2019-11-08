@@ -26,6 +26,8 @@ package org.tensa.facecheck.layer.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerProducer;
 import org.tensa.facecheck.layer.LayerToBack;
@@ -38,6 +40,8 @@ import org.tensa.tensada.matrix.NumericMatriz;
  * @author Marcelo
  */
 public class HiddenLayer extends ArrayList<LayerConsumer> implements LayerToBack, LayerConsumer, LayerProducer {
+    
+    private final Logger log = LoggerFactory.getLogger(HiddenLayer.class);
     
     private DoubleMatriz weights;
     private int status;
@@ -74,6 +78,10 @@ public class HiddenLayer extends ArrayList<LayerConsumer> implements LayerToBack
     @Override
     public void startProduction() {
         if (status == LayerConsumer.SUCCESS_STATUS) {
+            
+            log.info("pesos <{}><{}>", weights.getDominio().getFila(), weights.getDominio().getColumna());
+            log.info("layer <{}><{}>", inputLayer.getDominio().getFila(), inputLayer.getDominio().getColumna());
+            
             DoubleMatriz producto = weights.producto(inputLayer);
             DoubleMatriz distanciaE2 = (DoubleMatriz)producto.distanciaE2();
             outputLayer = (DoubleMatriz)producto
