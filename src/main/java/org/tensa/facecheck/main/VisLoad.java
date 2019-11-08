@@ -21,11 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.filter.MaskOp;
 import org.tensa.facecheck.layer.impl.HiddenLayer;
-import org.tensa.facecheck.layer.impl.PixelByteExpandedLeanringLayer;
 import org.tensa.facecheck.layer.impl.PixelDirectLeanringLayer;
-import org.tensa.facecheck.layer.impl.PixelsByteExpandedOutputLayer;
 import org.tensa.facecheck.layer.impl.PixelsDirectOutputLayer;
-import org.tensa.facecheck.layer.impl.SimplePixelsByteExpandedInputLayer;
 import org.tensa.facecheck.layer.impl.SimplePixelsDirectInputLayer;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
@@ -297,18 +294,18 @@ public class VisLoad extends javax.swing.JFrame {
 
     private void entrenarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_entrenarActionPerformed
             log.info("iniciando 0...");
-        int step = 501;
-        DoubleMatriz weightsH = (DoubleMatriz)new DoubleMatriz(new Dominio(501*501*3, 51*51*3)).matrizUno();
+        int step = 51;
+        DoubleMatriz weightsH = (DoubleMatriz)new DoubleMatriz(new Dominio(step*step*3 / 100, step*step*3)).matrizUno();
             log.info("iniciando 1...");
-        DoubleMatriz weightsO = (DoubleMatriz)new DoubleMatriz(new Dominio(51*51*3, 501*501*3));
+        DoubleMatriz weightsO = (DoubleMatriz)new DoubleMatriz(new Dominio(step*step*3, step*step*3 / 100));
             log.info("iniciando 2...");
         bufferImageFiltered = createCompatibleDestImage(buffImage, null);
             log.info("iniciando 3...");
         
         SimplePixelsDirectInputLayer simplePixelsInputLayer = new SimplePixelsDirectInputLayer();
         SimplePixelsDirectInputLayer simplePixelsCompareLayer = new SimplePixelsDirectInputLayer();
-        PixelDirectLeanringLayer pixelLeanringLayer = new PixelDirectLeanringLayer(weightsO, 0.01);
         HiddenLayer hiddenLayer = new HiddenLayer(weightsH, 0.001);
+        PixelDirectLeanringLayer pixelLeanringLayer = new PixelDirectLeanringLayer(weightsO, 0.01);
         PixelsDirectOutputLayer pixelsOutputLayer = new PixelsDirectOutputLayer(weightsO);
         
         
@@ -320,11 +317,12 @@ public class VisLoad extends javax.swing.JFrame {
         int height = buffImage.getHeight();
         
             log.info("procesando...");
-        for(int i=0;i<width;i+=step) {
+        for(int i=0;i<width-step;i+=step) {
+//        for(int i=0;i<step+1;i+=step) {
             log.info("bloque <{}>", i);
             
-//            for(int j=0;j<height;j+=step) {
-            for(int j=0;j<step+1;j+=step) {
+            for(int j=0;j<height-step;j+=step) {
+//            for(int j=0;j<step+1;j+=step) {
             log.info("sub bloque <{}>", j);
                 
             log.info("cargando bloque comparacion <{}><{}>", i, j);
@@ -339,9 +337,9 @@ public class VisLoad extends javax.swing.JFrame {
                 BufferedImage src = buffImage.getSubimage(i, j, step, step);
                 simplePixelsInputLayer.setSrc(src);
                 simplePixelsInputLayer.startProduction();
-                
             }
         }
+                
             java.awt.EventQueue.invokeLater(() -> {
                 vista.repaint();
                 respuesta.repaint();
