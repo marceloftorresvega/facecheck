@@ -48,6 +48,9 @@ public class VisLoad extends javax.swing.JFrame {
     private final int kwidth = 27;
     private float[] data;
     private BufferedImage bufferImageFiltered;
+    private DoubleMatriz weightsH;
+    private DoubleMatriz weightsO;
+    private int step;
 
     /**
      * Get the value of comboModel
@@ -128,6 +131,7 @@ public class VisLoad extends javax.swing.JFrame {
         jComboBox1 = new javax.swing.JComboBox();
         jButton3 = new javax.swing.JButton();
         entrenar = new javax.swing.JButton();
+        clean = new javax.swing.JButton();
         jSplitPane1 = new javax.swing.JSplitPane();
         vista = getNuevaVista();
         respuesta = getNuevaRespuesta();
@@ -165,6 +169,13 @@ public class VisLoad extends javax.swing.JFrame {
             }
         });
 
+        clean.setText("Limpiar");
+        clean.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cleanActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -178,9 +189,11 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jButton3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(entrenar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(clean)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(90, 90, 90))
+                .addGap(39, 39, 39))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -190,7 +203,8 @@ public class VisLoad extends javax.swing.JFrame {
                     .addComponent(jButton2)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton3)
-                    .addComponent(entrenar))
+                    .addComponent(entrenar)
+                    .addComponent(clean))
                 .addGap(0, 6, Short.MAX_VALUE))
         );
 
@@ -271,7 +285,8 @@ public class VisLoad extends javax.swing.JFrame {
         if(Objects.nonNull(bufferImageFiltered))
             bufferImageFiltered.flush();
         
-        bufferImageFiltered = conv.filter(buffImage, null);
+        bufferImageFiltered = conv.filter(destBuffImage, null);
+        destBuffImage = bufferImageFiltered;
         
         java.awt.EventQueue.invokeLater(() -> {
             respuesta.repaint();
@@ -295,12 +310,7 @@ public class VisLoad extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void entrenarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_entrenarActionPerformed
-            log.info("iniciando 0...");
-        int step = 101;
-        DoubleMatriz weightsH = (DoubleMatriz)new DoubleMatriz(new Dominio(step*step*3 / 1000, step*step*3)).matrizUno();
-            log.info("iniciando 1...");
-        DoubleMatriz weightsO = (DoubleMatriz)new DoubleMatriz(new Dominio(step*step*3, step*step*3 / 1000)).matrizUno();
-            log.info("iniciando 2...");
+
         bufferImageFiltered = createCompatibleDestImage(buffImage, null);
             log.info("iniciando 3...");
         
@@ -324,8 +334,8 @@ public class VisLoad extends javax.swing.JFrame {
 
                     SimplePixelsDirectInputLayer simplePixelsInputLayer = new SimplePixelsDirectInputLayer();
                     SimplePixelsDirectInputLayer simplePixelsCompareLayer = new SimplePixelsDirectInputLayer();
-                    HiddenLayer hiddenLayer = new HiddenLayer(weightsH, 0.0000001);
-                    PixelDirectLeanringLayer pixelLeanringLayer = new PixelDirectLeanringLayer(weightsO, 0.000001);
+                    HiddenLayer hiddenLayer = new HiddenLayer(weightsH, 0.001);
+                    PixelDirectLeanringLayer pixelLeanringLayer = new PixelDirectLeanringLayer(weightsO, 0.00001);
                     PixelsDirectOutputLayer pixelsOutputLayer = new PixelsDirectOutputLayer(weightsO);
 
 
@@ -355,6 +365,15 @@ public class VisLoad extends javax.swing.JFrame {
                 respuesta.repaint();
             });
     }//GEN-LAST:event_entrenarActionPerformed
+
+    private void cleanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanActionPerformed
+            log.info("iniciando 0...");
+        step = 101;
+            log.info("iniciando 1...");
+        weightsH = (DoubleMatriz)new DoubleMatriz(new Dominio(step*step*3 / 10000, step*step*3)).matrizUno();
+            log.info("iniciando 2...");
+        weightsO = (DoubleMatriz)new DoubleMatriz(new Dominio(step*step*3, step*step*3 / 10000)).matrizUno();
+    }//GEN-LAST:event_cleanActionPerformed
 
     public BufferedImage createCompatibleDestImage(BufferedImage src, ColorModel destCM) {
         BufferedImage image;
@@ -491,6 +510,7 @@ public class VisLoad extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton clean;
     private javax.swing.JButton entrenar;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
