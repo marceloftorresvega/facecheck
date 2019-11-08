@@ -79,8 +79,8 @@ public class HiddenLayer extends ArrayList<LayerConsumer> implements LayerToBack
     public void startProduction() {
         if (status == LayerConsumer.SUCCESS_STATUS) {
             
-            log.info("pesos <{}><{}>", weights.getDominio().getFila(), weights.getDominio().getColumna());
-            log.info("layer <{}><{}>", inputLayer.getDominio().getFila(), inputLayer.getDominio().getColumna());
+//            log.info("pesos <{}><{}>", weights.getDominio().getFila(), weights.getDominio().getColumna());
+//            log.info("layer <{}><{}>", inputLayer.getDominio().getFila(), inputLayer.getDominio().getColumna());
             
             DoubleMatriz producto = weights.producto(inputLayer);
             DoubleMatriz distanciaE2 = (DoubleMatriz)producto.distanciaE2();

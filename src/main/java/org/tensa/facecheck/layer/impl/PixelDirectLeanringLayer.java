@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerToBack;
+import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
 import org.tensa.tensada.matrix.Indice;
 import org.tensa.tensada.matrix.NumericMatriz;
@@ -71,13 +72,14 @@ public class PixelDirectLeanringLayer extends ArrayList<LayerToBack> implements 
     public void layerComplete(int status) {
         this.status = status;
         if (status == LayerConsumer.SUCCESS_STATUS) {
-            log.info("pesos <{}><{}>", weights.getDominio().getFila(), weights.getDominio().getColumna());
-            log.info("layer <{}><{}>", inputLayer.getDominio().getFila(), inputLayer.getDominio().getColumna());
+//            log.info("pesos <{}><{}>", weights.getDominio().getFila(), weights.getDominio().getColumna());
+//            log.info("layer <{}><{}>", inputLayer.getDominio().getFila(), inputLayer.getDominio().getColumna());
             
             DoubleMatriz producto = weights.producto(inputLayer);
             DoubleMatriz distanciaE2 = (DoubleMatriz)producto.distanciaE2();
             outputLayer = (DoubleMatriz)producto
                     .productoEscalar( 255 / Math.sqrt(distanciaE2.get(Indice.D1)));
+            adjustBack();
         }
     }
 
@@ -113,7 +115,10 @@ public class PixelDirectLeanringLayer extends ArrayList<LayerToBack> implements 
 
     @Override
     public DoubleMatriz getError() {
-       return (DoubleMatriz)error.distanciaE2().productoEscalar(1.0/2);
+        if( error!=null)
+            return (DoubleMatriz)error.distanciaE2().productoEscalar(1.0/2);
+        else
+            return new DoubleMatriz(new Dominio(1, 1));
     }
 
     @Override

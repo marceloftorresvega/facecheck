@@ -26,6 +26,7 @@ import org.tensa.facecheck.layer.impl.PixelsDirectOutputLayer;
 import org.tensa.facecheck.layer.impl.SimplePixelsDirectInputLayer;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
+import org.tensa.tensada.matrix.Indice;
 
 /**
  *
@@ -285,6 +286,7 @@ public class VisLoad extends javax.swing.JFrame {
             bufferImageFiltered.flush();
         
         bufferImageFiltered = conv.filter(buffImage, null);
+        destBuffImage = bufferImageFiltered;
         
         java.awt.EventQueue.invokeLater(() -> {
             vista.repaint();
@@ -294,10 +296,10 @@ public class VisLoad extends javax.swing.JFrame {
 
     private void entrenarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_entrenarActionPerformed
             log.info("iniciando 0...");
-        int step = 51;
-        DoubleMatriz weightsH = (DoubleMatriz)new DoubleMatriz(new Dominio(step*step*3 / 100, step*step*3)).matrizUno();
+        int step = 101;
+        DoubleMatriz weightsH = (DoubleMatriz)new DoubleMatriz(new Dominio(step*step*3 / 1000, step*step*3)).matrizUno();
             log.info("iniciando 1...");
-        DoubleMatriz weightsO = (DoubleMatriz)new DoubleMatriz(new Dominio(step*step*3, step*step*3 / 100));
+        DoubleMatriz weightsO = (DoubleMatriz)new DoubleMatriz(new Dominio(step*step*3, step*step*3 / 1000)).matrizUno();
             log.info("iniciando 2...");
         bufferImageFiltered = createCompatibleDestImage(buffImage, null);
             log.info("iniciando 3...");
@@ -322,8 +324,8 @@ public class VisLoad extends javax.swing.JFrame {
 
                     SimplePixelsDirectInputLayer simplePixelsInputLayer = new SimplePixelsDirectInputLayer();
                     SimplePixelsDirectInputLayer simplePixelsCompareLayer = new SimplePixelsDirectInputLayer();
-                    HiddenLayer hiddenLayer = new HiddenLayer(weightsH, 0.001);
-                    PixelDirectLeanringLayer pixelLeanringLayer = new PixelDirectLeanringLayer(weightsO, 0.01);
+                    HiddenLayer hiddenLayer = new HiddenLayer(weightsH, 0.0000001);
+                    PixelDirectLeanringLayer pixelLeanringLayer = new PixelDirectLeanringLayer(weightsO, 0.000001);
                     PixelsDirectOutputLayer pixelsOutputLayer = new PixelsDirectOutputLayer(weightsO);
 
 
@@ -343,7 +345,7 @@ public class VisLoad extends javax.swing.JFrame {
                     BufferedImage src = buffImage.getSubimage(i, j, step, step);
                     simplePixelsInputLayer.setSrc(src);
                     simplePixelsInputLayer.startProduction();
-                    
+                    log.info("      error <{}>", pixelLeanringLayer.getError().get(Indice.D1));
                 });
 //            }
 //        }
