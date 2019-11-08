@@ -302,43 +302,51 @@ public class VisLoad extends javax.swing.JFrame {
         bufferImageFiltered = createCompatibleDestImage(buffImage, null);
             log.info("iniciando 3...");
         
-        SimplePixelsDirectInputLayer simplePixelsInputLayer = new SimplePixelsDirectInputLayer();
-        SimplePixelsDirectInputLayer simplePixelsCompareLayer = new SimplePixelsDirectInputLayer();
-        HiddenLayer hiddenLayer = new HiddenLayer(weightsH, 0.001);
-        PixelDirectLeanringLayer pixelLeanringLayer = new PixelDirectLeanringLayer(weightsO, 0.01);
-        PixelsDirectOutputLayer pixelsOutputLayer = new PixelsDirectOutputLayer(weightsO);
-        
-        
-        simplePixelsInputLayer.getConsumers().add(hiddenLayer);
-        hiddenLayer.getConsumers().add(pixelLeanringLayer);
-        hiddenLayer.getConsumers().add(pixelsOutputLayer);
-        
         int width = buffImage.getWidth();
         int height = buffImage.getHeight();
         
             log.info("procesando...");
-        for(int i=0;i<width-step;i+=step) {
-//        for(int i=0;i<step+1;i+=step) {
-            log.info("bloque <{}>", i);
-            
-            for(int j=0;j<height-step;j+=step) {
-//            for(int j=0;j<step+1;j+=step) {
-            log.info("sub bloque <{}>", j);
-                
-            log.info("cargando bloque comparacion <{}><{}>", i, j);
-                BufferedImage comp = destBuffImage.getSubimage(i, j, step, step);
-                simplePixelsCompareLayer.setSrc(comp);
-                simplePixelsCompareLayer.startProduction();
-                pixelLeanringLayer.setCompareToLayer(simplePixelsCompareLayer.getOutputLayer());
-                
-                pixelsOutputLayer.setDest(bufferImageFiltered.getSubimage(i, j, step, step));
-                
-            log.info("cargando bloque ejecucion <{}><{}>", i, j);
-                BufferedImage src = buffImage.getSubimage(i, j, step, step);
-                simplePixelsInputLayer.setSrc(src);
-                simplePixelsInputLayer.startProduction();
-            }
-        }
+//        for(int i=0;i<width-step;i+=step) {
+////        for(int i=0;i<step+1;i+=step) {
+//            
+//            for(int j=0;j<height-step;j+=step) {
+////            for(int j=0;j<step+1;j+=step) {
+
+
+        new Dominio(width-step, height-step).stream()
+                .filter( idx -> ((idx.getFila() % step ==0) && (idx.getColumna()% step == 0)))
+                .parallel()
+                .forEach(idx -> {
+                    int i = idx.getFila();
+                    int j = idx.getColumna();
+
+                    SimplePixelsDirectInputLayer simplePixelsInputLayer = new SimplePixelsDirectInputLayer();
+                    SimplePixelsDirectInputLayer simplePixelsCompareLayer = new SimplePixelsDirectInputLayer();
+                    HiddenLayer hiddenLayer = new HiddenLayer(weightsH, 0.001);
+                    PixelDirectLeanringLayer pixelLeanringLayer = new PixelDirectLeanringLayer(weightsO, 0.01);
+                    PixelsDirectOutputLayer pixelsOutputLayer = new PixelsDirectOutputLayer(weightsO);
+
+
+                    simplePixelsInputLayer.getConsumers().add(hiddenLayer);
+                    hiddenLayer.getConsumers().add(pixelLeanringLayer);
+                    hiddenLayer.getConsumers().add(pixelsOutputLayer);
+
+                    log.info("cargando bloque comparacion <{}><{}>", i, j);
+                    BufferedImage comp = destBuffImage.getSubimage(i, j, step, step);
+                    simplePixelsCompareLayer.setSrc(comp);
+                    simplePixelsCompareLayer.startProduction();
+                    pixelLeanringLayer.setCompareToLayer(simplePixelsCompareLayer.getOutputLayer());
+
+                    pixelsOutputLayer.setDest(bufferImageFiltered.getSubimage(i, j, step, step));
+
+                     log.info("cargando bloque ejecucion <{}><{}>", i, j);
+                    BufferedImage src = buffImage.getSubimage(i, j, step, step);
+                    simplePixelsInputLayer.setSrc(src);
+                    simplePixelsInputLayer.startProduction();
+                    
+                });
+//            }
+//        }
                 
             java.awt.EventQueue.invokeLater(() -> {
                 vista.repaint();

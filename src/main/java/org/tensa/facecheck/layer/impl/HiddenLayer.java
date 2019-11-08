@@ -117,7 +117,10 @@ public class HiddenLayer extends ArrayList<LayerConsumer> implements LayerToBack
         toBackLayer = (DoubleMatriz) weights.productoPunto(error);
         
         NumericMatriz<Double> delta = error.productoTensorial(inputLayer).productoEscalar(learningStep).transpuesta();
-        weights.replaceAll((i,v) -> v + delta.get(i));
+        synchronized(weights){
+            weights.replaceAll((i,v) -> v + delta.get(i));
+            
+        }
         
         
         for(LayerToBack back : getProducers()) {
