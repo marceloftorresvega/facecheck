@@ -31,7 +31,6 @@ import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerToBack;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
-import org.tensa.tensada.matrix.Indice;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
@@ -76,9 +75,9 @@ public class PixelDirectLeanringLayer extends ArrayList<LayerToBack> implements 
 //            log.info("layer <{}><{}>", inputLayer.getDominio().getFila(), inputLayer.getDominio().getColumna());
             
             DoubleMatriz producto = weights.producto(inputLayer);
-            DoubleMatriz distanciaE2 = (DoubleMatriz)producto.distanciaE2();
-            outputLayer = (DoubleMatriz)producto
-                    .productoEscalar( 1 / Math.sqrt(distanciaE2.get(Indice.D1)));
+//            DoubleMatriz distanciaE2 = (DoubleMatriz)producto.distanciaE2();
+            outputLayer = (DoubleMatriz)producto;
+//                    .productoEscalar( 1 / Math.sqrt(distanciaE2.get(Indice.D1)));
             adjustBack();
         }
     }
