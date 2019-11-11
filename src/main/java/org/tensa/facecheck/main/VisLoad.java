@@ -20,9 +20,9 @@ import javax.swing.JPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.filter.MaskOp;
-import org.tensa.facecheck.layer.impl.HiddenLayer;
-import org.tensa.facecheck.layer.impl.PixelDirectLeanringLayer;
-import org.tensa.facecheck.layer.impl.PixelsDirectOutputLayer;
+import org.tensa.facecheck.layer.impl.HiddenSigmoidLayer;
+import org.tensa.facecheck.layer.impl.PixelDirectSigmoidLeanringLayer;
+import org.tensa.facecheck.layer.impl.PixelsDirectSigmoidOutputLayer;
 import org.tensa.facecheck.layer.impl.SimplePixelsDirectInputLayer;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
@@ -334,9 +334,9 @@ public class VisLoad extends javax.swing.JFrame {
 
                     SimplePixelsDirectInputLayer simplePixelsInputLayer = new SimplePixelsDirectInputLayer();
                     SimplePixelsDirectInputLayer simplePixelsCompareLayer = new SimplePixelsDirectInputLayer();
-                    HiddenLayer hiddenLayer = new HiddenLayer(weightsH, 0.001);
-                    PixelDirectLeanringLayer pixelLeanringLayer = new PixelDirectLeanringLayer(weightsO, 0.00001);
-                    PixelsDirectOutputLayer pixelsOutputLayer = new PixelsDirectOutputLayer(weightsO);
+                    HiddenSigmoidLayer hiddenLayer = new HiddenSigmoidLayer(weightsH, 0.001);
+                    PixelDirectSigmoidLeanringLayer pixelLeanringLayer = new PixelDirectSigmoidLeanringLayer(weightsO, 0.00001);
+                    PixelsDirectSigmoidOutputLayer pixelsOutputLayer = new PixelsDirectSigmoidOutputLayer(weightsO);
 
 
                     simplePixelsInputLayer.getConsumers().add(hiddenLayer);
