@@ -335,7 +335,7 @@ public class VisLoad extends javax.swing.JFrame {
                     SimplePixelsDirectInputLayer simplePixelsInputLayer = new SimplePixelsDirectInputLayer();
                     SimplePixelsDirectInputLayer simplePixelsCompareLayer = new SimplePixelsDirectInputLayer();
                     HiddenSigmoidLayer hiddenLayer = new HiddenSigmoidLayer(weightsH, 0.001);
-                    PixelDirectSigmoidLeanringLayer pixelLeanringLayer = new PixelDirectSigmoidLeanringLayer(weightsO, 0.00001);
+                    PixelDirectSigmoidLeanringLayer pixelLeanringLayer = new PixelDirectSigmoidLeanringLayer(weightsO, 0.1);
                     PixelsDirectSigmoidOutputLayer pixelsOutputLayer = new PixelsDirectSigmoidOutputLayer(weightsO);
 
 
@@ -371,8 +371,10 @@ public class VisLoad extends javax.swing.JFrame {
         step = 101;
             log.info("iniciando 1...");
         weightsH = (DoubleMatriz)new DoubleMatriz(new Dominio(step*step*3 / 10000, step*step*3)).matrizUno();
+        weightsH = (DoubleMatriz)weightsH.productoEscalar( 1.0 / Math.sqrt( step*step*3 / 10000 * step*step*3 ) );
             log.info("iniciando 2...");
         weightsO = (DoubleMatriz)new DoubleMatriz(new Dominio(step*step*3, step*step*3 / 10000)).matrizUno();
+        weightsO = (DoubleMatriz)weightsO.productoEscalar( 1.0 / Math.sqrt( step*step*3 / 10000 * step*step*3 ) );
     }//GEN-LAST:event_cleanActionPerformed
 
     public BufferedImage createCompatibleDestImage(BufferedImage src, ColorModel destCM) {
