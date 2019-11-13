@@ -142,6 +142,9 @@ public class VisLoad extends javax.swing.JFrame {
         cargar = new javax.swing.JButton();
         salva = new javax.swing.JButton();
         entrenar = new javax.swing.JCheckBox();
+        hiddenLearningRate = new javax.swing.JSpinner();
+        outputLearningRate = new javax.swing.JSpinner();
+        jLabel1 = new javax.swing.JLabel();
         jSplitPane1 = new javax.swing.JSplitPane();
         vista = getNuevaVista();
         respuesta = getNuevaRespuesta();
@@ -203,33 +206,44 @@ public class VisLoad extends javax.swing.JFrame {
         entrenar.setSelected(true);
         entrenar.setText("entrenar");
 
+        hiddenLearningRate.setModel(new javax.swing.SpinnerNumberModel(1.0d, 1.0d, 6.0d, 1.0d));
+
+        outputLearningRate.setModel(new javax.swing.SpinnerNumberModel(1.0d, 1.0d, 6.0d, 1.0d));
+
+        jLabel1.setText("aprendisaje");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButton1)
+                    .addComponent(jLabel1))
                 .addGap(18, 18, 18)
-                .addComponent(jButton2)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton2)
+                    .addComponent(hiddenLearningRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(outputLearningRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton3))
+                .addGap(12, 12, 12)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cargar)
+                    .addComponent(procesar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(cargar)
-                        .addGap(18, 18, 18)
                         .addComponent(salva)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(entrenar)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(entrenar))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(procesar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(clean)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(39, 39, 39))))
+                        .addGap(13, 13, 13)
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -245,7 +259,10 @@ public class VisLoad extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cargar)
                     .addComponent(salva)
-                    .addComponent(entrenar)))
+                    .addComponent(entrenar)
+                    .addComponent(hiddenLearningRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(outputLearningRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1)))
         );
 
         vista.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -285,7 +302,7 @@ public class VisLoad extends javax.swing.JFrame {
             .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGap(15, 15, 15)
-                .addComponent(jSplitPane1)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 612, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -369,14 +386,14 @@ public class VisLoad extends javax.swing.JFrame {
 
                     SimplePixelsDirectInputLayer simplePixelsInputLayer = new SimplePixelsDirectInputLayer();
                     SimplePixelsDirectInputLayer simplePixelsCompareLayer = new SimplePixelsDirectInputLayer();
-                    HiddenSigmoidLayer hiddenLayer = new HiddenSigmoidLayer(weightsH, 0.1);
+                    HiddenSigmoidLayer hiddenLayer = new HiddenSigmoidLayer(weightsH,  Math.pow(10, -(Double)hiddenLearningRate.getValue()));
                     PixelDirectSigmoidLeanringLayer pixelLeanringLayer = null;
                     PixelsDirectSigmoidOutputLayer pixelsOutputLayer = new PixelsDirectSigmoidOutputLayer(weightsO);
 
                     simplePixelsInputLayer.getConsumers().add(hiddenLayer);
 
                     if(entrenar.isSelected()){
-                        pixelLeanringLayer = new PixelDirectSigmoidLeanringLayer(weightsO, 0.1);
+                        pixelLeanringLayer = new PixelDirectSigmoidLeanringLayer(weightsO, Math.pow(10, -(Double)outputLearningRate.getValue()));
                         hiddenLayer.getConsumers().add(pixelLeanringLayer);
                     
                         log.info("cargando bloque comparacion <{}><{}>", i, j);
@@ -661,12 +678,15 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JButton cargar;
     private javax.swing.JButton clean;
     private javax.swing.JCheckBox entrenar;
+    private javax.swing.JSpinner hiddenLearningRate;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JSpinner outputLearningRate;
     private javax.swing.JButton procesar;
     private javax.swing.JPanel respuesta;
     private javax.swing.JButton salva;
