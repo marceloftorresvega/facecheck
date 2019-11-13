@@ -10,9 +10,16 @@ import java.awt.image.ConvolveOp;
 import java.awt.image.IndexColorModel;
 import java.awt.image.Kernel;
 import java.awt.image.WritableRaster;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Objects;
+import java.util.stream.IntStream;
 import javax.imageio.ImageIO;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
@@ -38,6 +45,7 @@ public class VisLoad extends javax.swing.JFrame {
 
     private final String baseUrl = "\\img\\originales\\";
     private final String testBaseUrl = "\\img\\procesadas\\";
+    private final String weightUrl = "\\data\\";
     
     private final String[] imageName = {"IMG_2869", "IMG_2918","IMG_3071","IMG_3076","IMG_3078","IMG_3079"};
 
@@ -130,8 +138,11 @@ public class VisLoad extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jComboBox1 = new javax.swing.JComboBox();
         jButton3 = new javax.swing.JButton();
-        entrenar = new javax.swing.JButton();
+        procesar = new javax.swing.JButton();
         clean = new javax.swing.JButton();
+        cargar = new javax.swing.JButton();
+        salva = new javax.swing.JButton();
+        entrenar = new javax.swing.JCheckBox();
         jSplitPane1 = new javax.swing.JSplitPane();
         vista = getNuevaVista();
         respuesta = getNuevaRespuesta();
@@ -162,10 +173,10 @@ public class VisLoad extends javax.swing.JFrame {
             }
         });
 
-        entrenar.setText("entrena");
-        entrenar.addActionListener(new java.awt.event.ActionListener() {
+        procesar.setText("procesar");
+        procesar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                entrenarActionPerformed(evt);
+                procesarActionPerformed(evt);
             }
         });
 
@@ -175,6 +186,23 @@ public class VisLoad extends javax.swing.JFrame {
                 cleanActionPerformed(evt);
             }
         });
+
+        cargar.setText("Carga");
+        cargar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cargarActionPerformed(evt);
+            }
+        });
+
+        salva.setText("Salva");
+        salva.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                salvaActionPerformed(evt);
+            }
+        });
+
+        entrenar.setSelected(true);
+        entrenar.setText("entrenar");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -188,12 +216,21 @@ public class VisLoad extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(entrenar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(clean)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(39, 39, 39))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(cargar)
+                        .addGap(18, 18, 18)
+                        .addComponent(salva)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(entrenar)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(procesar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(clean)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(39, 39, 39))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -203,9 +240,13 @@ public class VisLoad extends javax.swing.JFrame {
                     .addComponent(jButton2)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton3)
-                    .addComponent(entrenar)
+                    .addComponent(procesar)
                     .addComponent(clean))
-                .addGap(0, 6, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cargar)
+                    .addComponent(salva)
+                    .addComponent(entrenar)))
         );
 
         vista.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -218,7 +259,7 @@ public class VisLoad extends javax.swing.JFrame {
         );
         vistaLayout.setVerticalGroup(
             vistaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 240, Short.MAX_VALUE)
+            .addGap(0, 234, Short.MAX_VALUE)
         );
 
         jSplitPane1.setLeftComponent(vista);
@@ -233,7 +274,7 @@ public class VisLoad extends javax.swing.JFrame {
         );
         respuestaLayout.setVerticalGroup(
             respuestaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 240, Short.MAX_VALUE)
+            .addGap(0, 234, Short.MAX_VALUE)
         );
 
         jSplitPane1.setRightComponent(respuesta);
@@ -252,8 +293,8 @@ public class VisLoad extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jSplitPane1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -309,7 +350,7 @@ public class VisLoad extends javax.swing.JFrame {
         });
     }//GEN-LAST:event_jButton3ActionPerformed
 
-    private void entrenarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_entrenarActionPerformed
+    private void procesarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_procesarActionPerformed
 
         bufferImageFiltered = createCompatibleDestImage(buffImage, null);
             log.info("iniciando 3...");
@@ -334,28 +375,34 @@ public class VisLoad extends javax.swing.JFrame {
 
                     SimplePixelsDirectInputLayer simplePixelsInputLayer = new SimplePixelsDirectInputLayer();
                     SimplePixelsDirectInputLayer simplePixelsCompareLayer = new SimplePixelsDirectInputLayer();
-                    HiddenSigmoidLayer hiddenLayer = new HiddenSigmoidLayer(weightsH, 0.001);
-                    PixelDirectSigmoidLeanringLayer pixelLeanringLayer = new PixelDirectSigmoidLeanringLayer(weightsO, 0.1);
+                    HiddenSigmoidLayer hiddenLayer = new HiddenSigmoidLayer(weightsH, 0.1);
+                    PixelDirectSigmoidLeanringLayer pixelLeanringLayer = null;
                     PixelsDirectSigmoidOutputLayer pixelsOutputLayer = new PixelsDirectSigmoidOutputLayer(weightsO);
 
-
                     simplePixelsInputLayer.getConsumers().add(hiddenLayer);
-                    hiddenLayer.getConsumers().add(pixelLeanringLayer);
-                    hiddenLayer.getConsumers().add(pixelsOutputLayer);
 
-                    log.info("cargando bloque comparacion <{}><{}>", i, j);
-                    BufferedImage comp = destBuffImage.getSubimage(i, j, step, step);
-                    simplePixelsCompareLayer.setSrc(comp);
-                    simplePixelsCompareLayer.startProduction();
-                    pixelLeanringLayer.setCompareToLayer(simplePixelsCompareLayer.getOutputLayer());
-
-                    pixelsOutputLayer.setDest(bufferImageFiltered.getSubimage(i, j, step, step));
+                    if(entrenar.isSelected()){
+                        pixelLeanringLayer = new PixelDirectSigmoidLeanringLayer(weightsO, 0.1);
+                        hiddenLayer.getConsumers().add(pixelLeanringLayer);
+                    
+                        log.info("cargando bloque comparacion <{}><{}>", i, j);
+                        BufferedImage comp = destBuffImage.getSubimage(i, j, step, step);
+                        simplePixelsCompareLayer.setSrc(comp);
+                        simplePixelsCompareLayer.startProduction();
+                        pixelLeanringLayer.setCompareToLayer(simplePixelsCompareLayer.getOutputLayer());
+                        
+                        hiddenLayer.getConsumers().add(pixelsOutputLayer);
+                        pixelsOutputLayer.setDest(bufferImageFiltered.getSubimage(i, j, step, step));
+                    }
 
                      log.info("cargando bloque ejecucion <{}><{}>", i, j);
                     BufferedImage src = buffImage.getSubimage(i, j, step, step);
                     simplePixelsInputLayer.setSrc(src);
                     simplePixelsInputLayer.startProduction();
-                    log.info("      error <{}>", pixelLeanringLayer.getError().get(Indice.D1));
+                    
+                    if(entrenar.isSelected()){
+                        log.info("      error <{}>", pixelLeanringLayer.getError().get(Indice.D1));
+                    }
                 });
 //            }
 //        }
@@ -364,7 +411,7 @@ public class VisLoad extends javax.swing.JFrame {
                 vista.repaint();
                 respuesta.repaint();
             });
-    }//GEN-LAST:event_entrenarActionPerformed
+    }//GEN-LAST:event_procesarActionPerformed
 
     private void cleanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanActionPerformed
             log.info("iniciando 0...");
@@ -376,6 +423,105 @@ public class VisLoad extends javax.swing.JFrame {
         weightsO = (DoubleMatriz)new DoubleMatriz(new Dominio(step*step*3, step*step*3 / 10000)).matrizUno();
         weightsO = (DoubleMatriz)weightsO.productoEscalar( 1.0 / Math.sqrt( step*step*3 / 10000 * step*step*3 ) );
     }//GEN-LAST:event_cleanActionPerformed
+
+    private void salvaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salvaActionPerformed
+        String filename = System.getProperty("user.dir") + weightUrl + "nw.dat";
+         try( FileOutputStream fos = new FileOutputStream(filename) )   {
+            Integer fila = weightsH.getDominio().getFila();
+            Integer columna = weightsH.getDominio().getColumna();
+            
+            ByteBuffer headBuffer = ByteBuffer.allocate(8);
+            headBuffer.order(ByteOrder.LITTLE_ENDIAN);
+            
+            headBuffer.putInt(fila);
+            headBuffer.putInt(columna);
+            fos.write(headBuffer.array());
+            
+            ByteBuffer bodyBuffer = ByteBuffer.allocate(step * step * 3 * 8);
+            bodyBuffer.order(ByteOrder.LITTLE_ENDIAN);
+            
+            for(int j=1; j<=columna;j++){
+                bodyBuffer.position(0);
+                for(int i=1; i<=fila;i++){
+                    bodyBuffer.putDouble(weightsH.get( new Indice(i, j)));
+                }
+                fos.write(bodyBuffer.array());
+            }
+            fila = weightsO.getDominio().getFila();
+            columna = weightsO.getDominio().getColumna();
+            
+            headBuffer.position(0);
+            headBuffer.order(ByteOrder.LITTLE_ENDIAN);
+            
+            headBuffer.putInt(fila);
+            headBuffer.putInt(columna);
+            fos.write(headBuffer.array());
+            
+            bodyBuffer.position(0);
+            bodyBuffer.order(ByteOrder.LITTLE_ENDIAN);
+            
+            for(int i=1; i<=fila;i++){
+                bodyBuffer.position(0);
+                for(int j=1; j<=columna;j++){
+                    bodyBuffer.putDouble(weightsO.get( new Indice(i, j)));
+                }
+                fos.write(bodyBuffer.array());
+            }
+         } catch (FileNotFoundException ex) {
+             log.error("error al guardar  pesos", ex);
+         } catch (IOException ex) {
+             log.error("error al guardar  pesos", ex);             
+         }
+    }//GEN-LAST:event_salvaActionPerformed
+
+    private void cargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargarActionPerformed
+        String filename = System.getProperty("user.dir") + weightUrl + "nw.dat";
+        
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(filename), 15000 * 1024)) {
+
+            byte[] header = new byte[8];
+            byte[] body = new byte[step * step * 3 * 8];
+            
+            Integer fila;
+            Integer columna;
+            
+            bis.read(header);
+            ByteBuffer headBuffer = ByteBuffer.wrap(header);
+            headBuffer.order(ByteOrder.LITTLE_ENDIAN);
+            fila = headBuffer.getInt();
+            columna = headBuffer.getInt();
+            
+            Dominio dominio = new Dominio(fila, columna);
+            
+            ByteBuffer bodyBuffer;
+            weightsH = new DoubleMatriz(dominio);
+            
+            for(int j=1; j<=columna;j++){
+                bis.read(body);
+                bodyBuffer = ByteBuffer.wrap(body);
+                for(int i=1; i<=fila;i++){
+                    weightsH.indexa(i, j, bodyBuffer.getDouble());
+                }
+            } 
+            
+            dominio = new Dominio(fila, columna);
+            
+            weightsO = new DoubleMatriz(dominio);
+            
+            for(int i=1; i<=fila;i++){
+                bis.read(body);
+                for(int j=1; j<=columna;j++){
+                    bodyBuffer = ByteBuffer.wrap(body);
+                    weightsO.indexa(i , j, bodyBuffer.getDouble());
+                }
+            }
+            
+        } catch ( FileNotFoundException ex) {
+            log.error("error al cargar pesos", ex);
+        } catch (IOException ex) {
+            log.error("error al cargar pesos", ex);
+        }
+    }//GEN-LAST:event_cargarActionPerformed
 
     public BufferedImage createCompatibleDestImage(BufferedImage src, ColorModel destCM) {
         BufferedImage image;
@@ -512,15 +658,18 @@ public class VisLoad extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton cargar;
     private javax.swing.JButton clean;
-    private javax.swing.JButton entrenar;
+    private javax.swing.JCheckBox entrenar;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JButton procesar;
     private javax.swing.JPanel respuesta;
+    private javax.swing.JButton salva;
     private javax.swing.JPanel vista;
     // End of variables declaration//GEN-END:variables
 }
