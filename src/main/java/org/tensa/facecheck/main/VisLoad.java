@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Objects;
-import java.util.stream.IntStream;
 import javax.imageio.ImageIO;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
@@ -359,11 +358,6 @@ public class VisLoad extends javax.swing.JFrame {
         int height = buffImage.getHeight();
         
             log.info("procesando...");
-//        for(int i=0;i<width-step;i+=step) {
-////        for(int i=0;i<step+1;i+=step) {
-//            
-//            for(int j=0;j<height-step;j+=step) {
-////            for(int j=0;j<step+1;j+=step) {
 
 
         new Dominio(width-step, height-step).stream()
@@ -391,11 +385,11 @@ public class VisLoad extends javax.swing.JFrame {
                         simplePixelsCompareLayer.startProduction();
                         pixelLeanringLayer.setCompareToLayer(simplePixelsCompareLayer.getOutputLayer());
                         
-                        hiddenLayer.getConsumers().add(pixelsOutputLayer);
-                        pixelsOutputLayer.setDest(bufferImageFiltered.getSubimage(i, j, step, step));
                     }
 
-                     log.info("cargando bloque ejecucion <{}><{}>", i, j);
+                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
+                    hiddenLayer.getConsumers().add(pixelsOutputLayer);
+                    pixelsOutputLayer.setDest(bufferImageFiltered.getSubimage(i, j, step, step));
                     BufferedImage src = buffImage.getSubimage(i, j, step, step);
                     simplePixelsInputLayer.setSrc(src);
                     simplePixelsInputLayer.startProduction();
@@ -404,8 +398,6 @@ public class VisLoad extends javax.swing.JFrame {
                         log.info("      error <{}>", pixelLeanringLayer.getError().get(Indice.D1));
                     }
                 });
-//            }
-//        }
                 
             java.awt.EventQueue.invokeLater(() -> {
                 vista.repaint();
