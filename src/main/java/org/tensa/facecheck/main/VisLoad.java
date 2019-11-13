@@ -206,9 +206,9 @@ public class VisLoad extends javax.swing.JFrame {
         entrenar.setSelected(true);
         entrenar.setText("entrenar");
 
-        hiddenLearningRate.setModel(new javax.swing.SpinnerNumberModel(1.0d, 1.0d, 6.0d, 1.0d));
+        hiddenLearningRate.setModel(new javax.swing.SpinnerNumberModel(1.0d, 1.0d, 24.0d, 1.0d));
 
-        outputLearningRate.setModel(new javax.swing.SpinnerNumberModel(1.0d, 1.0d, 6.0d, 1.0d));
+        outputLearningRate.setModel(new javax.swing.SpinnerNumberModel(1.0d, 1.0d, 24.0d, 1.0d));
 
         jLabel1.setText("aprendisaje");
 
