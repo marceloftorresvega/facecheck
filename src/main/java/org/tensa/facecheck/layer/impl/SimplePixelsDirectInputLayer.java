@@ -53,7 +53,7 @@ public class SimplePixelsDirectInputLayer extends ArrayList<LayerConsumer> imple
         double[] pixels = src.getRaster().getPixels(0, 0, width, height, (double[])null);
         DoubleMatriz dm = new DoubleMatriz(new Dominio(pixels.length, 1));
         for(int k=0;k<pixels.length;k++){
-            dm.indexa(k + 1, 1, pixels[k] + 1);
+            dm.indexa(k + 1, 1, pixels[k] * 254 / 255 + 0.5);
 
         }
         NumericMatriz<Double> d = dm.distanciaE2();

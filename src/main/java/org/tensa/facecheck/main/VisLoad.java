@@ -491,10 +491,17 @@ public class VisLoad extends javax.swing.JFrame {
             for(int j=1; j<=columna;j++){
                 bis.read(body);
                 bodyBuffer = ByteBuffer.wrap(body);
+                bodyBuffer.order(ByteOrder.LITTLE_ENDIAN);
                 for(int i=1; i<=fila;i++){
                     weightsH.indexa(i, j, bodyBuffer.getDouble());
                 }
             } 
+            
+            bis.read(header);
+            headBuffer = ByteBuffer.wrap(header);
+            headBuffer.order(ByteOrder.LITTLE_ENDIAN);
+            fila = headBuffer.getInt();
+            columna = headBuffer.getInt();
             
             dominio = new Dominio(fila, columna);
             
@@ -502,8 +509,9 @@ public class VisLoad extends javax.swing.JFrame {
             
             for(int i=1; i<=fila;i++){
                 bis.read(body);
+                bodyBuffer = ByteBuffer.wrap(body);
+                bodyBuffer.order(ByteOrder.LITTLE_ENDIAN);
                 for(int j=1; j<=columna;j++){
-                    bodyBuffer = ByteBuffer.wrap(body);
                     weightsO.indexa(i , j, bodyBuffer.getDouble());
                 }
             }
