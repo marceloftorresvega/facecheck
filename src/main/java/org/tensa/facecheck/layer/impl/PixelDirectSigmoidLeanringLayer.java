@@ -96,14 +96,16 @@ public class PixelDirectSigmoidLeanringLayer extends ArrayList<LayerToBack> impl
 
     @Override
     public void adjustBack() {
+        compareToLayer = (DoubleMatriz)compareToLayer.productoEscalar(254.0/255).adicion(compareToLayer.matrizUno().productoEscalar(0.5)).productoEscalar(1.0/255);
         error = (DoubleMatriz)compareToLayer.substraccion(outputLayer);
         error.replaceAll((i,v) -> v * outputLayer.get(i) * compareToLayer.get(i));
         toBackLayer = (DoubleMatriz) weights.productoPunto(error);
         
-        NumericMatriz<Double> delta = inputLayer.productoTensorial(error).productoEscalar(learningStep).transpuesta();
+        NumericMatriz<Double> delta = error.productoTensorial(inputLayer).productoEscalar(learningStep);
+        NumericMatriz<Double> adicion = weights.adicion(delta);
         
         synchronized(weights){
-            weights.putAll( weights.adicion(delta));
+            weights.putAll(adicion);
             
         }
         
