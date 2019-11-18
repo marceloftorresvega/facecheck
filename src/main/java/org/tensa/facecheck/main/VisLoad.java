@@ -58,6 +58,7 @@ public class VisLoad extends javax.swing.JFrame {
     private DoubleMatriz weightsH;
     private DoubleMatriz weightsO;
     private int step;
+    private int rebaje;
 
     /**
      * Get the value of comboModel
@@ -221,28 +222,29 @@ public class VisLoad extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jButton1)
                     .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton3))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(hiddenLearningRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(41, 41, 41)
+                        .addComponent(outputLearningRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(procesar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(entrenar)))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton2)
-                    .addComponent(hiddenLearningRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(outputLearningRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton3))
-                .addGap(12, 12, 12)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cargar)
-                    .addComponent(procesar))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(salva)
+                        .addComponent(cargar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(entrenar))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(clean)
-                        .addGap(13, 13, 13)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(salva))
+                    .addComponent(clean))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -253,16 +255,16 @@ public class VisLoad extends javax.swing.JFrame {
                     .addComponent(jButton2)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton3)
-                    .addComponent(procesar)
-                    .addComponent(clean))
+                    .addComponent(cargar)
+                    .addComponent(salva))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cargar)
-                    .addComponent(salva)
-                    .addComponent(entrenar)
                     .addComponent(hiddenLearningRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(outputLearningRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1)))
+                    .addComponent(jLabel1)
+                    .addComponent(clean)
+                    .addComponent(entrenar)
+                    .addComponent(procesar)))
         );
 
         vista.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -286,7 +288,7 @@ public class VisLoad extends javax.swing.JFrame {
         respuesta.setLayout(respuestaLayout);
         respuestaLayout.setHorizontalGroup(
             respuestaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 281, Short.MAX_VALUE)
+            .addGap(0, 306, Short.MAX_VALUE)
         );
         respuestaLayout.setVerticalGroup(
             respuestaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -302,7 +304,7 @@ public class VisLoad extends javax.swing.JFrame {
             .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGap(15, 15, 15)
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 612, Short.MAX_VALUE)
+                .addComponent(jSplitPane1)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -379,6 +381,7 @@ public class VisLoad extends javax.swing.JFrame {
 
         new Dominio(width-step, height-step).stream()
                 .filter( idx -> ((idx.getFila() % step ==0) && (idx.getColumna()% step == 0)))
+                .sorted((idx1,idx2) -> (int)(2.0*Math.random()-1.0))
                 .parallel()
                 .forEach(idx -> {
                     int i = idx.getFila();
@@ -396,7 +399,7 @@ public class VisLoad extends javax.swing.JFrame {
                         pixelLeanringLayer = new PixelDirectSigmoidLeanringLayer(weightsO, Math.pow(10, -(Double)outputLearningRate.getValue()));
                         hiddenLayer.getConsumers().add(pixelLeanringLayer);
                     
-                        log.info("cargando bloque comparacion <{}><{}>", i, j);
+//                        log.info("cargando bloque comparacion <{}><{}>", i, j);
                         BufferedImage comp = destBuffImage.getSubimage(i, j, step, step);
                         simplePixelsCompareLayer.setSrc(comp);
                         simplePixelsCompareLayer.startProduction();
@@ -404,7 +407,7 @@ public class VisLoad extends javax.swing.JFrame {
                         
                     }
 
-                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
+//                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
                     hiddenLayer.getConsumers().add(pixelsOutputLayer);
                     pixelsOutputLayer.setDest(bufferImageFiltered.getSubimage(i, j, step, step));
                     BufferedImage src = buffImage.getSubimage(i, j, step, step);
@@ -423,14 +426,17 @@ public class VisLoad extends javax.swing.JFrame {
     }//GEN-LAST:event_procesarActionPerformed
 
     private void cleanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanActionPerformed
-            log.info("iniciando 0...");
+        log.info("iniciando 0...");
         step = 101;
-            log.info("iniciando 1...");
-        weightsH = (DoubleMatriz)new DoubleMatriz(new Dominio(step*step*3 / 10000, step*step*3)).matrizUno();
-        weightsH = (DoubleMatriz)weightsH.productoEscalar( 1.0 / Math.sqrt( step*step*3 / 10000 * step*step*3 ) );
-            log.info("iniciando 2...");
-        weightsO = (DoubleMatriz)new DoubleMatriz(new Dominio(step*step*3, step*step*3 / 10000)).matrizUno();
-        weightsO = (DoubleMatriz)weightsO.productoEscalar( 1.0 / Math.sqrt( step*step*3 / 10000 * step*step*3 ) );
+        rebaje = 2000;
+        
+        log.info("iniciando 1...<{},{}>",step*step*3 / rebaje, step*step*3);
+        weightsH = (DoubleMatriz)new DoubleMatriz(new Dominio(step*step*3 / rebaje, step*step*3)).matrizUno();
+        weightsH = (DoubleMatriz)weightsH.productoEscalar( 1.0 / Math.sqrt( step*step*3 / rebaje * step*step*3 ) );
+        
+        log.info("iniciando 2...<{},{}>",step*step*3, step*step*3 / rebaje);
+        weightsO = (DoubleMatriz)new DoubleMatriz(new Dominio(step*step*3, step*step*3 / rebaje)).matrizUno();
+        weightsO = (DoubleMatriz)weightsO.productoEscalar( 1.0 / Math.sqrt( step*step*3 / rebaje * step*step*3 ) );
     }//GEN-LAST:event_cleanActionPerformed
 
     private void salvaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salvaActionPerformed
