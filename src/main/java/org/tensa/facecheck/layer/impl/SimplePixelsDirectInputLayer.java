@@ -30,7 +30,6 @@ import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerProducer;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
-import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
  *
@@ -56,12 +55,12 @@ public class SimplePixelsDirectInputLayer extends ArrayList<LayerConsumer> imple
             dm.indexa(k + 1, 1, pixels[k] * 254 / 255 + 0.5);
 
         }
-        NumericMatriz<Double> d = dm.distanciaE2();
-        d.replaceAll((k, v) -> 1/ Math.sqrt(v));
-        
-
-        return (DoubleMatriz)d.productoKronecker(dm);
-//        return dm;
+//        NumericMatriz<Double> d = dm.distanciaE2();
+//        d.replaceAll((k, v) -> 1/ Math.sqrt(v));
+//        
+//
+//        return (DoubleMatriz)d.productoKronecker(dm);
+        return dm;
     }
 
     @Override
