@@ -72,6 +72,8 @@
                           <Component id="procesar" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="entrenar" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="seleccion" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -106,6 +108,7 @@
                       <Component id="clean" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="entrenar" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="procesar" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="seleccion" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -200,6 +203,11 @@
             <Property name="text" type="java.lang.String" value="aprendisaje"/>
           </Properties>
         </Component>
+        <Component class="javax.swing.JCheckBox" name="seleccion">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Selecci&#xf3;n"/>
+          </Properties>
+        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JSplitPane" name="jSplitPane1">
@@ -214,6 +222,10 @@
               </Border>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="vistaMouseClicked"/>
+            <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="vistaMouseReleased"/>
+          </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="getNuevaVista()"/>
           </AuxValues>
@@ -256,7 +268,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="306" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="323" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
