@@ -42,7 +42,7 @@ public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements Laye
     
     private final Logger log = LoggerFactory.getLogger(HiddenSigmoidLayer.class);
     
-    private DoubleMatriz weights;
+    private final DoubleMatriz weights;
     private int status;
     private DoubleMatriz outputLayer;
     private DoubleMatriz inputLayer;
@@ -50,7 +50,7 @@ public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements Laye
     private DoubleMatriz toBackLayer;
     private DoubleMatriz compareToLayer;
     private DoubleMatriz error;
-    private Double learningStep;
+    private final Double learningStep;
 
     public HiddenSigmoidLayer(DoubleMatriz weights, Double learningStep) {
         this.weights = weights;

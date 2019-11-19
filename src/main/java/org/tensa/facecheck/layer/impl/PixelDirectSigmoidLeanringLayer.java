@@ -41,7 +41,7 @@ public class PixelDirectSigmoidLeanringLayer extends ArrayList<LayerToBack> impl
     
     private final Logger log = LoggerFactory.getLogger(PixelDirectSigmoidLeanringLayer.class);
     
-    private DoubleMatriz weights;
+    private final DoubleMatriz weights;
     private int status;
     private DoubleMatriz outputLayer;
     private DoubleMatriz inputLayer;
@@ -49,7 +49,7 @@ public class PixelDirectSigmoidLeanringLayer extends ArrayList<LayerToBack> impl
     private DoubleMatriz toBackLayer;
     private DoubleMatriz compareToLayer;
     private DoubleMatriz error;
-    private Double learningStep;
+    private final Double learningStep;
 
     public PixelDirectSigmoidLeanringLayer(DoubleMatriz weights, Double learningStep) {
         this.weights = weights;
