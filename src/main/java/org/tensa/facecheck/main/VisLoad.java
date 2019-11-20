@@ -414,31 +414,27 @@ public class VisLoad extends javax.swing.JFrame {
                     PixelsDirectInputLayer simplePixelsInputLayer = new PixelsDirectInputLayer();
                     PixelsDirectInputLayer simplePixelsCompareLayer = new PixelsDirectInputLayer();
                     HiddenSigmoidLayer hiddenLayer = new HiddenSigmoidLayer(weightsH,  Math.pow(10, -(Double)hiddenLearningRate.getValue()));
-                    PixelDirectSigmoidLeanringLayer pixelLeanringLayer = null;
-                    PixelsDirectSigmoidOutputLayer pixelsOutputLayer = new PixelsDirectSigmoidOutputLayer(weightsO);
+                    PixelDirectSigmoidLeanringLayer pixelLeanringLayer = new PixelDirectSigmoidLeanringLayer(weightsO, Math.pow(10, -(Double)outputLearningRate.getValue()));
+                    PixelsDirectSigmoidOutputLayer pixelsOutputLayer = new PixelsDirectSigmoidOutputLayer(null);
 
                     simplePixelsInputLayer.getConsumers().add(hiddenLayer);
-
-                    if(entrenar.isSelected()){
-                        pixelLeanringLayer = new PixelDirectSigmoidLeanringLayer(weightsO, Math.pow(10, -(Double)outputLearningRate.getValue()));
-                        hiddenLayer.getConsumers().add(pixelLeanringLayer);
-                    
-//                        log.info("cargando bloque comparacion <{}><{}>", i, j);
-                        BufferedImage comp = destBuffImage.getSubimage(i, j, step, step);
-                        simplePixelsCompareLayer.setSrc(comp);
-                        simplePixelsCompareLayer.startProduction();
-                        pixelLeanringLayer.setCompareToLayer(simplePixelsCompareLayer.getOutputLayer());
-                        
-                    }
+                    hiddenLayer.getConsumers().add(pixelLeanringLayer);
+                    pixelLeanringLayer.getConsumers().add(pixelsOutputLayer);
 
 //                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
-                    hiddenLayer.getConsumers().add(pixelsOutputLayer);
                     pixelsOutputLayer.setDest(bufferImageFiltered.getSubimage(i, j, step, step));
                     BufferedImage src = buffImage.getSubimage(i, j, step, step);
                     simplePixelsInputLayer.setSrc(src);
                     simplePixelsInputLayer.startProduction();
                     
                     if(entrenar.isSelected()){
+//                        log.info("cargando bloque comparacion <{}><{}>", i, j);
+                        BufferedImage comp = destBuffImage.getSubimage(i, j, step, step);
+                        simplePixelsCompareLayer.setSrc(comp);
+                        simplePixelsCompareLayer.startProduction();
+                        pixelLeanringLayer.setCompareToLayer(simplePixelsCompareLayer.getOutputLayer());
+                        
+                        pixelLeanringLayer.adjustBack();
                         log.info("      error <{}>", pixelLeanringLayer.getError().get(Indice.D1));
                     }
                 });
