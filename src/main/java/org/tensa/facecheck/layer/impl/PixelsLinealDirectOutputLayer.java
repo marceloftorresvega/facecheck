@@ -32,7 +32,7 @@ import org.tensa.tensada.matrix.Indice;
  *
  * @author Marcelo
  */
-public class PixelsDirectOutputLayer implements LayerConsumer {
+public class PixelsLinealDirectOutputLayer implements LayerConsumer {
     
     private final DoubleMatriz weights;
     private int status;
@@ -41,7 +41,7 @@ public class PixelsDirectOutputLayer implements LayerConsumer {
     
     private BufferedImage dest;
 
-    public PixelsDirectOutputLayer(DoubleMatriz weights) {
+    public PixelsLinealDirectOutputLayer(DoubleMatriz weights) {
         this.weights = weights;
     }
 

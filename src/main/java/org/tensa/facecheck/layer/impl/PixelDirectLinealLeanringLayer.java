@@ -38,9 +38,9 @@ import org.tensa.tensada.matrix.NumericMatriz;
  *
  * @author Marcelo
  */
-public class PixelDirectLeanringLayer extends ArrayList<LayerToBack> implements LayerConsumer, LayerToBack, LayerProducer {
+public class PixelDirectLinealLeanringLayer extends ArrayList<LayerToBack> implements LayerConsumer, LayerToBack, LayerProducer {
     
-    private final Logger log = LoggerFactory.getLogger(PixelDirectLeanringLayer.class);
+    private final Logger log = LoggerFactory.getLogger(PixelDirectLinealLeanringLayer.class);
     
     private final DoubleMatriz weights;
     private int status;
@@ -53,7 +53,7 @@ public class PixelDirectLeanringLayer extends ArrayList<LayerToBack> implements 
     private final Double learningStep;
     private final List<LayerConsumer> consumers;
 
-    public PixelDirectLeanringLayer(DoubleMatriz weights, Double learningStep) {
+    public PixelDirectLinealLeanringLayer(DoubleMatriz weights, Double learningStep) {
         this.weights = weights;
         this.learningStep = learningStep;
         this.consumers = new ArrayList<>();
