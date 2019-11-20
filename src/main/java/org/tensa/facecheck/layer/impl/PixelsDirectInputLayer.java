@@ -35,7 +35,7 @@ import org.tensa.tensada.matrix.DoubleMatriz;
  *
  * @author Marcelo
  */
-public class SimplePixelsDirectInputLayer extends ArrayList<LayerConsumer> implements LayerProducer {
+public class PixelsDirectInputLayer extends ArrayList<LayerConsumer> implements LayerProducer {
     
     private BufferedImage src;
     private DoubleMatriz outputLayer;
