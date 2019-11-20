@@ -36,7 +36,6 @@ public class PixelsDirectSigmoidOutputLayer implements LayerConsumer {
     
     private DoubleMatriz weights;
     private int status;
-    private DoubleMatriz outputLayer;
     private DoubleMatriz inputLayer;
     
     private BufferedImage dest;
@@ -60,16 +59,10 @@ public class PixelsDirectSigmoidOutputLayer implements LayerConsumer {
     public void layerComplete(int status) {
         this.status = status;
         if (status == LayerConsumer.SUCCESS_STATUS) {
-//            DoubleMatriz producto = weights.producto(inputLayer);
-//            DoubleMatriz distanciaE2 = (DoubleMatriz)producto.distanciaE2();
-//            outputLayer = (DoubleMatriz)producto
-//                    .productoEscalar( 1 / Math.sqrt(distanciaE2.get(Indice.D1)));
-            outputLayer = weights.producto(inputLayer);
-            outputLayer.replaceAll((i,v) -> 1/(1 + Math.exp( - v )));
             
-            double[] pixels = new double[outputLayer.getDominio().getFila()];
+            double[] pixels = new double[inputLayer.getDominio().getFila()];
             for( int i =0; i< pixels.length; i++) {
-                pixels[i] = 255 * outputLayer.get(new Indice(i + 1, 1));
+                pixels[i] = 255 * inputLayer.get(new Indice(i + 1, 1));
             }
             
             int width = dest.getWidth();
