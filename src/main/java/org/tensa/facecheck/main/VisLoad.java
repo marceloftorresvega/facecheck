@@ -137,10 +137,10 @@ public class VisLoad extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        cargaImagen = new javax.swing.JButton();
+        suavizaResultado = new javax.swing.JButton();
         jComboBox1 = new javax.swing.JComboBox();
-        jButton3 = new javax.swing.JButton();
+        enmascaraResultado = new javax.swing.JButton();
         procesar = new javax.swing.JButton();
         clean = new javax.swing.JButton();
         cargar = new javax.swing.JButton();
@@ -157,26 +157,26 @@ public class VisLoad extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Vista de carga");
 
-        jButton1.setText("Carga...");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        cargaImagen.setText("Carga...");
+        cargaImagen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                cargaImagenActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Modifica");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        suavizaResultado.setText("Suaviza");
+        suavizaResultado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                suavizaResultadoActionPerformed(evt);
             }
         });
 
         jComboBox1.setModel(getComboModel());
 
-        jButton3.setText("enmascara");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        enmascaraResultado.setText("enmascara");
+        enmascaraResultado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                enmascaraResultadoActionPerformed(evt);
             }
         });
 
@@ -226,16 +226,16 @@ public class VisLoad extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton1)
+                    .addComponent(cargaImagen)
                     .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2)
+                        .addComponent(suavizaResultado)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton3))
+                        .addComponent(enmascaraResultado))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(hiddenLearningRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(41, 41, 41)
@@ -259,10 +259,10 @@ public class VisLoad extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
+                    .addComponent(cargaImagen)
+                    .addComponent(suavizaResultado)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton3)
+                    .addComponent(enmascaraResultado)
                     .addComponent(cargar)
                     .addComponent(salva))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -336,7 +336,7 @@ public class VisLoad extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void cargaImagenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargaImagenActionPerformed
         String _filename1 = System.getProperty("user.dir") + baseUrl + (String)jComboBox1.getSelectedItem() + sufxType;
         String _filename2 = System.getProperty("user.dir") + testBaseUrl + (String)jComboBox1.getSelectedItem() + sufxType;
         log.info("directorio user <{}>",System.getProperty("user.dir"));
@@ -352,9 +352,9 @@ public class VisLoad extends javax.swing.JFrame {
         } catch (IOException ex) {
             log.error("error de archivo <{}>", _filename1, ex);
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_cargaImagenActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void suavizaResultadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_suavizaResultadoActionPerformed
         
         
         ConvolveOp conv = new ConvolveOp(new Kernel(kwidth, kwidth, data));
@@ -367,9 +367,9 @@ public class VisLoad extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> {
             respuesta.repaint();
         });
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_suavizaResultadoActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void enmascaraResultadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_enmascaraResultadoActionPerformed
         
         MaskOp conv = new MaskOp();
         conv.setOtherSrc(destBuffImage);
@@ -383,7 +383,7 @@ public class VisLoad extends javax.swing.JFrame {
             vista.repaint();
             respuesta.repaint();
         });
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_enmascaraResultadoActionPerformed
 
     private void procesarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_procesarActionPerformed
 
@@ -414,31 +414,27 @@ public class VisLoad extends javax.swing.JFrame {
                     PixelsDirectInputLayer simplePixelsInputLayer = new PixelsDirectInputLayer();
                     PixelsDirectInputLayer simplePixelsCompareLayer = new PixelsDirectInputLayer();
                     HiddenSigmoidLayer hiddenLayer = new HiddenSigmoidLayer(weightsH,  Math.pow(10, -(Double)hiddenLearningRate.getValue()));
-                    PixelDirectSigmoidLeanringLayer pixelLeanringLayer = null;
-                    PixelsDirectSigmoidOutputLayer pixelsOutputLayer = new PixelsDirectSigmoidOutputLayer(weightsO);
+                    PixelDirectSigmoidLeanringLayer pixelLeanringLayer = new PixelDirectSigmoidLeanringLayer(weightsO, Math.pow(10, -(Double)outputLearningRate.getValue()));
+                    PixelsDirectSigmoidOutputLayer pixelsOutputLayer = new PixelsDirectSigmoidOutputLayer(null);
 
                     simplePixelsInputLayer.getConsumers().add(hiddenLayer);
-
-                    if(entrenar.isSelected()){
-                        pixelLeanringLayer = new PixelDirectSigmoidLeanringLayer(weightsO, Math.pow(10, -(Double)outputLearningRate.getValue()));
-                        hiddenLayer.getConsumers().add(pixelLeanringLayer);
-                    
-//                        log.info("cargando bloque comparacion <{}><{}>", i, j);
-                        BufferedImage comp = destBuffImage.getSubimage(i, j, step, step);
-                        simplePixelsCompareLayer.setSrc(comp);
-                        simplePixelsCompareLayer.startProduction();
-                        pixelLeanringLayer.setCompareToLayer(simplePixelsCompareLayer.getOutputLayer());
-                        
-                    }
+                    hiddenLayer.getConsumers().add(pixelLeanringLayer);
+                    pixelLeanringLayer.getConsumers().add(pixelsOutputLayer);
 
 //                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
-                    hiddenLayer.getConsumers().add(pixelsOutputLayer);
                     pixelsOutputLayer.setDest(bufferImageFiltered.getSubimage(i, j, step, step));
                     BufferedImage src = buffImage.getSubimage(i, j, step, step);
                     simplePixelsInputLayer.setSrc(src);
                     simplePixelsInputLayer.startProduction();
                     
                     if(entrenar.isSelected()){
+//                        log.info("cargando bloque comparacion <{}><{}>", i, j);
+                        BufferedImage comp = destBuffImage.getSubimage(i, j, step, step);
+                        simplePixelsCompareLayer.setSrc(comp);
+                        simplePixelsCompareLayer.startProduction();
+                        pixelLeanringLayer.setCompareToLayer(simplePixelsCompareLayer.getOutputLayer());
+                        
+                        pixelLeanringLayer.adjustBack();
                         log.info("      error <{}>", pixelLeanringLayer.getError().get(Indice.D1));
                     }
                 });
@@ -724,13 +720,12 @@ public class VisLoad extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton cargaImagen;
     private javax.swing.JButton cargar;
     private javax.swing.JButton clean;
+    private javax.swing.JButton enmascaraResultado;
     private javax.swing.JCheckBox entrenar;
     private javax.swing.JSpinner hiddenLearningRate;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
@@ -740,6 +735,7 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JPanel respuesta;
     private javax.swing.JButton salva;
     private javax.swing.JCheckBox seleccion;
+    private javax.swing.JButton suavizaResultado;
     private javax.swing.JPanel vista;
     // End of variables declaration//GEN-END:variables
 }
