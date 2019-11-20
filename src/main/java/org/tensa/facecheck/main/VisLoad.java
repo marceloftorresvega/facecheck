@@ -392,19 +392,13 @@ public class VisLoad extends javax.swing.JFrame {
         
         int width = buffImage.getWidth();
         int height = buffImage.getHeight();
-        float escala = (float)buffImage.getWidth() / (float)vista.getBounds().width;
-        Rectangle evalArea = new Rectangle(learnArea);
-        evalArea.x = (int) (evalArea.x * escala);
-        evalArea.y = (int) (evalArea.y * escala);
-        evalArea.width = (int) (evalArea.width * escala);
-        evalArea.height = (int) (evalArea.height * escala);
         
         log.info("procesando...");
 
 
         new Dominio(width-step, height-step).stream()
                 .filter( idx -> ((idx.getFila() % step ==0) && (idx.getColumna()% step == 0)))
-                .filter(idx -> (!seleccion.isSelected()) || ( evalArea.contains(idx.getFila(), idx.getColumna())) )
+                .filter(idx -> (!seleccion.isSelected()) || ( learnArea.contains(idx.getFila(), idx.getColumna())) )
                 .sorted((idx1,idx2) -> (int)(2.0*Math.random()-1.0))
                 .parallel()
                 .forEach(idx -> {
@@ -569,8 +563,10 @@ public class VisLoad extends javax.swing.JFrame {
     private void vistaMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_vistaMouseReleased
         int x = evt.getX();
         int y = evt.getY();
-        learnArea.width = x - learnArea.x;
-        learnArea.height = y - learnArea.y;
+        float escala = (float)buffImage.getWidth() / (float)vista.getBounds().width;
+        
+        learnArea.width = (int) (x * escala) - learnArea.x;
+        learnArea.height = (int) (y * escala) - learnArea.y;
 
         java.awt.EventQueue.invokeLater(() -> {
             vista.repaint();
@@ -580,8 +576,10 @@ public class VisLoad extends javax.swing.JFrame {
     private void vistaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_vistaMouseClicked
         int x = evt.getX();
         int y = evt.getY();
-        learnArea.x = x;
-        learnArea.y = y;
+        
+        float escala = (float)buffImage.getWidth() / (float)vista.getBounds().width;
+        learnArea.x = (int) (x * escala);
+        learnArea.y = (int) (y * escala);
     }//GEN-LAST:event_vistaMouseClicked
 
     public BufferedImage createCompatibleDestImage(BufferedImage src, ColorModel destCM) {
@@ -650,10 +648,17 @@ public class VisLoad extends javax.swing.JFrame {
                 if(Objects.nonNull(buffImage)){
                     Graphics2D localg = (Graphics2D)g;
                     float escala = (float)vista.getBounds().width / (float)buffImage.getWidth();
+                    
                     AffineTransform xforM = AffineTransform.getScaleInstance(escala, escala);
                     AffineTransformOp rop = new AffineTransformOp(xforM, AffineTransformOp.TYPE_BILINEAR);
                     localg.drawImage(buffImage, rop, 0     , 0);
-                    localg.draw(learnArea);
+
+                    Rectangle evalArea = new Rectangle(learnArea);
+                    evalArea.x = (int) (evalArea.x * escala);
+                    evalArea.y = (int) (evalArea.y * escala);
+                    evalArea.width = (int) (evalArea.width * escala);
+                    evalArea.height = (int) (evalArea.height * escala);
+                    localg.draw(evalArea);
                     
                 }
             }
