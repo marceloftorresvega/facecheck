@@ -28,6 +28,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.layer.LayerConsumer;
+import org.tensa.facecheck.layer.LayerProducer;
 import org.tensa.facecheck.layer.LayerToBack;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
@@ -37,11 +38,11 @@ import org.tensa.tensada.matrix.NumericMatriz;
  *
  * @author Marcelo
  */
-public class PixelDirectLeanringLayer extends ArrayList<LayerToBack> implements LayerConsumer, LayerToBack {
+public class PixelDirectLeanringLayer extends ArrayList<LayerToBack> implements LayerConsumer, LayerToBack, LayerProducer {
     
     private final Logger log = LoggerFactory.getLogger(PixelDirectLeanringLayer.class);
     
-    private DoubleMatriz weights;
+    private final DoubleMatriz weights;
     private int status;
     private DoubleMatriz outputLayer;
     private DoubleMatriz inputLayer;
@@ -49,11 +50,13 @@ public class PixelDirectLeanringLayer extends ArrayList<LayerToBack> implements 
     private DoubleMatriz toBackLayer;
     private DoubleMatriz compareToLayer;
     private DoubleMatriz error;
-    private Double learningStep;
+    private final Double learningStep;
+    private final List<LayerConsumer> consumers;
 
     public PixelDirectLeanringLayer(DoubleMatriz weights, Double learningStep) {
         this.weights = weights;
         this.learningStep = learningStep;
+        this.consumers = new ArrayList<>();
     }
 
     @Override
@@ -71,14 +74,7 @@ public class PixelDirectLeanringLayer extends ArrayList<LayerToBack> implements 
     public void layerComplete(int status) {
         this.status = status;
         if (status == LayerConsumer.SUCCESS_STATUS) {
-//            log.info("pesos <{}><{}>", weights.getDominio().getFila(), weights.getDominio().getColumna());
-//            log.info("layer <{}><{}>", inputLayer.getDominio().getFila(), inputLayer.getDominio().getColumna());
-            
-            DoubleMatriz producto = weights.producto(inputLayer);
-//            DoubleMatriz distanciaE2 = (DoubleMatriz)producto.distanciaE2();
-            outputLayer = (DoubleMatriz)producto;
-//                    .productoEscalar( 1 / Math.sqrt(distanciaE2.get(Indice.D1)));
-            adjustBack();
+            this.startProduction();
         }
     }
 
@@ -97,14 +93,14 @@ public class PixelDirectLeanringLayer extends ArrayList<LayerToBack> implements 
         error = (DoubleMatriz)compareToLayer.substraccion(outputLayer);
         toBackLayer = (DoubleMatriz) weights.productoPunto(error);
         
-        NumericMatriz<Double> delta = error.productoTensorial(inputLayer).productoEscalar(learningStep).transpuesta();
-        
+        NumericMatriz<Double> delta = inputLayer.productoTensorial(error).productoEscalar(learningStep);
+        NumericMatriz<Double> adicion = weights.adicion(delta);
         synchronized(weights){
-            weights.replaceAll((i,v) -> v + delta.get(i));
+            weights.putAll(adicion);
             
         }
         
-        for(LayerToBack back : this) {
+        for(LayerToBack back : getProducers()) {
             back.setCompareToLayer(toBackLayer);
             back.adjustBack();
         }
@@ -128,6 +124,28 @@ public class PixelDirectLeanringLayer extends ArrayList<LayerToBack> implements 
     @Override
     public List<LayerToBack> getProducers() {
         return this;
+    }
+
+    @Override
+    public DoubleMatriz getOutputLayer() {
+        return outputLayer;
+    }
+
+    @Override
+    public void startProduction() {
+        
+//            log.info("pesos <{}><{}>", weights.getDominio().getFila(), weights.getDominio().getColumna());
+//            log.info("layer <{}><{}>", inputLayer.getDominio().getFila(), inputLayer.getDominio().getColumna());
+            
+            DoubleMatriz producto = weights.producto(inputLayer);
+//            DoubleMatriz distanciaE2 = (DoubleMatriz)producto.distanciaE2();
+            outputLayer = (DoubleMatriz)producto;
+//                    .productoEscalar( 1 / Math.sqrt(distanciaE2.get(Indice.D1)));
+    }
+
+    @Override
+    public List<LayerConsumer> getConsumers() {
+        return consumers;
     }
     
     

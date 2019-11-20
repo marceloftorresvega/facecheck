@@ -34,7 +34,7 @@ import org.tensa.tensada.matrix.Indice;
  */
 public class PixelsDirectOutputLayer implements LayerConsumer {
     
-    private DoubleMatriz weights;
+    private final DoubleMatriz weights;
     private int status;
     private DoubleMatriz outputLayer;
     private DoubleMatriz inputLayer;
@@ -60,9 +60,8 @@ public class PixelsDirectOutputLayer implements LayerConsumer {
     public void layerComplete(int status) {
         this.status = status;
         if (status == LayerConsumer.SUCCESS_STATUS) {
-            DoubleMatriz producto = weights.producto(inputLayer);
-            DoubleMatriz distanciaE2 = (DoubleMatriz)producto.distanciaE2();
-            outputLayer = (DoubleMatriz)producto
+            DoubleMatriz distanciaE2 = (DoubleMatriz)inputLayer.distanciaE2();
+            outputLayer = (DoubleMatriz)inputLayer
                     .productoEscalar( 255 / Math.sqrt(distanciaE2.get(Indice.D1)));
             
             double[] pixels = new double[outputLayer.getDominio().getFila()];
