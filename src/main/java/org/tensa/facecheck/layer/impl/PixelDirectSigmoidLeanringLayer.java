@@ -108,7 +108,7 @@ public class PixelDirectSigmoidLeanringLayer extends ArrayList<LayerToBack> impl
             back.setCompareToLayer(toBackLayer);
             back.adjustBack();
         }
-        this.clear();
+        getProducers().clear();
         
     }
 
