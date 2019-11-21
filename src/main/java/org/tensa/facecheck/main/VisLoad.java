@@ -150,6 +150,8 @@ public class VisLoad extends javax.swing.JFrame {
         outputLearningRate = new javax.swing.JSpinner();
         jLabel1 = new javax.swing.JLabel();
         seleccion = new javax.swing.JCheckBox();
+        iteraciones = new javax.swing.JSpinner();
+        jLabel2 = new javax.swing.JLabel();
         jSplitPane1 = new javax.swing.JSplitPane();
         vista = getNuevaVista();
         respuesta = getNuevaRespuesta();
@@ -212,12 +214,19 @@ public class VisLoad extends javax.swing.JFrame {
         entrenar.setText("entrenar");
 
         hiddenLearningRate.setModel(new javax.swing.SpinnerNumberModel(1.0d, 1.0d, 24.0d, 1.0d));
+        hiddenLearningRate.setToolTipText("de capa oculta");
 
         outputLearningRate.setModel(new javax.swing.SpinnerNumberModel(1.0d, 1.0d, 24.0d, 1.0d));
+        outputLearningRate.setToolTipText("de capa de salida");
 
         jLabel1.setText("aprendisaje");
 
         seleccion.setText("Selección");
+
+        iteraciones.setModel(new javax.swing.SpinnerNumberModel(50, 1, 500, 10));
+        iteraciones.setToolTipText("Iteraciones");
+
+        jLabel2.setText("pesos");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -231,28 +240,31 @@ public class VisLoad extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(suavizaResultado)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(enmascaraResultado))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(hiddenLearningRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(41, 41, 41)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(outputLearningRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(procesar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(entrenar)
-                        .addGap(18, 18, 18)
-                        .addComponent(seleccion)))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(seleccion)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(iteraciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(suavizaResultado)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(enmascaraResultado)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(cargar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(salva))
-                    .addComponent(clean))
+                        .addComponent(salva)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(clean)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -264,16 +276,18 @@ public class VisLoad extends javax.swing.JFrame {
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(enmascaraResultado)
                     .addComponent(cargar)
-                    .addComponent(salva))
+                    .addComponent(salva)
+                    .addComponent(jLabel2)
+                    .addComponent(clean))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(hiddenLearningRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(outputLearningRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1)
-                    .addComponent(clean)
                     .addComponent(entrenar)
                     .addComponent(procesar)
-                    .addComponent(seleccion)))
+                    .addComponent(seleccion)
+                    .addComponent(iteraciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         vista.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -305,7 +319,7 @@ public class VisLoad extends javax.swing.JFrame {
         respuesta.setLayout(respuestaLayout);
         respuestaLayout.setHorizontalGroup(
             respuestaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 323, Short.MAX_VALUE)
+            .addGap(0, 371, Short.MAX_VALUE)
         );
         respuestaLayout.setVerticalGroup(
             respuestaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -396,42 +410,46 @@ public class VisLoad extends javax.swing.JFrame {
         log.info("procesando...");
 
 
-        new Dominio(width-step, height-step).stream()
-                .filter( idx -> ((idx.getFila() % step ==0) && (idx.getColumna()% step == 0)))
-                .filter(idx -> (!seleccion.isSelected()) || ( learnArea.contains(idx.getFila(), idx.getColumna())) )
-                .sorted((idx1,idx2) -> (int)(2.0*Math.random()-1.0))
-                .parallel()
-                .forEach(idx -> {
-                    int i = idx.getFila();
-                    int j = idx.getColumna();
+        Integer maxIteraciones = (Integer) iteraciones.getValue();
+        for(int idIteracion=0; idIteracion<maxIteraciones; idIteracion++) {
 
-                    PixelsDirectInputLayer simplePixelsInputLayer = new PixelsDirectInputLayer();
-                    PixelsDirectInputLayer simplePixelsCompareLayer = new PixelsDirectInputLayer();
-                    HiddenSigmoidLayer hiddenLayer = new HiddenSigmoidLayer(weightsH,  Math.pow(10, -(Double)hiddenLearningRate.getValue()));
-                    PixelDirectSigmoidLeanringLayer pixelLeanringLayer = new PixelDirectSigmoidLeanringLayer(weightsO, Math.pow(10, -(Double)outputLearningRate.getValue()));
-                    PixelsDirectSigmoidOutputLayer pixelsOutputLayer = new PixelsDirectSigmoidOutputLayer(null);
+            new Dominio(width-step, height-step).stream()
+                    .filter( idx -> ((idx.getFila() % step ==0) && (idx.getColumna()% step == 0)))
+                    .filter(idx -> (!seleccion.isSelected()) || ( learnArea.contains(idx.getFila(), idx.getColumna())) )
+                    .sorted((idx1,idx2) -> (int)(2.0*Math.random()-1.0))
+                    .parallel()
+                    .forEach(idx -> {
+                        int i = idx.getFila();
+                        int j = idx.getColumna();
 
-                    simplePixelsInputLayer.getConsumers().add(hiddenLayer);
-                    hiddenLayer.getConsumers().add(pixelLeanringLayer);
-                    pixelLeanringLayer.getConsumers().add(pixelsOutputLayer);
+                        PixelsDirectInputLayer simplePixelsInputLayer = new PixelsDirectInputLayer();
+                        PixelsDirectInputLayer simplePixelsCompareLayer = new PixelsDirectInputLayer();
+                        HiddenSigmoidLayer hiddenLayer = new HiddenSigmoidLayer(weightsH,  Math.pow(10, -(Double)hiddenLearningRate.getValue()));
+                        PixelDirectSigmoidLeanringLayer pixelLeanringLayer = new PixelDirectSigmoidLeanringLayer(weightsO, Math.pow(10, -(Double)outputLearningRate.getValue()));
+                        PixelsDirectSigmoidOutputLayer pixelsOutputLayer = new PixelsDirectSigmoidOutputLayer(null);
 
-//                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
-                    pixelsOutputLayer.setDest(bufferImageFiltered.getSubimage(i, j, step, step));
-                    BufferedImage src = buffImage.getSubimage(i, j, step, step);
-                    simplePixelsInputLayer.setSrc(src);
-                    simplePixelsInputLayer.startProduction();
-                    
-                    if(entrenar.isSelected()){
-//                        log.info("cargando bloque comparacion <{}><{}>", i, j);
-                        BufferedImage comp = destBuffImage.getSubimage(i, j, step, step);
-                        simplePixelsCompareLayer.setSrc(comp);
-                        simplePixelsCompareLayer.startProduction();
-                        pixelLeanringLayer.setCompareToLayer(simplePixelsCompareLayer.getOutputLayer());
-                        
-                        pixelLeanringLayer.adjustBack();
-                        log.info("      error <{}>", pixelLeanringLayer.getError().get(Indice.D1));
-                    }
-                });
+                        simplePixelsInputLayer.getConsumers().add(hiddenLayer);
+                        hiddenLayer.getConsumers().add(pixelLeanringLayer);
+                        pixelLeanringLayer.getConsumers().add(pixelsOutputLayer);
+
+    //                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
+                        pixelsOutputLayer.setDest(bufferImageFiltered.getSubimage(i, j, step, step));
+                        BufferedImage src = buffImage.getSubimage(i, j, step, step);
+                        simplePixelsInputLayer.setSrc(src);
+                        simplePixelsInputLayer.startProduction();
+
+                        if(entrenar.isSelected()){
+    //                        log.info("cargando bloque comparacion <{}><{}>", i, j);
+                            BufferedImage comp = destBuffImage.getSubimage(i, j, step, step);
+                            simplePixelsCompareLayer.setSrc(comp);
+                            simplePixelsCompareLayer.startProduction();
+                            pixelLeanringLayer.setCompareToLayer(simplePixelsCompareLayer.getOutputLayer());
+
+                            pixelLeanringLayer.adjustBack();
+                            log.info("      error <{}>", pixelLeanringLayer.getError().get(Indice.D1));
+                        }
+                    });
+        }
                 
             java.awt.EventQueue.invokeLater(() -> {
                 vista.repaint();
@@ -731,8 +749,10 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JButton enmascaraResultado;
     private javax.swing.JCheckBox entrenar;
     private javax.swing.JSpinner hiddenLearningRate;
+    private javax.swing.JSpinner iteraciones;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JSpinner outputLearningRate;
