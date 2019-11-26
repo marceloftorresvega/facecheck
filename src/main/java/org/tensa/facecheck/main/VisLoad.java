@@ -2,13 +2,23 @@ package org.tensa.facecheck.main;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.ConvolveOp;
+import java.awt.image.IndexColorModel;
 import java.awt.image.Kernel;
+import java.awt.image.WritableRaster;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Objects;
 import javax.imageio.ImageIO;
 import javax.swing.ComboBoxModel;
@@ -17,6 +27,13 @@ import javax.swing.JPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.filter.MaskOp;
+import org.tensa.facecheck.layer.impl.HiddenSigmoidLayer;
+import org.tensa.facecheck.layer.impl.PixelDirectSigmoidLeanringLayer;
+import org.tensa.facecheck.layer.impl.PixelsDirectSigmoidOutputLayer;
+import org.tensa.facecheck.layer.impl.PixelsDirectInputLayer;
+import org.tensa.tensada.matrix.Dominio;
+import org.tensa.tensada.matrix.DoubleMatriz;
+import org.tensa.tensada.matrix.Indice;
 
 /**
  *
@@ -28,6 +45,7 @@ public class VisLoad extends javax.swing.JFrame {
 
     private final String baseUrl = "\\img\\originales\\";
     private final String testBaseUrl = "\\img\\procesadas\\";
+    private final String weightUrl = "\\data\\";
     
     private final String[] imageName = {"IMG_2869", "IMG_2918","IMG_3071","IMG_3076","IMG_3078","IMG_3079"};
 
@@ -38,6 +56,11 @@ public class VisLoad extends javax.swing.JFrame {
     private final int kwidth = 27;
     private float[] data;
     private BufferedImage bufferImageFiltered;
+    private DoubleMatriz weightsH;
+    private DoubleMatriz weightsO;
+    private int step;
+    private int rebaje;
+    private Rectangle learnArea;
 
     /**
      * Get the value of comboModel
@@ -101,6 +124,7 @@ public class VisLoad extends javax.swing.JFrame {
         for(int i =0; i < kwidth * kwidth;i++){
             data[i] /= total / 1.5; 
         }
+        learnArea = new Rectangle();
     }
 
     /**
@@ -113,10 +137,21 @@ public class VisLoad extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        cargaImagen = new javax.swing.JButton();
+        suavizaResultado = new javax.swing.JButton();
         jComboBox1 = new javax.swing.JComboBox();
-        jButton3 = new javax.swing.JButton();
+        enmascaraResultado = new javax.swing.JButton();
+        procesar = new javax.swing.JButton();
+        clean = new javax.swing.JButton();
+        cargar = new javax.swing.JButton();
+        salva = new javax.swing.JButton();
+        entrenar = new javax.swing.JCheckBox();
+        hiddenLearningRate = new javax.swing.JSpinner();
+        outputLearningRate = new javax.swing.JSpinner();
+        jLabel1 = new javax.swing.JLabel();
+        seleccion = new javax.swing.JCheckBox();
+        iteraciones = new javax.swing.JSpinner();
+        jLabel2 = new javax.swing.JLabel();
         jSplitPane1 = new javax.swing.JSplitPane();
         vista = getNuevaVista();
         respuesta = getNuevaRespuesta();
@@ -124,28 +159,74 @@ public class VisLoad extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Vista de carga");
 
-        jButton1.setText("Carga...");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        cargaImagen.setText("Carga...");
+        cargaImagen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                cargaImagenActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Modifica");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        suavizaResultado.setText("Suaviza");
+        suavizaResultado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                suavizaResultadoActionPerformed(evt);
             }
         });
 
         jComboBox1.setModel(getComboModel());
 
-        jButton3.setText("enmascara");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        enmascaraResultado.setText("enmascara");
+        enmascaraResultado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                enmascaraResultadoActionPerformed(evt);
             }
         });
+
+        procesar.setText("procesar");
+        procesar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                procesarActionPerformed(evt);
+            }
+        });
+
+        clean.setText("Limpiar");
+        clean.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cleanActionPerformed(evt);
+            }
+        });
+
+        cargar.setText("Carga");
+        cargar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cargarActionPerformed(evt);
+            }
+        });
+
+        salva.setText("Salva");
+        salva.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                salvaActionPerformed(evt);
+            }
+        });
+
+        entrenar.setSelected(true);
+        entrenar.setText("entrenar");
+
+        hiddenLearningRate.setModel(new javax.swing.SpinnerNumberModel(1.0d, 1.0d, 24.0d, 1.0d));
+        hiddenLearningRate.setToolTipText("de capa oculta");
+
+        outputLearningRate.setModel(new javax.swing.SpinnerNumberModel(1.0d, 1.0d, 24.0d, 1.0d));
+        outputLearningRate.setToolTipText("de capa de salida");
+
+        jLabel1.setText("aprendisaje");
+
+        seleccion.setText("Selección");
+
+        iteraciones.setModel(new javax.swing.SpinnerNumberModel(50, 1, 500, 10));
+        iteraciones.setToolTipText("Iteraciones");
+
+        jLabel2.setText("pesos");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -153,27 +234,71 @@ public class VisLoad extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1)
-                .addGap(18, 18, 18)
-                .addComponent(jButton2)
-                .addGap(18, 18, 18)
-                .addComponent(jButton3)
-                .addGap(30, 30, 30)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(185, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(cargaImagen)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(hiddenLearningRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(outputLearningRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(procesar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(entrenar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(seleccion)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(iteraciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(suavizaResultado)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(enmascaraResultado)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cargar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(salva)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(clean)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
+                    .addComponent(cargaImagen)
+                    .addComponent(suavizaResultado)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton3))
-                .addGap(0, 6, Short.MAX_VALUE))
+                    .addComponent(enmascaraResultado)
+                    .addComponent(cargar)
+                    .addComponent(salva)
+                    .addComponent(jLabel2)
+                    .addComponent(clean))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(hiddenLearningRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(outputLearningRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1)
+                    .addComponent(entrenar)
+                    .addComponent(procesar)
+                    .addComponent(seleccion)
+                    .addComponent(iteraciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         vista.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        vista.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                vistaMouseClicked(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                vistaMouseReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout vistaLayout = new javax.swing.GroupLayout(vista);
         vista.setLayout(vistaLayout);
@@ -183,7 +308,7 @@ public class VisLoad extends javax.swing.JFrame {
         );
         vistaLayout.setVerticalGroup(
             vistaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 240, Short.MAX_VALUE)
+            .addGap(0, 234, Short.MAX_VALUE)
         );
 
         jSplitPane1.setLeftComponent(vista);
@@ -194,11 +319,11 @@ public class VisLoad extends javax.swing.JFrame {
         respuesta.setLayout(respuestaLayout);
         respuestaLayout.setHorizontalGroup(
             respuestaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 281, Short.MAX_VALUE)
+            .addGap(0, 371, Short.MAX_VALUE)
         );
         respuestaLayout.setVerticalGroup(
             respuestaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 240, Short.MAX_VALUE)
+            .addGap(0, 234, Short.MAX_VALUE)
         );
 
         jSplitPane1.setRightComponent(respuesta);
@@ -217,15 +342,15 @@ public class VisLoad extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSplitPane1)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void cargaImagenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargaImagenActionPerformed
         String _filename1 = System.getProperty("user.dir") + baseUrl + (String)jComboBox1.getSelectedItem() + sufxType;
         String _filename2 = System.getProperty("user.dir") + testBaseUrl + (String)jComboBox1.getSelectedItem() + sufxType;
         log.info("directorio user <{}>",System.getProperty("user.dir"));
@@ -241,23 +366,24 @@ public class VisLoad extends javax.swing.JFrame {
         } catch (IOException ex) {
             log.error("error de archivo <{}>", _filename1, ex);
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_cargaImagenActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void suavizaResultadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_suavizaResultadoActionPerformed
         
         
         ConvolveOp conv = new ConvolveOp(new Kernel(kwidth, kwidth, data));
         if(Objects.nonNull(bufferImageFiltered))
             bufferImageFiltered.flush();
         
-        bufferImageFiltered = conv.filter(buffImage, null);
+        bufferImageFiltered = conv.filter(destBuffImage, null);
+        destBuffImage = bufferImageFiltered;
         
         java.awt.EventQueue.invokeLater(() -> {
             respuesta.repaint();
         });
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_suavizaResultadoActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void enmascaraResultadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_enmascaraResultadoActionPerformed
         
         MaskOp conv = new MaskOp();
         conv.setOtherSrc(destBuffImage);
@@ -265,13 +391,252 @@ public class VisLoad extends javax.swing.JFrame {
             bufferImageFiltered.flush();
         
         bufferImageFiltered = conv.filter(buffImage, null);
+        destBuffImage = bufferImageFiltered;
         
         java.awt.EventQueue.invokeLater(() -> {
             vista.repaint();
             respuesta.repaint();
         });
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_enmascaraResultadoActionPerformed
 
+    private void procesarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_procesarActionPerformed
+
+        log.info("iniciando 3...");
+        bufferImageFiltered = createCompatibleDestImage(buffImage, null);
+        
+        int width = buffImage.getWidth();
+        int height = buffImage.getHeight();
+        
+        log.info("procesando...");
+
+
+        Integer maxIteraciones = (Integer) iteraciones.getValue();
+        for(int idIteracion=0; idIteracion<maxIteraciones; idIteracion++) {
+
+            new Dominio(width-step, height-step).stream()
+                    .filter( idx -> ((idx.getFila() % step ==0) && (idx.getColumna()% step == 0)))
+                    .filter(idx -> (!seleccion.isSelected()) || ( learnArea.contains(idx.getFila(), idx.getColumna())) )
+                    .sorted((idx1,idx2) -> (int)(2.0*Math.random()-1.0))
+                    .parallel()
+                    .forEach(idx -> {
+                        int i = idx.getFila();
+                        int j = idx.getColumna();
+
+                        PixelsDirectInputLayer simplePixelsInputLayer = new PixelsDirectInputLayer();
+                        PixelsDirectInputLayer simplePixelsCompareLayer = new PixelsDirectInputLayer();
+                        HiddenSigmoidLayer hiddenLayer = new HiddenSigmoidLayer(weightsH,  Math.pow(10, -(Double)hiddenLearningRate.getValue()));
+                        PixelDirectSigmoidLeanringLayer pixelLeanringLayer = new PixelDirectSigmoidLeanringLayer(weightsO, Math.pow(10, -(Double)outputLearningRate.getValue()));
+                        PixelsDirectSigmoidOutputLayer pixelsOutputLayer = new PixelsDirectSigmoidOutputLayer(null);
+
+                        simplePixelsInputLayer.getConsumers().add(hiddenLayer);
+                        hiddenLayer.getConsumers().add(pixelLeanringLayer);
+                        pixelLeanringLayer.getConsumers().add(pixelsOutputLayer);
+
+    //                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
+                        pixelsOutputLayer.setDest(bufferImageFiltered.getSubimage(i, j, step, step));
+                        BufferedImage src = buffImage.getSubimage(i, j, step, step);
+                        simplePixelsInputLayer.setSrc(src);
+                        simplePixelsInputLayer.startProduction();
+
+                        if(entrenar.isSelected()){
+    //                        log.info("cargando bloque comparacion <{}><{}>", i, j);
+                            BufferedImage comp = destBuffImage.getSubimage(i, j, step, step);
+                            simplePixelsCompareLayer.setSrc(comp);
+                            simplePixelsCompareLayer.startProduction();
+                            pixelLeanringLayer.setCompareToLayer(simplePixelsCompareLayer.getOutputLayer());
+
+                            pixelLeanringLayer.adjustBack();
+                            log.info("      error <{}>", pixelLeanringLayer.getError().get(Indice.D1));
+                        }
+                    });
+        }
+                
+            java.awt.EventQueue.invokeLater(() -> {
+                vista.repaint();
+                respuesta.repaint();
+            });
+    }//GEN-LAST:event_procesarActionPerformed
+
+    private void cleanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanActionPerformed
+        log.info("iniciando 0...");
+        step = 101;
+        rebaje = 2000;
+        
+        log.info("iniciando 1...<{},{}>",step*step*3 / rebaje, step*step*3);
+        weightsH = (DoubleMatriz)new DoubleMatriz(new Dominio(step*step*3 / rebaje, step*step*3)).matrizUno();
+        weightsH = (DoubleMatriz)weightsH.productoEscalar( 1.0 / Math.sqrt( step*step*3 / rebaje * step*step*3 ) );
+        
+        log.info("iniciando 2...<{},{}>",step*step*3, step*step*3 / rebaje);
+        weightsO = (DoubleMatriz)new DoubleMatriz(new Dominio(step*step*3, step*step*3 / rebaje)).matrizUno();
+        weightsO = (DoubleMatriz)weightsO.productoEscalar( 1.0 / Math.sqrt( step*step*3 / rebaje * step*step*3 ) );
+    }//GEN-LAST:event_cleanActionPerformed
+
+    private void salvaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salvaActionPerformed
+        String filename = System.getProperty("user.dir") + weightUrl + "nw.dat";
+         try( FileOutputStream fos = new FileOutputStream(filename) )   {
+            Integer fila = weightsH.getDominio().getFila();
+            Integer columna = weightsH.getDominio().getColumna();
+            
+            ByteBuffer headBuffer = ByteBuffer.allocate(8);
+            headBuffer.order(ByteOrder.LITTLE_ENDIAN);
+            
+            headBuffer.putInt(fila);
+            headBuffer.putInt(columna);
+            fos.write(headBuffer.array());
+            
+            ByteBuffer bodyBuffer = ByteBuffer.allocate(step * step * 3 * 8);
+            bodyBuffer.order(ByteOrder.LITTLE_ENDIAN);
+            
+            for(int j=1; j<=columna;j++){
+                bodyBuffer.position(0);
+                for(int i=1; i<=fila;i++){
+                    bodyBuffer.putDouble(weightsH.get( new Indice(i, j)));
+                }
+                fos.write(bodyBuffer.array());
+            }
+            fila = weightsO.getDominio().getFila();
+            columna = weightsO.getDominio().getColumna();
+            
+            headBuffer.position(0);
+            headBuffer.order(ByteOrder.LITTLE_ENDIAN);
+            
+            headBuffer.putInt(fila);
+            headBuffer.putInt(columna);
+            fos.write(headBuffer.array());
+            
+            bodyBuffer.position(0);
+            bodyBuffer.order(ByteOrder.LITTLE_ENDIAN);
+            
+            for(int i=1; i<=fila;i++){
+                bodyBuffer.position(0);
+                for(int j=1; j<=columna;j++){
+                    bodyBuffer.putDouble(weightsO.get( new Indice(i, j)));
+                }
+                fos.write(bodyBuffer.array());
+            }
+         } catch (FileNotFoundException ex) {
+             log.error("error al guardar  pesos", ex);
+         } catch (IOException ex) {
+             log.error("error al guardar  pesos", ex);             
+         }
+    }//GEN-LAST:event_salvaActionPerformed
+
+    private void cargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargarActionPerformed
+        String filename = System.getProperty("user.dir") + weightUrl + "nw.dat";
+        
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(filename), 15000 * 1024)) {
+
+            byte[] header = new byte[8];
+            byte[] body = new byte[step * step * 3 * 8];
+            
+            Integer fila;
+            Integer columna;
+            
+            bis.read(header);
+            ByteBuffer headBuffer = ByteBuffer.wrap(header);
+            headBuffer.order(ByteOrder.LITTLE_ENDIAN);
+            fila = headBuffer.getInt();
+            columna = headBuffer.getInt();
+            
+            Dominio dominio = new Dominio(fila, columna);
+            
+            ByteBuffer bodyBuffer;
+            weightsH = new DoubleMatriz(dominio);
+            
+            for(int j=1; j<=columna;j++){
+                bis.read(body);
+                bodyBuffer = ByteBuffer.wrap(body);
+                bodyBuffer.order(ByteOrder.LITTLE_ENDIAN);
+                for(int i=1; i<=fila;i++){
+                    weightsH.indexa(i, j, bodyBuffer.getDouble());
+                }
+            } 
+            
+            bis.read(header);
+            headBuffer = ByteBuffer.wrap(header);
+            headBuffer.order(ByteOrder.LITTLE_ENDIAN);
+            fila = headBuffer.getInt();
+            columna = headBuffer.getInt();
+            
+            dominio = new Dominio(fila, columna);
+            
+            weightsO = new DoubleMatriz(dominio);
+            
+            for(int i=1; i<=fila;i++){
+                bis.read(body);
+                bodyBuffer = ByteBuffer.wrap(body);
+                bodyBuffer.order(ByteOrder.LITTLE_ENDIAN);
+                for(int j=1; j<=columna;j++){
+                    weightsO.indexa(i , j, bodyBuffer.getDouble());
+                }
+            }
+            
+        } catch ( FileNotFoundException ex) {
+            log.error("error al cargar pesos", ex);
+        } catch (IOException ex) {
+            log.error("error al cargar pesos", ex);
+        }
+    }//GEN-LAST:event_cargarActionPerformed
+
+    private void vistaMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_vistaMouseReleased
+        int x = evt.getX();
+        int y = evt.getY();
+        float escala = (float)buffImage.getWidth() / (float)vista.getBounds().width;
+        
+        learnArea.width = (int) (x * escala) - learnArea.x;
+        learnArea.height = (int) (y * escala) - learnArea.y;
+
+        java.awt.EventQueue.invokeLater(() -> {
+            vista.repaint();
+        });
+    }//GEN-LAST:event_vistaMouseReleased
+
+    private void vistaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_vistaMouseClicked
+        int x = evt.getX();
+        int y = evt.getY();
+        
+        float escala = (float)buffImage.getWidth() / (float)vista.getBounds().width;
+        learnArea.x = (int) (x * escala);
+        learnArea.y = (int) (y * escala);
+    }//GEN-LAST:event_vistaMouseClicked
+
+    public BufferedImage createCompatibleDestImage(BufferedImage src, ColorModel destCM) {
+        BufferedImage image;
+
+        int w = src.getWidth();
+        int h = src.getHeight();
+
+        WritableRaster wr = null;
+
+        if (destCM == null) {
+            destCM = src.getColorModel();
+            // Not much support for ICM
+            if (destCM instanceof IndexColorModel) {
+                destCM = ColorModel.getRGBdefault();
+            } else {
+                /* Create destination image as similar to the source
+                 *  as it possible...
+                 */
+                wr = src.getData().createCompatibleWritableRaster(w, h);
+            }
+        }
+
+        if (wr == null) {
+            /* This is the case when destination color model
+             * was explicitly specified (and it may be not compatible
+             * with source raster structure) or source is indexed image.
+             * We should use destination color model to create compatible
+             * destination raster here.
+             */
+            wr = destCM.createCompatibleWritableRaster(w, h);
+        }
+
+        image = new BufferedImage (destCM, wr,
+                                   destCM.isAlphaPremultiplied(), null);
+
+        return image;
+    }
+    
     private float calculaMatriz(int i, int j){
         float retorno;
         float half = (float)kwidth / 2;
@@ -301,9 +666,17 @@ public class VisLoad extends javax.swing.JFrame {
                 if(Objects.nonNull(buffImage)){
                     Graphics2D localg = (Graphics2D)g;
                     float escala = (float)vista.getBounds().width / (float)buffImage.getWidth();
+                    
                     AffineTransform xforM = AffineTransform.getScaleInstance(escala, escala);
                     AffineTransformOp rop = new AffineTransformOp(xforM, AffineTransformOp.TYPE_BILINEAR);
                     localg.drawImage(buffImage, rop, 0     , 0);
+
+                    Rectangle evalArea = new Rectangle(learnArea);
+                    evalArea.x = (int) (evalArea.x * escala);
+                    evalArea.y = (int) (evalArea.y * escala);
+                    evalArea.width = (int) (evalArea.width * escala);
+                    evalArea.height = (int) (evalArea.height * escala);
+                    localg.draw(evalArea);
                     
                 }
             }
@@ -370,13 +743,24 @@ public class VisLoad extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton cargaImagen;
+    private javax.swing.JButton cargar;
+    private javax.swing.JButton clean;
+    private javax.swing.JButton enmascaraResultado;
+    private javax.swing.JCheckBox entrenar;
+    private javax.swing.JSpinner hiddenLearningRate;
+    private javax.swing.JSpinner iteraciones;
     private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JSpinner outputLearningRate;
+    private javax.swing.JButton procesar;
     private javax.swing.JPanel respuesta;
+    private javax.swing.JButton salva;
+    private javax.swing.JCheckBox seleccion;
+    private javax.swing.JButton suavizaResultado;
     private javax.swing.JPanel vista;
     // End of variables declaration//GEN-END:variables
 }
