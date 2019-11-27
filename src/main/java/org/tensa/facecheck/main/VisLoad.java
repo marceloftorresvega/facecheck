@@ -19,6 +19,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.LinkedList;
 import java.util.Objects;
 import javax.imageio.ImageIO;
 import javax.swing.ComboBoxModel;
@@ -61,6 +62,8 @@ public class VisLoad extends javax.swing.JFrame {
     private int step;
     private int rebaje;
     private Rectangle learnArea;
+    private LinkedList<Rectangle> areaQeue;
+    private boolean areaDelete = false;
 
     /**
      * Get the value of comboModel
@@ -125,6 +128,8 @@ public class VisLoad extends javax.swing.JFrame {
             data[i] /= total / 1.5; 
         }
         learnArea = new Rectangle();
+        areaQeue = new LinkedList<>();
+        areaQeue.add(learnArea);
     }
 
     /**
@@ -157,8 +162,12 @@ public class VisLoad extends javax.swing.JFrame {
         hiddenLearningRate = new javax.swing.JSpinner();
         outputLearningRate = new javax.swing.JSpinner();
         iteraciones = new javax.swing.JSpinner();
+        jCheckBox1 = new javax.swing.JCheckBox();
+        jButton3 = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         seleccion = new javax.swing.JCheckBox();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Vista de carga");
@@ -255,7 +264,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(suavizaResultado)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(enmascaraResultado)
-                .addContainerGap(355, Short.MAX_VALUE))
+                .addContainerGap(472, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -263,10 +272,10 @@ public class VisLoad extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(suavizaResultado)
                     .addComponent(enmascaraResultado))
-                .addGap(0, 2, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Post proceso", null, jPanel2, "PostProceso de salida");
+        jTabbedPane1.addTab("Pre proceso salida", null, jPanel2, "Pre proceso de imagen de salida");
 
         cargar.setText("Carga");
         cargar.addActionListener(new java.awt.event.ActionListener() {
@@ -300,7 +309,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(cargar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(salva)
-                .addContainerGap(315, Short.MAX_VALUE))
+                .addContainerGap(437, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -309,12 +318,12 @@ public class VisLoad extends javax.swing.JFrame {
                     .addComponent(clean)
                     .addComponent(cargar)
                     .addComponent(salva))
-                .addGap(0, 2, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Pesos", null, jPanel3, "administracion de pesos");
 
-        procesar.setText("procesar");
+        procesar.setText("Procesar");
         procesar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 procesarActionPerformed(evt);
@@ -333,6 +342,20 @@ public class VisLoad extends javax.swing.JFrame {
         iteraciones.setModel(new javax.swing.SpinnerNumberModel(50, 1, 500, 10));
         iteraciones.setToolTipText("Iteraciones");
 
+        jCheckBox1.setText("Usa Selección");
+        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox1ActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("Limpiar");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -348,7 +371,11 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(outputLearningRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(iteraciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(177, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jCheckBox1)
+                .addGap(18, 18, 18)
+                .addComponent(jButton3)
+                .addContainerGap(48, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -358,14 +385,35 @@ public class VisLoad extends javax.swing.JFrame {
                     .addComponent(procesar)
                     .addComponent(hiddenLearningRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(outputLearningRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(iteraciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 2, Short.MAX_VALUE))
+                    .addComponent(iteraciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jCheckBox1)
+                    .addComponent(jButton3))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Entrenamiento", jPanel4);
 
-        seleccion.setText("Selección");
+        seleccion.setText("Usa selección");
         seleccion.setActionCommand("Usar Seleccion");
+        seleccion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                seleccionActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("Agrega selección");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("Quita selección");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -374,13 +422,20 @@ public class VisLoad extends javax.swing.JFrame {
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(seleccion)
-                .addContainerGap(455, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton2)
+                .addContainerGap(268, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addComponent(seleccion)
-                .addGap(0, 2, Short.MAX_VALUE))
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(seleccion)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Seleccion", jPanel5);
@@ -391,7 +446,7 @@ public class VisLoad extends javax.swing.JFrame {
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 655, Short.MAX_VALUE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
@@ -409,8 +464,8 @@ public class VisLoad extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 667, Short.MAX_VALUE)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jSplitPane1)
+                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -485,14 +540,13 @@ public class VisLoad extends javax.swing.JFrame {
         int height = buffImage.getHeight();
         
         log.info("procesando...");
-
-
+        
         Integer maxIteraciones = (Integer) iteraciones.getValue();
         for(int idIteracion=0; idIteracion<maxIteraciones; idIteracion++) {
 
             new Dominio(width-step, height-step).stream()
                     .filter( idx -> ((idx.getFila() % step ==0) && (idx.getColumna()% step == 0)))
-                    .filter(idx -> (!seleccion.isSelected()) || ( learnArea.contains(idx.getFila(), idx.getColumna())) )
+                    .filter(idx -> (!seleccion.isSelected()) || ( areaQeue.stream().anyMatch(a -> a.contains(idx.getFila(), idx.getColumna()))) )
                     .sorted((idx1,idx2) -> (int)(2.0*Math.random()-1.0))
                     .parallel()
                     .forEach(idx -> {
@@ -673,9 +727,43 @@ public class VisLoad extends javax.swing.JFrame {
         int y = evt.getY();
         
         float escala = (float)buffImage.getWidth() / (float)vista.getBounds().width;
-        learnArea.x = (int) (x * escala);
-        learnArea.y = (int) (y * escala);
+        if (areaDelete) {
+            areaQeue.stream()
+                    .filter( a -> a.contains((int) (x * escala), (int) (y * escala)))
+                    .findFirst()
+                    .ifPresent( a -> areaQeue.removeFirstOccurrence(a));
+            areaDelete = false;
+            learnArea = areaQeue.getLast();
+        } else {
+            learnArea.x = (int) (x * escala);
+            learnArea.y = (int) (y * escala);
+        }
+        
+        java.awt.EventQueue.invokeLater(() -> {
+            vista.repaint();
+        });
     }//GEN-LAST:event_vistaMouseClicked
+
+    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+        seleccion.setSelected(jCheckBox1.isSelected());
+    }//GEN-LAST:event_jCheckBox1ActionPerformed
+
+    private void seleccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seleccionActionPerformed
+        jCheckBox1.setSelected(seleccion.isSelected());
+    }//GEN-LAST:event_seleccionActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        learnArea = new Rectangle();
+        areaQeue.add(learnArea);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        areaDelete = true;
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        cleanActionPerformed(evt);
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     public BufferedImage createCompatibleDestImage(BufferedImage src, ColorModel destCM) {
         BufferedImage image;
@@ -748,12 +836,15 @@ public class VisLoad extends javax.swing.JFrame {
                     AffineTransformOp rop = new AffineTransformOp(xforM, AffineTransformOp.TYPE_BILINEAR);
                     localg.drawImage(buffImage, rop, 0     , 0);
 
-                    Rectangle evalArea = new Rectangle(learnArea);
-                    evalArea.x = (int) (evalArea.x * escala);
-                    evalArea.y = (int) (evalArea.y * escala);
-                    evalArea.width = (int) (evalArea.width * escala);
-                    evalArea.height = (int) (evalArea.height * escala);
-                    localg.draw(evalArea);
+                    areaQeue.forEach( a -> {
+                        Rectangle evalArea = new Rectangle(a);
+                        evalArea.x = (int) (evalArea.x * escala);
+                        evalArea.y = (int) (evalArea.y * escala);
+                        evalArea.width = (int) (evalArea.width * escala);
+                        evalArea.height = (int) (evalArea.height * escala);
+                        localg.draw(evalArea);
+                    
+                    });
                     
                 }
             }
@@ -827,6 +918,10 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JCheckBox entrenar;
     private javax.swing.JSpinner hiddenLearningRate;
     private javax.swing.JSpinner iteraciones;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
