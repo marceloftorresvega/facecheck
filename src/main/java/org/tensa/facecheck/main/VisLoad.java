@@ -1,5 +1,6 @@
 package org.tensa.facecheck.main;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -64,6 +65,7 @@ public class VisLoad extends javax.swing.JFrame {
     private Rectangle learnArea;
     private LinkedList<Rectangle> areaQeue;
     private boolean areaDelete = false;
+    private boolean areaSelect = false;
 
     /**
      * Get the value of comboModel
@@ -168,6 +170,7 @@ public class VisLoad extends javax.swing.JFrame {
         seleccion = new javax.swing.JCheckBox();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Vista de carga");
@@ -417,6 +420,13 @@ public class VisLoad extends javax.swing.JFrame {
             }
         });
 
+        jButton4.setText("Modifica selección");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -428,7 +438,9 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton2)
-                .addContainerGap(268, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton4)
+                .addContainerGap(126, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -436,7 +448,8 @@ public class VisLoad extends javax.swing.JFrame {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(seleccion)
                     .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(jButton2)
+                    .addComponent(jButton4))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -448,7 +461,7 @@ public class VisLoad extends javax.swing.JFrame {
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 655, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
@@ -712,16 +725,18 @@ public class VisLoad extends javax.swing.JFrame {
     }//GEN-LAST:event_cargarActionPerformed
 
     private void vistaMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_vistaMouseReleased
-        int x = evt.getX();
-        int y = evt.getY();
-        float escala = (float)buffImage.getWidth() / (float)vista.getBounds().width;
-        
-        learnArea.width = (int) (x * escala) - learnArea.x;
-        learnArea.height = (int) (y * escala) - learnArea.y;
+        if (!areaDelete && !areaSelect) {
+            int x = evt.getX();
+            int y = evt.getY();
+            float escala = (float)buffImage.getWidth() / (float)vista.getBounds().width;
 
-        java.awt.EventQueue.invokeLater(() -> {
-            vista.repaint();
-        });
+            learnArea.width = (int) (x * escala) - learnArea.x;
+            learnArea.height = (int) (y * escala) - learnArea.y;
+
+            java.awt.EventQueue.invokeLater(() -> {
+                vista.repaint();
+            });
+        }
     }//GEN-LAST:event_vistaMouseReleased
 
     private void vistaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_vistaMouseClicked
@@ -729,13 +744,19 @@ public class VisLoad extends javax.swing.JFrame {
         int y = evt.getY();
         
         float escala = (float)buffImage.getWidth() / (float)vista.getBounds().width;
-        if (areaDelete) {
+        if (areaDelete && !areaSelect) {
             areaQeue.stream()
                     .filter( a -> a.contains((int) (x * escala), (int) (y * escala)))
                     .findFirst()
                     .ifPresent( a -> areaQeue.removeFirstOccurrence(a));
             areaDelete = false;
             learnArea = areaQeue.getLast();
+        } else if ( areaSelect && !areaDelete) {
+            areaQeue.stream()
+                    .filter( a -> a.contains((int) (x * escala), (int) (y * escala)))
+                    .findFirst()
+                    .ifPresent( a -> learnArea = a);
+            areaSelect = false;
         } else {
             learnArea.x = (int) (x * escala);
             learnArea.y = (int) (y * escala);
@@ -761,11 +782,17 @@ public class VisLoad extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         areaDelete = true;
+        areaSelect = false;
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         cleanActionPerformed(evt);
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        areaSelect = true;
+        areaDelete = false;
+    }//GEN-LAST:event_jButton4ActionPerformed
 
     public BufferedImage createCompatibleDestImage(BufferedImage src, ColorModel destCM) {
         BufferedImage image;
@@ -844,6 +871,13 @@ public class VisLoad extends javax.swing.JFrame {
                         evalArea.y = (int) (evalArea.y * escala);
                         evalArea.width = (int) (evalArea.width * escala);
                         evalArea.height = (int) (evalArea.height * escala);
+                        if (a.equals(learnArea)) {
+                            localg.setColor(Color.RED);
+                            
+                        } else {
+                            localg.setColor(Color.BLACK);
+                            
+                        }
                         localg.draw(evalArea);
                     
                     });
@@ -923,6 +957,7 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JPanel jPanel1;
