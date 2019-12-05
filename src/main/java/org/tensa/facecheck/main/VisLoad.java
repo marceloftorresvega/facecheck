@@ -600,7 +600,7 @@ public class VisLoad extends javax.swing.JFrame {
         for(int idIteracion=0; idIteracion<maxIteraciones; idIteracion++) {
 
             new Dominio(width-inStep, height-inStep).stream()
-                    .filter( idx -> ((idx.getFila() % inStep ==0) && (idx.getColumna()% inStep == 0)))
+                    .filter( idx -> ((idx.getFila() % inStep-(inStep-outStep)/2 ==0) && (idx.getColumna()% inStep-(inStep-outStep)/2 == 0)))
                     .filter(idx -> (!seleccion.isSelected()) || ( areaQeue.stream().anyMatch(a -> a.contains(idx.getFila(), idx.getColumna()))) )
                     .sorted((idx1,idx2) -> (int)(2.0*Math.random()-1.0))
                     .parallel()
@@ -619,14 +619,14 @@ public class VisLoad extends javax.swing.JFrame {
                         pixelLeanringLayer.getConsumers().add(pixelsOutputLayer);
 
     //                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
-                        pixelsOutputLayer.setDest(bufferImageFiltered.getSubimage(i, j, inStep, inStep));
+                        pixelsOutputLayer.setDest(bufferImageFiltered.getSubimage(i + (inStep-outStep)/2, j + (inStep-outStep)/2, outStep, outStep));
                         BufferedImage src = buffImage.getSubimage(i, j, inStep, inStep);
                         simplePixelsInputLayer.setSrc(src);
                         simplePixelsInputLayer.startProduction();
 
                         if(entrenar.isSelected()){
     //                        log.info("cargando bloque comparacion <{}><{}>", i, j);
-                            BufferedImage comp = destBuffImage.getSubimage(i, j, inStep, inStep);
+                            BufferedImage comp = destBuffImage.getSubimage(i + (inStep-outStep)/2, j + (inStep-outStep)/2, outStep, outStep);
                             simplePixelsCompareLayer.setSrc(comp);
                             simplePixelsCompareLayer.startProduction();
                             pixelLeanringLayer.setCompareToLayer(simplePixelsCompareLayer.getOutputLayer());
