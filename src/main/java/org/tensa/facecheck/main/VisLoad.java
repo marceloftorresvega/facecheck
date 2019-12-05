@@ -312,7 +312,7 @@ public class VisLoad extends javax.swing.JFrame {
 
         jLabel1.setText("Entrada");
 
-        inNeurs.setModel(new javax.swing.SpinnerNumberModel(200, 3, 1000, 1));
+        inNeurs.setModel(new javax.swing.SpinnerNumberModel(101, 3, 1000, 1));
         inNeurs.setToolTipText("Neuronas de entrada (pixels)");
 
         jLabel2.setText("Oculta");
@@ -322,7 +322,7 @@ public class VisLoad extends javax.swing.JFrame {
 
         jLabel3.setText("Salida");
 
-        outNeurs.setModel(new javax.swing.SpinnerNumberModel(200, 3, 1000, 1));
+        outNeurs.setModel(new javax.swing.SpinnerNumberModel(101, 3, 1000, 1));
         outNeurs.setToolTipText("Neuronas de salida (pixels)");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
