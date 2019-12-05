@@ -600,7 +600,7 @@ public class VisLoad extends javax.swing.JFrame {
         for(int idIteracion=0; idIteracion<maxIteraciones; idIteracion++) {
 
             new Dominio(width-inStep, height-inStep).stream()
-                    .filter( idx -> ((idx.getFila() % inStep-(inStep-outStep)/2 ==0) && (idx.getColumna()% inStep-(inStep-outStep)/2 == 0)))
+                    .filter( idx -> (( (idx.getFila()-(inStep-outStep)/2) % outStep ==0) && ((idx.getColumna()-(inStep-outStep)/2)% outStep == 0)))
                     .filter(idx -> (!seleccion.isSelected()) || ( areaQeue.stream().anyMatch(a -> a.contains(idx.getFila(), idx.getColumna()))) )
                     .sorted((idx1,idx2) -> (int)(2.0*Math.random()-1.0))
                     .parallel()
