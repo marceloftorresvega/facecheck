@@ -595,8 +595,12 @@ public class VisLoad extends javax.swing.JFrame {
         int height = buffImage.getHeight();
         
         log.info("procesando...");
-        
+        new Thread(() -> {
+            procesar.setEnabled(false);
+            jButton3.setEnabled(false);
+            clean.setEnabled(false);
         Integer maxIteraciones = (Integer) iteraciones.getValue();
+        
         for(int idIteracion=0; idIteracion<maxIteraciones; idIteracion++) {
 
             new Dominio(width-inStep, height-inStep).stream()
@@ -634,13 +638,17 @@ public class VisLoad extends javax.swing.JFrame {
                             pixelLeanringLayer.adjustBack();
                             log.info("      error <{}>", pixelLeanringLayer.getError().get(Indice.D1));
                         }
-                    });
-        }
-                
             java.awt.EventQueue.invokeLater(() -> {
                 vista.repaint();
                 respuesta.repaint();
             });
+                    });
+                
+        }
+            procesar.setEnabled(true);
+            jButton3.setEnabled(true);
+            clean.setEnabled(true);
+        }).start();
     }//GEN-LAST:event_procesarActionPerformed
 
     private void cleanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanActionPerformed
