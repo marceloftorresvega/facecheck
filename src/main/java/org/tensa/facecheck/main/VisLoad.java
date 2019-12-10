@@ -17,21 +17,19 @@ import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.DoubleBuffer;
-import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 import javax.swing.ComboBoxModel;
@@ -925,7 +923,7 @@ public class VisLoad extends javax.swing.JFrame {
     
     private int compareTo(ParOrdenado i1, ParOrdenado i2){
         int compared = i1.getColumna().compareTo(i2.getColumna());
-        return compared==0?i1.getFila().compareTo(i2.getColumna()):compared;
+        return compared==0?i1.getFila().compareTo(i2.getFila()):compared;
     }
     
     /**
