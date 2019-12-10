@@ -173,6 +173,7 @@ public class VisLoad extends javax.swing.JFrame {
         iteraciones = new javax.swing.JSpinner();
         jCheckBox1 = new javax.swing.JCheckBox();
         jButton3 = new javax.swing.JButton();
+        freno = new javax.swing.JToggleButton();
         jPanel5 = new javax.swing.JPanel();
         seleccion = new javax.swing.JCheckBox();
         jButton1 = new javax.swing.JButton();
@@ -276,7 +277,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(suavizaResultado)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(enmascaraResultado)
-                .addContainerGap(472, Short.MAX_VALUE))
+                .addContainerGap(551, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -348,7 +349,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(outNeurs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addContainerGap(107, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -401,6 +402,8 @@ public class VisLoad extends javax.swing.JFrame {
             }
         });
 
+        freno.setText("Freno");
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -420,7 +423,9 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jCheckBox1)
                 .addGap(18, 18, 18)
                 .addComponent(jButton3)
-                .addContainerGap(48, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(freno)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -432,7 +437,8 @@ public class VisLoad extends javax.swing.JFrame {
                     .addComponent(outputLearningRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(iteraciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jCheckBox1)
-                    .addComponent(jButton3))
+                    .addComponent(jButton3)
+                    .addComponent(freno))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -480,7 +486,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jButton2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton4)
-                .addContainerGap(126, Short.MAX_VALUE))
+                .addContainerGap(205, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -502,7 +508,7 @@ public class VisLoad extends javax.swing.JFrame {
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jTabbedPane1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -599,55 +605,56 @@ public class VisLoad extends javax.swing.JFrame {
             procesar.setEnabled(false);
             jButton3.setEnabled(false);
             clean.setEnabled(false);
-        Integer maxIteraciones = (Integer) iteraciones.getValue();
         
-        for(int idIteracion=0; idIteracion<maxIteraciones; idIteracion++) {
+            for(int idIteracion=0; (!freno.isSelected()) && entrenar.isSelected() && idIteracion<1 || idIteracion<((Integer) iteraciones.getValue()); idIteracion++) {
 
-            new Dominio(width-inStep, height-inStep).stream()
-                    .filter( idx -> (( (idx.getFila()-(inStep-outStep)/2) % outStep ==0) && ((idx.getColumna()-(inStep-outStep)/2)% outStep == 0)))
-                    .filter(idx -> (!seleccion.isSelected()) || ( areaQeue.stream().anyMatch(a -> a.contains(idx.getFila(), idx.getColumna()))) )
-                    .sorted((idx1,idx2) -> (int)(2.0*Math.random()-1.0))
-                    .parallel()
-                    .forEach(idx -> {
-                        int i = idx.getFila();
-                        int j = idx.getColumna();
+                new Dominio(width-inStep, height-inStep).stream()
+                        .filter( idx -> (( (idx.getFila()-(inStep-outStep)/2) % outStep ==0) && ((idx.getColumna()-(inStep-outStep)/2)% outStep == 0)))
+                        .filter(idx -> (!seleccion.isSelected()) || ( areaQeue.stream().anyMatch(a -> a.contains(idx.getFila(), idx.getColumna()))) )
+                        .sorted((idx1,idx2) -> (int)(2.0*Math.random()-1.0))
+                        .parallel()
+                        .filter(idx -> !freno.isSelected())
+                        .forEach(idx -> {
+                            int i = idx.getFila();
+                            int j = idx.getColumna();
 
-                        PixelsDirectInputLayer simplePixelsInputLayer = new PixelsDirectInputLayer();
-                        PixelsDirectInputLayer simplePixelsCompareLayer = new PixelsDirectInputLayer();
-                        HiddenSigmoidLayer hiddenLayer = new HiddenSigmoidLayer(weightsH,  Math.pow(10, -(Double)hiddenLearningRate.getValue()));
-                        PixelDirectSigmoidLeanringLayer pixelLeanringLayer = new PixelDirectSigmoidLeanringLayer(weightsO, Math.pow(10, -(Double)outputLearningRate.getValue()));
-                        PixelsDirectSigmoidOutputLayer pixelsOutputLayer = new PixelsDirectSigmoidOutputLayer(null);
+                            PixelsDirectInputLayer simplePixelsInputLayer = new PixelsDirectInputLayer();
+                            PixelsDirectInputLayer simplePixelsCompareLayer = new PixelsDirectInputLayer();
+                            HiddenSigmoidLayer hiddenLayer = new HiddenSigmoidLayer(weightsH,  Math.pow(10, -(Double)hiddenLearningRate.getValue()));
+                            PixelDirectSigmoidLeanringLayer pixelLeanringLayer = new PixelDirectSigmoidLeanringLayer(weightsO, Math.pow(10, -(Double)outputLearningRate.getValue()));
+                            PixelsDirectSigmoidOutputLayer pixelsOutputLayer = new PixelsDirectSigmoidOutputLayer(null);
 
-                        simplePixelsInputLayer.getConsumers().add(hiddenLayer);
-                        hiddenLayer.getConsumers().add(pixelLeanringLayer);
-                        pixelLeanringLayer.getConsumers().add(pixelsOutputLayer);
+                            simplePixelsInputLayer.getConsumers().add(hiddenLayer);
+                            hiddenLayer.getConsumers().add(pixelLeanringLayer);
+                            pixelLeanringLayer.getConsumers().add(pixelsOutputLayer);
 
-    //                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
-                        pixelsOutputLayer.setDest(bufferImageFiltered.getSubimage(i + (inStep-outStep)/2, j + (inStep-outStep)/2, outStep, outStep));
-                        BufferedImage src = buffImage.getSubimage(i, j, inStep, inStep);
-                        simplePixelsInputLayer.setSrc(src);
-                        simplePixelsInputLayer.startProduction();
+        //                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
+                            pixelsOutputLayer.setDest(bufferImageFiltered.getSubimage(i + (inStep-outStep)/2, j + (inStep-outStep)/2, outStep, outStep));
+                            BufferedImage src = buffImage.getSubimage(i, j, inStep, inStep);
+                            simplePixelsInputLayer.setSrc(src);
+                            simplePixelsInputLayer.startProduction();
 
-                        if(entrenar.isSelected()){
-    //                        log.info("cargando bloque comparacion <{}><{}>", i, j);
-                            BufferedImage comp = destBuffImage.getSubimage(i + (inStep-outStep)/2, j + (inStep-outStep)/2, outStep, outStep);
-                            simplePixelsCompareLayer.setSrc(comp);
-                            simplePixelsCompareLayer.startProduction();
-                            pixelLeanringLayer.setCompareToLayer(simplePixelsCompareLayer.getOutputLayer());
+                            if(entrenar.isSelected()){
+        //                        log.info("cargando bloque comparacion <{}><{}>", i, j);
+                                BufferedImage comp = destBuffImage.getSubimage(i + (inStep-outStep)/2, j + (inStep-outStep)/2, outStep, outStep);
+                                simplePixelsCompareLayer.setSrc(comp);
+                                simplePixelsCompareLayer.startProduction();
+                                pixelLeanringLayer.setCompareToLayer(simplePixelsCompareLayer.getOutputLayer());
 
-                            pixelLeanringLayer.adjustBack();
-                            log.info("      error <{}>", pixelLeanringLayer.getError().get(Indice.D1));
-                        }
-            java.awt.EventQueue.invokeLater(() -> {
-                vista.repaint();
-                respuesta.repaint();
-            });
-                    });
-                
-        }
+                                pixelLeanringLayer.adjustBack();
+                                log.info("      error <{}>", pixelLeanringLayer.getError().get(Indice.D1));
+                            }
+                            java.awt.EventQueue.invokeLater(() -> {
+                                vista.repaint();
+                                respuesta.repaint();
+                            });
+                        });
+
+            }
             procesar.setEnabled(true);
             jButton3.setEnabled(true);
             clean.setEnabled(true);
+            freno.setSelected(false);
         }).start();
     }//GEN-LAST:event_procesarActionPerformed
 
@@ -1001,6 +1008,7 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JButton clean;
     private javax.swing.JButton enmascaraResultado;
     private javax.swing.JCheckBox entrenar;
+    private javax.swing.JToggleButton freno;
     private javax.swing.JSpinner hiddNeurs;
     private javax.swing.JSpinner hiddenLearningRate;
     private javax.swing.JSpinner inNeurs;
