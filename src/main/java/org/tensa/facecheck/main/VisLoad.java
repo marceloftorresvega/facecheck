@@ -14,6 +14,8 @@ import java.awt.image.Kernel;
 import java.awt.image.WritableRaster;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -635,59 +637,43 @@ public class VisLoad extends javax.swing.JFrame {
          try( 
                  OutputStream fos = Files.newOutputStream(Paths.get(filename));
                  BufferedOutputStream out = new BufferedOutputStream(fos);
-                 GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(out))   {
+                 GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(out);
+                 DataOutputStream dos = new DataOutputStream(gzOut)
+                 )   {
             
             Integer fila = weightsH.getDominio().getFila();
             Integer columna = weightsH.getDominio().getColumna();
             
-            ByteBuffer headBuffer = ByteBuffer.allocate(2 * 4);
-            headBuffer.order(ByteOrder.LITTLE_ENDIAN);
-            headBuffer.putInt(fila);
-            headBuffer.putInt(columna);
-            gzOut.write(headBuffer.array());
+            dos.writeInt(fila);
+            dos.writeInt(columna);
             
-            ByteBuffer bodyBuffer = ByteBuffer.allocate(fila * 8);
-            bodyBuffer.order(ByteOrder.LITTLE_ENDIAN);
-            DoubleBuffer doubleBuffer = bodyBuffer.asDoubleBuffer();
             List<ParOrdenado> listado = weightsH.getDominio()
                     .stream()
                     .sorted(this::compareTo)
                     .collect(Collectors.toList());
             
             for ( ParOrdenado indice : listado) {
-                if(!doubleBuffer.hasRemaining()){
-                    gzOut.write(bodyBuffer.array());
-                    doubleBuffer.position(0);
-                }
-                doubleBuffer.put(weightsH.get(indice));
+                dos.writeInt(indice.getFila());
+                dos.writeInt(indice.getColumna());
+                dos.writeDouble(weightsH.get(indice));
             }
             
             fila = weightsO.getDominio().getFila();
             columna = weightsO.getDominio().getColumna();
             
-            headBuffer.position(0);
-            headBuffer.order(ByteOrder.LITTLE_ENDIAN);
+            dos.writeInt(fila);
+            dos.writeInt(columna);
             
-            headBuffer.putInt(fila);
-            headBuffer.putInt(columna);
-            gzOut.write(headBuffer.array());
-            
-            bodyBuffer = ByteBuffer.allocate( fila * 8);
-            bodyBuffer.order(ByteOrder.LITTLE_ENDIAN);
-            
-            doubleBuffer = bodyBuffer.asDoubleBuffer();
             listado = weightsO.getDominio()
                     .stream()
                     .sorted(this::compareTo)
                     .collect(Collectors.toList());
             
             for ( ParOrdenado indice : listado) {
-                if(!doubleBuffer.hasRemaining()){
-                    gzOut.write(bodyBuffer.array());
-                    gzOut.flush();
-                    doubleBuffer.position(0);
-                }
-                doubleBuffer.put(weightsO.get(indice));
+                dos.writeInt(indice.getFila());
+                dos.writeInt(indice.getColumna());
+                dos.writeDouble(weightsO.get(indice));
+                
             }
             
          } catch (FileNotFoundException ex) {
@@ -703,49 +689,33 @@ public class VisLoad extends javax.swing.JFrame {
         try (
                 InputStream fis = Files.newInputStream(Paths.get(filename));
                 BufferedInputStream bis = new BufferedInputStream(fis);
-                GzipCompressorInputStream gzIn = new GzipCompressorInputStream(bis)
+                GzipCompressorInputStream gzIn = new GzipCompressorInputStream(bis);
+                DataInputStream dis = new DataInputStream(gzIn)
                 ) {
 
-            byte[] header = new byte[8];
-            
             Integer fila;
             Integer columna;
-            
-            bis.read(header);
-            ByteBuffer headBuffer = ByteBuffer.wrap(header);
-            headBuffer.order(ByteOrder.LITTLE_ENDIAN);
-            fila = headBuffer.getInt();
-            columna = headBuffer.getInt();
+
+            fila = dis.readInt();
+            columna = dis.readInt();
             
             log.info("leer <{}>, <{}>", fila, columna);
-            byte[] body = new byte[fila * 8];
             Dominio dominio = new Dominio(fila, columna);
             
-            ByteBuffer bodyBuffer;
             weightsH = new DoubleMatriz(dominio);
             
             List<ParOrdenado> listado = weightsH.getDominio()
                     .stream()
                     .sorted(this::compareTo)
                     .collect(Collectors.toList());
-            bodyBuffer = ByteBuffer.allocate(8);
             for ( ParOrdenado indice : listado) {
-                if (indice.getFila() == 0) {
-                    gzIn.read(body);
-                    bodyBuffer = ByteBuffer.wrap(body);
-                    bodyBuffer.order(ByteOrder.LITTLE_ENDIAN);
-                }
-                weightsH.indexa(indice.getFila(), indice.getColumna(), bodyBuffer.getDouble());
+                weightsH.indexa(dis.readInt(), dis.readInt(), dis.readDouble());
                 
             }
             
-            bis.read(header);
-            headBuffer = ByteBuffer.wrap(header);
-            headBuffer.order(ByteOrder.LITTLE_ENDIAN);
-            fila = headBuffer.getInt();
-            columna = headBuffer.getInt();
+            fila = dis.readInt();
+            columna = dis.readInt();
             
-            body = new byte[fila * 8];
             dominio = new Dominio(fila, columna);
             
             weightsO = new DoubleMatriz(dominio);
@@ -755,14 +725,9 @@ public class VisLoad extends javax.swing.JFrame {
                     .sorted(this::compareTo)
                     .collect(Collectors.toList());
             
-            bodyBuffer = ByteBuffer.allocate(8);
             for ( ParOrdenado indice : listado) {
-                if (indice.getFila() == 0) {
-                    gzIn.read(body);
-                    bodyBuffer = ByteBuffer.wrap(body);
-                    bodyBuffer.order(ByteOrder.LITTLE_ENDIAN);
-                }
-                weightsO.indexa(indice.getFila(), indice.getColumna(), bodyBuffer.getDouble());
+                
+                weightsO.indexa(dis.readInt(), dis.readInt(), dis.readDouble());
                 
             }
             
