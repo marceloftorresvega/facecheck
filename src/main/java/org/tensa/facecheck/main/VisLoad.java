@@ -714,6 +714,7 @@ public class VisLoad extends javax.swing.JFrame {
             fila = dis.readInt();
             columna = dis.readInt();
             
+            log.info("leer <{}>, <{}>", fila, columna);
             dominio = new Dominio(fila, columna);
             
             weightsO = new DoubleMatriz(dominio);
