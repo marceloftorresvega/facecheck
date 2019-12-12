@@ -773,7 +773,7 @@ public class VisLoad extends javax.swing.JFrame {
             fila = dis.readInt();
             columna = dis.readInt();
             
-            outNeurs.setValue((int)Math.sqrt(columna)/3);
+            outNeurs.setValue((int)Math.sqrt(fila)/3);
                         
             log.info("leer <{}>, <{}>", fila, columna);
             dominio = new Dominio(fila, columna);
