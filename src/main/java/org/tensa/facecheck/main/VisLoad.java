@@ -47,6 +47,7 @@ import org.tensa.facecheck.layer.impl.PixelsDirectInputLayer;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
 import org.tensa.tensada.matrix.Indice;
+import org.tensa.tensada.matrix.ParOrdenado;
 
 /**
  *
@@ -71,8 +72,9 @@ public class VisLoad extends javax.swing.JFrame {
     private BufferedImage bufferImageFiltered;
     private DoubleMatriz weightsH;
     private DoubleMatriz weightsO;
-    private int step;
-    private int rebaje;
+    private int inStep;
+    private int outStep;
+    private int hidStep;
     private Rectangle learnArea;
     private LinkedList<Rectangle> areaQeue;
     private boolean areaDelete = false;
@@ -169,6 +171,12 @@ public class VisLoad extends javax.swing.JFrame {
         cargar = new javax.swing.JButton();
         clean = new javax.swing.JButton();
         salva = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        inNeurs = new javax.swing.JSpinner();
+        jLabel2 = new javax.swing.JLabel();
+        hiddNeurs = new javax.swing.JSpinner();
+        jLabel3 = new javax.swing.JLabel();
+        outNeurs = new javax.swing.JSpinner();
         jPanel4 = new javax.swing.JPanel();
         procesar = new javax.swing.JButton();
         entrenar = new javax.swing.JCheckBox();
@@ -177,6 +185,7 @@ public class VisLoad extends javax.swing.JFrame {
         iteraciones = new javax.swing.JSpinner();
         jCheckBox1 = new javax.swing.JCheckBox();
         jButton3 = new javax.swing.JButton();
+        freno = new javax.swing.JToggleButton();
         jPanel5 = new javax.swing.JPanel();
         seleccion = new javax.swing.JCheckBox();
         jButton1 = new javax.swing.JButton();
