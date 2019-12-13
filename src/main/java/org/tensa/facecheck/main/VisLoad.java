@@ -21,15 +21,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.DoubleBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 import javax.swing.ComboBoxModel;
@@ -753,7 +749,7 @@ public class VisLoad extends javax.swing.JFrame {
             fila = dis.readInt();
             columna = dis.readInt();
             
-            inNeurs.setValue((int)Math.sqrt(columna)/3 );
+            inNeurs.setValue((int)Math.sqrt(columna/3));
             hiddNeurs.setValue(fila);
             
             log.info("leer <{}>, <{}>", fila, columna);
@@ -773,7 +769,7 @@ public class VisLoad extends javax.swing.JFrame {
             fila = dis.readInt();
             columna = dis.readInt();
             
-            outNeurs.setValue((int)Math.sqrt(fila)/3);
+            outNeurs.setValue((int)Math.sqrt(fila/3));
                         
             log.info("leer <{}>, <{}>", fila, columna);
             dominio = new Dominio(fila, columna);
