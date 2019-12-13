@@ -183,7 +183,7 @@ public class VisLoad extends javax.swing.JFrame {
         jCheckBox1 = new javax.swing.JCheckBox();
         jButton3 = new javax.swing.JButton();
         freno = new javax.swing.JToggleButton();
-        actualizacion = new javax.swing.JComboBox<>();
+        actualizacion = new javax.swing.JCheckBox();
         jPanel5 = new javax.swing.JPanel();
         seleccion = new javax.swing.JCheckBox();
         jButton1 = new javax.swing.JButton();
@@ -415,8 +415,8 @@ public class VisLoad extends javax.swing.JFrame {
 
         freno.setText("Freno");
 
-        actualizacion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "continua (lenta)", "por iteracion", "al final (mas rapida)" }));
-        actualizacion.setToolTipText("frecuencia de actualización, influye en desempeño");
+        actualizacion.setText("Continua");
+        actualizacion.setToolTipText("actualizacion de pantalla cada 30 segundos");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -440,8 +440,8 @@ public class VisLoad extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jButton3)
                 .addGap(18, 18, 18)
-                .addComponent(actualizacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(actualizacion)
+                .addContainerGap(70, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -455,7 +455,7 @@ public class VisLoad extends javax.swing.JFrame {
                     .addComponent(jCheckBox1)
                     .addComponent(jButton3)
                     .addComponent(freno)
-                    .addComponent(actualizacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(actualizacion))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -663,20 +663,13 @@ public class VisLoad extends javax.swing.JFrame {
                                 log.info("diferencia <{}>", pixelLeanringLayer.getError().get(Indice.D1));
                             }
                         });
-                        if (actualizacion.getSelectedIndex()==1) {
-                            java.awt.EventQueue.invokeLater(() -> {
-                                respuesta.repaint();
-                            });
-
-                        }
 
             }
-            if (actualizacion.getSelectedIndex()==2) {
-                java.awt.EventQueue.invokeLater(() -> {
-                    respuesta.repaint();
-                });
-
-            }
+            
+            java.awt.EventQueue.invokeLater(() -> {
+                respuesta.repaint();
+            });
+            
             procesar.setEnabled(true);
             jButton3.setEnabled(true);
             clean.setEnabled(true);
@@ -687,7 +680,7 @@ public class VisLoad extends javax.swing.JFrame {
             while (!procesar.isEnabled()) {
                 try {
                     Thread.sleep(30000);
-                    if (actualizacion.getSelectedIndex()==0) {
+                    if (actualizacion.isSelected()) {
                         java.awt.EventQueue.invokeLater(() -> {
                             respuesta.repaint();
                         });
@@ -1060,7 +1053,7 @@ public class VisLoad extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> actualizacion;
+    private javax.swing.JCheckBox actualizacion;
     private javax.swing.JButton cargaImagen;
     private javax.swing.JButton cargar;
     private javax.swing.JButton clean;
