@@ -163,6 +163,9 @@ public class VisLoad extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         suavizaResultado = new javax.swing.JButton();
         enmascaraResultado = new javax.swing.JButton();
+        cargaOriginal = new javax.swing.JButton();
+        cargaPreparada = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JSeparator();
         jPanel3 = new javax.swing.JPanel();
         cargar = new javax.swing.JButton();
         clean = new javax.swing.JButton();
@@ -270,11 +273,28 @@ public class VisLoad extends javax.swing.JFrame {
         });
 
         enmascaraResultado.setText("enmascara");
+        enmascaraResultado.setToolTipText("mascara de salida preparada sobre original");
         enmascaraResultado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 enmascaraResultadoActionPerformed(evt);
             }
         });
+
+        cargaOriginal.setText("Original");
+        cargaOriginal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cargaOriginalActionPerformed(evt);
+            }
+        });
+
+        cargaPreparada.setText("Preparada");
+        cargaPreparada.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cargaPreparadaActionPerformed(evt);
+            }
+        });
+
+        jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -282,18 +302,30 @@ public class VisLoad extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(cargaOriginal)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cargaPreparada)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(suavizaResultado)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(enmascaraResultado)
-                .addContainerGap(551, Short.MAX_VALUE))
+                .addContainerGap(354, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(suavizaResultado)
-                    .addComponent(enmascaraResultado))
+                    .addComponent(enmascaraResultado)
+                    .addComponent(cargaOriginal)
+                    .addComponent(cargaPreparada))
                 .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jSeparator1)
+                .addContainerGap())
         );
 
         jTabbedPane1.addTab("Pre proceso salida", null, jPanel2, "Pre proceso de imagen de salida");
@@ -868,6 +900,25 @@ public class VisLoad extends javax.swing.JFrame {
         areaDelete = false;
     }//GEN-LAST:event_jButton4ActionPerformed
 
+    private void cargaPreparadaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargaPreparadaActionPerformed
+        String _filename2 = System.getProperty("user.dir") + testBaseUrl + (String)jComboBox1.getSelectedItem() + sufxType;
+        log.info("directorio user <{}>",System.getProperty("user.dir"));
+        
+        try {
+            destBuffImage = ImageIO.read(new File(_filename2));
+            
+            java.awt.EventQueue.invokeLater(() -> {
+                vista.repaint();
+            });
+        } catch (IOException ex) {
+            log.error("error de archivo <{}>", _filename2, ex);
+        }
+    }//GEN-LAST:event_cargaPreparadaActionPerformed
+
+    private void cargaOriginalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargaOriginalActionPerformed
+        destBuffImage = buffImage;
+    }//GEN-LAST:event_cargaOriginalActionPerformed
+
     public BufferedImage createCompatibleDestImage(BufferedImage src, ColorModel destCM) {
         BufferedImage image;
 
@@ -1026,6 +1077,8 @@ public class VisLoad extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cargaImagen;
+    private javax.swing.JButton cargaOriginal;
+    private javax.swing.JButton cargaPreparada;
     private javax.swing.JButton cargar;
     private javax.swing.JButton clean;
     private javax.swing.JButton enmascaraResultado;
@@ -1050,6 +1103,7 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JSpinner outNeurs;

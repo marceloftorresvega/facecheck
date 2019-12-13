@@ -216,10 +216,16 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
+                          <Component id="cargaOriginal" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="cargaPreparada" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="jSeparator1" min="-2" pref="15" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="suavizaResultado" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="enmascaraResultado" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="551" max="32767" attributes="0"/>
+                          <EmptySpace pref="354" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -229,8 +235,15 @@
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="suavizaResultado" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="enmascaraResultado" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="cargaOriginal" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="cargaPreparada" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="jSeparator1" max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -247,10 +260,32 @@
                 <Component class="javax.swing.JButton" name="enmascaraResultado">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="enmascara"/>
+                    <Property name="toolTipText" type="java.lang.String" value="mascara de salida preparada sobre original"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="enmascaraResultadoActionPerformed"/>
                   </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="cargaOriginal">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Original"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cargaOriginalActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="cargaPreparada">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Preparada"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cargaPreparadaActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JSeparator" name="jSeparator1">
+                  <Properties>
+                    <Property name="orientation" type="int" value="1"/>
+                  </Properties>
                 </Component>
               </SubComponents>
             </Container>
