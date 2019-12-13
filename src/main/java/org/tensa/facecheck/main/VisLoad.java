@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 import javax.swing.ComboBoxModel;
@@ -182,6 +183,7 @@ public class VisLoad extends javax.swing.JFrame {
         jCheckBox1 = new javax.swing.JCheckBox();
         jButton3 = new javax.swing.JButton();
         freno = new javax.swing.JToggleButton();
+        actualizacion = new javax.swing.JComboBox<>();
         jPanel5 = new javax.swing.JPanel();
         seleccion = new javax.swing.JCheckBox();
         jButton1 = new javax.swing.JButton();
@@ -285,7 +287,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(suavizaResultado)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(enmascaraResultado)
-                .addContainerGap(551, Short.MAX_VALUE))
+                .addContainerGap(658, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -357,7 +359,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(outNeurs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(107, Short.MAX_VALUE))
+                .addContainerGap(214, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -386,6 +388,7 @@ public class VisLoad extends javax.swing.JFrame {
 
         entrenar.setSelected(true);
         entrenar.setText("entrenar");
+        entrenar.setToolTipText("modo de proceso");
 
         hiddenLearningRate.setModel(new javax.swing.SpinnerNumberModel(1.0d, 1.0d, 24.0d, 1.0d));
         hiddenLearningRate.setToolTipText("de capa oculta");
@@ -412,6 +415,9 @@ public class VisLoad extends javax.swing.JFrame {
 
         freno.setText("Freno");
 
+        actualizacion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "continua (lenta)", "por iteracion", "al final (mas rapida)" }));
+        actualizacion.setToolTipText("frecuencia de actualización, influye en desempeño");
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -419,7 +425,9 @@ public class VisLoad extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(procesar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(freno)
+                .addGap(12, 12, 12)
                 .addComponent(entrenar)
                 .addGap(18, 18, 18)
                 .addComponent(hiddenLearningRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -431,8 +439,8 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jCheckBox1)
                 .addGap(18, 18, 18)
                 .addComponent(jButton3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(freno)
+                .addGap(18, 18, 18)
+                .addComponent(actualizacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
@@ -446,7 +454,8 @@ public class VisLoad extends javax.swing.JFrame {
                     .addComponent(iteraciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jCheckBox1)
                     .addComponent(jButton3)
-                    .addComponent(freno))
+                    .addComponent(freno)
+                    .addComponent(actualizacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -494,7 +503,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jButton2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton4)
-                .addContainerGap(205, Short.MAX_VALUE))
+                .addContainerGap(312, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -616,6 +625,7 @@ public class VisLoad extends javax.swing.JFrame {
         
             for(int idIteracion=0; (!freno.isSelected()) && entrenar.isSelected() && idIteracion<1 || idIteracion<((Integer) iteraciones.getValue()); idIteracion++) {
 
+                log.info("iteracion <{}>", idIteracion);
                 new Dominio(width-inStep, height-inStep).stream()
                         .filter( idx -> (( (idx.getFila()-(inStep-outStep)/2) % outStep ==0) && ((idx.getColumna()-(inStep-outStep)/2)% outStep == 0)))
                         .filter(idx -> (!seleccion.isSelected()) || ( areaQeue.stream().anyMatch(a -> a.contains(idx.getFila(), idx.getColumna()))) )
@@ -650,13 +660,21 @@ public class VisLoad extends javax.swing.JFrame {
                                 pixelLeanringLayer.setCompareToLayer(simplePixelsCompareLayer.getOutputLayer());
 
                                 pixelLeanringLayer.adjustBack();
-                                log.info("      error <{}>", pixelLeanringLayer.getError().get(Indice.D1));
+                                log.info("diferencia <{}>", pixelLeanringLayer.getError().get(Indice.D1));
                             }
+                        });
+                        if (actualizacion.getSelectedIndex()==1) {
                             java.awt.EventQueue.invokeLater(() -> {
-                                vista.repaint();
                                 respuesta.repaint();
                             });
-                        });
+
+                        }
+
+            }
+            if (actualizacion.getSelectedIndex()==2) {
+                java.awt.EventQueue.invokeLater(() -> {
+                    respuesta.repaint();
+                });
 
             }
             procesar.setEnabled(true);
@@ -664,6 +682,23 @@ public class VisLoad extends javax.swing.JFrame {
             clean.setEnabled(true);
             freno.setSelected(false);
         }).start();
+        
+        new Thread( () -> {
+            while (!procesar.isEnabled()) {
+                try {
+                    Thread.sleep(30000);
+                    if (actualizacion.getSelectedIndex()==0) {
+                        java.awt.EventQueue.invokeLater(() -> {
+                            respuesta.repaint();
+                        });
+                        
+                    }
+                } catch (InterruptedException ex) {
+                   log.error("error en actualizador", ex);
+                }
+            }
+            
+        });
     }//GEN-LAST:event_procesarActionPerformed
 
     private void cleanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanActionPerformed
@@ -1025,6 +1060,7 @@ public class VisLoad extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> actualizacion;
     private javax.swing.JButton cargaImagen;
     private javax.swing.JButton cargar;
     private javax.swing.JButton clean;
