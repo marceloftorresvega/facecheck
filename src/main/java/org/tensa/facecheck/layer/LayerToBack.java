@@ -27,20 +27,44 @@ import java.util.List;
 import org.tensa.tensada.matrix.DoubleMatriz;
 
 /**
- *
+ * ejecucion de metodos backpropagation
+ * calcula valores de error y propaga
  * @author Marcelo
  */
 public interface LayerToBack {
     
+    /**
+     * resultados para la propagacion del error
+     * @return matriz de pesos de error
+     */
     DoubleMatriz getToBackLayer();
     
+    /**
+     * error medio de la capa
+     * @return matriz de error (1 valor)
+     */
     DoubleMatriz getError();
     
+    /**
+     * retorna valor de ajuste para los pesos
+     * @return número entre 0 y 1
+     */
     Double getLeanringStep();
     
+    /**
+     * se adquiere valores deseados para aprendisaje supervizado
+     * @param compare matriz de valores para comparar
+     */
     void setCompareToLayer(DoubleMatriz compare);
     
+    /**
+     * procesa valores deseados versus valores producidos y propaga error
+     */
     void adjustBack();
     
+    /**
+     * retorna el listado de capas que reciben la propagacion del error
+     * @return listado de capas
+     */
     List<LayerToBack> getProducers();
 }
