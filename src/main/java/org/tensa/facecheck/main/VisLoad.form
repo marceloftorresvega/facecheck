@@ -321,7 +321,7 @@
                           <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="outNeurs" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="107" max="32767" attributes="0"/>
+                          <EmptySpace pref="214" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -425,7 +425,9 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="procesar" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="freno" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                           <Component id="entrenar" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="hiddenLearningRate" min="-2" max="-2" attributes="0"/>
@@ -437,9 +439,9 @@
                           <Component id="jCheckBox1" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="jButton3" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="freno" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="actualizacion" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="70" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -455,6 +457,7 @@
                               <Component id="jCheckBox1" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jButton3" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="freno" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="actualizacion" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
@@ -474,6 +477,7 @@
                   <Properties>
                     <Property name="selected" type="boolean" value="true"/>
                     <Property name="text" type="java.lang.String" value="entrenar"/>
+                    <Property name="toolTipText" type="java.lang.String" value="modo de proceso"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JSpinner" name="hiddenLearningRate">
@@ -521,6 +525,12 @@
                     <Property name="text" type="java.lang.String" value="Freno"/>
                   </Properties>
                 </Component>
+                <Component class="javax.swing.JCheckBox" name="actualizacion">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Continua"/>
+                    <Property name="toolTipText" type="java.lang.String" value="actualizacion de pantalla cada 30 segundos"/>
+                  </Properties>
+                </Component>
               </SubComponents>
             </Container>
             <Container class="javax.swing.JPanel" name="jPanel5">
@@ -544,7 +554,7 @@
                           <Component id="jButton2" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jButton4" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="205" max="32767" attributes="0"/>
+                          <EmptySpace pref="312" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
