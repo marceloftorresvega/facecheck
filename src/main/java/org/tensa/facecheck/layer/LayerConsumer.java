@@ -26,18 +26,38 @@ package org.tensa.facecheck.layer;
 import org.tensa.tensada.matrix.DoubleMatriz;
 
 /**
- *
+ * consumidor de resultados de otra capa
  * @author Marcelo
  */
 public interface LayerConsumer {
     
+    /**
+     * estado de proceso correcto
+     */
     public static final int SUCCESS_STATUS = 0;
+
+    /**
+     * estado de proceso erroneo
+     */
     public static final int ERROR_STATUS = 1;
     
+    /**
+     * carga datos de entrada producido por otra capa
+     * @param inputLayer
+     * @return la misma matriz de entrada o una equivalente
+     */
     DoubleMatriz seInputLayer(DoubleMatriz inputLayer);
     
+    /**
+     * se obtienen pesos utilizados por la capa
+     * @return retorna matriz de pesos
+     */
     DoubleMatriz getWeights();
     
+    /**
+     * consume datos de entrada y realiza proceso por los pesos
+     * @param status @see LayerConsumer.SUCCESS_STATUS suministrado al procedimiento
+     */
     void layerComplete(int status);
     
 }

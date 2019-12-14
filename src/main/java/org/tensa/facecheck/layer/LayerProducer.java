@@ -27,15 +27,26 @@ import java.util.List;
 import org.tensa.tensada.matrix.DoubleMatriz;
 
 /**
- *
+ * produccion de resultados
  * @author Marcelo
  */
 public interface LayerProducer {
     
+    /**
+     * resultados salida producidos por la capa
+     * @return
+     */
     DoubleMatriz getOutputLayer();
     
+    /**
+     * realiza produccion de la salida
+     */
     void startProduction();
     
+    /**
+     * retorna listado de consumidores de la salida de la capa
+     * @return
+     */
     List<LayerConsumer> getConsumers();
     
 }
