@@ -114,7 +114,8 @@ public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements Laye
         error = (DoubleMatriz) outputLayer.matrizUno().substraccion(outputLayer);
         error.replaceAll((i,v) -> v * outputLayer.get(i) * compareToLayer.get(i));
         
-        toBackLayer = (DoubleMatriz) weights.productoPunto(error);
+//        toBackLayer = (DoubleMatriz) weights.productoPunto(error);
+        toBackLayer = (DoubleMatriz) error.productoPunto(weights).transpuesta();
         
         NumericMatriz<Double> delta = error.productoTensorial(inputLayer).productoEscalar(learningStep);
         NumericMatriz<Double> adicion = weights.adicion(delta);
