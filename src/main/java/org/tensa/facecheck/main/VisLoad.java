@@ -603,6 +603,7 @@ public class VisLoad extends javax.swing.JFrame {
             
             java.awt.EventQueue.invokeLater(() -> {
                 vista.repaint();
+                respuesta.repaint();
             });
         } catch (IOException ex) {
             log.error("error de archivo <{}>", _filename1, ex);
@@ -654,7 +655,7 @@ public class VisLoad extends javax.swing.JFrame {
             jButton3.setEnabled(false);
             clean.setEnabled(false);
         
-            for(int idIteracion=0; (!freno.isSelected()) && entrenar.isSelected() && idIteracion<1 || idIteracion<((Integer) iteraciones.getValue()); idIteracion++) {
+            for(int idIteracion=0; (!freno.isSelected()) && (entrenar.isSelected() && idIteracion<1 || (!entrenar.isSelected()) && idIteracion<((Integer) iteraciones.getValue())); idIteracion++) {
 
                 log.info("iteracion <{}>", idIteracion);
                 new Dominio(width-inStep, height-inStep).stream()
@@ -712,9 +713,11 @@ public class VisLoad extends javax.swing.JFrame {
                 try {
                     Thread.sleep(30000);
                     if (actualizacion.isSelected()) {
-                        java.awt.EventQueue.invokeLater(() -> {
+                        synchronized(respuesta){
+//                        java.awt.EventQueue.invokeLater(() -> {
                             respuesta.repaint();
-                        });
+//                        });
+                        }
                         
                     }
                 } catch (InterruptedException ex) {
