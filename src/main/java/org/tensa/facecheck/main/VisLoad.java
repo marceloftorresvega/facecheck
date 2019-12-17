@@ -655,7 +655,7 @@ public class VisLoad extends javax.swing.JFrame {
             jButton3.setEnabled(false);
             clean.setEnabled(false);
         
-            for(int idIteracion=0; (!freno.isSelected()) && (entrenar.isSelected() && idIteracion<1 || (!entrenar.isSelected()) && idIteracion<((Integer) iteraciones.getValue())); idIteracion++) {
+            for(int idIteracion=0; (!freno.isSelected()) && ((!entrenar.isSelected()) && idIteracion<1 || entrenar.isSelected() && idIteracion<((Integer) iteraciones.getValue())); idIteracion++) {
 
                 log.info("iteracion <{}>", idIteracion);
                 new Dominio(width-inStep, height-inStep).stream()
@@ -716,16 +716,20 @@ public class VisLoad extends javax.swing.JFrame {
                         synchronized(respuesta){
 //                        java.awt.EventQueue.invokeLater(() -> {
                             respuesta.repaint();
+                            log.info("realiza actualizacion");
 //                        });
                         }
                         
+                    } else {
+                        log.info("no realiza actualizacion");
                     }
                 } catch (InterruptedException ex) {
                    log.error("error en actualizador", ex);
                 }
             }
+            log.info("finaliza actualizador");
             
-        });
+        }).start();
     }//GEN-LAST:event_procesarActionPerformed
 
     private void cleanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanActionPerformed
