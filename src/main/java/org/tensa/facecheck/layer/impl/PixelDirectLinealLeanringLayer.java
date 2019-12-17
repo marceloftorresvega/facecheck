@@ -91,7 +91,8 @@ public class PixelDirectLinealLeanringLayer extends ArrayList<LayerToBack> imple
     @Override
     public void adjustBack() {
         error = (DoubleMatriz)compareToLayer.substraccion(outputLayer);
-        toBackLayer = (DoubleMatriz) weights.productoPunto(error);
+//        toBackLayer = (DoubleMatriz) weights.productoPunto(error);
+        toBackLayer = (DoubleMatriz) error.productoPunto(weights).transpuesta();
         
         NumericMatriz<Double> delta = inputLayer.productoTensorial(error).productoEscalar(learningStep);
         NumericMatriz<Double> adicion = weights.adicion(delta);
