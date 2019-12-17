@@ -729,7 +729,7 @@ public class VisLoad extends javax.swing.JFrame {
             }
             log.info("finaliza actualizador");
             
-        });
+        }).start();
     }//GEN-LAST:event_procesarActionPerformed
 
     private void cleanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanActionPerformed
