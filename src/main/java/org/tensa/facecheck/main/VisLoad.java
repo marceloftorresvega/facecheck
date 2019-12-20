@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 import javax.swing.ComboBoxModel;
@@ -738,13 +739,19 @@ public class VisLoad extends javax.swing.JFrame {
         hidStep = (Integer)hiddNeurs.getValue();
         outStep = (Integer)outNeurs.getValue();
         
-        log.info("iniciando 1...<{},{}>",hidStep, inStep*inStep*3);
-        weightsH = (DoubleMatriz)new DoubleMatriz(new Dominio(hidStep, inStep*inStep*3)).matrizUno();
-        weightsH = (DoubleMatriz)weightsH.productoEscalar( 1.0 / Math.sqrt( hidStep * inStep*inStep*3 ) );
+        int inSize = inStep*inStep*3;
+        int outSize = outStep*outStep*3;
         
-        log.info("iniciando 2...<{},{}>",outStep*outStep*3, hidStep);
-        weightsO = (DoubleMatriz)new DoubleMatriz(new Dominio(outStep*outStep*3, hidStep)).matrizUno();
-        weightsO = (DoubleMatriz)weightsO.productoEscalar( 1.0 / Math.sqrt( hidStep * outStep*outStep*3 ) );
+        log.info("iniciando 1...<{},{}>",hidStep, inSize);
+        weightsH = (DoubleMatriz)new DoubleMatriz(new Dominio(hidStep, inSize)).matrizUno();
+        weightsH.replaceAll((ParOrdenado i, Double v) -> 0.5 - Math.cos( Math.PI * (i.getColumna() / inSize + i.getFila()/ hidStep) ) );
+        weightsH = (DoubleMatriz)weightsH.productoEscalar( hidStep / Math.sqrt(weightsH.distanciaE2().get(Indice.D1)) );
+        
+        log.info("iniciando 2...<{},{}>",outSize, hidStep);
+        weightsO = (DoubleMatriz)new DoubleMatriz(new Dominio(outSize, hidStep)).matrizUno();
+        weightsO.replaceAll((ParOrdenado i, Double v) -> 0.5 - Math.cos( Math.PI * (i.getColumna() / hidStep + i.getFila()/ outSize) ) );
+        weightsO = (DoubleMatriz)weightsO.productoEscalar( hidStep/ Math.sqrt(weightsO.distanciaE2().get(Indice.D1)) );
+        
     }//GEN-LAST:event_cleanActionPerformed
 
     private void salvaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salvaActionPerformed
