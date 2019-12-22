@@ -742,15 +742,19 @@ public class VisLoad extends javax.swing.JFrame {
         int inSize = inStep*inStep*3;
         int outSize = outStep*outStep*3;
         
-        log.info("iniciando 1...<{},{}>",hidStep, inSize);
+        log.info("iniciando 1.0..<{},{}>",hidStep, inSize);
         weightsH = (DoubleMatriz)new DoubleMatriz(new Dominio(hidStep, inSize)).matrizUno();
-        weightsH.replaceAll((ParOrdenado i, Double v) -> 0.5 - Math.cos( Math.PI * (i.getColumna() / inSize + i.getFila()/ hidStep) ) );
-        weightsH = (DoubleMatriz)weightsH.productoEscalar( hidStep / Math.sqrt(weightsH.distanciaE2().get(Indice.D1)) );
+        log.info("iniciando 1.1..<{},{}>",hidStep, inSize);
+        weightsH.replaceAll((ParOrdenado i, Double v) -> Math.cos( Math.PI * (i.getColumna() / inSize + i.getFila()/ hidStep) ) );
+//        log.info("iniciando 1.2..<{},{}>",hidStep, inSize);
+//        weightsH = (DoubleMatriz)weightsH.productoEscalar( hidStep / Math.sqrt(weightsH.distanciaE2().get(Indice.D1)) );
         
-        log.info("iniciando 2...<{},{}>",outSize, hidStep);
+        log.info("iniciando 2.0..<{},{}>",outSize, hidStep);
         weightsO = (DoubleMatriz)new DoubleMatriz(new Dominio(outSize, hidStep)).matrizUno();
-        weightsO.replaceAll((ParOrdenado i, Double v) -> 0.5 - Math.cos( Math.PI * (i.getColumna() / hidStep + i.getFila()/ outSize) ) );
-        weightsO = (DoubleMatriz)weightsO.productoEscalar( hidStep/ Math.sqrt(weightsO.distanciaE2().get(Indice.D1)) );
+        log.info("iniciando 2.1..<{},{}>",outSize, hidStep);
+        weightsO.replaceAll((ParOrdenado i, Double v) -> -Math.cos( Math.PI * (i.getColumna() / hidStep + i.getFila()/ outSize) ) );
+//        log.info("iniciando 2.2..<{},{}>",outSize, hidStep);
+//        weightsO = (DoubleMatriz)weightsO.productoEscalar( hidStep/ Math.sqrt(weightsO.distanciaE2().get(Indice.D1)) );
         
     }//GEN-LAST:event_cleanActionPerformed
 
@@ -1069,7 +1073,7 @@ public class VisLoad extends javax.swing.JFrame {
                     Graphics2D localg = (Graphics2D)g;
                     float escala = (float)respuesta.getBounds().width / (float)bufferImageFiltered.getWidth();
                     AffineTransform xforM = AffineTransform.getScaleInstance(escala, escala);
-                    AffineTransformOp rop = new AffineTransformOp(xforM, AffineTransformOp.TYPE_BILINEAR);
+                    AffineTransformOp rop = new AffineTransformOp(xforM, AffineTransformOp.TYPE_BICUBIC);
                     localg.drawImage(bufferImageFiltered, rop, 0     , 0);
                     
                 }
