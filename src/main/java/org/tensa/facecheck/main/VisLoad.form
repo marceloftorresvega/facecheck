@@ -441,7 +441,7 @@
                           <Component id="jButton3" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="actualizacion" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="70" max="32767" attributes="0"/>
+                          <EmptySpace pref="100" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -482,16 +482,16 @@
                 </Component>
                 <Component class="javax.swing.JSpinner" name="hiddenLearningRate">
                   <Properties>
-                    <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-                      <SpinnerModel initial="1.0" maximum="24.0" minimum="1.0" numberType="java.lang.Double" stepSize="1.0" type="number"/>
+                    <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="getSpinnerModel()" type="code"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" value="de capa oculta"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JSpinner" name="outputLearningRate">
                   <Properties>
-                    <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-                      <SpinnerModel initial="1.0" maximum="24.0" minimum="1.0" numberType="java.lang.Double" stepSize="1.0" type="number"/>
+                    <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="getSpinnerModel()" type="code"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" value="de capa de salida"/>
                   </Properties>

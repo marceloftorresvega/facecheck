@@ -32,6 +32,9 @@ import javax.imageio.ImageIO;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JPanel;
+import javax.swing.SpinnerListModel;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.slf4j.Logger;
@@ -59,6 +62,8 @@ public class VisLoad extends javax.swing.JFrame {
     private final String weightUrl = "\\data\\";
     
     private final String[] imageName = {"IMG_2869", "IMG_2918","IMG_3071","IMG_3076","IMG_3078","IMG_3079"};
+    
+    private final Double[] learningFactor = {.001, 0.003, .004, .005, .008, .01, .03, .04, .05, .08, .1, .3, .4, .5, .8};
 
     private final String sufxType = ".jpg";
     private ComboBoxModel comboModel;
@@ -88,6 +93,12 @@ public class VisLoad extends javax.swing.JFrame {
             
         return comboModel;
       
+    }
+    
+    public SpinnerModel getSpinnerModel(){
+//        if(Objects.isNull(spinnerModel))
+        SpinnerListModel spinnerModel = new SpinnerListModel(learningFactor);
+        return spinnerModel;
     }
 
     /**
@@ -422,10 +433,10 @@ public class VisLoad extends javax.swing.JFrame {
         entrenar.setText("entrenar");
         entrenar.setToolTipText("modo de proceso");
 
-        hiddenLearningRate.setModel(new javax.swing.SpinnerNumberModel(1.0d, 1.0d, 24.0d, 1.0d));
+        hiddenLearningRate.setModel(getSpinnerModel());
         hiddenLearningRate.setToolTipText("de capa oculta");
 
-        outputLearningRate.setModel(new javax.swing.SpinnerNumberModel(1.0d, 1.0d, 24.0d, 1.0d));
+        outputLearningRate.setModel(getSpinnerModel());
         outputLearningRate.setToolTipText("de capa de salida");
 
         iteraciones.setModel(new javax.swing.SpinnerNumberModel(50, 1, 500, 10));
@@ -473,7 +484,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jButton3)
                 .addGap(18, 18, 18)
                 .addComponent(actualizacion)
-                .addContainerGap(70, Short.MAX_VALUE))
+                .addContainerGap(100, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -671,8 +682,8 @@ public class VisLoad extends javax.swing.JFrame {
 
                             PixelsDirectInputLayer simplePixelsInputLayer = new PixelsDirectInputLayer();
                             PixelsDirectInputLayer simplePixelsCompareLayer = new PixelsDirectInputLayer();
-                            HiddenSigmoidLayer hiddenLayer = new HiddenSigmoidLayer(weightsH,  Math.pow(10, -(Double)hiddenLearningRate.getValue()));
-                            PixelDirectSigmoidLeanringLayer pixelLeanringLayer = new PixelDirectSigmoidLeanringLayer(weightsO, Math.pow(10, -(Double)outputLearningRate.getValue()));
+                            HiddenSigmoidLayer hiddenLayer = new HiddenSigmoidLayer(weightsH,  (Double)hiddenLearningRate.getValue());
+                            PixelDirectSigmoidLeanringLayer pixelLeanringLayer = new PixelDirectSigmoidLeanringLayer(weightsO, (Double)outputLearningRate.getValue());
                             PixelsDirectSigmoidOutputLayer pixelsOutputLayer = new PixelsDirectSigmoidOutputLayer(null);
 
                             simplePixelsInputLayer.getConsumers().add(hiddenLayer);
