@@ -612,7 +612,7 @@ public class VisLoad extends javax.swing.JFrame {
             buffImage = ImageIO.read(new File(_filename1));
             
             destBuffImage = ImageIO.read(new File(_filename2));
-            
+            bufferImageFiltered = destBuffImage;
             java.awt.EventQueue.invokeLater(() -> {
                 vista.repaint();
                 respuesta.repaint();
@@ -962,6 +962,7 @@ public class VisLoad extends javax.swing.JFrame {
         
         try {
             destBuffImage = ImageIO.read(new File(_filename2));
+            bufferImageFiltered = destBuffImage;
             
             java.awt.EventQueue.invokeLater(() -> {
                 vista.repaint();
@@ -973,6 +974,7 @@ public class VisLoad extends javax.swing.JFrame {
 
     private void cargaOriginalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargaOriginalActionPerformed
         destBuffImage = buffImage;
+        bufferImageFiltered = destBuffImage;
         java.awt.EventQueue.invokeLater(() -> {
             respuesta.repaint();
         });
