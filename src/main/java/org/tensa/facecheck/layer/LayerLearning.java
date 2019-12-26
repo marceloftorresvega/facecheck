@@ -47,9 +47,9 @@ public interface LayerLearning {
     
     /**
      * retorna valor de ajuste para los pesos
-     * @return número entre 0 y 1
+     * @return the java.lang.Double
      */
-    Double getLeanringStep();
+    Double getLeanringFactor();
     
     /**
      * se adquiere valores deseados para aprendisaje supervizado

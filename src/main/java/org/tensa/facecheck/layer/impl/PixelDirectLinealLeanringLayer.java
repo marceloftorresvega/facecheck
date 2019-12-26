@@ -118,7 +118,7 @@ public class PixelDirectLinealLeanringLayer extends ArrayList<LayerLearning> imp
     }
 
     @Override
-    public Double getLeanringStep() {
+    public Double getLeanringFactor() {
         return learningStep;
     }
 

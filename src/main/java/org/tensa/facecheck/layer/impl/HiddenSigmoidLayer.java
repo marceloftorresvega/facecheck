@@ -143,7 +143,7 @@ public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements Laye
     }
 
     @Override
-    public Double getLeanringStep() {
+    public Double getLeanringFactor() {
         return learningStep;
     }
 

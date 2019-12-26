@@ -122,7 +122,7 @@ public class PixelDirectSigmoidLeanringLayer extends ArrayList<LayerLearning> im
     }
 
     @Override
-    public Double getLeanringStep() {
+    public Double getLeanringFactor() {
         return learningStep;
     }
 
