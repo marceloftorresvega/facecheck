@@ -53,9 +53,9 @@ public interface LayerLearning {
     
     /**
      * se adquiere valores deseados para aprendisaje supervizado
-     * @param compare matriz de valores para comparar
+     * @param learningData matriz de valores para comparar
      */
-    void setCompareToLayer(DoubleMatriz compare);
+    void setLearningData(DoubleMatriz learningData);
     
     /**
      * procesa valores deseados versus valores producidos y propaga error

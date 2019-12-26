@@ -105,8 +105,8 @@ public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements Laye
     }
 
     @Override
-    public void setCompareToLayer(DoubleMatriz compare) {
-        this.compareToLayer = compare;
+    public void setLearningData(DoubleMatriz learningData) {
+        this.compareToLayer = learningData;
     }
 
     @Override
@@ -126,7 +126,7 @@ public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements Laye
         
         
         for(LayerLearning back : getProducers()) {
-            back.setCompareToLayer(toBackLayer);
+            back.setLearningData(toBackLayer);
             back.adjustBack();
         }
         getProducers().clear();

@@ -699,7 +699,7 @@ public class VisLoad extends javax.swing.JFrame {
                                 BufferedImage comp = destBuffImage.getSubimage(i + (inStep-outStep)/2, j + (inStep-outStep)/2, outStep, outStep);
                                 simplePixelsCompareLayer.setSrc(comp);
                                 simplePixelsCompareLayer.startProduction();
-                                pixelLeanringLayer.setCompareToLayer(simplePixelsCompareLayer.getOutputLayer());
+                                pixelLeanringLayer.setLearningData(simplePixelsCompareLayer.getOutputLayer());
 
                                 pixelLeanringLayer.adjustBack();
                                 log.info("diferencia <{}>", pixelLeanringLayer.getError().get(Indice.D1));

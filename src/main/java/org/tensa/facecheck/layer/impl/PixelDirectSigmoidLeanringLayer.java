@@ -85,8 +85,8 @@ public class PixelDirectSigmoidLeanringLayer extends ArrayList<LayerLearning> im
     }
 
     @Override
-    public void setCompareToLayer(DoubleMatriz compare) {
-        this.compareToLayer = compare;
+    public void setLearningData(DoubleMatriz learningData) {
+        this.compareToLayer = learningData;
     }
 
     @Override
@@ -106,7 +106,7 @@ public class PixelDirectSigmoidLeanringLayer extends ArrayList<LayerLearning> im
         }
         
         for(LayerLearning back : getProducers()) {
-            back.setCompareToLayer(toBackLayer);
+            back.setLearningData(toBackLayer);
             back.adjustBack();
         }
         getProducers().clear();
