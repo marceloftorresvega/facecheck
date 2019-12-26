@@ -47,14 +47,14 @@ public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements Laye
     private DoubleMatriz outputLayer;
     private DoubleMatriz inputLayer;
     
-    private DoubleMatriz toBackLayer;
-    private DoubleMatriz compareToLayer;
+    private DoubleMatriz propagationError;
+    private DoubleMatriz learningData;
     private DoubleMatriz error;
-    private final Double learningStep;
+    private final Double learningFactor;
 
     public HiddenSigmoidLayer(DoubleMatriz weights, Double learningStep) {
         this.weights = weights;
-        this.learningStep = learningStep;
+        this.learningFactor = learningStep;
     }
 
     @Override
@@ -101,23 +101,23 @@ public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements Laye
 
     @Override
     public DoubleMatriz getPropagationError() {
-        return toBackLayer;
+        return propagationError;
     }
 
     @Override
     public void setLearningData(DoubleMatriz learningData) {
-        this.compareToLayer = learningData;
+        this.learningData = learningData;
     }
 
     @Override
     public void adjustBack() {
         error = (DoubleMatriz) outputLayer.matrizUno().substraccion(outputLayer);
-        error.replaceAll((i,v) -> v * outputLayer.get(i) * compareToLayer.get(i));
+        error.replaceAll((i,v) -> v * outputLayer.get(i) * learningData.get(i));
         
 //        toBackLayer = (DoubleMatriz) weights.productoPunto(error);
-        toBackLayer = (DoubleMatriz) error.productoPunto(weights).transpuesta();
+        propagationError = (DoubleMatriz) error.productoPunto(weights).transpuesta();
         
-        NumericMatriz<Double> delta = error.productoTensorial(inputLayer).productoEscalar(learningStep);
+        NumericMatriz<Double> delta = error.productoTensorial(inputLayer).productoEscalar(learningFactor);
         NumericMatriz<Double> adicion = weights.adicion(delta);
         synchronized(weights){
             weights.putAll(adicion);
@@ -126,7 +126,7 @@ public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements Laye
         
         
         for(LayerLearning back : getProducers()) {
-            back.setLearningData(toBackLayer);
+            back.setLearningData(propagationError);
             back.adjustBack();
         }
         getProducers().clear();
@@ -144,7 +144,7 @@ public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements Laye
 
     @Override
     public Double getLeanringFactor() {
-        return learningStep;
+        return learningFactor;
     }
 
     @Override

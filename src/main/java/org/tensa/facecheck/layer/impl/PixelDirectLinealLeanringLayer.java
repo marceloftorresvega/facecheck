@@ -47,15 +47,15 @@ public class PixelDirectLinealLeanringLayer extends ArrayList<LayerLearning> imp
     private DoubleMatriz outputLayer;
     private DoubleMatriz inputLayer;
     
-    private DoubleMatriz toBackLayer;
-    private DoubleMatriz compareToLayer;
+    private DoubleMatriz propagationError;
+    private DoubleMatriz learningData;
     private DoubleMatriz error;
-    private final Double learningStep;
+    private final Double learningFactor;
     private final List<LayerConsumer> consumers;
 
     public PixelDirectLinealLeanringLayer(DoubleMatriz weights, Double learningStep) {
         this.weights = weights;
-        this.learningStep = learningStep;
+        this.learningFactor = learningStep;
         this.consumers = new ArrayList<>();
     }
 
@@ -80,21 +80,21 @@ public class PixelDirectLinealLeanringLayer extends ArrayList<LayerLearning> imp
 
     @Override
     public DoubleMatriz getPropagationError() {
-        return toBackLayer;
+        return propagationError;
     }
 
     @Override
     public void setLearningData(DoubleMatriz learningData) {
-        this.compareToLayer = learningData;
+        this.learningData = learningData;
     }
 
     @Override
     public void adjustBack() {
-        error = (DoubleMatriz)compareToLayer.substraccion(outputLayer);
+        error = (DoubleMatriz)learningData.substraccion(outputLayer);
 //        toBackLayer = (DoubleMatriz) weights.productoPunto(error);
-        toBackLayer = (DoubleMatriz) error.productoPunto(weights).transpuesta();
+        propagationError = (DoubleMatriz) error.productoPunto(weights).transpuesta();
         
-        NumericMatriz<Double> delta = inputLayer.productoTensorial(error).productoEscalar(learningStep);
+        NumericMatriz<Double> delta = inputLayer.productoTensorial(error).productoEscalar(learningFactor);
         NumericMatriz<Double> adicion = weights.adicion(delta);
         synchronized(weights){
             weights.putAll(adicion);
@@ -102,7 +102,7 @@ public class PixelDirectLinealLeanringLayer extends ArrayList<LayerLearning> imp
         }
         
         for(LayerLearning back : getProducers()) {
-            back.setLearningData(toBackLayer);
+            back.setLearningData(propagationError);
             back.adjustBack();
         }
         this.clear();
@@ -119,7 +119,7 @@ public class PixelDirectLinealLeanringLayer extends ArrayList<LayerLearning> imp
 
     @Override
     public Double getLeanringFactor() {
-        return learningStep;
+        return learningFactor;
     }
 
     @Override
