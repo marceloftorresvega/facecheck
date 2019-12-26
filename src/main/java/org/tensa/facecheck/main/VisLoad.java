@@ -31,6 +31,8 @@ import javax.imageio.ImageIO;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JPanel;
+import javax.swing.SpinnerListModel;
+import javax.swing.SpinnerModel;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.slf4j.Logger;
@@ -58,6 +60,8 @@ public class VisLoad extends javax.swing.JFrame {
     private final String weightUrl = "\\data\\";
     
     private final String[] imageName = {"IMG_2869", "IMG_2918","IMG_3071","IMG_3076","IMG_3078","IMG_3079"};
+    
+    private final Double[] learningFactor = {.001, 0.003, .004, .005, .008, .01, .03, .04, .05, .08, .1, .3, .4, .5, .8};
 
     private final String sufxType = ".jpg";
     private ComboBoxModel comboModel;
@@ -87,6 +91,12 @@ public class VisLoad extends javax.swing.JFrame {
             
         return comboModel;
       
+    }
+    
+    public SpinnerModel getSpinnerModel(){
+//        if(Objects.isNull(spinnerModel))
+        SpinnerListModel spinnerModel = new SpinnerListModel(learningFactor);
+        return spinnerModel;
     }
 
     /**
@@ -215,7 +225,7 @@ public class VisLoad extends javax.swing.JFrame {
         );
         vistaLayout.setVerticalGroup(
             vistaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 116, Short.MAX_VALUE)
+            .addGap(0, 462, Short.MAX_VALUE)
         );
 
         jSplitPane1.setLeftComponent(vista);
@@ -230,7 +240,7 @@ public class VisLoad extends javax.swing.JFrame {
         );
         respuestaLayout.setVerticalGroup(
             respuestaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 116, Short.MAX_VALUE)
+            .addGap(0, 462, Short.MAX_VALUE)
         );
 
         jSplitPane1.setRightComponent(respuesta);
@@ -421,10 +431,10 @@ public class VisLoad extends javax.swing.JFrame {
         entrenar.setText("entrenar");
         entrenar.setToolTipText("modo de proceso");
 
-        hiddenLearningRate.setModel(new javax.swing.SpinnerNumberModel(1.0d, 1.0d, 24.0d, 1.0d));
+        hiddenLearningRate.setModel(getSpinnerModel());
         hiddenLearningRate.setToolTipText("de capa oculta");
 
-        outputLearningRate.setModel(new javax.swing.SpinnerNumberModel(1.0d, 1.0d, 24.0d, 1.0d));
+        outputLearningRate.setModel(getSpinnerModel());
         outputLearningRate.setToolTipText("de capa de salida");
 
         iteraciones.setModel(new javax.swing.SpinnerNumberModel(50, 1, 500, 10));
@@ -446,7 +456,7 @@ public class VisLoad extends javax.swing.JFrame {
 
         freno.setText("Freno");
 
-        actualizacion.setText("Continua");
+        actualizacion.setText("Actualización");
         actualizacion.setToolTipText("actualizacion de pantalla cada 30 segundos");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -472,7 +482,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jButton3)
                 .addGap(18, 18, 18)
                 .addComponent(actualizacion)
-                .addContainerGap(70, Short.MAX_VALUE))
+                .addContainerGap(74, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -582,7 +592,7 @@ public class VisLoad extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSplitPane1)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -600,7 +610,7 @@ public class VisLoad extends javax.swing.JFrame {
             buffImage = ImageIO.read(new File(_filename1));
             
             destBuffImage = ImageIO.read(new File(_filename2));
-            
+            bufferImageFiltered = destBuffImage;
             java.awt.EventQueue.invokeLater(() -> {
                 vista.repaint();
                 respuesta.repaint();
@@ -643,7 +653,7 @@ public class VisLoad extends javax.swing.JFrame {
 
     private void procesarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_procesarActionPerformed
 
-        log.info("iniciando 3...");
+        log.info("iniciando proceso...");
         bufferImageFiltered = createCompatibleDestImage(buffImage, null);
         
         int width = buffImage.getWidth();
@@ -670,8 +680,8 @@ public class VisLoad extends javax.swing.JFrame {
 
                             PixelsDirectInputLayer simplePixelsInputLayer = new PixelsDirectInputLayer();
                             PixelsDirectInputLayer simplePixelsCompareLayer = new PixelsDirectInputLayer();
-                            HiddenSigmoidLayer hiddenLayer = new HiddenSigmoidLayer(weightsH,  Math.pow(10, -(Double)hiddenLearningRate.getValue()));
-                            PixelDirectSigmoidLeanringLayer pixelLeanringLayer = new PixelDirectSigmoidLeanringLayer(weightsO, Math.pow(10, -(Double)outputLearningRate.getValue()));
+                            HiddenSigmoidLayer hiddenLayer = new HiddenSigmoidLayer(weightsH,  (Double)hiddenLearningRate.getValue());
+                            PixelDirectSigmoidLeanringLayer pixelLeanringLayer = new PixelDirectSigmoidLeanringLayer(weightsO, (Double)outputLearningRate.getValue());
                             PixelsDirectSigmoidOutputLayer pixelsOutputLayer = new PixelsDirectSigmoidOutputLayer(null);
 
                             simplePixelsInputLayer.getConsumers().add(hiddenLayer);
@@ -738,13 +748,23 @@ public class VisLoad extends javax.swing.JFrame {
         hidStep = (Integer)hiddNeurs.getValue();
         outStep = (Integer)outNeurs.getValue();
         
-        log.info("iniciando 1...<{},{}>",hidStep, inStep*inStep*3);
-        weightsH = (DoubleMatriz)new DoubleMatriz(new Dominio(hidStep, inStep*inStep*3)).matrizUno();
-        weightsH = (DoubleMatriz)weightsH.productoEscalar( 1.0 / Math.sqrt( hidStep * inStep*inStep*3 ) );
+        int inSize = inStep*inStep*3;
+        int outSize = outStep*outStep*3;
         
-        log.info("iniciando 2...<{},{}>",outStep*outStep*3, hidStep);
-        weightsO = (DoubleMatriz)new DoubleMatriz(new Dominio(outStep*outStep*3, hidStep)).matrizUno();
-        weightsO = (DoubleMatriz)weightsO.productoEscalar( 1.0 / Math.sqrt( hidStep * outStep*outStep*3 ) );
+        log.info("iniciando 1.0..<{},{}>",hidStep, inSize);
+        weightsH = (DoubleMatriz)new DoubleMatriz(new Dominio(hidStep, inSize)).matrizUno();
+        log.info("iniciando 1.1..<{},{}>",hidStep, inSize);
+        weightsH.replaceAll((ParOrdenado i, Double v) -> 0.5-Math.random() );
+//        log.info("iniciando 1.2..<{},{}>",hidStep, inSize);
+//        weightsH = (DoubleMatriz)weightsH.productoEscalar( hidStep / Math.sqrt(weightsH.distanciaE2().get(Indice.D1)) );
+        
+        log.info("iniciando 2.0..<{},{}>",outSize, hidStep);
+        weightsO = (DoubleMatriz)new DoubleMatriz(new Dominio(outSize, hidStep)).matrizUno();
+        log.info("iniciando 2.1..<{},{}>",outSize, hidStep);
+        weightsO.replaceAll((ParOrdenado i, Double v) -> 0.5-Math.random() );
+//        log.info("iniciando 2.2..<{},{}>",outSize, hidStep);
+//        weightsO = (DoubleMatriz)weightsO.productoEscalar( hidStep/ Math.sqrt(weightsO.distanciaE2().get(Indice.D1)) );
+        
     }//GEN-LAST:event_cleanActionPerformed
 
     private void salvaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salvaActionPerformed
@@ -940,6 +960,7 @@ public class VisLoad extends javax.swing.JFrame {
         
         try {
             destBuffImage = ImageIO.read(new File(_filename2));
+            bufferImageFiltered = destBuffImage;
             
             java.awt.EventQueue.invokeLater(() -> {
                 vista.repaint();
@@ -951,6 +972,7 @@ public class VisLoad extends javax.swing.JFrame {
 
     private void cargaOriginalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargaOriginalActionPerformed
         destBuffImage = buffImage;
+        bufferImageFiltered = destBuffImage;
         java.awt.EventQueue.invokeLater(() -> {
             respuesta.repaint();
         });
