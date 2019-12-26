@@ -35,9 +35,9 @@ public interface LayerLearning {
     
     /**
      * resultados para la propagacion del error
-     * @return matriz de pesos de error
+     * @return the org.tensa.tensada.matrix.DoubleMatriz
      */
-    DoubleMatriz getToBackLayer();
+    DoubleMatriz getPropagationError();
     
     /**
      * error medio de la capa

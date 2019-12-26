@@ -79,7 +79,7 @@ public class PixelDirectLinealLeanringLayer extends ArrayList<LayerLearning> imp
     }
 
     @Override
-    public DoubleMatriz getToBackLayer() {
+    public DoubleMatriz getPropagationError() {
         return toBackLayer;
     }
 

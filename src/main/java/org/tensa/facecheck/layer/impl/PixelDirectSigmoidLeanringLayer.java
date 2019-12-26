@@ -80,7 +80,7 @@ public class PixelDirectSigmoidLeanringLayer extends ArrayList<LayerLearning> im
     }
 
     @Override
-    public DoubleMatriz getToBackLayer() {
+    public DoubleMatriz getPropagationError() {
         return toBackLayer;
     }
 

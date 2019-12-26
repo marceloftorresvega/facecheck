@@ -100,7 +100,7 @@ public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements Laye
     }
 
     @Override
-    public DoubleMatriz getToBackLayer() {
+    public DoubleMatriz getPropagationError() {
         return toBackLayer;
     }
 
