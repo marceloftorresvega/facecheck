@@ -60,7 +60,7 @@ public interface LayerLearning {
     /**
      * procesa valores deseados versus valores producidos y propaga error
      */
-    void adjustBack();
+    void startLearning();
     
     /**
      * retorna el listado de capas que reciben la propagacion del error

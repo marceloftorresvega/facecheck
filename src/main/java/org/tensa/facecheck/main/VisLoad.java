@@ -701,7 +701,7 @@ public class VisLoad extends javax.swing.JFrame {
                                 simplePixelsCompareLayer.startProduction();
                                 pixelLeanringLayer.setLearningData(simplePixelsCompareLayer.getOutputLayer());
 
-                                pixelLeanringLayer.adjustBack();
+                                pixelLeanringLayer.startLearning();
                                 log.info("diferencia <{}>", pixelLeanringLayer.getError().get(Indice.D1));
                             }
                         });

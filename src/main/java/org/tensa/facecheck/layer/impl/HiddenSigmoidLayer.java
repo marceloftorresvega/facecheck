@@ -110,7 +110,7 @@ public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements Laye
     }
 
     @Override
-    public void adjustBack() {
+    public void startLearning() {
         error = (DoubleMatriz) outputLayer.matrizUno().substraccion(outputLayer);
         error.replaceAll((i,v) -> v * outputLayer.get(i) * learningData.get(i));
         
@@ -127,7 +127,7 @@ public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements Laye
         
         for(LayerLearning back : getProducers()) {
             back.setLearningData(propagationError);
-            back.adjustBack();
+            back.startLearning();
         }
         getProducers().clear();
     }

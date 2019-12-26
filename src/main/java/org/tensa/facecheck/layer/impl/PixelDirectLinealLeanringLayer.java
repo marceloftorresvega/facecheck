@@ -89,7 +89,7 @@ public class PixelDirectLinealLeanringLayer extends ArrayList<LayerLearning> imp
     }
 
     @Override
-    public void adjustBack() {
+    public void startLearning() {
         error = (DoubleMatriz)learningData.substraccion(outputLayer);
 //        toBackLayer = (DoubleMatriz) weights.productoPunto(error);
         propagationError = (DoubleMatriz) error.productoPunto(weights).transpuesta();
@@ -103,7 +103,7 @@ public class PixelDirectLinealLeanringLayer extends ArrayList<LayerLearning> imp
         
         for(LayerLearning back : getProducers()) {
             back.setLearningData(propagationError);
-            back.adjustBack();
+            back.startLearning();
         }
         this.clear();
         

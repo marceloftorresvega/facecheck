@@ -90,7 +90,7 @@ public class PixelDirectSigmoidLeanringLayer extends ArrayList<LayerLearning> im
     }
 
     @Override
-    public void adjustBack() {
+    public void startLearning() {
         learningData = (DoubleMatriz)learningData.productoEscalar(1.0/255);
         error = (DoubleMatriz)learningData.substraccion(outputLayer);
         error.replaceAll((i,v) -> v * outputLayer.get(i) * learningData.get(i));
@@ -107,7 +107,7 @@ public class PixelDirectSigmoidLeanringLayer extends ArrayList<LayerLearning> im
         
         for(LayerLearning back : getProducers()) {
             back.setLearningData(propagationError);
-            back.adjustBack();
+            back.startLearning();
         }
         getProducers().clear();
         
