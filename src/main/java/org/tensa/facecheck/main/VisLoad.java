@@ -26,7 +26,6 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 import javax.swing.ComboBoxModel;
@@ -34,7 +33,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JPanel;
 import javax.swing.SpinnerListModel;
 import javax.swing.SpinnerModel;
-import javax.swing.SpinnerNumberModel;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.slf4j.Logger;
@@ -227,7 +225,7 @@ public class VisLoad extends javax.swing.JFrame {
         );
         vistaLayout.setVerticalGroup(
             vistaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 116, Short.MAX_VALUE)
+            .addGap(0, 462, Short.MAX_VALUE)
         );
 
         jSplitPane1.setLeftComponent(vista);
@@ -242,7 +240,7 @@ public class VisLoad extends javax.swing.JFrame {
         );
         respuestaLayout.setVerticalGroup(
             respuestaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 116, Short.MAX_VALUE)
+            .addGap(0, 462, Short.MAX_VALUE)
         );
 
         jSplitPane1.setRightComponent(respuesta);
@@ -458,7 +456,7 @@ public class VisLoad extends javax.swing.JFrame {
 
         freno.setText("Freno");
 
-        actualizacion.setText("Continua");
+        actualizacion.setText("Actualización");
         actualizacion.setToolTipText("actualizacion de pantalla cada 30 segundos");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -484,7 +482,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jButton3)
                 .addGap(18, 18, 18)
                 .addComponent(actualizacion)
-                .addContainerGap(100, Short.MAX_VALUE))
+                .addContainerGap(74, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -594,7 +592,7 @@ public class VisLoad extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSplitPane1)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -655,7 +653,7 @@ public class VisLoad extends javax.swing.JFrame {
 
     private void procesarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_procesarActionPerformed
 
-        log.info("iniciando 3...");
+        log.info("iniciando proceso...");
         bufferImageFiltered = createCompatibleDestImage(buffImage, null);
         
         int width = buffImage.getWidth();
