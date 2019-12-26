@@ -30,15 +30,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerProducer;
-import org.tensa.facecheck.layer.LayerToBack;
 import org.tensa.tensada.matrix.DoubleMatriz;
 import org.tensa.tensada.matrix.NumericMatriz;
+import org.tensa.facecheck.layer.LayerLearning;
 
 /**
  *
  * @author Marcelo
  */
-public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements LayerToBack, LayerConsumer, LayerProducer {
+public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements LayerLearning, LayerConsumer, LayerProducer {
     
     private final Logger log = LoggerFactory.getLogger(HiddenSigmoidLayer.class);
     
@@ -92,8 +92,8 @@ public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements Laye
                 lc.seInputLayer(outputLayer);
                 lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
                 
-                if(lc instanceof LayerToBack) {
-                    ((LayerToBack)lc).getProducers().add(this);
+                if(lc instanceof LayerLearning) {
+                    ((LayerLearning)lc).getProducers().add(this);
                 }
             }
         }
@@ -125,7 +125,7 @@ public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements Laye
         }
         
         
-        for(LayerToBack back : getProducers()) {
+        for(LayerLearning back : getProducers()) {
             back.setCompareToLayer(toBackLayer);
             back.adjustBack();
         }
@@ -148,7 +148,7 @@ public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements Laye
     }
 
     @Override
-    public List<LayerToBack> getProducers() {
+    public List<LayerLearning> getProducers() {
         return Collections.emptyList();
     }
 

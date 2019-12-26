@@ -29,16 +29,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerProducer;
-import org.tensa.facecheck.layer.LayerToBack;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
 import org.tensa.tensada.matrix.NumericMatriz;
+import org.tensa.facecheck.layer.LayerLearning;
 
 /**
  *
  * @author Marcelo
  */
-public class PixelDirectLinealLeanringLayer extends ArrayList<LayerToBack> implements LayerConsumer, LayerToBack, LayerProducer {
+public class PixelDirectLinealLeanringLayer extends ArrayList<LayerLearning> implements LayerConsumer, LayerLearning, LayerProducer {
     
     private final Logger log = LoggerFactory.getLogger(PixelDirectLinealLeanringLayer.class);
     
@@ -101,7 +101,7 @@ public class PixelDirectLinealLeanringLayer extends ArrayList<LayerToBack> imple
             
         }
         
-        for(LayerToBack back : getProducers()) {
+        for(LayerLearning back : getProducers()) {
             back.setCompareToLayer(toBackLayer);
             back.adjustBack();
         }
@@ -123,7 +123,7 @@ public class PixelDirectLinealLeanringLayer extends ArrayList<LayerToBack> imple
     }
 
     @Override
-    public List<LayerToBack> getProducers() {
+    public List<LayerLearning> getProducers() {
         return this;
     }
 

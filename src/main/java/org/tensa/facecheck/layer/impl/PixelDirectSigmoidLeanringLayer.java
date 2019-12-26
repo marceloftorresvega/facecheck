@@ -29,16 +29,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerProducer;
-import org.tensa.facecheck.layer.LayerToBack;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
 import org.tensa.tensada.matrix.NumericMatriz;
+import org.tensa.facecheck.layer.LayerLearning;
 
 /**
  *
  * @author Marcelo
  */
-public class PixelDirectSigmoidLeanringLayer extends ArrayList<LayerToBack> implements LayerConsumer, LayerToBack, LayerProducer {
+public class PixelDirectSigmoidLeanringLayer extends ArrayList<LayerLearning> implements LayerConsumer, LayerLearning, LayerProducer {
     
     private final Logger log = LoggerFactory.getLogger(PixelDirectSigmoidLeanringLayer.class);
     
@@ -105,7 +105,7 @@ public class PixelDirectSigmoidLeanringLayer extends ArrayList<LayerToBack> impl
             
         }
         
-        for(LayerToBack back : getProducers()) {
+        for(LayerLearning back : getProducers()) {
             back.setCompareToLayer(toBackLayer);
             back.adjustBack();
         }
@@ -127,7 +127,7 @@ public class PixelDirectSigmoidLeanringLayer extends ArrayList<LayerToBack> impl
     }
 
     @Override
-    public List<LayerToBack> getProducers() {
+    public List<LayerLearning> getProducers() {
         return this;
     }
 
@@ -152,8 +152,8 @@ public class PixelDirectSigmoidLeanringLayer extends ArrayList<LayerToBack> impl
                 lc.seInputLayer(outputLayer);
                 lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
                 
-                if(lc instanceof LayerToBack) {
-                    ((LayerToBack)lc).getProducers().add(this);
+                if(lc instanceof LayerLearning) {
+                    ((LayerLearning)lc).getProducers().add(this);
                 }
             }
             
