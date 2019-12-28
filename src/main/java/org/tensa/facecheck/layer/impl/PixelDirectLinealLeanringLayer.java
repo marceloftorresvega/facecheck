@@ -38,7 +38,7 @@ import org.tensa.facecheck.layer.LayerLearning;
  *
  * @author Marcelo
  */
-public class PixelDirectLinealLeanringLayer extends ArrayList<LayerLearning> implements LayerConsumer, LayerLearning, LayerProducer {
+public class PixelDirectLinealLeanringLayer implements LayerConsumer, LayerLearning, LayerProducer {
     
     private final Logger log = LoggerFactory.getLogger(PixelDirectLinealLeanringLayer.class);
     
@@ -52,11 +52,13 @@ public class PixelDirectLinealLeanringLayer extends ArrayList<LayerLearning> imp
     private DoubleMatriz error;
     private final Double learningFactor;
     private final List<LayerConsumer> consumers;
+    private final List<LayerLearning> producers;
 
     public PixelDirectLinealLeanringLayer(DoubleMatriz weights, Double learningStep) {
         this.weights = weights;
         this.learningFactor = learningStep;
         this.consumers = new ArrayList<>();
+        this.producers = new ArrayList<>();
     }
 
     @Override
@@ -105,7 +107,7 @@ public class PixelDirectLinealLeanringLayer extends ArrayList<LayerLearning> imp
             back.setLearningData(propagationError);
             back.startLearning();
         }
-        this.clear();
+        producers.clear();
         
     }
 
@@ -124,7 +126,7 @@ public class PixelDirectLinealLeanringLayer extends ArrayList<LayerLearning> imp
 
     @Override
     public List<LayerLearning> getProducers() {
-        return this;
+        return producers;
     }
 
     @Override

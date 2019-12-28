@@ -38,7 +38,7 @@ import org.tensa.facecheck.layer.LayerLearning;
  *
  * @author Marcelo
  */
-public class PixelDirectSigmoidLeanringLayer extends ArrayList<LayerLearning> implements LayerConsumer, LayerLearning, LayerProducer {
+public class PixelDirectSigmoidLeanringLayer implements LayerConsumer, LayerLearning, LayerProducer {
     
     private final Logger log = LoggerFactory.getLogger(PixelDirectSigmoidLeanringLayer.class);
     
@@ -53,11 +53,13 @@ public class PixelDirectSigmoidLeanringLayer extends ArrayList<LayerLearning> im
     private final Double learningFactor;
     
     private final List<LayerConsumer> consumers;
+    private final List<LayerLearning> producers;
 
     public PixelDirectSigmoidLeanringLayer(DoubleMatriz weights, Double learningStep) {
         this.weights = weights;
         this.learningFactor = learningStep;
         this.consumers = new ArrayList<>();
+        this.producers = new ArrayList<>();
     }
 
     @Override
@@ -128,7 +130,7 @@ public class PixelDirectSigmoidLeanringLayer extends ArrayList<LayerLearning> im
 
     @Override
     public List<LayerLearning> getProducers() {
-        return this;
+        return producers;
     }
 
     @Override
