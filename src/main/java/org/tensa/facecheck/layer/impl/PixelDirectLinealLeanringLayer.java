@@ -96,7 +96,7 @@ public class PixelDirectLinealLeanringLayer implements LayerConsumer, LayerLearn
 //        toBackLayer = (DoubleMatriz) weights.productoPunto(error);
         propagationError = (DoubleMatriz) error.productoPunto(weights).transpuesta();
         
-        NumericMatriz<Double> delta = inputLayer.productoTensorial(error).productoEscalar(learningFactor);
+        NumericMatriz<Double> delta = error.productoTensorial(inputLayer.productoEscalar(learningFactor));
         NumericMatriz<Double> adicion = weights.adicion(delta);
         synchronized(weights){
             weights.putAll(adicion);

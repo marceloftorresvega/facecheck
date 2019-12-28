@@ -118,7 +118,7 @@ public class PixelDirectSigmoidLeanringLayer implements LayerConsumer, LayerLear
     @Override
     public DoubleMatriz getError() {
         if( error!=null)
-            return (DoubleMatriz)error.distanciaE2().productoEscalar(1.0/2);
+            return (DoubleMatriz)error.distanciaE2().productoEscalar(0.5);
         else
             return new DoubleMatriz(new Dominio(1, 1));
     }

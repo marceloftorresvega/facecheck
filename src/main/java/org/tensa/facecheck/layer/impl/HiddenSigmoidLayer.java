@@ -24,7 +24,6 @@
 package org.tensa.facecheck.layer.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,7 +120,7 @@ public class HiddenSigmoidLayer implements LayerLearning, LayerConsumer, LayerPr
 //        toBackLayer = (DoubleMatriz) weights.productoPunto(error);
         propagationError = (DoubleMatriz) error.productoPunto(weights).transpuesta();
         
-        NumericMatriz<Double> delta = error.productoTensorial(inputLayer).productoEscalar(learningFactor);
+        NumericMatriz<Double> delta = error.productoEscalar(learningFactor).productoTensorial(inputLayer);
         NumericMatriz<Double> adicion = weights.adicion(delta);
         synchronized(weights){
             weights.putAll(adicion);
@@ -143,7 +142,7 @@ public class HiddenSigmoidLayer implements LayerLearning, LayerConsumer, LayerPr
 
     @Override
     public DoubleMatriz getError() {
-        return (DoubleMatriz)error.distanciaE2().productoEscalar(1.0/2);
+        return (DoubleMatriz)error.distanciaE2().productoEscalar(0.5);
     }
 
     @Override
