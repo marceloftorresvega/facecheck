@@ -99,7 +99,7 @@ public class PixelDirectSigmoidLeanringLayer implements LayerConsumer, LayerLear
 //        toBackLayer = (DoubleMatriz) weights.productoPunto(error);
         propagationError = (DoubleMatriz) error.productoPunto(weights).transpuesta();
         
-        NumericMatriz<Double> delta = error.productoTensorial(inputLayer.productoEscalar(learningFactor));
+        NumericMatriz<Double> delta = error.productoTensorial(inputLayer).productoEscalar(learningFactor);
         NumericMatriz<Double> adicion = weights.adicion(delta);
         
         synchronized(weights){

@@ -120,7 +120,7 @@ public class HiddenSigmoidLayer implements LayerLearning, LayerConsumer, LayerPr
 //        toBackLayer = (DoubleMatriz) weights.productoPunto(error);
         propagationError = (DoubleMatriz) error.productoPunto(weights).transpuesta();
         
-        NumericMatriz<Double> delta = error.productoEscalar(learningFactor).productoTensorial(inputLayer);
+        NumericMatriz<Double> delta = error.productoTensorial(inputLayer).productoEscalar(learningFactor);
         NumericMatriz<Double> adicion = weights.adicion(delta);
         synchronized(weights){
             weights.putAll(adicion);
