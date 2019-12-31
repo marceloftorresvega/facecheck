@@ -24,7 +24,6 @@
 package org.tensa.facecheck.layer.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +37,7 @@ import org.tensa.facecheck.layer.LayerLearning;
  *
  * @author Marcelo
  */
-public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements LayerLearning, LayerConsumer, LayerProducer {
+public class HiddenSigmoidLayer implements LayerLearning, LayerConsumer, LayerProducer {
     
     private final Logger log = LoggerFactory.getLogger(HiddenSigmoidLayer.class);
     
@@ -51,10 +50,14 @@ public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements Laye
     private DoubleMatriz learningData;
     private DoubleMatriz error;
     private final Double learningFactor;
+    private final List<LayerConsumer> consumers;
+    private final List<LayerLearning> producers;
 
     public HiddenSigmoidLayer(DoubleMatriz weights, Double learningStep) {
         this.weights = weights;
         this.learningFactor = learningStep;
+        this.consumers = new ArrayList<>();
+        this.producers = new ArrayList<>();
     }
 
     @Override
@@ -88,7 +91,7 @@ public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements Laye
             outputLayer = weights.producto(inputLayer);
             outputLayer.replaceAll((i,v) -> 1/(1 + Math.exp( - v )));
             
-            for(LayerConsumer lc : this) {
+            for(LayerConsumer lc : consumers) {
                 lc.seInputLayer(outputLayer);
                 lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
                 
@@ -139,7 +142,7 @@ public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements Laye
 
     @Override
     public DoubleMatriz getError() {
-        return (DoubleMatriz)error.distanciaE2().productoEscalar(1.0/2);
+        return (DoubleMatriz)error.distanciaE2().productoEscalar(0.5);
     }
 
     @Override
@@ -149,12 +152,12 @@ public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements Laye
 
     @Override
     public List<LayerLearning> getProducers() {
-        return Collections.emptyList();
+        return producers;
     }
 
     @Override
     public List<LayerConsumer> getConsumers() {
-       return this;
+       return consumers;
     }
     
 }
