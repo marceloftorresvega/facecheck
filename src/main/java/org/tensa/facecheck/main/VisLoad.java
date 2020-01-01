@@ -83,6 +83,7 @@ public class VisLoad extends javax.swing.JFrame {
     private boolean areaDelete = false;
     private boolean areaSelect = false;
     private final FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("pesos", "dat");
+    private final FileNameExtensionFilter fileNameExtensionFilterImage = new FileNameExtensionFilter("JPEG", "jpg");
 
     /**
      * Get the value of comboModel
@@ -187,7 +188,7 @@ public class VisLoad extends javax.swing.JFrame {
         cargaPreparada = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         jSeparator2 = new javax.swing.JSeparator();
-        jButton5 = new javax.swing.JButton();
+        jButtonSalvaImagen = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         cargar = new javax.swing.JButton();
         clean = new javax.swing.JButton();
@@ -281,7 +282,10 @@ public class VisLoad extends javax.swing.JFrame {
         jDialogImagenSalva.setTitle("Salva Imagen");
         jDialogImagenSalva.setSize(jFileChooserImagenSalva.getMinimumSize());
 
+        jFileChooserImagenSalva.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
+        jFileChooserImagenSalva.setCurrentDirectory(new File(System.getProperty("user.dir")));
         jFileChooserImagenSalva.setDialogTitle("Salva Imagen");
+        jFileChooserImagenSalva.setFileFilter(getFileNameExtensionFilterImage());
         jFileChooserImagenSalva.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jFileChooserImagenSalvaActionPerformed(evt);
@@ -412,10 +416,10 @@ public class VisLoad extends javax.swing.JFrame {
 
         jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
-        jButton5.setText("Salvar");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
+        jButtonSalvaImagen.setText("Salvar");
+        jButtonSalvaImagen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
+                jButtonSalvaImagenActionPerformed(evt);
             }
         });
 
@@ -437,7 +441,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton5)
+                .addComponent(jButtonSalvaImagen)
                 .addContainerGap(366, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -457,7 +461,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jButton5))
+                .addComponent(jButtonSalvaImagen))
         );
 
         jTabbedPane1.addTab("Pre proceso salida", null, jPanel2, "Pre proceso de imagen de salida");
@@ -842,7 +846,7 @@ public class VisLoad extends javax.swing.JFrame {
         new Thread( () -> {
             while (!procesar.isEnabled()) {
                 try {
-                    Thread.sleep(30000);
+                    Thread.sleep(15000);
                     if (actualizacion.isSelected()) {
                         synchronized(respuesta){
 //                        java.awt.EventQueue.invokeLater(() -> {
@@ -1020,9 +1024,9 @@ public class VisLoad extends javax.swing.JFrame {
         jDialogPesosLoad.setVisible(true);
     }//GEN-LAST:event_cargarActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+    private void jButtonSalvaImagenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalvaImagenActionPerformed
         jDialogImagenSalva.setVisible(true);
-    }//GEN-LAST:event_jButton5ActionPerformed
+    }//GEN-LAST:event_jButtonSalvaImagenActionPerformed
 
     private void jFileChooserImagenSalvaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserImagenSalvaActionPerformed
         jDialogImagenSalva.setVisible(false);
@@ -1037,11 +1041,6 @@ public class VisLoad extends javax.swing.JFrame {
             } catch (IOException ex) {
                 log.info("file error", ex);
             }
-//            String[] writerFormatNames = ImageIO.getWriterFormatNames();
-//            for (int i=0; writerFormatNames.length>i;i++) {
-//
-//                log.info("format {}" , writerFormatNames[i]);
-//            }
         }
         jDialogImagenSalva.setVisible(false);
     }//GEN-LAST:event_jFileChooserImagenSalvaActionPerformed1
@@ -1266,12 +1265,12 @@ public class VisLoad extends javax.swing.JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                if(Objects.nonNull(bufferImageFiltered)){
+                if(Objects.nonNull(getBufferImageFiltered())){
                     Graphics2D localg = (Graphics2D)g;
-                    float escala = (float)respuesta.getBounds().width / (float)bufferImageFiltered.getWidth();
+                    float escala = (float)respuesta.getBounds().width / (float)getBufferImageFiltered().getWidth();
                     AffineTransform xforM = AffineTransform.getScaleInstance(escala, escala);
                     AffineTransformOp rop = new AffineTransformOp(xforM, AffineTransformOp.TYPE_BILINEAR);
-                    localg.drawImage(bufferImageFiltered, rop, 0     , 0);
+                    localg.drawImage(getBufferImageFiltered(), rop, 0     , 0);
                     
                 }
             }
@@ -1339,7 +1338,7 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButtonSalvaImagen;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JDialog jDialogImagenSalva;
@@ -1373,5 +1372,13 @@ public class VisLoad extends javax.swing.JFrame {
 
     public FileNameExtensionFilter getFileNameExtensionFilter() {
         return fileNameExtensionFilter;
+    }
+
+    public FileNameExtensionFilter getFileNameExtensionFilterImage() {
+        return fileNameExtensionFilterImage;
+    }
+
+    public BufferedImage getBufferImageFiltered() {
+        return bufferImageFiltered;
     }
 }

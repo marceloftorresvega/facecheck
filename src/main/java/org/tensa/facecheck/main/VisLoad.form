@@ -130,7 +130,14 @@
       <SubComponents>
         <Component class="javax.swing.JFileChooser" name="jFileChooserImagenSalva">
           <Properties>
+            <Property name="dialogType" type="int" value="1"/>
+            <Property name="currentDirectory" type="java.io.File" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="new File(System.getProperty(&quot;user.dir&quot;))" type="code"/>
+            </Property>
             <Property name="dialogTitle" type="java.lang.String" value="Salva Imagen"/>
+            <Property name="fileFilter" type="javax.swing.filechooser.FileFilter" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="getFileNameExtensionFilterImage()" type="code"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jFileChooserImagenSalvaActionPerformed,jFileChooserImagenSalvaActionPerformed1"/>
@@ -366,7 +373,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jSeparator2" min="-2" pref="17" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jButton5" min="-2" max="-2" attributes="0"/>
+                          <Component id="jButtonSalvaImagen" min="-2" max="-2" attributes="0"/>
                           <EmptySpace pref="366" max="32767" attributes="0"/>
                       </Group>
                   </Group>
@@ -392,7 +399,7 @@
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                          <Component id="jButton5" min="-2" max="-2" attributes="0"/>
+                          <Component id="jButtonSalvaImagen" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -441,12 +448,12 @@
                     <Property name="orientation" type="int" value="1"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JButton" name="jButton5">
+                <Component class="javax.swing.JButton" name="jButtonSalvaImagen">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Salvar"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton5ActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonSalvaImagenActionPerformed"/>
                   </Events>
                 </Component>
               </SubComponents>
