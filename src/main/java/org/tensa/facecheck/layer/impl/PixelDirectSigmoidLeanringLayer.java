@@ -29,16 +29,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerProducer;
-import org.tensa.facecheck.layer.LayerToBack;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
 import org.tensa.tensada.matrix.NumericMatriz;
+import org.tensa.facecheck.layer.LayerLearning;
 
 /**
  *
  * @author Marcelo
  */
-public class PixelDirectSigmoidLeanringLayer extends ArrayList<LayerToBack> implements LayerConsumer, LayerToBack, LayerProducer {
+public class PixelDirectSigmoidLeanringLayer implements LayerConsumer, LayerLearning, LayerProducer {
     
     private final Logger log = LoggerFactory.getLogger(PixelDirectSigmoidLeanringLayer.class);
     
@@ -47,17 +47,19 @@ public class PixelDirectSigmoidLeanringLayer extends ArrayList<LayerToBack> impl
     private DoubleMatriz outputLayer;
     private DoubleMatriz inputLayer;
     
-    private DoubleMatriz toBackLayer;
-    private DoubleMatriz compareToLayer;
+    private DoubleMatriz propagationError;
+    private DoubleMatriz learningData;
     private DoubleMatriz error;
-    private final Double learningStep;
+    private final Double learningFactor;
     
     private final List<LayerConsumer> consumers;
+    private final List<LayerLearning> producers;
 
     public PixelDirectSigmoidLeanringLayer(DoubleMatriz weights, Double learningStep) {
         this.weights = weights;
-        this.learningStep = learningStep;
+        this.learningFactor = learningStep;
         this.consumers = new ArrayList<>();
+        this.producers = new ArrayList<>();
     }
 
     @Override
@@ -80,24 +82,24 @@ public class PixelDirectSigmoidLeanringLayer extends ArrayList<LayerToBack> impl
     }
 
     @Override
-    public DoubleMatriz getToBackLayer() {
-        return toBackLayer;
+    public DoubleMatriz getPropagationError() {
+        return propagationError;
     }
 
     @Override
-    public void setCompareToLayer(DoubleMatriz compare) {
-        this.compareToLayer = compare;
+    public void setLearningData(DoubleMatriz learningData) {
+        this.learningData = learningData;
     }
 
     @Override
-    public void adjustBack() {
-        compareToLayer = (DoubleMatriz)compareToLayer.productoEscalar(1.0/255);
-        error = (DoubleMatriz)compareToLayer.substraccion(outputLayer);
-        error.replaceAll((i,v) -> v * outputLayer.get(i) * compareToLayer.get(i));
+    public void startLearning() {
+        learningData = (DoubleMatriz)learningData.productoEscalar(1.0/255);
+        error = (DoubleMatriz)learningData.substraccion(outputLayer);
+        error.replaceAll((i,v) -> v * outputLayer.get(i) * learningData.get(i));
 //        toBackLayer = (DoubleMatriz) weights.productoPunto(error);
-        toBackLayer = (DoubleMatriz) error.productoPunto(weights).transpuesta();
+        propagationError = (DoubleMatriz) error.productoPunto(weights).transpuesta();
         
-        NumericMatriz<Double> delta = error.productoTensorial(inputLayer).productoEscalar(learningStep);
+        NumericMatriz<Double> delta = error.productoTensorial(inputLayer).productoEscalar(learningFactor);
         NumericMatriz<Double> adicion = weights.adicion(delta);
         
         synchronized(weights){
@@ -105,9 +107,9 @@ public class PixelDirectSigmoidLeanringLayer extends ArrayList<LayerToBack> impl
             
         }
         
-        for(LayerToBack back : getProducers()) {
-            back.setCompareToLayer(toBackLayer);
-            back.adjustBack();
+        for(LayerLearning back : getProducers()) {
+            back.setLearningData(propagationError);
+            back.startLearning();
         }
         getProducers().clear();
         
@@ -116,19 +118,19 @@ public class PixelDirectSigmoidLeanringLayer extends ArrayList<LayerToBack> impl
     @Override
     public DoubleMatriz getError() {
         if( error!=null)
-            return (DoubleMatriz)error.distanciaE2().productoEscalar(1.0/2);
+            return (DoubleMatriz)error.distanciaE2().productoEscalar(0.5);
         else
             return new DoubleMatriz(new Dominio(1, 1));
     }
 
     @Override
-    public Double getLeanringStep() {
-        return learningStep;
+    public Double getLeanringFactor() {
+        return learningFactor;
     }
 
     @Override
-    public List<LayerToBack> getProducers() {
-        return this;
+    public List<LayerLearning> getProducers() {
+        return producers;
     }
 
     @Override
@@ -152,8 +154,8 @@ public class PixelDirectSigmoidLeanringLayer extends ArrayList<LayerToBack> impl
                 lc.seInputLayer(outputLayer);
                 lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
                 
-                if(lc instanceof LayerToBack) {
-                    ((LayerToBack)lc).getProducers().add(this);
+                if(lc instanceof LayerLearning) {
+                    ((LayerLearning)lc).getProducers().add(this);
                 }
             }
             

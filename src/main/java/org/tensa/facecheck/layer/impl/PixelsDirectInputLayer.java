@@ -35,10 +35,15 @@ import org.tensa.tensada.matrix.DoubleMatriz;
  *
  * @author Marcelo
  */
-public class PixelsDirectInputLayer extends ArrayList<LayerConsumer> implements LayerProducer {
+public class PixelsDirectInputLayer implements LayerProducer {
     
     private BufferedImage src;
     private DoubleMatriz outputLayer;
+    private final List<LayerConsumer> consumers;
+
+    public PixelsDirectInputLayer() {
+        this.consumers = new ArrayList<>();
+    }
     
     private DoubleMatriz scanInput(){
         
@@ -71,7 +76,7 @@ public class PixelsDirectInputLayer extends ArrayList<LayerConsumer> implements 
     @Override
     public void startProduction() {
         outputLayer = scanInput();
-        for( LayerConsumer lc : this){
+        for( LayerConsumer lc : consumers){
             lc.seInputLayer(outputLayer);
             lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
         }
@@ -79,7 +84,7 @@ public class PixelsDirectInputLayer extends ArrayList<LayerConsumer> implements 
 
     @Override
     public List<LayerConsumer> getConsumers() {
-        return this;
+        return consumers;
     }
 
     public void setSrc(BufferedImage src) {

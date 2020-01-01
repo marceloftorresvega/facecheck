@@ -24,21 +24,20 @@
 package org.tensa.facecheck.layer.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerProducer;
-import org.tensa.facecheck.layer.LayerToBack;
 import org.tensa.tensada.matrix.DoubleMatriz;
 import org.tensa.tensada.matrix.NumericMatriz;
+import org.tensa.facecheck.layer.LayerLearning;
 
 /**
  *
  * @author Marcelo
  */
-public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements LayerToBack, LayerConsumer, LayerProducer {
+public class HiddenSigmoidLayer implements LayerLearning, LayerConsumer, LayerProducer {
     
     private final Logger log = LoggerFactory.getLogger(HiddenSigmoidLayer.class);
     
@@ -47,14 +46,18 @@ public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements Laye
     private DoubleMatriz outputLayer;
     private DoubleMatriz inputLayer;
     
-    private DoubleMatriz toBackLayer;
-    private DoubleMatriz compareToLayer;
+    private DoubleMatriz propagationError;
+    private DoubleMatriz learningData;
     private DoubleMatriz error;
-    private final Double learningStep;
+    private final Double learningFactor;
+    private final List<LayerConsumer> consumers;
+    private final List<LayerLearning> producers;
 
     public HiddenSigmoidLayer(DoubleMatriz weights, Double learningStep) {
         this.weights = weights;
-        this.learningStep = learningStep;
+        this.learningFactor = learningStep;
+        this.consumers = new ArrayList<>();
+        this.producers = new ArrayList<>();
     }
 
     @Override
@@ -88,36 +91,36 @@ public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements Laye
             outputLayer = weights.producto(inputLayer);
             outputLayer.replaceAll((i,v) -> 1/(1 + Math.exp( - v )));
             
-            for(LayerConsumer lc : this) {
+            for(LayerConsumer lc : consumers) {
                 lc.seInputLayer(outputLayer);
                 lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
                 
-                if(lc instanceof LayerToBack) {
-                    ((LayerToBack)lc).getProducers().add(this);
+                if(lc instanceof LayerLearning) {
+                    ((LayerLearning)lc).getProducers().add(this);
                 }
             }
         }
     }
 
     @Override
-    public DoubleMatriz getToBackLayer() {
-        return toBackLayer;
+    public DoubleMatriz getPropagationError() {
+        return propagationError;
     }
 
     @Override
-    public void setCompareToLayer(DoubleMatriz compare) {
-        this.compareToLayer = compare;
+    public void setLearningData(DoubleMatriz learningData) {
+        this.learningData = learningData;
     }
 
     @Override
-    public void adjustBack() {
+    public void startLearning() {
         error = (DoubleMatriz) outputLayer.matrizUno().substraccion(outputLayer);
-        error.replaceAll((i,v) -> v * outputLayer.get(i) * compareToLayer.get(i));
+        error.replaceAll((i,v) -> v * outputLayer.get(i) * learningData.get(i));
         
 //        toBackLayer = (DoubleMatriz) weights.productoPunto(error);
-        toBackLayer = (DoubleMatriz) error.productoPunto(weights).transpuesta();
+        propagationError = (DoubleMatriz) error.productoPunto(weights).transpuesta();
         
-        NumericMatriz<Double> delta = error.productoTensorial(inputLayer).productoEscalar(learningStep);
+        NumericMatriz<Double> delta = error.productoTensorial(inputLayer).productoEscalar(learningFactor);
         NumericMatriz<Double> adicion = weights.adicion(delta);
         synchronized(weights){
             weights.putAll(adicion);
@@ -125,9 +128,9 @@ public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements Laye
         }
         
         
-        for(LayerToBack back : getProducers()) {
-            back.setCompareToLayer(toBackLayer);
-            back.adjustBack();
+        for(LayerLearning back : getProducers()) {
+            back.setLearningData(propagationError);
+            back.startLearning();
         }
         getProducers().clear();
     }
@@ -139,22 +142,22 @@ public class HiddenSigmoidLayer extends ArrayList<LayerConsumer> implements Laye
 
     @Override
     public DoubleMatriz getError() {
-        return (DoubleMatriz)error.distanciaE2().productoEscalar(1.0/2);
+        return (DoubleMatriz)error.distanciaE2().productoEscalar(0.5);
     }
 
     @Override
-    public Double getLeanringStep() {
-        return learningStep;
+    public Double getLeanringFactor() {
+        return learningFactor;
     }
 
     @Override
-    public List<LayerToBack> getProducers() {
-        return Collections.emptyList();
+    public List<LayerLearning> getProducers() {
+        return producers;
     }
 
     @Override
     public List<LayerConsumer> getConsumers() {
-       return this;
+       return consumers;
     }
     
 }

@@ -29,16 +29,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerProducer;
-import org.tensa.facecheck.layer.LayerToBack;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
 import org.tensa.tensada.matrix.NumericMatriz;
+import org.tensa.facecheck.layer.LayerLearning;
 
 /**
  *
  * @author Marcelo
  */
-public class PixelDirectLinealLeanringLayer extends ArrayList<LayerToBack> implements LayerConsumer, LayerToBack, LayerProducer {
+public class PixelDirectLinealLeanringLayer implements LayerConsumer, LayerLearning, LayerProducer {
     
     private final Logger log = LoggerFactory.getLogger(PixelDirectLinealLeanringLayer.class);
     
@@ -47,16 +47,18 @@ public class PixelDirectLinealLeanringLayer extends ArrayList<LayerToBack> imple
     private DoubleMatriz outputLayer;
     private DoubleMatriz inputLayer;
     
-    private DoubleMatriz toBackLayer;
-    private DoubleMatriz compareToLayer;
+    private DoubleMatriz propagationError;
+    private DoubleMatriz learningData;
     private DoubleMatriz error;
-    private final Double learningStep;
+    private final Double learningFactor;
     private final List<LayerConsumer> consumers;
+    private final List<LayerLearning> producers;
 
     public PixelDirectLinealLeanringLayer(DoubleMatriz weights, Double learningStep) {
         this.weights = weights;
-        this.learningStep = learningStep;
+        this.learningFactor = learningStep;
         this.consumers = new ArrayList<>();
+        this.producers = new ArrayList<>();
     }
 
     @Override
@@ -79,33 +81,33 @@ public class PixelDirectLinealLeanringLayer extends ArrayList<LayerToBack> imple
     }
 
     @Override
-    public DoubleMatriz getToBackLayer() {
-        return toBackLayer;
+    public DoubleMatriz getPropagationError() {
+        return propagationError;
     }
 
     @Override
-    public void setCompareToLayer(DoubleMatriz compare) {
-        this.compareToLayer = compare;
+    public void setLearningData(DoubleMatriz learningData) {
+        this.learningData = learningData;
     }
 
     @Override
-    public void adjustBack() {
-        error = (DoubleMatriz)compareToLayer.substraccion(outputLayer);
+    public void startLearning() {
+        error = (DoubleMatriz)learningData.substraccion(outputLayer);
 //        toBackLayer = (DoubleMatriz) weights.productoPunto(error);
-        toBackLayer = (DoubleMatriz) error.productoPunto(weights).transpuesta();
+        propagationError = (DoubleMatriz) error.productoPunto(weights).transpuesta();
         
-        NumericMatriz<Double> delta = inputLayer.productoTensorial(error).productoEscalar(learningStep);
+        NumericMatriz<Double> delta = error.productoTensorial(inputLayer).productoEscalar(learningFactor);
         NumericMatriz<Double> adicion = weights.adicion(delta);
         synchronized(weights){
             weights.putAll(adicion);
             
         }
         
-        for(LayerToBack back : getProducers()) {
-            back.setCompareToLayer(toBackLayer);
-            back.adjustBack();
+        for(LayerLearning back : getProducers()) {
+            back.setLearningData(propagationError);
+            back.startLearning();
         }
-        this.clear();
+        producers.clear();
         
     }
 
@@ -118,13 +120,13 @@ public class PixelDirectLinealLeanringLayer extends ArrayList<LayerToBack> imple
     }
 
     @Override
-    public Double getLeanringStep() {
-        return learningStep;
+    public Double getLeanringFactor() {
+        return learningFactor;
     }
 
     @Override
-    public List<LayerToBack> getProducers() {
-        return this;
+    public List<LayerLearning> getProducers() {
+        return producers;
     }
 
     @Override
