@@ -17,6 +17,7 @@ import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +27,7 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 import javax.swing.ComboBoxModel;
@@ -33,6 +35,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JPanel;
 import javax.swing.SpinnerListModel;
 import javax.swing.SpinnerModel;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.slf4j.Logger;
@@ -79,6 +82,7 @@ public class VisLoad extends javax.swing.JFrame {
     private LinkedList<Rectangle> areaQeue;
     private boolean areaDelete = false;
     private boolean areaSelect = false;
+    private final FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("pesos", "dat");
 
     /**
      * Get the value of comboModel
@@ -162,6 +166,12 @@ public class VisLoad extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jDialogPesosSave = new javax.swing.JDialog();
+        jFileChooserPesosSave = new javax.swing.JFileChooser();
+        jDialogPesosLoad = new javax.swing.JDialog();
+        jFileChooserPesosLoad = new javax.swing.JFileChooser();
+        jDialogImagenSalva = new javax.swing.JDialog();
+        jFileChooserImagenSalva = new javax.swing.JFileChooser();
         jSplitPane1 = new javax.swing.JSplitPane();
         vista = getNuevaVista();
         respuesta = getNuevaRespuesta();
@@ -176,6 +186,8 @@ public class VisLoad extends javax.swing.JFrame {
         cargaOriginal = new javax.swing.JButton();
         cargaPreparada = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
+        jSeparator2 = new javax.swing.JSeparator();
+        jButton5 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         cargar = new javax.swing.JButton();
         clean = new javax.swing.JButton();
@@ -201,6 +213,97 @@ public class VisLoad extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
+
+        jDialogPesosSave.setTitle("Guardar pesos");
+        jDialogPesosSave.setAlwaysOnTop(true);
+        jDialogPesosSave.setMinimumSize(jFileChooserPesosSave.getMinimumSize());
+        jDialogPesosSave.setModal(true);
+        jDialogPesosSave.setPreferredSize(jFileChooserPesosSave.getPreferredSize());
+
+        jFileChooserPesosSave.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
+        jFileChooserPesosSave.setCurrentDirectory(new File(System.getProperty("user.dir")));
+        jFileChooserPesosSave.setDialogTitle("Guardar pesos");
+        jFileChooserPesosSave.setFileFilter(getFileNameExtensionFilter());
+        jFileChooserPesosSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jFileChooserPesosSaveActionPerformed(evt);
+                jFileChooserPesosSaveActionPerformed1(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jDialogPesosSaveLayout = new javax.swing.GroupLayout(jDialogPesosSave.getContentPane());
+        jDialogPesosSave.getContentPane().setLayout(jDialogPesosSaveLayout);
+        jDialogPesosSaveLayout.setHorizontalGroup(
+            jDialogPesosSaveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialogPesosSaveLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jFileChooserPesosSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jDialogPesosSaveLayout.setVerticalGroup(
+            jDialogPesosSaveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialogPesosSaveLayout.createSequentialGroup()
+                .addComponent(jFileChooserPesosSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+
+        jDialogPesosLoad.setTitle("Carga Pesos");
+        jDialogPesosLoad.setMinimumSize(jFileChooserPesosLoad.getMinimumSize());
+        jDialogPesosLoad.setPreferredSize(jFileChooserPesosLoad.getPreferredSize());
+
+        jFileChooserPesosLoad.setCurrentDirectory(new File(System.getProperty("user.dir")));
+        jFileChooserPesosLoad.setDialogTitle("Carga Pesos");
+        jFileChooserPesosLoad.setFileFilter(getFileNameExtensionFilter());
+        jFileChooserPesosLoad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jFileChooserPesosLoadActionPerformed(evt);
+                jFileChooserPesosLoadActionPerformed1(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jDialogPesosLoadLayout = new javax.swing.GroupLayout(jDialogPesosLoad.getContentPane());
+        jDialogPesosLoad.getContentPane().setLayout(jDialogPesosLoadLayout);
+        jDialogPesosLoadLayout.setHorizontalGroup(
+            jDialogPesosLoadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialogPesosLoadLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jFileChooserPesosLoad, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jDialogPesosLoadLayout.setVerticalGroup(
+            jDialogPesosLoadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialogPesosLoadLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jFileChooserPesosLoad, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jDialogImagenSalva.setTitle("Salva Imagen");
+        jDialogImagenSalva.setSize(jFileChooserImagenSalva.getMinimumSize());
+
+        jFileChooserImagenSalva.setDialogTitle("Salva Imagen");
+        jFileChooserImagenSalva.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jFileChooserImagenSalvaActionPerformed(evt);
+                jFileChooserImagenSalvaActionPerformed1(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jDialogImagenSalvaLayout = new javax.swing.GroupLayout(jDialogImagenSalva.getContentPane());
+        jDialogImagenSalva.getContentPane().setLayout(jDialogImagenSalvaLayout);
+        jDialogImagenSalvaLayout.setHorizontalGroup(
+            jDialogImagenSalvaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDialogImagenSalvaLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jFileChooserImagenSalva, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jDialogImagenSalvaLayout.setVerticalGroup(
+            jDialogImagenSalvaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialogImagenSalvaLayout.createSequentialGroup()
+                .addComponent(jFileChooserImagenSalva, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Vista de carga");
@@ -307,6 +410,15 @@ public class VisLoad extends javax.swing.JFrame {
 
         jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
+        jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
+
+        jButton5.setText("Salvar");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -322,7 +434,11 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(suavizaResultado)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(enmascaraResultado)
-                .addContainerGap(354, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton5)
+                .addContainerGap(366, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -335,8 +451,13 @@ public class VisLoad extends javax.swing.JFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSeparator1)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparator1)
+                    .addComponent(jSeparator2))
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jButton5))
         );
 
         jTabbedPane1.addTab("Pre proceso salida", null, jPanel2, "Pre proceso de imagen de salida");
@@ -358,7 +479,7 @@ public class VisLoad extends javax.swing.JFrame {
         salva.setText("Salva");
         salva.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                salvaActionPerformed(evt);
+                salvaActionPerformed1(evt);
             }
         });
 
@@ -592,7 +713,7 @@ public class VisLoad extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
+                .addComponent(jSplitPane1)
                 .addContainerGap())
         );
 
@@ -767,123 +888,6 @@ public class VisLoad extends javax.swing.JFrame {
         
     }//GEN-LAST:event_cleanActionPerformed
 
-    private void salvaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salvaActionPerformed
-        String filename = System.getProperty("user.dir") + weightUrl + "nw.dat";
-        
-         try( 
-                 OutputStream fos = Files.newOutputStream(Paths.get(filename));
-                 BufferedOutputStream out = new BufferedOutputStream(fos);
-                 GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(out);
-                 DataOutputStream dos = new DataOutputStream(gzOut)
-                 )   {
-            
-            Integer fila = weightsH.getDominio().getFila();
-            Integer columna = weightsH.getDominio().getColumna();
-            
-            dos.writeInt(fila);
-            dos.writeInt(columna);
-            
-            List<ParOrdenado> listado = weightsH.getDominio()
-                    .stream()
-                    .sorted(this::compareTo)
-                    .collect(Collectors.toList());
-            
-            for ( ParOrdenado indice : listado) {
-                dos.writeInt(indice.getFila());
-                dos.writeInt(indice.getColumna());
-                dos.writeDouble(weightsH.get(indice));
-            }
-            
-            fila = weightsO.getDominio().getFila();
-            columna = weightsO.getDominio().getColumna();
-            
-            dos.writeInt(fila);
-            dos.writeInt(columna);
-            
-            listado = weightsO.getDominio()
-                    .stream()
-                    .sorted(this::compareTo)
-                    .collect(Collectors.toList());
-            
-            for ( ParOrdenado indice : listado) {
-                dos.writeInt(indice.getFila());
-                dos.writeInt(indice.getColumna());
-                dos.writeDouble(weightsO.get(indice));
-                
-            }
-            
-         } catch (FileNotFoundException ex) {
-             log.error("error al guardar  pesos", ex);
-         } catch (IOException ex) {
-             log.error("error al guardar  pesos", ex);             
-         }
-    }//GEN-LAST:event_salvaActionPerformed
-
-    private void cargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargarActionPerformed
-        String filename = System.getProperty("user.dir") + weightUrl + "nw.dat";
-        
-        try (
-                InputStream fis = Files.newInputStream(Paths.get(filename));
-                BufferedInputStream bis = new BufferedInputStream(fis);
-                GzipCompressorInputStream gzIn = new GzipCompressorInputStream(bis);
-                DataInputStream dis = new DataInputStream(gzIn)
-                ) {
-
-            Integer fila;
-            Integer columna;
-
-            fila = dis.readInt();
-            columna = dis.readInt();
-            
-            inNeurs.setValue((int)Math.sqrt(columna/3));
-            hiddNeurs.setValue(fila);
-            
-            log.info("leer <{}>, <{}>", fila, columna);
-            Dominio dominio = new Dominio(fila, columna);
-            
-            weightsH = new DoubleMatriz(dominio);
-            
-            List<ParOrdenado> listado = weightsH.getDominio()
-                    .stream()
-                    .sorted(this::compareTo)
-                    .collect(Collectors.toList());
-            for ( ParOrdenado indice : listado) {
-                weightsH.indexa(dis.readInt(), dis.readInt(), dis.readDouble());
-                
-            }
-            
-            fila = dis.readInt();
-            columna = dis.readInt();
-            
-            outNeurs.setValue((int)Math.sqrt(fila/3));
-                        
-            log.info("leer <{}>, <{}>", fila, columna);
-            dominio = new Dominio(fila, columna);
-            
-            weightsO = new DoubleMatriz(dominio);
-            
-            listado = weightsO.getDominio()
-                    .stream()
-                    .sorted(this::compareTo)
-                    .collect(Collectors.toList());
-            
-            for ( ParOrdenado indice : listado) {
-                
-                weightsO.indexa(dis.readInt(), dis.readInt(), dis.readDouble());
-                
-            }
-            
-            inStep = (Integer)inNeurs.getValue();
-            hidStep = (Integer)hiddNeurs.getValue();
-            outStep = (Integer)outNeurs.getValue();
-            
-        } catch ( FileNotFoundException ex) {
-            log.error("error al cargar pesos", ex);
-        } catch (IOException ex) {
-            log.error("error al cargar pesos", ex);
-        }
-    }//GEN-LAST:event_cargarActionPerformed
-
     private void vistaMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_vistaMouseReleased
         if (!areaDelete && !areaSelect) {
             int x = evt.getX();
@@ -979,6 +983,69 @@ public class VisLoad extends javax.swing.JFrame {
         
     }//GEN-LAST:event_cargaOriginalActionPerformed
 
+    private void salvaActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salvaActionPerformed1
+        jDialogPesosSave.setVisible(true);
+    }//GEN-LAST:event_salvaActionPerformed1
+
+    private void jFileChooserPesosSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserPesosSaveActionPerformed
+        if (evt.getActionCommand().equals("ApproveSelection")) {
+            salvaPesos(jFileChooserPesosSave.getSelectedFile().getPath());
+            jDialogPesosSave.setVisible(false);
+            
+        }
+    }//GEN-LAST:event_jFileChooserPesosSaveActionPerformed
+
+    private void jFileChooserPesosSaveActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserPesosSaveActionPerformed1
+        if (evt.getActionCommand().equals("CancelSelection")) {
+            jDialogPesosSave.setVisible(false);
+            
+        }
+        
+    }//GEN-LAST:event_jFileChooserPesosSaveActionPerformed1
+
+    private void jFileChooserPesosLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserPesosLoadActionPerformed
+        if (evt.getActionCommand().equals("CancelSelection")) {
+            jDialogPesosLoad.setVisible(false);
+        }
+    }//GEN-LAST:event_jFileChooserPesosLoadActionPerformed
+
+    private void jFileChooserPesosLoadActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserPesosLoadActionPerformed1
+        if (evt.getActionCommand().equals("ApproveSelection")) {
+            cargaPesos(jFileChooserPesosLoad.getSelectedFile().getPath());
+            jDialogPesosLoad.setVisible(false);
+        }    
+    }//GEN-LAST:event_jFileChooserPesosLoadActionPerformed1
+
+    private void cargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargarActionPerformed
+        jDialogPesosLoad.setVisible(true);
+    }//GEN-LAST:event_cargarActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        jDialogImagenSalva.setVisible(true);
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jFileChooserImagenSalvaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserImagenSalvaActionPerformed
+        jDialogImagenSalva.setVisible(false);
+    }//GEN-LAST:event_jFileChooserImagenSalvaActionPerformed
+
+    private void jFileChooserImagenSalvaActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserImagenSalvaActionPerformed1
+        if (evt.getActionCommand().equals("ApproveSelection")) {
+            
+            try  {
+                jFileChooserImagenSalva.getSelectedFile().createNewFile();
+                ImageIO.write(bufferImageFiltered, "JPEG", jFileChooserImagenSalva.getSelectedFile());
+            } catch (IOException ex) {
+                log.info("file error", ex);
+            }
+//            String[] writerFormatNames = ImageIO.getWriterFormatNames();
+//            for (int i=0; writerFormatNames.length>i;i++) {
+//
+//                log.info("format {}" , writerFormatNames[i]);
+//            }
+        }
+        jDialogImagenSalva.setVisible(false);
+    }//GEN-LAST:event_jFileChooserImagenSalvaActionPerformed1
+
     public BufferedImage createCompatibleDestImage(BufferedImage src, ColorModel destCM) {
         BufferedImage image;
 
@@ -1034,6 +1101,125 @@ public class VisLoad extends javax.swing.JFrame {
         
 //        return  (1- retorno);
         return retorno;
+    }
+    
+    private void cargaPesos(String archivo) {
+//        String archivo = System.getProperty("user.dir") + weightUrl + "nw.dat";
+//        String archivox = System.getProperty("user.dir") + weightUrl + "nw.dat";
+        log.info(archivo);
+//        log.info(archivox);
+        try (
+                InputStream fis = Files.newInputStream(Paths.get(archivo));
+                BufferedInputStream bis = new BufferedInputStream(fis);
+                GzipCompressorInputStream gzIn = new GzipCompressorInputStream(bis);
+                DataInputStream dis = new DataInputStream(gzIn)
+                ) {
+
+            Integer fila;
+            Integer columna;
+
+            fila = dis.readInt();
+            columna = dis.readInt();
+            
+            inNeurs.setValue((int)Math.sqrt(columna/3));
+            hiddNeurs.setValue(fila);
+            
+            log.info("leer <{}>, <{}>", fila, columna);
+            Dominio dominio = new Dominio(fila, columna);
+            
+            weightsH = new DoubleMatriz(dominio);
+            
+            List<ParOrdenado> listado = weightsH.getDominio()
+                    .stream()
+                    .sorted(this::compareTo)
+                    .collect(Collectors.toList());
+            for ( ParOrdenado indice : listado) {
+                weightsH.indexa(dis.readInt(), dis.readInt(), dis.readDouble());
+                
+            }
+            
+            fila = dis.readInt();
+            columna = dis.readInt();
+            
+            outNeurs.setValue((int)Math.sqrt(fila/3));
+                        
+            log.info("leer <{}>, <{}>", fila, columna);
+            dominio = new Dominio(fila, columna);
+            
+            weightsO = new DoubleMatriz(dominio);
+            
+            listado = weightsO.getDominio()
+                    .stream()
+                    .sorted(this::compareTo)
+                    .collect(Collectors.toList());
+            
+            for ( ParOrdenado indice : listado) {
+                
+                weightsO.indexa(dis.readInt(), dis.readInt(), dis.readDouble());
+                
+            }
+            
+            inStep = (Integer)inNeurs.getValue();
+            hidStep = (Integer)hiddNeurs.getValue();
+            outStep = (Integer)outNeurs.getValue();
+            
+        } catch ( FileNotFoundException ex) {
+            log.error("error al cargar pesos", ex);
+        } catch (IOException ex) {
+            log.error("error al cargar pesos", ex);
+        }
+    }
+    
+    private void salvaPesos(String archivo) {
+//        String filename = 3 + weightUrl + "nw.dat";
+
+         try( 
+                 OutputStream fos = Files.newOutputStream(Paths.get(archivo));
+                 BufferedOutputStream out = new BufferedOutputStream(fos);
+                 GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(out);
+                 DataOutputStream dos = new DataOutputStream(gzOut)
+                 )   {
+            
+            Integer fila = weightsH.getDominio().getFila();
+            Integer columna = weightsH.getDominio().getColumna();
+            
+            dos.writeInt(fila);
+            dos.writeInt(columna);
+            
+            List<ParOrdenado> listado = weightsH.getDominio()
+                    .stream()
+                    .sorted(this::compareTo)
+                    .collect(Collectors.toList());
+            
+            for ( ParOrdenado indice : listado) {
+                dos.writeInt(indice.getFila());
+                dos.writeInt(indice.getColumna());
+                dos.writeDouble(weightsH.get(indice));
+            }
+            
+            fila = weightsO.getDominio().getFila();
+            columna = weightsO.getDominio().getColumna();
+            
+            dos.writeInt(fila);
+            dos.writeInt(columna);
+            
+            listado = weightsO.getDominio()
+                    .stream()
+                    .sorted(this::compareTo)
+                    .collect(Collectors.toList());
+            
+            for ( ParOrdenado indice : listado) {
+                dos.writeInt(indice.getFila());
+                dos.writeInt(indice.getColumna());
+                dos.writeDouble(weightsO.get(indice));
+                
+            }
+            
+         } catch (FileNotFoundException ex) {
+             log.error("error al guardar  pesos", ex);
+         } catch (IOException ex) {
+             log.error("error al guardar  pesos", ex);             
+         }
     }
     
     private javax.swing.JPanel getNuevaVista(){
@@ -1153,8 +1339,15 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JDialog jDialogImagenSalva;
+    private javax.swing.JDialog jDialogPesosLoad;
+    private javax.swing.JDialog jDialogPesosSave;
+    private javax.swing.JFileChooser jFileChooserImagenSalva;
+    private javax.swing.JFileChooser jFileChooserPesosLoad;
+    private javax.swing.JFileChooser jFileChooserPesosSave;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -1165,6 +1358,7 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JSpinner outNeurs;
@@ -1176,4 +1370,8 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JButton suavizaResultado;
     private javax.swing.JPanel vista;
     // End of variables declaration//GEN-END:variables
+
+    public FileNameExtensionFilter getFileNameExtensionFilter() {
+        return fileNameExtensionFilter;
+    }
 }
