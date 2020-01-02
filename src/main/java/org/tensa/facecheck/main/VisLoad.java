@@ -59,15 +59,10 @@ public class VisLoad extends javax.swing.JFrame {
     private final Logger log = LoggerFactory.getLogger(VisLoad.class);
 
     private final String baseUrl = "\\img\\originales\\";
-    private final String testBaseUrl = "\\img\\procesadas\\";
-    private final String weightUrl = "\\data\\";
-    
-    private final String[] imageName = {"IMG_2869", "IMG_2918","IMG_3071","IMG_3076","IMG_3078","IMG_3079"};
-    
+        
     private final Double[] learningFactor = {.001, 0.003, .004, .005, .008, .01, .03, .04, .05, .08, .1, .3, .4, .5, .8};
 
     private final String sufxType = ".jpg";
-    private ComboBoxModel comboModel;
     private BufferedImage buffImage ;
     private BufferedImage destBuffImage ;
     private final int kwidth = 27;
@@ -85,19 +80,6 @@ public class VisLoad extends javax.swing.JFrame {
     private final FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("pesos", "dat");
     private final FileNameExtensionFilter fileNameExtensionFilterImage = new FileNameExtensionFilter("JPEG", "jpg");
 
-    /**
-     * Get the value of comboModel
-     *
-     * @return the value of comboModel
-     */
-    public ComboBoxModel getComboModel() {
-        if(Objects.isNull(comboModel))
-            comboModel = new DefaultComboBoxModel(imageName);
-            
-        return comboModel;
-      
-    }
-    
     public SpinnerModel getSpinnerModel(){
 //        if(Objects.isNull(spinnerModel))
         SpinnerListModel spinnerModel = new SpinnerListModel(learningFactor);
@@ -111,25 +93,6 @@ public class VisLoad extends javax.swing.JFrame {
      */
     public String getSufxType() {
         return sufxType;
-    }
-
-    /**
-     * Get the value of imageName
-     *
-     * @return the value of imageName
-     */
-    public String[] getImageName() {
-        return imageName;
-    }
-
-    /**
-     * Get the value of imageName at specified index
-     *
-     * @param index the index of imageName
-     * @return the value of imageName at specified index
-     */
-    public String getImageName(int index) {
-        return this.imageName[index];
     }
 
     public String getBaseUrl() {
@@ -173,6 +136,10 @@ public class VisLoad extends javax.swing.JFrame {
         jFileChooserPesosLoad = new javax.swing.JFileChooser();
         jDialogImagenSalva = new javax.swing.JDialog();
         jFileChooserImagenSalva = new javax.swing.JFileChooser();
+        jDialogImagenLoadResult = new javax.swing.JDialog();
+        jFileChooserLoadImagenResult = new javax.swing.JFileChooser();
+        jDialogLoadImagen = new javax.swing.JDialog();
+        jFileChooserLoadImagen = new javax.swing.JFileChooser();
         jSplitPane1 = new javax.swing.JSplitPane();
         vista = getNuevaVista();
         respuesta = getNuevaRespuesta();
@@ -180,7 +147,6 @@ public class VisLoad extends javax.swing.JFrame {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         cargaImagen = new javax.swing.JButton();
-        jComboBox1 = new javax.swing.JComboBox();
         jPanel2 = new javax.swing.JPanel();
         suavizaResultado = new javax.swing.JButton();
         enmascaraResultado = new javax.swing.JButton();
@@ -309,6 +275,64 @@ public class VisLoad extends javax.swing.JFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
+        jDialogImagenLoadResult.setTitle("Carga resultante");
+        jDialogImagenLoadResult.setSize(jFileChooserLoadImagenResult.getPreferredSize());
+
+        jFileChooserLoadImagenResult.setCurrentDirectory(new File(System.getProperty("user.dir")));
+        jFileChooserLoadImagenResult.setDialogTitle("Carga resultante");
+        jFileChooserLoadImagenResult.setFileFilter(getFileNameExtensionFilterImage());
+        jFileChooserLoadImagenResult.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jFileChooserLoadImagenResultActionPerformed(evt);
+                jFileChooserLoadImagenResultActionPerformed1(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jDialogImagenLoadResultLayout = new javax.swing.GroupLayout(jDialogImagenLoadResult.getContentPane());
+        jDialogImagenLoadResult.getContentPane().setLayout(jDialogImagenLoadResultLayout);
+        jDialogImagenLoadResultLayout.setHorizontalGroup(
+            jDialogImagenLoadResultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialogImagenLoadResultLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jFileChooserLoadImagenResult, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jDialogImagenLoadResultLayout.setVerticalGroup(
+            jDialogImagenLoadResultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDialogImagenLoadResultLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jFileChooserLoadImagenResult, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        jDialogLoadImagen.setSize(jFileChooserLoadImagen.getPreferredSize());
+
+        jFileChooserLoadImagen.setCurrentDirectory(new File(System.getProperty("user.dir")));
+        jFileChooserLoadImagen.setDialogTitle("Carga Imagen Inicial");
+        jFileChooserLoadImagen.setFileFilter(getFileNameExtensionFilterImage());
+        jFileChooserLoadImagen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jFileChooserLoadImagenActionPerformed(evt);
+                jFileChooserLoadImagenActionPerformed1(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jDialogLoadImagenLayout = new javax.swing.GroupLayout(jDialogLoadImagen.getContentPane());
+        jDialogLoadImagen.getContentPane().setLayout(jDialogLoadImagenLayout);
+        jDialogLoadImagenLayout.setHorizontalGroup(
+            jDialogLoadImagenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialogLoadImagenLayout.createSequentialGroup()
+                .addComponent(jFileChooserLoadImagen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        jDialogLoadImagenLayout.setVerticalGroup(
+            jDialogLoadImagenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDialogLoadImagenLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jFileChooserLoadImagen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Vista de carga");
 
@@ -359,8 +383,6 @@ public class VisLoad extends javax.swing.JFrame {
             }
         });
 
-        jComboBox1.setModel(getComboModel());
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -368,29 +390,25 @@ public class VisLoad extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(cargaImagen)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(422, 422, 422))
+                .addGap(760, 760, 760))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cargaImagen)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(cargaImagen)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Imagen", null, jPanel1, "Carga de imagen");
 
-        suavizaResultado.setText("Suaviza");
+        suavizaResultado.setText("Suavizar");
         suavizaResultado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 suavizaResultadoActionPerformed(evt);
             }
         });
 
-        enmascaraResultado.setText("enmascara");
+        enmascaraResultado.setText("enmascarar");
         enmascaraResultado.setToolTipText("mascara de salida preparada sobre original");
         enmascaraResultado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -405,7 +423,7 @@ public class VisLoad extends javax.swing.JFrame {
             }
         });
 
-        cargaPreparada.setText("Preparada");
+        cargaPreparada.setText("Procesada");
         cargaPreparada.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cargaPreparadaActionPerformed(evt);
@@ -442,7 +460,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonSalvaImagen)
-                .addContainerGap(366, Short.MAX_VALUE))
+                .addContainerGap(354, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -464,7 +482,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jButtonSalvaImagen))
         );
 
-        jTabbedPane1.addTab("Pre proceso salida", null, jPanel2, "Pre proceso de imagen de salida");
+        jTabbedPane1.addTab("Imagen salida", null, jPanel2, "Pre proceso de imagen de salida");
 
         cargar.setText("Carga");
         cargar.addActionListener(new java.awt.event.ActionListener() {
@@ -726,25 +744,6 @@ public class VisLoad extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void cargaImagenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargaImagenActionPerformed
-        String _filename1 = System.getProperty("user.dir") + baseUrl + (String)jComboBox1.getSelectedItem() + sufxType;
-        String _filename2 = System.getProperty("user.dir") + testBaseUrl + (String)jComboBox1.getSelectedItem() + sufxType;
-        log.info("directorio user <{}>",System.getProperty("user.dir"));
-        
-        try {
-            buffImage = ImageIO.read(new File(_filename1));
-            
-            destBuffImage = ImageIO.read(new File(_filename2));
-            bufferImageFiltered = destBuffImage;
-            java.awt.EventQueue.invokeLater(() -> {
-                vista.repaint();
-                respuesta.repaint();
-            });
-        } catch (IOException ex) {
-            log.error("error de archivo <{}>", _filename1, ex);
-        }
-    }//GEN-LAST:event_cargaImagenActionPerformed
-
     private void suavizaResultadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_suavizaResultadoActionPerformed
         
         
@@ -962,22 +961,6 @@ public class VisLoad extends javax.swing.JFrame {
         areaDelete = false;
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    private void cargaPreparadaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargaPreparadaActionPerformed
-        String _filename2 = System.getProperty("user.dir") + testBaseUrl + (String)jComboBox1.getSelectedItem() + sufxType;
-        log.info("directorio user <{}>",System.getProperty("user.dir"));
-        
-        try {
-            destBuffImage = ImageIO.read(new File(_filename2));
-            bufferImageFiltered = destBuffImage;
-            
-            java.awt.EventQueue.invokeLater(() -> {
-                vista.repaint();
-            });
-        } catch (IOException ex) {
-            log.error("error de archivo <{}>", _filename2, ex);
-        }
-    }//GEN-LAST:event_cargaPreparadaActionPerformed
-
     private void cargaOriginalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargaOriginalActionPerformed
         destBuffImage = buffImage;
         bufferImageFiltered = destBuffImage;
@@ -1044,6 +1027,57 @@ public class VisLoad extends javax.swing.JFrame {
         }
         jDialogImagenSalva.setVisible(false);
     }//GEN-LAST:event_jFileChooserImagenSalvaActionPerformed1
+
+    private void jFileChooserLoadImagenResultActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserLoadImagenResultActionPerformed
+        jDialogImagenLoadResult.setVisible(false);
+    }//GEN-LAST:event_jFileChooserLoadImagenResultActionPerformed
+
+    private void jFileChooserLoadImagenResultActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserLoadImagenResultActionPerformed1
+        if (evt.getActionCommand().equals("ApproveSelection")) {
+//            String _filename2 = System.getProperty("user.dir") + testBaseUrl + (String)jComboBox1.getSelectedItem() + sufxType;
+//            log.info("directorio user <{}>",System.getProperty("user.dir"));
+
+            try {
+                destBuffImage = ImageIO.read(jFileChooserLoadImagenResult.getSelectedFile());
+                bufferImageFiltered = destBuffImage;
+
+                java.awt.EventQueue.invokeLater(() -> {
+                    respuesta.repaint();
+                });
+            } catch (IOException ex) {
+                log.error("error de archivo ", ex);
+            }
+            
+        }
+    }//GEN-LAST:event_jFileChooserLoadImagenResultActionPerformed1
+
+    private void cargaPreparadaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargaPreparadaActionPerformed
+        jDialogImagenLoadResult.setVisible(true);
+    }//GEN-LAST:event_cargaPreparadaActionPerformed
+
+    private void jFileChooserLoadImagenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserLoadImagenActionPerformed
+        jDialogLoadImagen.setVisible(false);
+    }//GEN-LAST:event_jFileChooserLoadImagenActionPerformed
+
+    private void jFileChooserLoadImagenActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserLoadImagenActionPerformed1
+                
+        try {
+            buffImage = ImageIO.read(jFileChooserLoadImagen.getSelectedFile());
+            
+            destBuffImage = buffImage;
+            bufferImageFiltered = destBuffImage;
+            java.awt.EventQueue.invokeLater(() -> {
+                vista.repaint();
+                respuesta.repaint();
+            });
+        } catch (IOException ex) {
+            log.error("error de archivo ", ex);
+        }
+    }//GEN-LAST:event_jFileChooserLoadImagenActionPerformed1
+
+    private void cargaImagenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargaImagenActionPerformed
+        jDialogLoadImagen.setVisible(true);
+    }//GEN-LAST:event_cargaImagenActionPerformed
 
     public BufferedImage createCompatibleDestImage(BufferedImage src, ColorModel destCM) {
         BufferedImage image;
@@ -1340,11 +1374,14 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButtonSalvaImagen;
     private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JDialog jDialogImagenLoadResult;
     private javax.swing.JDialog jDialogImagenSalva;
+    private javax.swing.JDialog jDialogLoadImagen;
     private javax.swing.JDialog jDialogPesosLoad;
     private javax.swing.JDialog jDialogPesosSave;
     private javax.swing.JFileChooser jFileChooserImagenSalva;
+    private javax.swing.JFileChooser jFileChooserLoadImagen;
+    private javax.swing.JFileChooser jFileChooserLoadImagenResult;
     private javax.swing.JFileChooser jFileChooserPesosLoad;
     private javax.swing.JFileChooser jFileChooserPesosSave;
     private javax.swing.JLabel jLabel1;
