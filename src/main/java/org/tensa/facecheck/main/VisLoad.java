@@ -376,7 +376,7 @@ public class VisLoad extends javax.swing.JFrame {
 
         jSplitPane1.setRightComponent(respuesta);
 
-        cargaImagen.setText("Carga...");
+        cargaImagen.setText("Cargar...");
         cargaImagen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cargaImagenActionPerformed(evt);
@@ -399,7 +399,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Imagen", null, jPanel1, "Carga de imagen");
+        jTabbedPane1.addTab("Imagen entrada", null, jPanel1, "Carga de imagen");
 
         suavizaResultado.setText("Suavizar");
         suavizaResultado.addActionListener(new java.awt.event.ActionListener() {
@@ -416,14 +416,14 @@ public class VisLoad extends javax.swing.JFrame {
             }
         });
 
-        cargaOriginal.setText("Original");
+        cargaOriginal.setText("Limpiar original");
         cargaOriginal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cargaOriginalActionPerformed(evt);
             }
         });
 
-        cargaPreparada.setText("Procesada");
+        cargaPreparada.setText("Cargar...");
         cargaPreparada.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cargaPreparadaActionPerformed(evt);
@@ -434,7 +434,8 @@ public class VisLoad extends javax.swing.JFrame {
 
         jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
-        jButtonSalvaImagen.setText("Salvar");
+        jButtonSalvaImagen.setText("Salvar...");
+        jButtonSalvaImagen.setToolTipText("");
         jButtonSalvaImagen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonSalvaImagenActionPerformed(evt);
@@ -460,7 +461,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonSalvaImagen)
-                .addContainerGap(354, Short.MAX_VALUE))
+                .addContainerGap(320, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -484,7 +485,7 @@ public class VisLoad extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Imagen salida", null, jPanel2, "Pre proceso de imagen de salida");
 
-        cargar.setText("Carga");
+        cargar.setText("Carga...");
         cargar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cargarActionPerformed(evt);
@@ -498,7 +499,7 @@ public class VisLoad extends javax.swing.JFrame {
             }
         });
 
-        salva.setText("Salva");
+        salva.setText("Salva...");
         salva.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 salvaActionPerformed1(evt);
@@ -543,7 +544,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(outNeurs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(214, Short.MAX_VALUE))
+                .addContainerGap(201, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -625,7 +626,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jButton3)
                 .addGap(18, 18, 18)
                 .addComponent(actualizacion)
-                .addContainerGap(74, Short.MAX_VALUE))
+                .addContainerGap(79, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -687,7 +688,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jButton2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton4)
-                .addContainerGap(312, Short.MAX_VALUE))
+                .addContainerGap(317, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -708,7 +709,7 @@ public class VisLoad extends javax.swing.JFrame {
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 846, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
