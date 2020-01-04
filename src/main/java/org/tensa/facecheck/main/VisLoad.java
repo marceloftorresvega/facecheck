@@ -17,7 +17,6 @@ import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,13 +24,8 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JPanel;
 import javax.swing.SpinnerListModel;
 import javax.swing.SpinnerModel;
@@ -1035,8 +1029,6 @@ public class VisLoad extends javax.swing.JFrame {
 
     private void jFileChooserLoadImagenResultActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserLoadImagenResultActionPerformed1
         if (evt.getActionCommand().equals("ApproveSelection")) {
-//            String _filename2 = System.getProperty("user.dir") + testBaseUrl + (String)jComboBox1.getSelectedItem() + sufxType;
-//            log.info("directorio user <{}>",System.getProperty("user.dir"));
 
             try {
                 destBuffImage = ImageIO.read(jFileChooserLoadImagenResult.getSelectedFile());
@@ -1138,60 +1130,30 @@ public class VisLoad extends javax.swing.JFrame {
     }
     
     private void cargaPesos(String archivo) {
-//        String archivo = System.getProperty("user.dir") + weightUrl + "nw.dat";
-//        String archivox = System.getProperty("user.dir") + weightUrl + "nw.dat";
         log.info(archivo);
-//        log.info(archivox);
         try (
                 InputStream fis = Files.newInputStream(Paths.get(archivo));
                 BufferedInputStream bis = new BufferedInputStream(fis);
                 GzipCompressorInputStream gzIn = new GzipCompressorInputStream(bis);
                 DataInputStream dis = new DataInputStream(gzIn)
                 ) {
-
             Integer fila;
             Integer columna;
 
-            fila = dis.readInt();
-            columna = dis.readInt();
+            weightsH = cargaMatriz(dis);
+
+            fila = weightsH.getDominio().getFila();
+            columna = weightsH.getDominio().getColumna();
             
             inNeurs.setValue((int)Math.sqrt(columna/3));
             hiddNeurs.setValue(fila);
             
-            log.info("leer <{}>, <{}>", fila, columna);
-            Dominio dominio = new Dominio(fila, columna);
+            weightsO = cargaMatriz(dis);
             
-            weightsH = new DoubleMatriz(dominio);
-            
-            List<ParOrdenado> listado = weightsH.getDominio()
-                    .stream()
-                    .sorted(this::compareTo)
-                    .collect(Collectors.toList());
-            for ( ParOrdenado indice : listado) {
-                weightsH.indexa(dis.readInt(), dis.readInt(), dis.readDouble());
-                
-            }
-            
-            fila = dis.readInt();
-            columna = dis.readInt();
+            fila = weightsO.getDominio().getFila();
+            columna = weightsO.getDominio().getColumna();
             
             outNeurs.setValue((int)Math.sqrt(fila/3));
-                        
-            log.info("leer <{}>, <{}>", fila, columna);
-            dominio = new Dominio(fila, columna);
-            
-            weightsO = new DoubleMatriz(dominio);
-            
-            listado = weightsO.getDominio()
-                    .stream()
-                    .sorted(this::compareTo)
-                    .collect(Collectors.toList());
-            
-            for ( ParOrdenado indice : listado) {
-                
-                weightsO.indexa(dis.readInt(), dis.readInt(), dis.readDouble());
-                
-            }
             
             inStep = (Integer)inNeurs.getValue();
             hidStep = (Integer)hiddNeurs.getValue();
@@ -1204,8 +1166,30 @@ public class VisLoad extends javax.swing.JFrame {
         }
     }
     
+    private DoubleMatriz cargaMatriz( DataInputStream dis) throws IOException {
+        
+        Integer fila;
+        Integer columna;
+
+        fila = dis.readInt();
+        columna = dis.readInt();
+        
+        log.info("leer <{}>, <{}>", fila, columna);
+        Dominio dominio = new Dominio(fila, columna);
+            
+        DoubleMatriz weights = new DoubleMatriz(dominio);
+        
+        for ( ParOrdenado indice : dominio) {
+            weights.indexa(dis.readInt(), dis.readInt(), dis.readDouble());
+
+        }
+        
+        return weights;
+        
+    }
+    
     private void salvaPesos(String archivo) {
-//        String filename = 3 + weightUrl + "nw.dat";
+        log.info(archivo);
 
          try( 
                  OutputStream fos = Files.newOutputStream(Paths.get(archivo));
@@ -1214,46 +1198,31 @@ public class VisLoad extends javax.swing.JFrame {
                  DataOutputStream dos = new DataOutputStream(gzOut)
                  )   {
             
-            Integer fila = weightsH.getDominio().getFila();
-            Integer columna = weightsH.getDominio().getColumna();
-            
-            dos.writeInt(fila);
-            dos.writeInt(columna);
-            
-            List<ParOrdenado> listado = weightsH.getDominio()
-                    .stream()
-                    .sorted(this::compareTo)
-                    .collect(Collectors.toList());
-            
-            for ( ParOrdenado indice : listado) {
-                dos.writeInt(indice.getFila());
-                dos.writeInt(indice.getColumna());
-                dos.writeDouble(weightsH.get(indice));
-            }
-            
-            fila = weightsO.getDominio().getFila();
-            columna = weightsO.getDominio().getColumna();
-            
-            dos.writeInt(fila);
-            dos.writeInt(columna);
-            
-            listado = weightsO.getDominio()
-                    .stream()
-                    .sorted(this::compareTo)
-                    .collect(Collectors.toList());
-            
-            for ( ParOrdenado indice : listado) {
-                dos.writeInt(indice.getFila());
-                dos.writeInt(indice.getColumna());
-                dos.writeDouble(weightsO.get(indice));
-                
-            }
+            salvaMatriz(weightsH, dos);
+            salvaMatriz(weightsO, dos);
             
          } catch (FileNotFoundException ex) {
              log.error("error al guardar  pesos", ex);
          } catch (IOException ex) {
              log.error("error al guardar  pesos", ex);             
          }
+    }
+    
+    private void salvaMatriz(DoubleMatriz weights, DataOutputStream dos) throws IOException {
+        
+        Dominio dominio = weights.getDominio();
+        Integer fila = dominio.getFila();
+        Integer columna = dominio.getColumna();
+
+        dos.writeInt(fila);
+        dos.writeInt(columna);
+        
+        for ( ParOrdenado indice : dominio) {
+            dos.writeInt(indice.getFila());
+            dos.writeInt(indice.getColumna());
+            dos.writeDouble(weights.get(indice));
+
+        }
     }
     
     private javax.swing.JPanel getNuevaVista(){
