@@ -123,6 +123,7 @@ public class VisLoad extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
         jDialogPesosSave = new javax.swing.JDialog();
         jFileChooserPesosSave = new javax.swing.JFileChooser();
@@ -174,12 +175,12 @@ public class VisLoad extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
+        jProgressBar1 = new javax.swing.JProgressBar();
 
         jDialogPesosSave.setTitle("Guardar pesos");
         jDialogPesosSave.setAlwaysOnTop(true);
         jDialogPesosSave.setMinimumSize(jFileChooserPesosSave.getMinimumSize());
         jDialogPesosSave.setModal(true);
-        jDialogPesosSave.setPreferredSize(jFileChooserPesosSave.getPreferredSize());
 
         jFileChooserPesosSave.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
         jFileChooserPesosSave.setCurrentDirectory(new File(System.getProperty("user.dir")));
@@ -210,7 +211,6 @@ public class VisLoad extends javax.swing.JFrame {
 
         jDialogPesosLoad.setTitle("Carga Pesos");
         jDialogPesosLoad.setMinimumSize(jFileChooserPesosLoad.getMinimumSize());
-        jDialogPesosLoad.setPreferredSize(jFileChooserPesosLoad.getPreferredSize());
 
         jFileChooserPesosLoad.setCurrentDirectory(new File(System.getProperty("user.dir")));
         jFileChooserPesosLoad.setDialogTitle("Carga Pesos");
@@ -332,7 +332,7 @@ public class VisLoad extends javax.swing.JFrame {
 
         jSplitPane1.setDividerLocation(128);
 
-        vista.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        vista.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         vista.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 vistaMouseClicked(evt);
@@ -350,7 +350,7 @@ public class VisLoad extends javax.swing.JFrame {
         );
         vistaLayout.setVerticalGroup(
             vistaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 462, Short.MAX_VALUE)
+            .addGap(0, 450, Short.MAX_VALUE)
         );
 
         jSplitPane1.setLeftComponent(vista);
@@ -365,7 +365,7 @@ public class VisLoad extends javax.swing.JFrame {
         );
         respuestaLayout.setVerticalGroup(
             respuestaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 462, Short.MAX_VALUE)
+            .addGap(0, 450, Short.MAX_VALUE)
         );
 
         jSplitPane1.setRightComponent(respuesta);
@@ -577,6 +577,11 @@ public class VisLoad extends javax.swing.JFrame {
 
         iteraciones.setModel(new javax.swing.SpinnerNumberModel(50, 1, 500, 10));
         iteraciones.setToolTipText("Iteraciones");
+        iteraciones.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                iteracionesStateChanged(evt);
+            }
+        });
 
         jCheckBox1.setText("Usa Selección");
         jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
@@ -703,7 +708,7 @@ public class VisLoad extends javax.swing.JFrame {
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 846, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1)
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
@@ -714,6 +719,9 @@ public class VisLoad extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, iteraciones, org.jdesktop.beansbinding.ELProperty.create("${value}"), jProgressBar1, org.jdesktop.beansbinding.BeanProperty.create("maximum"));
+        bindingGroup.addBinding(binding);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -722,7 +730,10 @@ public class VisLoad extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jSplitPane1)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -731,10 +742,13 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSplitPane1)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         getAccessibleContext().setAccessibleName("Oculta Caras");
+
+        bindingGroup.bind();
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -787,6 +801,7 @@ public class VisLoad extends javax.swing.JFrame {
             for(int idIteracion=0; (!freno.isSelected()) && ((!entrenar.isSelected()) && idIteracion<1 || entrenar.isSelected() && idIteracion<((Integer) iteraciones.getValue())); idIteracion++) {
 
                 log.info("iteracion <{}>", idIteracion);
+                jProgressBar1.setValue(idIteracion);
                 new Dominio(width-inStep, height-inStep).stream()
                         .filter( idx -> (( (idx.getFila()-(inStep-outStep)/2) % outStep ==0) && ((idx.getColumna()-(inStep-outStep)/2)% outStep == 0)))
                         .filter(idx -> (!seleccion.isSelected()) || ( areaQeue.stream().anyMatch(a -> a.contains(idx.getFila(), idx.getColumna()))) )
@@ -828,6 +843,7 @@ public class VisLoad extends javax.swing.JFrame {
             }
             
             java.awt.EventQueue.invokeLater(() -> {
+                jProgressBar1.setValue(jProgressBar1.getMaximum());
                 respuesta.repaint();
             });
             
@@ -1071,6 +1087,10 @@ public class VisLoad extends javax.swing.JFrame {
     private void cargaImagenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargaImagenActionPerformed
         jDialogLoadImagen.setVisible(true);
     }//GEN-LAST:event_cargaImagenActionPerformed
+
+    private void iteracionesStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_iteracionesStateChanged
+        jProgressBar1.setMaximum((Integer)iteraciones.getValue());
+    }//GEN-LAST:event_iteracionesStateChanged
 
     public BufferedImage createCompatibleDestImage(BufferedImage src, ColorModel destCM) {
         BufferedImage image;
@@ -1363,6 +1383,7 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSplitPane jSplitPane1;
@@ -1375,6 +1396,7 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JCheckBox seleccion;
     private javax.swing.JButton suavizaResultado;
     private javax.swing.JPanel vista;
+    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 
     public FileNameExtensionFilter getFileNameExtensionFilter() {
