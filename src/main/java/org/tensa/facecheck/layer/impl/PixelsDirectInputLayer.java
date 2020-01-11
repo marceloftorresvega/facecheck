@@ -30,6 +30,8 @@ import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerProducer;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
+import org.tensa.tensada.matrix.Indice;
+import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
  *
@@ -39,9 +41,16 @@ public class PixelsDirectInputLayer implements LayerProducer {
     
     private BufferedImage src;
     private DoubleMatriz outputLayer;
+    private boolean normalizar;
     private final List<LayerConsumer> consumers;
 
     public PixelsDirectInputLayer() {
+        this.consumers = new ArrayList<>();
+    }
+
+    public PixelsDirectInputLayer(BufferedImage src, boolean normalizar) {
+        this.src = src;
+        this.normalizar = normalizar;
         this.consumers = new ArrayList<>();
     }
     
@@ -60,11 +69,12 @@ public class PixelsDirectInputLayer implements LayerProducer {
             dm.indexa(k + 1, 1, pixels[k] * 254 / 255 + 0.5);
 
         }
-//        NumericMatriz<Double> d = dm.distanciaE2();
-//        d.replaceAll((k, v) -> 1/ Math.sqrt(v));
-//        
-//
-//        return (DoubleMatriz)d.productoKronecker(dm);
+        if(normalizar) {
+            NumericMatriz<Double> d = dm.distanciaE2();
+            double normalizador = 1/ Math.sqrt( d.get(Indice.D1));
+            dm = (DoubleMatriz)dm.productoEscalar(normalizador);
+        }
+        
         return dm;
     }
 
@@ -89,6 +99,14 @@ public class PixelsDirectInputLayer implements LayerProducer {
 
     public void setSrc(BufferedImage src) {
         this.src = src;
+    }
+
+    public boolean isNormalizar() {
+        return normalizar;
+    }
+
+    public void setNormalizar(boolean normalizar) {
+        this.normalizar = normalizar;
     }
     
 }
