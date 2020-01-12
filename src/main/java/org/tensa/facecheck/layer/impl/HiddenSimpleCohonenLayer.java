@@ -49,9 +49,9 @@ public class HiddenSimpleCohonenLayer implements LayerLearning, LayerConsumer, L
     private Double learningFactor;
     private DoubleMatriz propagationError;
 
-    public HiddenSimpleCohonenLayer(DoubleMatriz inputLayer, DoubleMatriz weights) {
-        this.inputLayer = inputLayer;
+    public HiddenSimpleCohonenLayer(DoubleMatriz weights, Double learningFactor) {
         this.weights = weights;
+        this.learningFactor = learningFactor;
         this.consumer = new ArrayList<>();
         this.producers = new ArrayList<>();
     }
