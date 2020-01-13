@@ -130,11 +130,11 @@ public class HiddenSimpleCohonenLayer implements LayerLearning, LayerConsumer, L
         if (status == LayerConsumer.SUCCESS_STATUS) {
 
             DoubleMatriz valorNeto = weights.producto(inputLayer);
-            Optional<Map.Entry<ParOrdenado, Double>> min = valorNeto.entrySet().stream().min((e1, e2) -> e1.getValue().compareTo(e2.getValue()));
+            Optional<Map.Entry<ParOrdenado, Double>> max = valorNeto.entrySet().stream().max((e1, e2) -> e1.getValue().compareTo(e2.getValue()));
 
             outputLayer = new DoubleMatriz(valorNeto.getDominio());
-            if (min.isPresent()) {
-                outputLayer.put(min.get().getKey(), 1.0);
+            if (max.isPresent()) {
+                outputLayer.put(max.get().getKey(), 1.0);
             }
 
             for (LayerConsumer lc : consumer) {
