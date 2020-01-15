@@ -30,6 +30,7 @@ import java.util.Optional;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerLearning;
 import org.tensa.facecheck.layer.LayerProducer;
+import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
 import org.tensa.tensada.matrix.NumericMatriz;
 import org.tensa.tensada.matrix.ParOrdenado;
@@ -128,8 +129,17 @@ public class HiddenSimpleCohonenLayer implements LayerLearning, LayerConsumer, L
     public void startProduction() {
 
         if (status == LayerConsumer.SUCCESS_STATUS) {
+            //en caso de tener pesos normalizados se puede usar el producto como expresion de diferencia
+            //DoubleMatriz valorNeto = weights.producto(inputLayer);
 
-            DoubleMatriz valorNeto = weights.producto(inputLayer);
+            //en caso de pesos sin normalizar se emplea esta expresion
+            NumericMatriz<Double> matrizUno = weights.matrizUno(new Dominio(weights.getDominio().getFila(),1));
+            NumericMatriz<Double> substraccion = matrizUno.productoTensorial(inputLayer).substraccion(weights);
+            
+            NumericMatriz<Double> distancias2 = substraccion.productoTensorial(substraccion);
+            distancias2.replaceAll((i,v) -> i.getFila()==i.getColumna()?v:0.0);
+            NumericMatriz<Double> valorNeto = distancias2.producto(matrizUno);
+            
             Optional<Map.Entry<ParOrdenado, Double>> max = valorNeto.entrySet().stream().max((e1, e2) -> e1.getValue().compareTo(e2.getValue()));
 
             outputLayer = new DoubleMatriz(valorNeto.getDominio());
