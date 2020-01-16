@@ -32,6 +32,7 @@ import org.tensa.facecheck.layer.LayerLearning;
 import org.tensa.facecheck.layer.LayerProducer;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
+import org.tensa.tensada.matrix.Indice;
 import org.tensa.tensada.matrix.NumericMatriz;
 import org.tensa.tensada.matrix.ParOrdenado;
 
@@ -132,17 +133,40 @@ public class HiddenSimpleCohonenLayer implements LayerLearning, LayerConsumer, L
             //en caso de tener pesos normalizados se puede usar el producto como expresion de diferencia
             //DoubleMatriz valorNeto = weights.producto(inputLayer);
 
-            //en caso de pesos sin normalizar se emplea esta expresion
-            NumericMatriz<Double> matrizUno = weights.matrizUno(new Dominio(weights.getDominio().getFila(),1));
-            NumericMatriz<Double> substraccion = matrizUno.productoTensorial(inputLayer).substraccion(weights);
-            
-            NumericMatriz<Double> distancias2 = substraccion.productoTensorial(substraccion);
-            distancias2.replaceAll((i,v) -> i.getFila()==i.getColumna()?v:0.0);
-            NumericMatriz<Double> valorNeto = distancias2.producto(matrizUno);
-            
-            Optional<Map.Entry<ParOrdenado, Double>> max = valorNeto.entrySet().stream().max((e1, e2) -> e1.getValue().compareTo(e2.getValue()));
+            //en caso de pesos sin normalizar se emplea esta expresion            
+            DoubleMatriz cuadrados = weights.getDominio().stream()
+                    .reduce(
+                            new DoubleMatriz(weights.getDominio()),
+                            (DoubleMatriz m, ParOrdenado i) -> {
+                                double diff2 = inputLayer.get(new Indice(i.getColumna(),1)) - weights.get(i);
+                                diff2 *= diff2;
+                                m.put(i, diff2);
+                                return m;
+                            } ,
+                            (DoubleMatriz m1,DoubleMatriz m2) -> {
+                                m1.putAll(m2);
+                                return m1;
+                            });
+            Dominio dominiofinal = new Dominio(weights.getDominio().getFila(), 1);
+            DoubleMatriz distancias = dominiofinal.stream()
+                    .reduce(
+                            new DoubleMatriz(dominiofinal),
+                            (m,i)-> {
+                                double sum = cuadrados.entrySet().stream()
+                                        .filter((e) -> e.getKey().getFila() == i.getFila())
+                                        .mapToDouble((e) -> e.getValue())
+                                        .sum();
+                                m.put(i, sum);
+                                return m; 
+                            }, 
+                            (m1,m2) -> {
+                                m1.putAll(m2);
+                                return m1;
+                            });
+                    
+            Optional<Map.Entry<ParOrdenado, Double>> max = distancias.entrySet().stream().max((e1, e2) -> e1.getValue().compareTo(e2.getValue()));
 
-            outputLayer = new DoubleMatriz(valorNeto.getDominio());
+            outputLayer = new DoubleMatriz(distancias.getDominio());
             if (max.isPresent()) {
                 outputLayer.put(max.get().getKey(), 1.0);
             }
