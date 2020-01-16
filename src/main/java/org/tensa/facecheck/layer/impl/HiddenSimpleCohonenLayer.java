@@ -132,44 +132,30 @@ public class HiddenSimpleCohonenLayer implements LayerLearning, LayerConsumer, L
         if (status == LayerConsumer.SUCCESS_STATUS) {
             //en caso de tener pesos normalizados se puede usar el producto como expresion de diferencia
             //DoubleMatriz valorNeto = weights.producto(inputLayer);
-
-            //en caso de pesos sin normalizar se emplea esta expresion            
-            DoubleMatriz cuadrados = weights.getDominio().stream()
-                    .reduce(
-                            new DoubleMatriz(weights.getDominio()),
-                            (DoubleMatriz m, ParOrdenado i) -> {
-                                double diff2 = inputLayer.get(new Indice(i.getColumna(),1)) - weights.get(i);
-                                diff2 *= diff2;
-                                m.put(i, diff2);
-                                return m;
-                            } ,
-                            (DoubleMatriz m1,DoubleMatriz m2) -> {
-                                m1.putAll(m2);
-                                return m1;
-                            });
-            Dominio dominiofinal = new Dominio(weights.getDominio().getFila(), 1);
-            DoubleMatriz distancias = dominiofinal.stream()
-                    .reduce(
-                            new DoubleMatriz(dominiofinal),
-                            (m,i)-> {
-                                double sum = cuadrados.entrySet().stream()
-                                        .filter((e) -> e.getKey().getFila() == i.getFila())
-                                        .mapToDouble((e) -> e.getValue())
-                                        .sum();
-                                m.put(i, sum);
-                                return m; 
-                            }, 
-                            (m1,m2) -> {
-                                m1.putAll(m2);
-                                return m1;
-                            });
-                    
-            Optional<Map.Entry<ParOrdenado, Double>> max = distancias.entrySet().stream().max((e1, e2) -> e1.getValue().compareTo(e2.getValue()));
-
-            outputLayer = new DoubleMatriz(distancias.getDominio());
-            if (max.isPresent()) {
-                outputLayer.put(max.get().getKey(), 1.0);
+            
+            //en caso de pesos sin normalizar se emplea esta expresion
+            int filas = weights.getDominio().getFila();
+            int columnas = weights.getDominio().getColumna();
+            Dominio dominiofinal = new Dominio(filas, 1);
+            outputLayer = new DoubleMatriz(dominiofinal);
+            
+            int maxIndex = 1;
+            double maxValue = 0.0;
+            
+            for(int i=1; i<=filas; i++){
+                double suma = 0.0;
+                for(int j =1; j<=columnas; j++){
+                    double diff2 = inputLayer.get(new Indice(j,1)) - weights.get(new Indice(i,j));
+                    suma += diff2*diff2;
+                }
+                double value = Math.sqrt(suma);
+                if(value>maxValue) {
+                    maxValue = value;
+                    maxIndex = i;
+                }
             }
+
+            outputLayer.indexa(maxIndex, 1, 1.0);
 
             for (LayerConsumer lc : consumer) {
                 lc.seInputLayer(outputLayer);
