@@ -42,6 +42,8 @@ public class PixelsDirectInputLayer implements LayerProducer {
     private BufferedImage src;
     private DoubleMatriz outputLayer;
     private boolean normalizar;
+    private boolean reflectancia;
+    private boolean preventCeroUno;
     private final List<LayerConsumer> consumers;
 
     public PixelsDirectInputLayer() {
@@ -66,13 +68,23 @@ public class PixelsDirectInputLayer implements LayerProducer {
         double[] pixels = src.getRaster().getPixels(0, 0, width, height, (double[])null);
         DoubleMatriz dm = new DoubleMatriz(new Dominio(pixels.length, 1));
         for(int k=0;k<pixels.length;k++){
-            dm.indexa(k + 1, 1, pixels[k] * 254 / 255 + 0.5);
+            dm.indexa(k + 1, 1, pixels[k] );
 
+        }
+        if(preventCeroUno) {
+            double escala = 254.0/255.0;
+            NumericMatriz<Double> margen = dm.matrizUno().productoEscalar(0.5);
+            dm = (DoubleMatriz)dm.productoEscalar(escala).adicion(margen);
         }
         if(normalizar) {
             NumericMatriz<Double> d = dm.distanciaE2();
             double normalizador = 1/ Math.sqrt( d.get(Indice.D1));
             dm = (DoubleMatriz)dm.productoEscalar(normalizador);
+        }
+        if(reflectancia) {
+            NumericMatriz<Double> r = dm.productoPunto(dm.matrizUno());
+            double reflector =  1/ r.get(Indice.D1);
+            dm = (DoubleMatriz)dm.productoEscalar(reflector);
         }
         
         return dm;
@@ -107,6 +119,24 @@ public class PixelsDirectInputLayer implements LayerProducer {
 
     public void setNormalizar(boolean normalizar) {
         this.normalizar = normalizar;
+        this.reflectancia = !normalizar;
+    }
+
+    public boolean isReflectancia() {
+        return reflectancia;
+    }
+
+    public void setReflectancia(boolean reflectancia) {
+        this.reflectancia = reflectancia;
+        this.normalizar = !reflectancia;
+    }
+
+    public boolean isPreventCeroUno() {
+        return preventCeroUno;
+    }
+
+    public void setPreventCeroUno(boolean preventCeroUno) {
+        this.preventCeroUno = preventCeroUno;
     }
     
 }
