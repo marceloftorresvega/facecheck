@@ -140,7 +140,7 @@ public class HiddenSimpleCohonenLayer implements LayerLearning, LayerConsumer, L
             outputLayer = new DoubleMatriz(dominiofinal);
             
             int maxIndex = 1;
-            double maxValue = 0.0;
+            double minValue = 100.0;
             
             for(int i=1; i<=filas; i++){
                 double suma = 0.0;
@@ -149,8 +149,8 @@ public class HiddenSimpleCohonenLayer implements LayerLearning, LayerConsumer, L
                     suma += diff2*diff2;
                 }
                 double value = Math.sqrt(suma);
-                if(value>maxValue) {
-                    maxValue = value;
+                if(value<minValue) {
+                    minValue = value;
                     maxIndex = i;
                 }
             }
