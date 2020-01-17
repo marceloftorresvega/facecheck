@@ -50,6 +50,7 @@ public class HiddenSimpleCohonenLayer implements LayerLearning, LayerConsumer, L
     private int status;
     private Double learningFactor;
     private DoubleMatriz propagationError;
+    private boolean normalized;
 
     public HiddenSimpleCohonenLayer(DoubleMatriz weights, Double learningFactor) {
         this.weights = weights;
@@ -130,32 +131,42 @@ public class HiddenSimpleCohonenLayer implements LayerLearning, LayerConsumer, L
     public void startProduction() {
 
         if (status == LayerConsumer.SUCCESS_STATUS) {
-            //en caso de tener pesos normalizados se puede usar el producto como expresion de diferencia
-            //DoubleMatriz valorNeto = weights.producto(inputLayer);
+            if (normalized) {
+                //en caso de tener pesos normalizados se puede usar el producto como expresion de diferencia
+                DoubleMatriz valorNeto = weights.producto(inputLayer);
+                Optional<Map.Entry<ParOrdenado, Double>> max = valorNeto.entrySet().stream().max((e1, e2) -> e1.getValue().compareTo(e2.getValue()));
             
-            //en caso de pesos sin normalizar se emplea esta expresion
-            int filas = weights.getDominio().getFila();
-            int columnas = weights.getDominio().getColumna();
-            Dominio dominiofinal = new Dominio(filas, 1);
-            outputLayer = new DoubleMatriz(dominiofinal);
-            
-            int maxIndex = 1;
-            double minValue = 100.0;
-            
-            for(int i=1; i<=filas; i++){
-                double suma = 0.0;
-                for(int j =1; j<=columnas; j++){
-                    double diff2 = inputLayer.get(new Indice(j,1)) - weights.get(new Indice(i,j));
-                    suma += diff2*diff2;
+                outputLayer = new DoubleMatriz(valorNeto.getDominio());
+                if (max.isPresent()) {
+                    outputLayer.put(max.get().getKey(), 1.0);
                 }
-                double value = Math.sqrt(suma);
-                if(value<minValue) {
-                    minValue = value;
-                    maxIndex = i;
-                }
-            }
+                
+            } else {
+                //en caso de pesos sin normalizar se emplea esta expresion
+                int filas = weights.getDominio().getFila();
+                int columnas = weights.getDominio().getColumna();
+                Dominio dominiofinal = new Dominio(filas, 1);
+                outputLayer = new DoubleMatriz(dominiofinal);
 
-            outputLayer.indexa(maxIndex, 1, 1.0);
+                int maxIndex = 1;
+                double minValue = 100.0;
+
+                for(int i=1; i<=filas; i++){
+                    double suma = 0.0;
+                    for(int j =1; j<=columnas; j++){
+                        double diff2 = inputLayer.get(new Indice(j,1)) - weights.get(new Indice(i,j));
+                        suma += diff2*diff2;
+                    }
+                    double value = Math.sqrt(suma);
+                    if(value<minValue) {
+                        minValue = value;
+                        maxIndex = i;
+                    }
+                }
+
+                outputLayer.indexa(maxIndex, 1, 1.0);
+
+            }
 
             for (LayerConsumer lc : consumer) {
                 lc.seInputLayer(outputLayer);
@@ -171,6 +182,14 @@ public class HiddenSimpleCohonenLayer implements LayerLearning, LayerConsumer, L
     @Override
     public List<LayerConsumer> getConsumers() {
         return consumer;
+    }
+
+    public boolean isNormalized() {
+        return normalized;
+    }
+
+    public void setNormalized(boolean normalized) {
+        this.normalized = normalized;
     }
 
 }
