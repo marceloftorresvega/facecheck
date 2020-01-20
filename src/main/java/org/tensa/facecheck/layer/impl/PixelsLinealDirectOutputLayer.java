@@ -60,12 +60,7 @@ public class PixelsLinealDirectOutputLayer implements LayerConsumer {
     public void layerComplete(int status) {
         this.status = status;
         if (status == LayerConsumer.SUCCESS_STATUS) {
-//            DoubleMatriz distanciaE2 = (DoubleMatriz)inputLayer.distanciaE2();
             outputLayer = (DoubleMatriz)inputLayer;
-//            outputLayer = (DoubleMatriz)inputLayer
-//                    .productoEscalar( 255.0 );
-//            outputLayer = (DoubleMatriz)inputLayer
-//                    .productoEscalar( 255 / Math.sqrt(distanciaE2.get(Indice.D1)));
             double[] pixels = new double[outputLayer.getDominio().getFila()];
             for( int i =0; i< pixels.length; i++) {
                 pixels[i] = 255 * outputLayer.get(new Indice(i + 1, 1));
