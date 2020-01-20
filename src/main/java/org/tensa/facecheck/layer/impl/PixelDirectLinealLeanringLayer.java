@@ -137,13 +137,17 @@ public class PixelDirectLinealLeanringLayer implements LayerConsumer, LayerLearn
     @Override
     public void startProduction() {
         
-//            log.info("pesos <{}><{}>", weights.getDominio().getFila(), weights.getDominio().getColumna());
-//            log.info("layer <{}><{}>", inputLayer.getDominio().getFila(), inputLayer.getDominio().getColumna());
+            outputLayer = weights.producto(inputLayer);
             
-            DoubleMatriz producto = weights.producto(inputLayer);
-//            DoubleMatriz distanciaE2 = (DoubleMatriz)producto.distanciaE2();
-            outputLayer = (DoubleMatriz)producto;
-//                    .productoEscalar( 1 / Math.sqrt(distanciaE2.get(Indice.D1)));
+            for(LayerConsumer lc : consumers) {
+                lc.seInputLayer(outputLayer);
+                lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
+                
+                if(lc instanceof LayerLearning) {
+                    ((LayerLearning)lc).getProducers().add(this);
+                }
+            }
+
     }
 
     @Override
