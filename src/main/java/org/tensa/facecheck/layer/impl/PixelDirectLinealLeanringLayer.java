@@ -92,6 +92,7 @@ public class PixelDirectLinealLeanringLayer implements LayerConsumer, LayerLearn
 
     @Override
     public void startLearning() {
+        learningData = (DoubleMatriz)learningData.productoEscalar(1.0/255);
         error = (DoubleMatriz)learningData.substraccion(outputLayer);
 //        toBackLayer = (DoubleMatriz) weights.productoPunto(error);
         propagationError = (DoubleMatriz) error.productoPunto(weights).transpuesta();
