@@ -817,12 +817,13 @@ public class VisLoad extends javax.swing.JFrame {
         int width = buffImage.getWidth();
         int height = buffImage.getHeight();
         
-        log.info("procesando...");
-        new Thread(() -> {
-            procesar.setEnabled(false);
-            jButton3.setEnabled(false);
-            clean.setEnabled(false);
+        procesar.setEnabled(false);
+        jButton3.setEnabled(false);
+        clean.setEnabled(false);
         
+        new Thread(() -> {
+            log.info("procesando...");
+
             for(int idIteracion=0; (!freno.isSelected()) && ((!entrenar.isSelected()) && idIteracion<1 || entrenar.isSelected() && idIteracion<((Integer) iteraciones.getValue())); idIteracion++) {
 
                 log.info("iteracion <{}>", idIteracion);
