@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.OptionalDouble;
@@ -82,7 +83,7 @@ public class VisLoad extends javax.swing.JFrame {
     private boolean areaSelect = false;
     private final FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("pesos", "dat");
     private final FileNameExtensionFilter fileNameExtensionFilterImage = new FileNameExtensionFilter("JPEG", "jpg");
-    private ParOrdenado[] errorGraphDomain;
+    private ParOrdenado[] proccesDomain;
 
     public SpinnerModel getSpinnerModel(){
 //        if(Objects.isNull(spinnerModel))
@@ -825,19 +826,16 @@ public class VisLoad extends javax.swing.JFrame {
             for(int idIteracion=0; (!freno.isSelected()) && ((!entrenar.isSelected()) && idIteracion<1 || entrenar.isSelected() && idIteracion<((Integer) iteraciones.getValue())); idIteracion++) {
 
                 log.info("iteracion <{}>", idIteracion);
+                jProgressBar1.setValue(idIteracion);
                 Dominio dominio = new Dominio(width-inStep, height-inStep);
                 
-                errorGraphDomain = dominio.stream()
+                proccesDomain = dominio.stream()
                         .filter( idx -> (( (idx.getFila()-(inStep-outStep)/2) % outStep ==0) && ((idx.getColumna()-(inStep-outStep)/2)% outStep == 0)))
                         .filter(idx -> (!seleccion.isSelected()) || ( areaQeue.stream().anyMatch(a -> a.contains(idx.getFila(), idx.getColumna()))) )
                         .collect(Collectors.toList())
                         .toArray(new ParOrdenado[1]);
                 errorGraph = new DoubleMatriz(dominio);
-                
-                jProgressBar1.setValue(idIteracion);
-                dominio.stream()
-                        .filter( idx -> (( (idx.getFila()-(inStep-outStep)/2) % outStep ==0) && ((idx.getColumna()-(inStep-outStep)/2)% outStep == 0)))
-                        .filter(idx -> (!seleccion.isSelected()) || ( areaQeue.stream().anyMatch(a -> a.contains(idx.getFila(), idx.getColumna()))) )
+                Arrays.stream(proccesDomain)
                         .sorted((idx1,idx2) -> (int)(2.0*Math.random()-1.0))
                         .parallel()
                         .filter(idx -> !freno.isSelected())
@@ -1347,7 +1345,7 @@ public class VisLoad extends javax.swing.JFrame {
                 if (Objects.nonNull(errorGraph)) {
                     OptionalDouble maxError = errorGraph.values().stream().mapToDouble( i -> i).max();
                     
-                    double size = (double) errorGraphDomain.length;
+                    double size = (double) proccesDomain.length;
                     
                     Graphics2D gr2 = (Graphics2D) grphcs;
                     gr2.setColor(Color.RED);
@@ -1359,7 +1357,7 @@ public class VisLoad extends javax.swing.JFrame {
                     gr2.scale( lcWidth, lclHeight);
                     int adv = 0;
                     
-                    for (ParOrdenado idx : errorGraphDomain) {
+                    for (ParOrdenado idx : proccesDomain) {
                         Double errorPoint = errorGraph.get(idx);
                         Shape shape = new Rectangle2D.Double( adv++, 0, 1, errorPoint);
                         gr2.draw(shape);
