@@ -44,6 +44,7 @@ public class PixelsDirectInputLayer implements LayerProducer {
     private boolean normalizar;
     private boolean reflectancia;
     private boolean preventCeroUno;
+    private boolean escalar;
     private final List<LayerConsumer> consumers;
 
     public PixelsDirectInputLayer() {
@@ -75,6 +76,10 @@ public class PixelsDirectInputLayer implements LayerProducer {
             double escala = 254.0/255.0;
             NumericMatriz<Double> margen = dm.matrizUno().productoEscalar(0.5);
             dm = (DoubleMatriz)dm.productoEscalar(escala).adicion(margen);
+        }
+        if(escalar) {
+            double escala = 1/255.0;
+            dm = (DoubleMatriz)dm.productoEscalar(escala);
         }
         if(normalizar) {
             NumericMatriz<Double> d = dm.distanciaE2();
@@ -137,6 +142,14 @@ public class PixelsDirectInputLayer implements LayerProducer {
 
     public void setPreventCeroUno(boolean preventCeroUno) {
         this.preventCeroUno = preventCeroUno;
+    }
+
+    public boolean isEscalar() {
+        return escalar;
+    }
+
+    public void setEscalar(boolean escalar) {
+        this.escalar = escalar;
     }
     
 }
