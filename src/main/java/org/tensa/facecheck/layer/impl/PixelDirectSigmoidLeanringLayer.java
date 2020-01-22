@@ -93,7 +93,6 @@ public class PixelDirectSigmoidLeanringLayer implements LayerConsumer, LayerLear
 
     @Override
     public void startLearning() {
-        learningData = (DoubleMatriz)learningData.productoEscalar(1.0/255);
         error = (DoubleMatriz)learningData.substraccion(outputLayer);
         error.replaceAll((i,v) -> v * outputLayer.get(i) * learningData.get(i));
 //        toBackLayer = (DoubleMatriz) weights.productoPunto(error);
