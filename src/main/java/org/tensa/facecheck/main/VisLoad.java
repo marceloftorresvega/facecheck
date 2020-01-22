@@ -29,6 +29,8 @@ import java.util.LinkedList;
 import java.util.Objects;
 import java.util.OptionalDouble;
 import java.util.function.ToDoubleFunction;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.SpinnerListModel;
@@ -883,13 +885,13 @@ public class VisLoad extends javax.swing.JFrame {
                 try {
                     Thread.sleep(15000);
                     if (actualizacion.isSelected()) {
-                        synchronized(this){
+//                        synchronized(this){
 //                        java.awt.EventQueue.invokeLater(() -> {
                             respuesta.repaint();
                             jErrorGraf.repaint();
                             log.info("realiza actualizacion");
 //                        });
-                        }
+//                        }
                         
                     } else {
                         log.info("no realiza actualizacion");
@@ -1336,16 +1338,25 @@ public class VisLoad extends javax.swing.JFrame {
                 super.paintComponent(grphcs); 
                 if (Objects.nonNull(errorGraph)) {
                     OptionalDouble maxError = errorGraph.values().stream().mapToDouble( i -> i).max();
-                    int size = errorGraph.values().size();
+                    
+                    Stream<ParOrdenado> dominioStream = errorGraph.getDominio().stream()
+                            .filter( idx -> (( (idx.getFila()-(inStep-outStep)/2) % outStep ==0) && ((idx.getColumna()-(inStep-outStep)/2)% outStep == 0)))
+                            .filter(idx -> (!seleccion.isSelected()) || ( areaQeue.stream().anyMatch(a -> a.contains(idx.getFila(), idx.getColumna()))) );
+                    ParOrdenado[] linea = dominioStream.collect(Collectors.toList()).toArray(new ParOrdenado[1]);
+                    double size = (double) linea.length;
+                    
                     Graphics2D gr2 = (Graphics2D) grphcs;
-                    gr2.setColor(Color.yellow);
-                    double lcWidth = ((double)size) / jErrorGraf.getWidth();
-                    double lclHeight = maxError.orElse(1.0) / jErrorGraf.getHeight();
+                    gr2.setColor(Color.RED);
+                    double tol = maxError.orElse(1.0);
+                    double lcWidth = jErrorGraf.getWidth() / size;
+                    double lclHeight = jErrorGraf.getHeight() / tol;
 //                    gr2.translate(0, -1/ lclHeight);
                     gr2.translate(0, 0);
-                    gr2.scale( 1/ lcWidth, 1/ lclHeight);
+                    gr2.scale( lcWidth, lclHeight);
                     int adv = 0;
-                    for( Double errorPoint : errorGraph.values()) {
+                    
+                    for (ParOrdenado idx : linea) {
+                        Double errorPoint = errorGraph.get(idx);
                         Shape shape = new Rectangle2D.Double( adv++, 0, 1, errorPoint);
                         gr2.draw(shape);
                         
