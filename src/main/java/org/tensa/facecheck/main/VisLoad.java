@@ -829,12 +829,14 @@ public class VisLoad extends javax.swing.JFrame {
         //                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
                             pixelsOutputLayer.setDest(bufferImageFiltered.getSubimage(i + (inStep-outStep)/2, j + (inStep-outStep)/2, outStep, outStep));
                             BufferedImage src = buffImage.getSubimage(i, j, inStep, inStep);
+                            simplePixelsInputLayer.setReflectancia(true);
                             simplePixelsInputLayer.setSrc(src);
                             simplePixelsInputLayer.startProduction();
 
                             if(entrenar.isSelected()){
         //                        log.info("cargando bloque comparacion <{}><{}>", i, j);
                                 BufferedImage comp = destBuffImage.getSubimage(i + (inStep-outStep)/2, j + (inStep-outStep)/2, outStep, outStep);
+                                simplePixelsCompareLayer.setEscalar(true);
                                 simplePixelsCompareLayer.setSrc(comp);
                                 simplePixelsCompareLayer.startProduction();
                                 pixelLeanringLayer.setLearningData(simplePixelsCompareLayer.getOutputLayer());
