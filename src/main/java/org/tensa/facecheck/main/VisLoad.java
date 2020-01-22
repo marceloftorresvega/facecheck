@@ -82,6 +82,7 @@ public class VisLoad extends javax.swing.JFrame {
     private boolean areaSelect = false;
     private final FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("pesos", "dat");
     private final FileNameExtensionFilter fileNameExtensionFilterImage = new FileNameExtensionFilter("JPEG", "jpg");
+    private ParOrdenado[] errorGraphDomain;
 
     public SpinnerModel getSpinnerModel(){
 //        if(Objects.isNull(spinnerModel))
@@ -825,7 +826,14 @@ public class VisLoad extends javax.swing.JFrame {
 
                 log.info("iteracion <{}>", idIteracion);
                 Dominio dominio = new Dominio(width-inStep, height-inStep);
+                
+                errorGraphDomain = dominio.stream()
+                        .filter( idx -> (( (idx.getFila()-(inStep-outStep)/2) % outStep ==0) && ((idx.getColumna()-(inStep-outStep)/2)% outStep == 0)))
+                        .filter(idx -> (!seleccion.isSelected()) || ( areaQeue.stream().anyMatch(a -> a.contains(idx.getFila(), idx.getColumna()))) )
+                        .collect(Collectors.toList())
+                        .toArray(new ParOrdenado[1]);
                 errorGraph = new DoubleMatriz(dominio);
+                
                 jProgressBar1.setValue(idIteracion);
                 dominio.stream()
                         .filter( idx -> (( (idx.getFila()-(inStep-outStep)/2) % outStep ==0) && ((idx.getColumna()-(inStep-outStep)/2)% outStep == 0)))
@@ -1339,11 +1347,7 @@ public class VisLoad extends javax.swing.JFrame {
                 if (Objects.nonNull(errorGraph)) {
                     OptionalDouble maxError = errorGraph.values().stream().mapToDouble( i -> i).max();
                     
-                    Stream<ParOrdenado> dominioStream = errorGraph.getDominio().stream()
-                            .filter( idx -> (( (idx.getFila()-(inStep-outStep)/2) % outStep ==0) && ((idx.getColumna()-(inStep-outStep)/2)% outStep == 0)))
-                            .filter(idx -> (!seleccion.isSelected()) || ( areaQeue.stream().anyMatch(a -> a.contains(idx.getFila(), idx.getColumna()))) );
-                    ParOrdenado[] linea = dominioStream.collect(Collectors.toList()).toArray(new ParOrdenado[1]);
-                    double size = (double) linea.length;
+                    double size = (double) errorGraphDomain.length;
                     
                     Graphics2D gr2 = (Graphics2D) grphcs;
                     gr2.setColor(Color.RED);
@@ -1355,7 +1359,7 @@ public class VisLoad extends javax.swing.JFrame {
                     gr2.scale( lcWidth, lclHeight);
                     int adv = 0;
                     
-                    for (ParOrdenado idx : linea) {
+                    for (ParOrdenado idx : errorGraphDomain) {
                         Double errorPoint = errorGraph.get(idx);
                         Shape shape = new Rectangle2D.Double( adv++, 0, 1, errorPoint);
                         gr2.draw(shape);
