@@ -41,9 +41,11 @@ import org.tensa.facecheck.layer.impl.PixelDirectSigmoidLeanringLayer;
 import org.tensa.facecheck.layer.impl.PixelsDirectSigmoidOutputLayer;
 import org.tensa.facecheck.layer.impl.PixelsDirectInputLayer;
 import org.tensa.facecheck.layer.impl.PixelsLinealDirectOutputLayer;
+import org.tensa.tensada.matrix.BlockMatriz;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
 import org.tensa.tensada.matrix.Indice;
+import org.tensa.tensada.matrix.Matriz;
 import org.tensa.tensada.matrix.ParOrdenado;
 
 /**
@@ -829,7 +831,7 @@ public class VisLoad extends javax.swing.JFrame {
         //                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
                             pixelsOutputLayer.setDest(bufferImageFiltered.getSubimage(i + (inStep-outStep)/2, j + (inStep-outStep)/2, outStep, outStep));
                             BufferedImage src = buffImage.getSubimage(i, j, inStep, inStep);
-                            simplePixelsInputLayer.setReflectancia(true);
+                            simplePixelsInputLayer.setNormalizar(true);
                             simplePixelsInputLayer.setSrc(src);
                             simplePixelsInputLayer.startProduction();
 
@@ -895,7 +897,26 @@ public class VisLoad extends javax.swing.JFrame {
         log.info("iniciando 1.0..<{},{}>",hidStep, inSize);
         weightsH = (DoubleMatriz)new DoubleMatriz(new Dominio(hidStep, inSize)).matrizUno();
         log.info("iniciando 1.1..<{},{}>",hidStep, inSize);
-        weightsH.replaceAll((ParOrdenado i, Double v) -> 0.5-Math.random() );
+        weightsH.replaceAll((ParOrdenado i, Double v) -> v-2*Math.random() );
+        log.info("iniciando 1.2..<{},{}>",hidStep, inSize);
+        BlockMatriz<Double> blockMatriz = new BlockMatriz<>(new Dominio(hidStep, 1));
+        blockMatriz.getDominio().forEach( idx -> {
+            blockMatriz.put(idx, new DoubleMatriz(new Dominio(1, inSize)));
+        });
+        log.info("iniciando 1.3..<{},{}>",hidStep, inSize);
+        blockMatriz.splitIn(weightsH);
+        log.info("iniciando 1.4..<{},{}>",hidStep, inSize);
+        blockMatriz.replaceAll((ParOrdenado idx, Matriz<Double> m) -> 
+                ((DoubleMatriz)m)
+                        .productoEscalar(
+                                1 / Math.sqrt(
+                                        ((DoubleMatriz)m)
+                                                .distanciaE2().get(Indice.D1)
+                                )
+                        )
+        );
+        log.info("iniciando 1.5..<{},{}>",hidStep, inSize);
+        weightsH = (DoubleMatriz)blockMatriz.merge();
 //        log.info("iniciando 1.2..<{},{}>",hidStep, inSize);
 //        weightsH = (DoubleMatriz)weightsH.productoEscalar( hidStep / Math.sqrt(weightsH.distanciaE2().get(Indice.D1)) );
         
