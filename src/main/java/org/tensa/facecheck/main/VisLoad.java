@@ -46,6 +46,7 @@ import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
 import org.tensa.tensada.matrix.Indice;
 import org.tensa.tensada.matrix.Matriz;
+import org.tensa.tensada.matrix.NumericMatriz;
 import org.tensa.tensada.matrix.ParOrdenado;
 
 /**
@@ -895,28 +896,21 @@ public class VisLoad extends javax.swing.JFrame {
         int outSize = outStep*outStep*3;
         
         log.info("iniciando 1.0..<{},{}>",hidStep, inSize);
-        weightsH = (DoubleMatriz)new DoubleMatriz(new Dominio(hidStep, inSize)).matrizUno();
-        log.info("iniciando 1.1..<{},{}>",hidStep, inSize);
-        weightsH.replaceAll((ParOrdenado i, Double v) -> v-2*Math.random() );
-        log.info("iniciando 1.2..<{},{}>",hidStep, inSize);
+//        weightsH = (DoubleMatriz)new DoubleMatriz(new Dominio(hidStep, inSize)).matrizUno();
+//        log.info("iniciando 1.1..<{},{}>",hidStep, inSize);
+//        weightsH.replaceAll((ParOrdenado i, Double v) -> v-2*Math.random() );
+//        log.info("iniciando 1.2..<{},{}>",hidStep, inSize);
         BlockMatriz<Double> blockMatriz = new BlockMatriz<>(new Dominio(hidStep, 1));
         blockMatriz.getDominio().forEach( idx -> {
-            blockMatriz.put(idx, new DoubleMatriz(new Dominio(1, inSize)));
-        });
-        log.info("iniciando 1.3..<{},{}>",hidStep, inSize);
-        blockMatriz.splitIn(weightsH);
-        log.info("iniciando 1.4..<{},{}>",hidStep, inSize);
-        blockMatriz.replaceAll((ParOrdenado idx, Matriz<Double> m) -> 
-                ((DoubleMatriz)m)
-                        .productoEscalar(
+            NumericMatriz<Double> tmpm = new DoubleMatriz(new Dominio(1, inSize)).matrizUno();
+            tmpm.replaceAll((ParOrdenado i, Double v) -> v-2*Math.random());
+            tmpm = tmpm.productoEscalar(
                                 1 / Math.sqrt(
-                                        ((DoubleMatriz)m)
-                                                .distanciaE2().get(Indice.D1)
-                                )
-                        )
-        );
-        log.info("iniciando 1.5..<{},{}>",hidStep, inSize);
-        weightsH = (DoubleMatriz)blockMatriz.merge();
+                                        tmpm.distanciaE2().get(Indice.D1)));
+            blockMatriz.put(idx, tmpm);
+        });
+        log.info("iniciando 1.1..<{},{}>",hidStep, inSize);
+        weightsH = new DoubleMatriz(blockMatriz.merge());
 //        log.info("iniciando 1.2..<{},{}>",hidStep, inSize);
 //        weightsH = (DoubleMatriz)weightsH.productoEscalar( hidStep / Math.sqrt(weightsH.distanciaE2().get(Indice.D1)) );
         
