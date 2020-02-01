@@ -901,13 +901,16 @@ public class VisLoad extends javax.swing.JFrame {
 //        weightsH.replaceAll((ParOrdenado i, Double v) -> v-2*Math.random() );
 //        log.info("iniciando 1.2..<{},{}>",hidStep, inSize);
         BlockMatriz<Double> blockMatriz = new BlockMatriz<>(new Dominio(hidStep, 1));
-        blockMatriz.getDominio().forEach( idx -> {
-            NumericMatriz<Double> tmpm = new DoubleMatriz(new Dominio(1, inSize)).matrizUno();
-            tmpm.replaceAll((ParOrdenado i, Double v) -> v-2*Math.random());
-            tmpm = tmpm.productoEscalar(
-                                1 / Math.sqrt(
-                                        tmpm.distanciaE2().get(Indice.D1)));
-            blockMatriz.put(idx, tmpm);
+        blockMatriz.getDominio().forEach( (ParOrdenado idx) -> {
+            final NumericMatriz<Double> tmpm = new DoubleMatriz(new Dominio(1, inSize));
+            tmpm.getDominio().forEach((i) -> {
+                tmpm.put(i, 1-2*Math.random());
+                    });
+            double punto = tmpm.values().stream()
+                    .mapToDouble(v -> v*v)
+                    .sum();
+            blockMatriz.put(idx, tmpm.productoEscalar(
+                                1 / Math.sqrt(punto)));
         });
         log.info("iniciando 1.1..<{},{}>",hidStep, inSize);
         weightsH = new DoubleMatriz(blockMatriz.merge());
