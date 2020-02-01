@@ -41,9 +41,12 @@ import org.tensa.facecheck.layer.impl.PixelDirectSigmoidLeanringLayer;
 import org.tensa.facecheck.layer.impl.PixelsDirectSigmoidOutputLayer;
 import org.tensa.facecheck.layer.impl.PixelsDirectInputLayer;
 import org.tensa.facecheck.layer.impl.PixelsLinealDirectOutputLayer;
+import org.tensa.tensada.matrix.BlockMatriz;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
 import org.tensa.tensada.matrix.Indice;
+import org.tensa.tensada.matrix.Matriz;
+import org.tensa.tensada.matrix.NumericMatriz;
 import org.tensa.tensada.matrix.ParOrdenado;
 
 /**
@@ -829,7 +832,7 @@ public class VisLoad extends javax.swing.JFrame {
         //                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
                             pixelsOutputLayer.setDest(bufferImageFiltered.getSubimage(i + (inStep-outStep)/2, j + (inStep-outStep)/2, outStep, outStep));
                             BufferedImage src = buffImage.getSubimage(i, j, inStep, inStep);
-                            simplePixelsInputLayer.setReflectancia(true);
+                            simplePixelsInputLayer.setNormalizar(true);
                             simplePixelsInputLayer.setSrc(src);
                             simplePixelsInputLayer.startProduction();
 
@@ -893,9 +896,24 @@ public class VisLoad extends javax.swing.JFrame {
         int outSize = outStep*outStep*3;
         
         log.info("iniciando 1.0..<{},{}>",hidStep, inSize);
-        weightsH = (DoubleMatriz)new DoubleMatriz(new Dominio(hidStep, inSize)).matrizUno();
+//        weightsH = (DoubleMatriz)new DoubleMatriz(new Dominio(hidStep, inSize)).matrizUno();
+//        log.info("iniciando 1.1..<{},{}>",hidStep, inSize);
+//        weightsH.replaceAll((ParOrdenado i, Double v) -> v-2*Math.random() );
+//        log.info("iniciando 1.2..<{},{}>",hidStep, inSize);
+        BlockMatriz<Double> blockMatriz = new BlockMatriz<>(new Dominio(hidStep, 1));
+        blockMatriz.getDominio().forEach( (ParOrdenado idx) -> {
+            final NumericMatriz<Double> tmpm = new DoubleMatriz(new Dominio(1, inSize));
+            tmpm.getDominio().forEach((i) -> {
+                tmpm.put(i, 1-2*Math.random());
+                    });
+            double punto = tmpm.values().stream()
+                    .mapToDouble(v -> v*v)
+                    .sum();
+            blockMatriz.put(idx, tmpm.productoEscalar(
+                                1 / Math.sqrt(punto)));
+        });
         log.info("iniciando 1.1..<{},{}>",hidStep, inSize);
-        weightsH.replaceAll((ParOrdenado i, Double v) -> 0.5-Math.random() );
+        weightsH = new DoubleMatriz(blockMatriz.merge());
 //        log.info("iniciando 1.2..<{},{}>",hidStep, inSize);
 //        weightsH = (DoubleMatriz)weightsH.productoEscalar( hidStep / Math.sqrt(weightsH.distanciaE2().get(Indice.D1)) );
         
