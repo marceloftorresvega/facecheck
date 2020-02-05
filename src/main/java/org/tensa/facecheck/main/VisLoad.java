@@ -896,33 +896,40 @@ public class VisLoad extends javax.swing.JFrame {
         int outSize = outStep*outStep*3;
         
         log.info("iniciando 1.0..<{},{}>",hidStep, inSize);
-//        weightsH = (DoubleMatriz)new DoubleMatriz(new Dominio(hidStep, inSize)).matrizUno();
-//        log.info("iniciando 1.1..<{},{}>",hidStep, inSize);
-//        weightsH.replaceAll((ParOrdenado i, Double v) -> v-2*Math.random() );
-//        log.info("iniciando 1.2..<{},{}>",hidStep, inSize);
-        BlockMatriz<Double> blockMatriz = new BlockMatriz<>(new Dominio(hidStep, 1));
-        blockMatriz.getDominio().forEach( (ParOrdenado idx) -> {
+        BlockMatriz<Double> hiddenBlockMatriz = new BlockMatriz<>(new Dominio(hidStep, 1));
+        hiddenBlockMatriz.getDominio().forEach( (ParOrdenado idx) -> {
             final NumericMatriz<Double> tmpm = new DoubleMatriz(new Dominio(1, inSize));
             tmpm.getDominio().forEach((i) -> {
                 tmpm.put(i, 1-2*Math.random());
                     });
             double punto = tmpm.values().stream()
-                    .mapToDouble(v -> v*v)
+                    .mapToDouble(v -> v * v)
                     .sum();
-            blockMatriz.put(idx, tmpm.productoEscalar(
-                                1 / Math.sqrt(punto)));
+            punto = 1 / Math.sqrt(punto);
+            hiddenBlockMatriz.put(idx, tmpm.productoEscalar( punto ));
+            tmpm.clear();
         });
         log.info("iniciando 1.1..<{},{}>",hidStep, inSize);
-        weightsH = new DoubleMatriz(blockMatriz.merge());
-//        log.info("iniciando 1.2..<{},{}>",hidStep, inSize);
-//        weightsH = (DoubleMatriz)weightsH.productoEscalar( hidStep / Math.sqrt(weightsH.distanciaE2().get(Indice.D1)) );
+        weightsH = new DoubleMatriz(hiddenBlockMatriz.merge());
+        hiddenBlockMatriz.clear();
         
         log.info("iniciando 2.0..<{},{}>",outSize, hidStep);
-        weightsO = (DoubleMatriz)new DoubleMatriz(new Dominio(outSize, hidStep)).matrizUno();
+        BlockMatriz<Double> outBlockMatriz = new BlockMatriz<>(new Dominio(outSize, 1));
+        outBlockMatriz.getDominio().forEach( (ParOrdenado idx) -> {
+            final NumericMatriz<Double> tmpm = new DoubleMatriz(new Dominio(1, hidStep));
+            tmpm.getDominio().forEach((i) -> {
+                tmpm.put(i, 1-2*Math.random());
+                    });
+            double punto = tmpm.values().stream()
+                    .mapToDouble(v -> v * v)
+                    .sum();
+            punto = 1 / Math.sqrt(punto);
+            outBlockMatriz.put(idx, tmpm.productoEscalar( punto ));
+            tmpm.clear();
+        });
         log.info("iniciando 2.1..<{},{}>",outSize, hidStep);
-        weightsO.replaceAll((ParOrdenado i, Double v) -> 0.5-Math.random() );
-//        log.info("iniciando 2.2..<{},{}>",outSize, hidStep);
-//        weightsO = (DoubleMatriz)weightsO.productoEscalar( hidStep/ Math.sqrt(weightsO.distanciaE2().get(Indice.D1)) );
+        weightsO = new DoubleMatriz(outBlockMatriz.merge());
+        outBlockMatriz.clear();
         
     }//GEN-LAST:event_cleanActionPerformed
 
