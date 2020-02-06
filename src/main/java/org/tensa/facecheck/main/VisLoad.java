@@ -130,17 +130,12 @@ public class VisLoad extends javax.swing.JFrame {
     private void initComponents() {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        jDialogPesosSave = new javax.swing.JDialog();
-        jFileChooserPesosSave = new javax.swing.JFileChooser();
-        jDialogPesosLoad = new javax.swing.JDialog();
-        jFileChooserPesosLoad = new javax.swing.JFileChooser();
-        jDialogImagenSalva = new javax.swing.JDialog();
-        jFileChooserImagenSalva = new javax.swing.JFileChooser();
-        jDialogImagenLoadResult = new javax.swing.JDialog();
-        jFileChooserLoadImagenResult = new javax.swing.JFileChooser();
-        jDialogLoadImagen = new javax.swing.JDialog();
-        jFileChooserLoadImagen = new javax.swing.JFileChooser();
         adaptInputButtonGroup = new javax.swing.ButtonGroup();
+        jFileChooserPesosSave = new javax.swing.JFileChooser();
+        jFileChooserPesosLoad = new javax.swing.JFileChooser();
+        jFileChooserImagenSalva = new javax.swing.JFileChooser();
+        jFileChooserLoadImagenResult = new javax.swing.JFileChooser();
+        jFileChooserLoadImagen = new javax.swing.JFileChooser();
         jSplitPane1 = new javax.swing.JSplitPane();
         vista = getNuevaVista();
         respuesta = getNuevaRespuesta();
@@ -187,155 +182,27 @@ public class VisLoad extends javax.swing.JFrame {
         jButton4 = new javax.swing.JButton();
         jProgressBar1 = new javax.swing.JProgressBar();
 
-        jDialogPesosSave.setTitle("Guardar pesos");
-        jDialogPesosSave.setAlwaysOnTop(true);
-        jDialogPesosSave.setMinimumSize(jFileChooserPesosSave.getMinimumSize());
-        jDialogPesosSave.setModal(true);
-
         jFileChooserPesosSave.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
         jFileChooserPesosSave.setCurrentDirectory(new File(System.getProperty("user.dir")));
         jFileChooserPesosSave.setDialogTitle("Guardar pesos");
         jFileChooserPesosSave.setFileFilter(getFileNameExtensionFilter());
-        jFileChooserPesosSave.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jFileChooserPesosSaveActionPerformed(evt);
-                jFileChooserPesosSaveActionPerformed1(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jDialogPesosSaveLayout = new javax.swing.GroupLayout(jDialogPesosSave.getContentPane());
-        jDialogPesosSave.getContentPane().setLayout(jDialogPesosSaveLayout);
-        jDialogPesosSaveLayout.setHorizontalGroup(
-            jDialogPesosSaveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDialogPesosSaveLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jFileChooserPesosSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jDialogPesosSaveLayout.setVerticalGroup(
-            jDialogPesosSaveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDialogPesosSaveLayout.createSequentialGroup()
-                .addComponent(jFileChooserPesosSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-
-        jDialogPesosLoad.setTitle("Carga Pesos");
-        jDialogPesosLoad.setMinimumSize(jFileChooserPesosLoad.getMinimumSize());
 
         jFileChooserPesosLoad.setCurrentDirectory(new File(System.getProperty("user.dir")));
         jFileChooserPesosLoad.setDialogTitle("Carga Pesos");
         jFileChooserPesosLoad.setFileFilter(getFileNameExtensionFilter());
-        jFileChooserPesosLoad.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jFileChooserPesosLoadActionPerformed(evt);
-                jFileChooserPesosLoadActionPerformed1(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jDialogPesosLoadLayout = new javax.swing.GroupLayout(jDialogPesosLoad.getContentPane());
-        jDialogPesosLoad.getContentPane().setLayout(jDialogPesosLoadLayout);
-        jDialogPesosLoadLayout.setHorizontalGroup(
-            jDialogPesosLoadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDialogPesosLoadLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jFileChooserPesosLoad, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jDialogPesosLoadLayout.setVerticalGroup(
-            jDialogPesosLoadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDialogPesosLoadLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jFileChooserPesosLoad, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jDialogImagenSalva.setTitle("Salva Imagen");
-        jDialogImagenSalva.setSize(jFileChooserImagenSalva.getMinimumSize());
 
         jFileChooserImagenSalva.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
         jFileChooserImagenSalva.setCurrentDirectory(new File(System.getProperty("user.dir")));
         jFileChooserImagenSalva.setDialogTitle("Salva Imagen");
         jFileChooserImagenSalva.setFileFilter(getFileNameExtensionFilterImage());
-        jFileChooserImagenSalva.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jFileChooserImagenSalvaActionPerformed(evt);
-                jFileChooserImagenSalvaActionPerformed1(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jDialogImagenSalvaLayout = new javax.swing.GroupLayout(jDialogImagenSalva.getContentPane());
-        jDialogImagenSalva.getContentPane().setLayout(jDialogImagenSalvaLayout);
-        jDialogImagenSalvaLayout.setHorizontalGroup(
-            jDialogImagenSalvaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDialogImagenSalvaLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jFileChooserImagenSalva, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jDialogImagenSalvaLayout.setVerticalGroup(
-            jDialogImagenSalvaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDialogImagenSalvaLayout.createSequentialGroup()
-                .addComponent(jFileChooserImagenSalva, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-
-        jDialogImagenLoadResult.setTitle("Carga resultante");
-        jDialogImagenLoadResult.setSize(jFileChooserLoadImagenResult.getPreferredSize());
 
         jFileChooserLoadImagenResult.setCurrentDirectory(new File(System.getProperty("user.dir")));
         jFileChooserLoadImagenResult.setDialogTitle("Carga resultante");
         jFileChooserLoadImagenResult.setFileFilter(getFileNameExtensionFilterImage());
-        jFileChooserLoadImagenResult.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jFileChooserLoadImagenResultActionPerformed(evt);
-                jFileChooserLoadImagenResultActionPerformed1(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jDialogImagenLoadResultLayout = new javax.swing.GroupLayout(jDialogImagenLoadResult.getContentPane());
-        jDialogImagenLoadResult.getContentPane().setLayout(jDialogImagenLoadResultLayout);
-        jDialogImagenLoadResultLayout.setHorizontalGroup(
-            jDialogImagenLoadResultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDialogImagenLoadResultLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jFileChooserLoadImagenResult, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jDialogImagenLoadResultLayout.setVerticalGroup(
-            jDialogImagenLoadResultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDialogImagenLoadResultLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jFileChooserLoadImagenResult, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-
-        jDialogLoadImagen.setSize(jFileChooserLoadImagen.getPreferredSize());
 
         jFileChooserLoadImagen.setCurrentDirectory(new File(System.getProperty("user.dir")));
         jFileChooserLoadImagen.setDialogTitle("Carga Imagen Inicial");
         jFileChooserLoadImagen.setFileFilter(getFileNameExtensionFilterImage());
-        jFileChooserLoadImagen.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jFileChooserLoadImagenActionPerformed(evt);
-                jFileChooserLoadImagenActionPerformed1(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jDialogLoadImagenLayout = new javax.swing.GroupLayout(jDialogLoadImagen.getContentPane());
-        jDialogLoadImagen.getContentPane().setLayout(jDialogLoadImagenLayout);
-        jDialogLoadImagenLayout.setHorizontalGroup(
-            jDialogLoadImagenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDialogLoadImagenLayout.createSequentialGroup()
-                .addComponent(jFileChooserLoadImagen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        jDialogLoadImagenLayout.setVerticalGroup(
-            jDialogLoadImagenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDialogLoadImagenLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jFileChooserLoadImagen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Vista de carga");
@@ -1050,110 +917,70 @@ public class VisLoad extends javax.swing.JFrame {
     }//GEN-LAST:event_cargaOriginalActionPerformed
 
     private void salvaActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salvaActionPerformed1
-        jDialogPesosSave.setVisible(true);
+        int showSaveDialog = jFileChooserPesosSave.showSaveDialog(null);
+        if (showSaveDialog == javax.swing.JFileChooser.APPROVE_OPTION) {
+            salvaPesos(jFileChooserPesosSave.getSelectedFile().getPath());
+        }
     }//GEN-LAST:event_salvaActionPerformed1
 
-    private void jFileChooserPesosSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserPesosSaveActionPerformed
-        if (evt.getActionCommand().equals("ApproveSelection")) {
-            salvaPesos(jFileChooserPesosSave.getSelectedFile().getPath());
-            jDialogPesosSave.setVisible(false);
-            
-        }
-    }//GEN-LAST:event_jFileChooserPesosSaveActionPerformed
-
-    private void jFileChooserPesosSaveActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserPesosSaveActionPerformed1
-        if (evt.getActionCommand().equals("CancelSelection")) {
-            jDialogPesosSave.setVisible(false);
-            
-        }
-        
-    }//GEN-LAST:event_jFileChooserPesosSaveActionPerformed1
-
-    private void jFileChooserPesosLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserPesosLoadActionPerformed
-        if (evt.getActionCommand().equals("CancelSelection")) {
-            jDialogPesosLoad.setVisible(false);
-        }
-    }//GEN-LAST:event_jFileChooserPesosLoadActionPerformed
-
-    private void jFileChooserPesosLoadActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserPesosLoadActionPerformed1
-        if (evt.getActionCommand().equals("ApproveSelection")) {
-            cargaPesos(jFileChooserPesosLoad.getSelectedFile().getPath());
-            jDialogPesosLoad.setVisible(false);
-        }    
-    }//GEN-LAST:event_jFileChooserPesosLoadActionPerformed1
-
     private void cargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargarActionPerformed
-        jDialogPesosLoad.setVisible(true);
+        int showOpenDialog = jFileChooserPesosLoad.showOpenDialog(null);
+        if (showOpenDialog == javax.swing.JFileChooser.APPROVE_OPTION) {
+            log.info("jFileChooserPesosLoad");
+            cargaPesos(jFileChooserPesosLoad.getSelectedFile().getPath());
+        }
     }//GEN-LAST:event_cargarActionPerformed
 
     private void jButtonSalvaImagenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalvaImagenActionPerformed
-        jDialogImagenSalva.setVisible(true);
-    }//GEN-LAST:event_jButtonSalvaImagenActionPerformed
-
-    private void jFileChooserImagenSalvaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserImagenSalvaActionPerformed
-        jDialogImagenSalva.setVisible(false);
-    }//GEN-LAST:event_jFileChooserImagenSalvaActionPerformed
-
-    private void jFileChooserImagenSalvaActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserImagenSalvaActionPerformed1
-        if (evt.getActionCommand().equals("ApproveSelection")) {
-            
+        int showSaveDialog = jFileChooserImagenSalva.showSaveDialog(null);
+        if (showSaveDialog == javax.swing.JFileChooser.APPROVE_OPTION) {
+            log.info("jFileChooserImagenSalva");
             try  {
                 jFileChooserImagenSalva.getSelectedFile().createNewFile();
                 ImageIO.write(bufferImageFiltered, "JPEG", jFileChooserImagenSalva.getSelectedFile());
             } catch (IOException ex) {
                 log.info("file error", ex);
             }
+            
         }
-        jDialogImagenSalva.setVisible(false);
-    }//GEN-LAST:event_jFileChooserImagenSalvaActionPerformed1
+    }//GEN-LAST:event_jButtonSalvaImagenActionPerformed
 
-    private void jFileChooserLoadImagenResultActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserLoadImagenResultActionPerformed
-        jDialogImagenLoadResult.setVisible(false);
-    }//GEN-LAST:event_jFileChooserLoadImagenResultActionPerformed
-
-    private void jFileChooserLoadImagenResultActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserLoadImagenResultActionPerformed1
-        if (evt.getActionCommand().equals("ApproveSelection")) {
-
+    private void cargaPreparadaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargaPreparadaActionPerformed
+        int showOpenDialog = jFileChooserLoadImagen.showOpenDialog(null);
+        if (showOpenDialog ==  javax.swing.JFileChooser.APPROVE_OPTION) {
             try {
-                destBuffImage = ImageIO.read(jFileChooserLoadImagenResult.getSelectedFile());
-                bufferImageFiltered = destBuffImage;
+                buffImage = ImageIO.read(jFileChooserLoadImagen.getSelectedFile());
 
+                destBuffImage = buffImage;
+                bufferImageFiltered = destBuffImage;
                 java.awt.EventQueue.invokeLater(() -> {
+                    vista.repaint();
                     respuesta.repaint();
                 });
             } catch (IOException ex) {
                 log.error("error de archivo ", ex);
             }
-            
         }
-    }//GEN-LAST:event_jFileChooserLoadImagenResultActionPerformed1
-
-    private void cargaPreparadaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargaPreparadaActionPerformed
-        jDialogImagenLoadResult.setVisible(true);
     }//GEN-LAST:event_cargaPreparadaActionPerformed
 
-    private void jFileChooserLoadImagenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserLoadImagenActionPerformed
-        jDialogLoadImagen.setVisible(false);
-    }//GEN-LAST:event_jFileChooserLoadImagenActionPerformed
-
-    private void jFileChooserLoadImagenActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserLoadImagenActionPerformed1
-                
-        try {
-            buffImage = ImageIO.read(jFileChooserLoadImagen.getSelectedFile());
-            
-            destBuffImage = buffImage;
-            bufferImageFiltered = destBuffImage;
-            java.awt.EventQueue.invokeLater(() -> {
-                vista.repaint();
-                respuesta.repaint();
-            });
-        } catch (IOException ex) {
-            log.error("error de archivo ", ex);
-        }
-    }//GEN-LAST:event_jFileChooserLoadImagenActionPerformed1
-
     private void cargaImagenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargaImagenActionPerformed
-        jDialogLoadImagen.setVisible(true);
+        int showOpenDialog = jFileChooserLoadImagen.showOpenDialog(null);
+            
+        if (showOpenDialog ==  javax.swing.JFileChooser.APPROVE_OPTION) {
+            try {
+                buffImage = ImageIO.read(jFileChooserLoadImagen.getSelectedFile());
+
+                destBuffImage = buffImage;
+                bufferImageFiltered = destBuffImage;
+                java.awt.EventQueue.invokeLater(() -> {
+                    vista.repaint();
+                    respuesta.repaint();
+                });
+            } catch (IOException ex) {
+                log.error("error de archivo ", ex);
+            }
+        }
+      
     }//GEN-LAST:event_cargaImagenActionPerformed
 
     private void iteracionesStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_iteracionesStateChanged
@@ -1433,11 +1260,6 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButtonSalvaImagen;
     private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JDialog jDialogImagenLoadResult;
-    private javax.swing.JDialog jDialogImagenSalva;
-    private javax.swing.JDialog jDialogLoadImagen;
-    private javax.swing.JDialog jDialogPesosLoad;
-    private javax.swing.JDialog jDialogPesosSave;
     private javax.swing.JFileChooser jFileChooserImagenSalva;
     private javax.swing.JFileChooser jFileChooserLoadImagen;
     private javax.swing.JFileChooser jFileChooserLoadImagenResult;
