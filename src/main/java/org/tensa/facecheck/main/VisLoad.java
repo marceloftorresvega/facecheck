@@ -869,7 +869,10 @@ public class VisLoad extends javax.swing.JFrame {
 
                                 pixelLeanringLayer.startLearning();
                                 Double errorVal = pixelLeanringLayer.getError().get(Indice.D1);
-                                errorGraph.put(idx, errorVal);
+                                    
+                                synchronized(errorGraph) {
+                                    errorGraph.put(idx, errorVal);
+                                }
                                 log.info("diferencia <{}>", errorVal);                                
                             }
                         });
