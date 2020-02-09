@@ -165,6 +165,8 @@ public class VisLoad extends javax.swing.JFrame {
         hiddNeurs = new javax.swing.JSpinner();
         jLabel3 = new javax.swing.JLabel();
         outNeurs = new javax.swing.JSpinner();
+        hdCreationStyle = new javax.swing.JComboBox<>();
+        outCreationStyle = new javax.swing.JComboBox<>();
         jPanel4 = new javax.swing.JPanel();
         procesar = new javax.swing.JButton();
         entrenar = new javax.swing.JCheckBox();
@@ -356,7 +358,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonSalvaImagen)
-                .addContainerGap(320, Short.MAX_VALUE))
+                .addContainerGap(337, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -416,6 +418,12 @@ public class VisLoad extends javax.swing.JFrame {
         outNeurs.setModel(new javax.swing.SpinnerNumberModel(101, 3, 1000, 1));
         outNeurs.setToolTipText("Neuronas de salida (pixels)");
 
+        hdCreationStyle.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "simple", "reflectante", "normalizada" }));
+        hdCreationStyle.setToolTipText("metodo de iniciación");
+
+        outCreationStyle.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "simple", "reflactante", "normalizada" }));
+        outCreationStyle.setToolTipText("metodo de iniciación");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -435,11 +443,15 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(hiddNeurs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(12, 12, 12)
+                .addComponent(hdCreationStyle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(outNeurs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(201, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(outCreationStyle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -453,7 +465,9 @@ public class VisLoad extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(hiddNeurs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
-                    .addComponent(outNeurs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(outNeurs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(hdCreationStyle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(outCreationStyle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -526,7 +540,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jButton3)
                 .addGap(18, 18, 18)
                 .addComponent(actualizacion)
-                .addContainerGap(79, Short.MAX_VALUE))
+                .addContainerGap(96, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -588,7 +602,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jButton2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton4)
-                .addContainerGap(317, Short.MAX_VALUE))
+                .addContainerGap(334, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -805,12 +819,18 @@ public class VisLoad extends javax.swing.JFrame {
             final NumericMatriz<Double> tmpm = new DoubleMatriz(new Dominio(1, inSize));
             tmpm.getDominio().forEach((i) -> {
                 tmpm.put(i, 1-2*Math.random());
-                    });
-            double punto = tmpm.values().stream()
-                    .mapToDouble(v -> v * v)
-                    .sum();
-            punto = 1 / Math.sqrt(punto);
-            hiddenBlockMatriz.put(idx, tmpm.productoEscalar( punto ));
+            });
+            switch (hdCreationStyle.getSelectedIndex()) {
+                case 0:
+                    hiddenBlockMatriz.put(idx, simpleCreationStyle(tmpm));
+                    break;
+                case 1:
+                    hiddenBlockMatriz.put(idx, reflectCreationStyle(tmpm));
+                    break;
+                case 2:
+                    hiddenBlockMatriz.put(idx, normalCreationStyle(tmpm));
+                    break;
+            }
             tmpm.clear();
         });
         log.info("iniciando 1.1..<{},{}>",hidStep, inSize);
@@ -824,11 +844,17 @@ public class VisLoad extends javax.swing.JFrame {
             tmpm.getDominio().forEach((i) -> {
                 tmpm.put(i, 1-2*Math.random());
                     });
-            double punto = tmpm.values().stream()
-                    .mapToDouble(v -> v * v)
-                    .sum();
-            punto = 1 / Math.sqrt(punto);
-            outBlockMatriz.put(idx, tmpm.productoEscalar( punto ));
+            switch (outCreationStyle.getSelectedIndex()) {
+                case 0:
+                    outBlockMatriz.put(idx, simpleCreationStyle(tmpm));
+                    break;
+                case 1:
+                    outBlockMatriz.put(idx, reflectCreationStyle(tmpm));
+                    break;
+                case 2:
+                    outBlockMatriz.put(idx, normalCreationStyle(tmpm));
+                    break;
+            }
             tmpm.clear();
         });
         log.info("iniciando 2.1..<{},{}>",outSize, hidStep);
@@ -1203,6 +1229,26 @@ public class VisLoad extends javax.swing.JFrame {
         return compared==0?i1.getFila().compareTo(i2.getFila()):compared;
     }
     
+    private NumericMatriz<Double> simpleCreationStyle(NumericMatriz<Double> tmpm) {
+        return tmpm;
+    }
+    
+    private NumericMatriz<Double> reflectCreationStyle(NumericMatriz<Double> tmpm) {
+        double punto = tmpm.values().stream()
+                .mapToDouble(v -> Math.abs(v))
+                .sum();
+        punto = 1 / punto;
+        return tmpm.productoEscalar( punto );
+    }
+    
+    private NumericMatriz<Double> normalCreationStyle(NumericMatriz<Double> tmpm) {
+            double punto = tmpm.values().stream()
+                    .mapToDouble(v -> v * v)
+                    .sum();
+            punto = 1 / Math.sqrt(punto);
+        return tmpm.productoEscalar( punto );
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -1250,6 +1296,7 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JButton enmascaraResultado;
     private javax.swing.JCheckBox entrenar;
     private javax.swing.JToggleButton freno;
+    private javax.swing.JComboBox<String> hdCreationStyle;
     private javax.swing.JSpinner hiddNeurs;
     private javax.swing.JSpinner hiddenLearningRate;
     private javax.swing.JSpinner inNeurs;
@@ -1280,6 +1327,7 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JRadioButton normalizeJRadioButton;
+    private javax.swing.JComboBox<String> outCreationStyle;
     private javax.swing.JSpinner outNeurs;
     private javax.swing.JSpinner outputLearningRate;
     private javax.swing.JCheckBox preventZeroJCheckBox;
