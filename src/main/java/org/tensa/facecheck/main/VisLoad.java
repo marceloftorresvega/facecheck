@@ -59,7 +59,7 @@ public class VisLoad extends javax.swing.JFrame {
 
     private final String baseUrl = "\\img\\originales\\";
         
-    private final Double[] learningFactor = {.001, 0.003, .004, .005, .008, .01, .03, .04, .05, .08, .1, .3, .4, .5, .8};
+    private final Double[] learningFactor = {.00001, 0.00003, .00004, .00005, .00008,.0001, 0.0003, .0004, .0005, .0008,.001, 0.003, .004, .005, .008, .01, .03, .04, .05, .08, .1, .3, .4, .5, .8};
 
     private final String sufxType = ".jpg";
     private BufferedImage buffImage ;
@@ -130,15 +130,11 @@ public class VisLoad extends javax.swing.JFrame {
     private void initComponents() {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        jDialogPesosSave = new javax.swing.JDialog();
+        adaptInputButtonGroup = new javax.swing.ButtonGroup();
         jFileChooserPesosSave = new javax.swing.JFileChooser();
-        jDialogPesosLoad = new javax.swing.JDialog();
         jFileChooserPesosLoad = new javax.swing.JFileChooser();
-        jDialogImagenSalva = new javax.swing.JDialog();
         jFileChooserImagenSalva = new javax.swing.JFileChooser();
-        jDialogImagenLoadResult = new javax.swing.JDialog();
         jFileChooserLoadImagenResult = new javax.swing.JFileChooser();
-        jDialogLoadImagen = new javax.swing.JDialog();
         jFileChooserLoadImagen = new javax.swing.JFileChooser();
         jSplitPane1 = new javax.swing.JSplitPane();
         vista = getNuevaVista();
@@ -147,6 +143,10 @@ public class VisLoad extends javax.swing.JFrame {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         cargaImagen = new javax.swing.JButton();
+        preventZeroJCheckBox = new javax.swing.JCheckBox();
+        scaleJRadioButton = new javax.swing.JRadioButton();
+        normalizeJRadioButton = new javax.swing.JRadioButton();
+        reflectJRadioButton = new javax.swing.JRadioButton();
         jPanel2 = new javax.swing.JPanel();
         suavizaResultado = new javax.swing.JButton();
         enmascaraResultado = new javax.swing.JButton();
@@ -165,6 +165,8 @@ public class VisLoad extends javax.swing.JFrame {
         hiddNeurs = new javax.swing.JSpinner();
         jLabel3 = new javax.swing.JLabel();
         outNeurs = new javax.swing.JSpinner();
+        hdCreationStyle = new javax.swing.JComboBox<>();
+        outCreationStyle = new javax.swing.JComboBox<>();
         jPanel4 = new javax.swing.JPanel();
         procesar = new javax.swing.JButton();
         entrenar = new javax.swing.JCheckBox();
@@ -182,155 +184,27 @@ public class VisLoad extends javax.swing.JFrame {
         jButton4 = new javax.swing.JButton();
         jProgressBar1 = new javax.swing.JProgressBar();
 
-        jDialogPesosSave.setTitle("Guardar pesos");
-        jDialogPesosSave.setAlwaysOnTop(true);
-        jDialogPesosSave.setMinimumSize(jFileChooserPesosSave.getMinimumSize());
-        jDialogPesosSave.setModal(true);
-
         jFileChooserPesosSave.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
         jFileChooserPesosSave.setCurrentDirectory(new File(System.getProperty("user.dir")));
         jFileChooserPesosSave.setDialogTitle("Guardar pesos");
         jFileChooserPesosSave.setFileFilter(getFileNameExtensionFilter());
-        jFileChooserPesosSave.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jFileChooserPesosSaveActionPerformed(evt);
-                jFileChooserPesosSaveActionPerformed1(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jDialogPesosSaveLayout = new javax.swing.GroupLayout(jDialogPesosSave.getContentPane());
-        jDialogPesosSave.getContentPane().setLayout(jDialogPesosSaveLayout);
-        jDialogPesosSaveLayout.setHorizontalGroup(
-            jDialogPesosSaveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDialogPesosSaveLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jFileChooserPesosSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jDialogPesosSaveLayout.setVerticalGroup(
-            jDialogPesosSaveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDialogPesosSaveLayout.createSequentialGroup()
-                .addComponent(jFileChooserPesosSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-
-        jDialogPesosLoad.setTitle("Carga Pesos");
-        jDialogPesosLoad.setMinimumSize(jFileChooserPesosLoad.getMinimumSize());
 
         jFileChooserPesosLoad.setCurrentDirectory(new File(System.getProperty("user.dir")));
         jFileChooserPesosLoad.setDialogTitle("Carga Pesos");
         jFileChooserPesosLoad.setFileFilter(getFileNameExtensionFilter());
-        jFileChooserPesosLoad.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jFileChooserPesosLoadActionPerformed(evt);
-                jFileChooserPesosLoadActionPerformed1(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jDialogPesosLoadLayout = new javax.swing.GroupLayout(jDialogPesosLoad.getContentPane());
-        jDialogPesosLoad.getContentPane().setLayout(jDialogPesosLoadLayout);
-        jDialogPesosLoadLayout.setHorizontalGroup(
-            jDialogPesosLoadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDialogPesosLoadLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jFileChooserPesosLoad, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jDialogPesosLoadLayout.setVerticalGroup(
-            jDialogPesosLoadLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDialogPesosLoadLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jFileChooserPesosLoad, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jDialogImagenSalva.setTitle("Salva Imagen");
-        jDialogImagenSalva.setSize(jFileChooserImagenSalva.getMinimumSize());
 
         jFileChooserImagenSalva.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
         jFileChooserImagenSalva.setCurrentDirectory(new File(System.getProperty("user.dir")));
         jFileChooserImagenSalva.setDialogTitle("Salva Imagen");
         jFileChooserImagenSalva.setFileFilter(getFileNameExtensionFilterImage());
-        jFileChooserImagenSalva.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jFileChooserImagenSalvaActionPerformed(evt);
-                jFileChooserImagenSalvaActionPerformed1(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jDialogImagenSalvaLayout = new javax.swing.GroupLayout(jDialogImagenSalva.getContentPane());
-        jDialogImagenSalva.getContentPane().setLayout(jDialogImagenSalvaLayout);
-        jDialogImagenSalvaLayout.setHorizontalGroup(
-            jDialogImagenSalvaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDialogImagenSalvaLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jFileChooserImagenSalva, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jDialogImagenSalvaLayout.setVerticalGroup(
-            jDialogImagenSalvaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDialogImagenSalvaLayout.createSequentialGroup()
-                .addComponent(jFileChooserImagenSalva, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-
-        jDialogImagenLoadResult.setTitle("Carga resultante");
-        jDialogImagenLoadResult.setSize(jFileChooserLoadImagenResult.getPreferredSize());
 
         jFileChooserLoadImagenResult.setCurrentDirectory(new File(System.getProperty("user.dir")));
         jFileChooserLoadImagenResult.setDialogTitle("Carga resultante");
         jFileChooserLoadImagenResult.setFileFilter(getFileNameExtensionFilterImage());
-        jFileChooserLoadImagenResult.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jFileChooserLoadImagenResultActionPerformed(evt);
-                jFileChooserLoadImagenResultActionPerformed1(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jDialogImagenLoadResultLayout = new javax.swing.GroupLayout(jDialogImagenLoadResult.getContentPane());
-        jDialogImagenLoadResult.getContentPane().setLayout(jDialogImagenLoadResultLayout);
-        jDialogImagenLoadResultLayout.setHorizontalGroup(
-            jDialogImagenLoadResultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDialogImagenLoadResultLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jFileChooserLoadImagenResult, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jDialogImagenLoadResultLayout.setVerticalGroup(
-            jDialogImagenLoadResultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDialogImagenLoadResultLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jFileChooserLoadImagenResult, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-
-        jDialogLoadImagen.setSize(jFileChooserLoadImagen.getPreferredSize());
 
         jFileChooserLoadImagen.setCurrentDirectory(new File(System.getProperty("user.dir")));
         jFileChooserLoadImagen.setDialogTitle("Carga Imagen Inicial");
         jFileChooserLoadImagen.setFileFilter(getFileNameExtensionFilterImage());
-        jFileChooserLoadImagen.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jFileChooserLoadImagenActionPerformed(evt);
-                jFileChooserLoadImagenActionPerformed1(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jDialogLoadImagenLayout = new javax.swing.GroupLayout(jDialogLoadImagen.getContentPane());
-        jDialogLoadImagen.getContentPane().setLayout(jDialogLoadImagenLayout);
-        jDialogLoadImagenLayout.setHorizontalGroup(
-            jDialogLoadImagenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDialogLoadImagenLayout.createSequentialGroup()
-                .addComponent(jFileChooserLoadImagen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        jDialogLoadImagenLayout.setVerticalGroup(
-            jDialogLoadImagenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDialogLoadImagenLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jFileChooserLoadImagen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Vista de carga");
@@ -382,6 +256,17 @@ public class VisLoad extends javax.swing.JFrame {
             }
         });
 
+        preventZeroJCheckBox.setText("previene ceros");
+
+        adaptInputButtonGroup.add(scaleJRadioButton);
+        scaleJRadioButton.setText("Escalar");
+
+        adaptInputButtonGroup.add(normalizeJRadioButton);
+        normalizeJRadioButton.setSelected(true);
+        normalizeJRadioButton.setText("Normalizar");
+
+        reflectJRadioButton.setText("Reflectancia");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -389,12 +274,25 @@ public class VisLoad extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(cargaImagen)
-                .addGap(760, 760, 760))
+                .addGap(18, 18, 18)
+                .addComponent(preventZeroJCheckBox)
+                .addGap(18, 18, 18)
+                .addComponent(scaleJRadioButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(normalizeJRadioButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(reflectJRadioButton)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(cargaImagen)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cargaImagen)
+                    .addComponent(preventZeroJCheckBox)
+                    .addComponent(scaleJRadioButton)
+                    .addComponent(normalizeJRadioButton)
+                    .addComponent(reflectJRadioButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -460,7 +358,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonSalvaImagen)
-                .addContainerGap(320, Short.MAX_VALUE))
+                .addContainerGap(337, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -520,6 +418,12 @@ public class VisLoad extends javax.swing.JFrame {
         outNeurs.setModel(new javax.swing.SpinnerNumberModel(101, 3, 1000, 1));
         outNeurs.setToolTipText("Neuronas de salida (pixels)");
 
+        hdCreationStyle.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "simple", "reflectante", "normalizada" }));
+        hdCreationStyle.setToolTipText("metodo de iniciación");
+
+        outCreationStyle.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "simple", "reflactante", "normalizada" }));
+        outCreationStyle.setToolTipText("metodo de iniciación");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -539,11 +443,15 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(hiddNeurs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(12, 12, 12)
+                .addComponent(hdCreationStyle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(outNeurs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(201, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(outCreationStyle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -557,7 +465,9 @@ public class VisLoad extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(hiddNeurs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
-                    .addComponent(outNeurs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(outNeurs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(hdCreationStyle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(outCreationStyle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -630,7 +540,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jButton3)
                 .addGap(18, 18, 18)
                 .addComponent(actualizacion)
-                .addContainerGap(79, Short.MAX_VALUE))
+                .addContainerGap(96, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -692,7 +602,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jButton2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton4)
-                .addContainerGap(317, Short.MAX_VALUE))
+                .addContainerGap(334, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -832,7 +742,15 @@ public class VisLoad extends javax.swing.JFrame {
         //                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
                             pixelsOutputLayer.setDest(bufferImageFiltered.getSubimage(i + (inStep-outStep)/2, j + (inStep-outStep)/2, outStep, outStep));
                             BufferedImage src = buffImage.getSubimage(i, j, inStep, inStep);
-                            simplePixelsInputLayer.setNormalizar(true);
+                            if (adaptInputButtonGroup.getSelection().equals(scaleJRadioButton.getModel())) {
+                                simplePixelsInputLayer.setEscalar(true);
+                            }
+                            if (adaptInputButtonGroup.getSelection().equals(normalizeJRadioButton.getModel())) {
+                                simplePixelsInputLayer.setNormalizar(true);
+                            }
+                            if (adaptInputButtonGroup.getSelection().equals(reflectJRadioButton.getModel())) {
+                                simplePixelsInputLayer.setReflectancia(true);
+                            }
                             simplePixelsInputLayer.setSrc(src);
                             simplePixelsInputLayer.startProduction();
 
@@ -901,12 +819,18 @@ public class VisLoad extends javax.swing.JFrame {
             final NumericMatriz<Double> tmpm = new DoubleMatriz(new Dominio(1, inSize));
             tmpm.getDominio().forEach((i) -> {
                 tmpm.put(i, 1-2*Math.random());
-                    });
-            double punto = tmpm.values().stream()
-                    .mapToDouble(v -> v * v)
-                    .sum();
-            punto = 1 / Math.sqrt(punto);
-            hiddenBlockMatriz.put(idx, tmpm.productoEscalar( punto ));
+            });
+            switch (hdCreationStyle.getSelectedIndex()) {
+                case 0:
+                    hiddenBlockMatriz.put(idx, simpleCreationStyle(tmpm));
+                    break;
+                case 1:
+                    hiddenBlockMatriz.put(idx, reflectCreationStyle(tmpm));
+                    break;
+                case 2:
+                    hiddenBlockMatriz.put(idx, normalCreationStyle(tmpm));
+                    break;
+            }
             tmpm.clear();
         });
         log.info("iniciando 1.1..<{},{}>",hidStep, inSize);
@@ -920,11 +844,17 @@ public class VisLoad extends javax.swing.JFrame {
             tmpm.getDominio().forEach((i) -> {
                 tmpm.put(i, 1-2*Math.random());
                     });
-            double punto = tmpm.values().stream()
-                    .mapToDouble(v -> v * v)
-                    .sum();
-            punto = 1 / Math.sqrt(punto);
-            outBlockMatriz.put(idx, tmpm.productoEscalar( punto ));
+            switch (outCreationStyle.getSelectedIndex()) {
+                case 0:
+                    outBlockMatriz.put(idx, simpleCreationStyle(tmpm));
+                    break;
+                case 1:
+                    outBlockMatriz.put(idx, reflectCreationStyle(tmpm));
+                    break;
+                case 2:
+                    outBlockMatriz.put(idx, normalCreationStyle(tmpm));
+                    break;
+            }
             tmpm.clear();
         });
         log.info("iniciando 2.1..<{},{}>",outSize, hidStep);
@@ -1013,110 +943,70 @@ public class VisLoad extends javax.swing.JFrame {
     }//GEN-LAST:event_cargaOriginalActionPerformed
 
     private void salvaActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salvaActionPerformed1
-        jDialogPesosSave.setVisible(true);
+        int showSaveDialog = jFileChooserPesosSave.showSaveDialog(null);
+        if (showSaveDialog == javax.swing.JFileChooser.APPROVE_OPTION) {
+            salvaPesos(jFileChooserPesosSave.getSelectedFile().getPath());
+        }
     }//GEN-LAST:event_salvaActionPerformed1
 
-    private void jFileChooserPesosSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserPesosSaveActionPerformed
-        if (evt.getActionCommand().equals("ApproveSelection")) {
-            salvaPesos(jFileChooserPesosSave.getSelectedFile().getPath());
-            jDialogPesosSave.setVisible(false);
-            
-        }
-    }//GEN-LAST:event_jFileChooserPesosSaveActionPerformed
-
-    private void jFileChooserPesosSaveActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserPesosSaveActionPerformed1
-        if (evt.getActionCommand().equals("CancelSelection")) {
-            jDialogPesosSave.setVisible(false);
-            
-        }
-        
-    }//GEN-LAST:event_jFileChooserPesosSaveActionPerformed1
-
-    private void jFileChooserPesosLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserPesosLoadActionPerformed
-        if (evt.getActionCommand().equals("CancelSelection")) {
-            jDialogPesosLoad.setVisible(false);
-        }
-    }//GEN-LAST:event_jFileChooserPesosLoadActionPerformed
-
-    private void jFileChooserPesosLoadActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserPesosLoadActionPerformed1
-        if (evt.getActionCommand().equals("ApproveSelection")) {
-            cargaPesos(jFileChooserPesosLoad.getSelectedFile().getPath());
-            jDialogPesosLoad.setVisible(false);
-        }    
-    }//GEN-LAST:event_jFileChooserPesosLoadActionPerformed1
-
     private void cargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargarActionPerformed
-        jDialogPesosLoad.setVisible(true);
+        int showOpenDialog = jFileChooserPesosLoad.showOpenDialog(null);
+        if (showOpenDialog == javax.swing.JFileChooser.APPROVE_OPTION) {
+            log.info("jFileChooserPesosLoad");
+            cargaPesos(jFileChooserPesosLoad.getSelectedFile().getPath());
+        }
     }//GEN-LAST:event_cargarActionPerformed
 
     private void jButtonSalvaImagenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalvaImagenActionPerformed
-        jDialogImagenSalva.setVisible(true);
-    }//GEN-LAST:event_jButtonSalvaImagenActionPerformed
-
-    private void jFileChooserImagenSalvaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserImagenSalvaActionPerformed
-        jDialogImagenSalva.setVisible(false);
-    }//GEN-LAST:event_jFileChooserImagenSalvaActionPerformed
-
-    private void jFileChooserImagenSalvaActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserImagenSalvaActionPerformed1
-        if (evt.getActionCommand().equals("ApproveSelection")) {
-            
+        int showSaveDialog = jFileChooserImagenSalva.showSaveDialog(null);
+        if (showSaveDialog == javax.swing.JFileChooser.APPROVE_OPTION) {
+            log.info("jFileChooserImagenSalva");
             try  {
                 jFileChooserImagenSalva.getSelectedFile().createNewFile();
                 ImageIO.write(bufferImageFiltered, "JPEG", jFileChooserImagenSalva.getSelectedFile());
             } catch (IOException ex) {
                 log.info("file error", ex);
             }
+            
         }
-        jDialogImagenSalva.setVisible(false);
-    }//GEN-LAST:event_jFileChooserImagenSalvaActionPerformed1
+    }//GEN-LAST:event_jButtonSalvaImagenActionPerformed
 
-    private void jFileChooserLoadImagenResultActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserLoadImagenResultActionPerformed
-        jDialogImagenLoadResult.setVisible(false);
-    }//GEN-LAST:event_jFileChooserLoadImagenResultActionPerformed
-
-    private void jFileChooserLoadImagenResultActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserLoadImagenResultActionPerformed1
-        if (evt.getActionCommand().equals("ApproveSelection")) {
-
+    private void cargaPreparadaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargaPreparadaActionPerformed
+        int showOpenDialog = jFileChooserLoadImagen.showOpenDialog(null);
+        if (showOpenDialog ==  javax.swing.JFileChooser.APPROVE_OPTION) {
             try {
-                destBuffImage = ImageIO.read(jFileChooserLoadImagenResult.getSelectedFile());
-                bufferImageFiltered = destBuffImage;
+                buffImage = ImageIO.read(jFileChooserLoadImagen.getSelectedFile());
 
+                destBuffImage = buffImage;
+                bufferImageFiltered = destBuffImage;
                 java.awt.EventQueue.invokeLater(() -> {
+                    vista.repaint();
                     respuesta.repaint();
                 });
             } catch (IOException ex) {
                 log.error("error de archivo ", ex);
             }
-            
         }
-    }//GEN-LAST:event_jFileChooserLoadImagenResultActionPerformed1
-
-    private void cargaPreparadaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargaPreparadaActionPerformed
-        jDialogImagenLoadResult.setVisible(true);
     }//GEN-LAST:event_cargaPreparadaActionPerformed
 
-    private void jFileChooserLoadImagenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserLoadImagenActionPerformed
-        jDialogLoadImagen.setVisible(false);
-    }//GEN-LAST:event_jFileChooserLoadImagenActionPerformed
-
-    private void jFileChooserLoadImagenActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooserLoadImagenActionPerformed1
-                
-        try {
-            buffImage = ImageIO.read(jFileChooserLoadImagen.getSelectedFile());
-            
-            destBuffImage = buffImage;
-            bufferImageFiltered = destBuffImage;
-            java.awt.EventQueue.invokeLater(() -> {
-                vista.repaint();
-                respuesta.repaint();
-            });
-        } catch (IOException ex) {
-            log.error("error de archivo ", ex);
-        }
-    }//GEN-LAST:event_jFileChooserLoadImagenActionPerformed1
-
     private void cargaImagenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargaImagenActionPerformed
-        jDialogLoadImagen.setVisible(true);
+        int showOpenDialog = jFileChooserLoadImagen.showOpenDialog(null);
+            
+        if (showOpenDialog ==  javax.swing.JFileChooser.APPROVE_OPTION) {
+            try {
+                buffImage = ImageIO.read(jFileChooserLoadImagen.getSelectedFile());
+
+                destBuffImage = buffImage;
+                bufferImageFiltered = destBuffImage;
+                java.awt.EventQueue.invokeLater(() -> {
+                    vista.repaint();
+                    respuesta.repaint();
+                });
+            } catch (IOException ex) {
+                log.error("error de archivo ", ex);
+            }
+        }
+      
     }//GEN-LAST:event_cargaImagenActionPerformed
 
     private void iteracionesStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_iteracionesStateChanged
@@ -1339,6 +1229,26 @@ public class VisLoad extends javax.swing.JFrame {
         return compared==0?i1.getFila().compareTo(i2.getFila()):compared;
     }
     
+    private NumericMatriz<Double> simpleCreationStyle(NumericMatriz<Double> tmpm) {
+        return tmpm;
+    }
+    
+    private NumericMatriz<Double> reflectCreationStyle(NumericMatriz<Double> tmpm) {
+        double punto = tmpm.values().stream()
+                .mapToDouble(v -> Math.abs(v))
+                .sum();
+        punto = 1 / punto;
+        return tmpm.productoEscalar( punto );
+    }
+    
+    private NumericMatriz<Double> normalCreationStyle(NumericMatriz<Double> tmpm) {
+            double punto = tmpm.values().stream()
+                    .mapToDouble(v -> v * v)
+                    .sum();
+            punto = 1 / Math.sqrt(punto);
+        return tmpm.productoEscalar( punto );
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -1377,6 +1287,7 @@ public class VisLoad extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox actualizacion;
+    private javax.swing.ButtonGroup adaptInputButtonGroup;
     private javax.swing.JButton cargaImagen;
     private javax.swing.JButton cargaOriginal;
     private javax.swing.JButton cargaPreparada;
@@ -1385,6 +1296,7 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JButton enmascaraResultado;
     private javax.swing.JCheckBox entrenar;
     private javax.swing.JToggleButton freno;
+    private javax.swing.JComboBox<String> hdCreationStyle;
     private javax.swing.JSpinner hiddNeurs;
     private javax.swing.JSpinner hiddenLearningRate;
     private javax.swing.JSpinner inNeurs;
@@ -1395,11 +1307,6 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButtonSalvaImagen;
     private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JDialog jDialogImagenLoadResult;
-    private javax.swing.JDialog jDialogImagenSalva;
-    private javax.swing.JDialog jDialogLoadImagen;
-    private javax.swing.JDialog jDialogPesosLoad;
-    private javax.swing.JDialog jDialogPesosSave;
     private javax.swing.JFileChooser jFileChooserImagenSalva;
     private javax.swing.JFileChooser jFileChooserLoadImagen;
     private javax.swing.JFileChooser jFileChooserLoadImagenResult;
@@ -1419,11 +1326,16 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JRadioButton normalizeJRadioButton;
+    private javax.swing.JComboBox<String> outCreationStyle;
     private javax.swing.JSpinner outNeurs;
     private javax.swing.JSpinner outputLearningRate;
+    private javax.swing.JCheckBox preventZeroJCheckBox;
     private javax.swing.JButton procesar;
+    private javax.swing.JRadioButton reflectJRadioButton;
     private javax.swing.JPanel respuesta;
     private javax.swing.JButton salva;
+    private javax.swing.JRadioButton scaleJRadioButton;
     private javax.swing.JCheckBox seleccion;
     private javax.swing.JButton suavizaResultado;
     private javax.swing.JPanel vista;
