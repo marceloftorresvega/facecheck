@@ -4,7 +4,9 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -23,8 +25,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Objects;
+import java.util.OptionalDouble;
+import java.util.function.ToDoubleFunction;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.SpinnerListModel;
@@ -69,6 +76,7 @@ public class VisLoad extends javax.swing.JFrame {
     private BufferedImage bufferImageFiltered;
     private DoubleMatriz weightsH;
     private DoubleMatriz weightsO;
+    private DoubleMatriz errorGraph;
     private int inStep;
     private int outStep;
     private int hidStep;
@@ -78,6 +86,7 @@ public class VisLoad extends javax.swing.JFrame {
     private boolean areaSelect = false;
     private final FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("pesos", "dat");
     private final FileNameExtensionFilter fileNameExtensionFilterImage = new FileNameExtensionFilter("JPEG", "jpg");
+    private ParOrdenado[] proccesDomain;
 
     public SpinnerModel getSpinnerModel(){
 //        if(Objects.isNull(spinnerModel))
@@ -183,6 +192,7 @@ public class VisLoad extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jProgressBar1 = new javax.swing.JProgressBar();
+        jErrorGraf = getNuevaErrorGram();
 
         jFileChooserPesosSave.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
         jFileChooserPesosSave.setCurrentDirectory(new File(System.getProperty("user.dir")));
@@ -229,7 +239,7 @@ public class VisLoad extends javax.swing.JFrame {
         );
         vistaLayout.setVerticalGroup(
             vistaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 457, Short.MAX_VALUE)
+            .addGap(0, 376, Short.MAX_VALUE)
         );
 
         jSplitPane1.setLeftComponent(vista);
@@ -244,7 +254,7 @@ public class VisLoad extends javax.swing.JFrame {
         );
         respuestaLayout.setVerticalGroup(
             respuestaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 457, Short.MAX_VALUE)
+            .addGap(0, 376, Short.MAX_VALUE)
         );
 
         jSplitPane1.setRightComponent(respuesta);
@@ -621,23 +631,30 @@ public class VisLoad extends javax.swing.JFrame {
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jTabbedPane1)
-                .addContainerGap())
+            .addComponent(jTabbedPane1)
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                .addGap(0, 0, 0)
+            .addGroup(jPanel6Layout.createSequentialGroup()
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(0, 6, Short.MAX_VALUE))
         );
 
         jProgressBar1.setStringPainted(true);
 
         org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, iteraciones, org.jdesktop.beansbinding.ELProperty.create("${value}"), jProgressBar1, org.jdesktop.beansbinding.BeanProperty.create("maximum"));
         bindingGroup.addBinding(binding);
+
+        javax.swing.GroupLayout jErrorGrafLayout = new javax.swing.GroupLayout(jErrorGraf);
+        jErrorGraf.setLayout(jErrorGrafLayout);
+        jErrorGrafLayout.setHorizontalGroup(
+            jErrorGrafLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        jErrorGrafLayout.setVerticalGroup(
+            jErrorGrafLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -650,7 +667,8 @@ public class VisLoad extends javax.swing.JFrame {
                     .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jErrorGraf, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -660,7 +678,10 @@ public class VisLoad extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSplitPane1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jErrorGraf, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         getAccessibleContext().setAccessibleName("Oculta Caras");
@@ -709,19 +730,26 @@ public class VisLoad extends javax.swing.JFrame {
         int width = buffImage.getWidth();
         int height = buffImage.getHeight();
         
-        log.info("procesando...");
-        new Thread(() -> {
-            procesar.setEnabled(false);
-            jButton3.setEnabled(false);
-            clean.setEnabled(false);
+        procesar.setEnabled(false);
+        jButton3.setEnabled(false);
+        clean.setEnabled(false);
         
+        new Thread(() -> {
+            log.info("procesando...");
+
             for(int idIteracion=0; (!freno.isSelected()) && ((!entrenar.isSelected()) && idIteracion<1 || entrenar.isSelected() && idIteracion<((Integer) iteraciones.getValue())); idIteracion++) {
 
                 log.info("iteracion <{}>", idIteracion);
                 jProgressBar1.setValue(idIteracion);
-                new Dominio(width-inStep, height-inStep).stream()
+                Dominio dominio = new Dominio(width-inStep, height-inStep);
+                
+                proccesDomain = dominio.stream()
                         .filter( idx -> (( (idx.getFila()-(inStep-outStep)/2) % outStep ==0) && ((idx.getColumna()-(inStep-outStep)/2)% outStep == 0)))
                         .filter(idx -> (!seleccion.isSelected()) || ( areaQeue.stream().anyMatch(a -> a.contains(idx.getFila(), idx.getColumna()))) )
+                        .collect(Collectors.toList())
+                        .toArray(new ParOrdenado[1]);
+                errorGraph = new DoubleMatriz(dominio);
+                Arrays.stream(proccesDomain)
                         .sorted((idx1,idx2) -> (int)(2.0*Math.random()-1.0))
                         .parallel()
                         .filter(idx -> !freno.isSelected())
@@ -763,7 +791,12 @@ public class VisLoad extends javax.swing.JFrame {
                                 pixelLeanringLayer.setLearningData(simplePixelsCompareLayer.getOutputLayer());
 
                                 pixelLeanringLayer.startLearning();
-                                log.info("diferencia <{}>", pixelLeanringLayer.getError().get(Indice.D1));
+                                Double errorVal = pixelLeanringLayer.getError().get(Indice.D1);
+                                    
+                                synchronized(errorGraph) {
+                                    errorGraph.put(idx, errorVal);
+                                }
+                                log.info("diferencia <{}>", errorVal);                                
                             }
                         });
 
@@ -785,12 +818,13 @@ public class VisLoad extends javax.swing.JFrame {
                 try {
                     Thread.sleep(15000);
                     if (actualizacion.isSelected()) {
-                        synchronized(respuesta){
+//                        synchronized(this){
 //                        java.awt.EventQueue.invokeLater(() -> {
                             respuesta.repaint();
+                            jErrorGraf.repaint();
                             log.info("realiza actualizacion");
 //                        });
-                        }
+//                        }
                         
                     } else {
                         log.info("no realiza actualizacion");
@@ -1224,6 +1258,38 @@ public class VisLoad extends javax.swing.JFrame {
         };
     }
     
+    private javax.swing.JPanel getNuevaErrorGram() {
+        return new JPanel(true){
+            @Override
+            protected void paintComponent(Graphics grphcs) {
+                super.paintComponent(grphcs); 
+                if (Objects.nonNull(errorGraph)) {
+                    OptionalDouble maxError = errorGraph.values().stream().mapToDouble( i -> i).max();
+                    
+                    double size = (double) proccesDomain.length;
+                    
+                    Graphics2D gr2 = (Graphics2D) grphcs;
+                    gr2.setColor(Color.RED);
+                    double tol = maxError.orElse(1.0);
+                    double lcWidth = jErrorGraf.getWidth() / size;
+                    double lclHeight = jErrorGraf.getHeight() / tol;
+//                    gr2.translate(0, -1/ lclHeight);
+                    gr2.translate(0, 0);
+                    gr2.scale( lcWidth, lclHeight);
+                    int adv = 0;
+                    
+                    for (ParOrdenado idx : proccesDomain) {
+                        Double errorPoint = errorGraph.get(idx);
+                        Shape shape = new Rectangle2D.Double( adv++, 0, 1, errorPoint);
+                        gr2.draw(shape);
+                        
+                    }
+                }
+            }
+            
+        };
+    }
+    
     private int compareTo(ParOrdenado i1, ParOrdenado i2){
         int compared = i1.getColumna().compareTo(i2.getColumna());
         return compared==0?i1.getFila().compareTo(i2.getFila()):compared;
@@ -1307,6 +1373,7 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButtonSalvaImagen;
     private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JPanel jErrorGraf;
     private javax.swing.JFileChooser jFileChooserImagenSalva;
     private javax.swing.JFileChooser jFileChooserLoadImagen;
     private javax.swing.JFileChooser jFileChooserLoadImagenResult;
