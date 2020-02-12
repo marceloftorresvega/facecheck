@@ -275,6 +275,7 @@ public class VisLoad extends javax.swing.JFrame {
         normalizeJRadioButton.setSelected(true);
         normalizeJRadioButton.setText("Normalizar");
 
+        adaptInputButtonGroup.add(reflectJRadioButton);
         reflectJRadioButton.setText("Reflectancia");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
