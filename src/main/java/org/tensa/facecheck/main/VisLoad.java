@@ -1010,9 +1010,8 @@ public class VisLoad extends javax.swing.JFrame {
         int showOpenDialog = jFileChooserLoadImagen.showOpenDialog(null);
         if (showOpenDialog ==  javax.swing.JFileChooser.APPROVE_OPTION) {
             try {
-                buffImage = ImageIO.read(jFileChooserLoadImagen.getSelectedFile());
+                destBuffImage = ImageIO.read(jFileChooserLoadImagen.getSelectedFile());
 
-                destBuffImage = buffImage;
                 bufferImageFiltered = destBuffImage;
                 java.awt.EventQueue.invokeLater(() -> {
                     vista.repaint();
