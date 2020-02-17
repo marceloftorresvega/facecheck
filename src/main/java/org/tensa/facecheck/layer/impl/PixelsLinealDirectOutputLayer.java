@@ -34,9 +34,8 @@ import org.tensa.tensada.matrix.Indice;
  */
 public class PixelsLinealDirectOutputLayer implements LayerConsumer {
     
-    private final DoubleMatriz weights;
+    private DoubleMatriz weights;
     private int status;
-    private DoubleMatriz outputLayer;
     private DoubleMatriz inputLayer;
     
     private BufferedImage dest;
@@ -60,10 +59,10 @@ public class PixelsLinealDirectOutputLayer implements LayerConsumer {
     public void layerComplete(int status) {
         this.status = status;
         if (status == LayerConsumer.SUCCESS_STATUS) {
-            outputLayer = (DoubleMatriz)inputLayer;
-            double[] pixels = new double[outputLayer.getDominio().getFila()];
+            
+            double[] pixels = new double[inputLayer.getDominio().getFila()];
             for( int i =0; i< pixels.length; i++) {
-                pixels[i] = 255 * outputLayer.get(new Indice(i + 1, 1));
+                pixels[i] = 255 * inputLayer.get(new Indice(i + 1, 1));
             }
             
             int width = dest.getWidth();

@@ -23,8 +23,10 @@
  */
 package org.tensa.facecheck.layer.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.layer.LayerConsumer;
@@ -114,19 +116,33 @@ public class HiddenSigmoidLayer implements LayerLearning, LayerConsumer, LayerPr
 
     @Override
     public void startLearning() {
-        error = (DoubleMatriz) outputLayer.matrizUno().substraccion(outputLayer);
-        error.replaceAll((i,v) -> v * outputLayer.get(i) * learningData.get(i));
-        
-//        toBackLayer = (DoubleMatriz) weights.productoPunto(error);
-        propagationError = (DoubleMatriz) error.productoPunto(weights).transpuesta();
-        
-        NumericMatriz<Double> delta = error.productoTensorial(inputLayer).productoEscalar(learningFactor);
-        NumericMatriz<Double> adicion = weights.adicion(delta);
-        synchronized(weights){
-            weights.putAll(adicion);
-            
+        try {
+            try (NumericMatriz<Double> m1 = outputLayer.matrizUno()) {
+
+                error = (DoubleMatriz) m1.substraccion(outputLayer);
+                error.replaceAll((i,v) -> v * outputLayer.get(i) * learningData.get(i));
+            }
+
+//        propagationError = (DoubleMatriz) weights.productoPunto(error);
+            try (NumericMatriz<Double> punto = error.productoPunto(weights)) {
+                
+                propagationError = (DoubleMatriz) punto.transpuesta();
+            }
+
+            try (
+                NumericMatriz<Double> tensor = error.productoTensorial(inputLayer);
+                NumericMatriz<Double> delta = tensor.productoEscalar(learningFactor);
+                NumericMatriz<Double> adicion = weights.adicion(delta);) {
+
+                synchronized(weights){
+                    weights.putAll(adicion);
+
+                }
+            }
+
+        } catch (IOException ex) {
+            log.error("startLearning", ex);
         }
-        
         
         for(LayerLearning back : getProducers()) {
             back.setLearningData(propagationError);
