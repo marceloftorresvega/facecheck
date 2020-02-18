@@ -23,13 +23,14 @@
  */
 package org.tensa.facecheck.layer;
 
-import org.tensa.tensada.matrix.DoubleMatriz;
+import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
  * consumidor de resultados de otra capa
  * @author Marcelo
+ * @param <N>
  */
-public interface LayerConsumer {
+public interface LayerConsumer<N extends Number> {
     
     /**
      * estado de proceso correcto
@@ -46,13 +47,13 @@ public interface LayerConsumer {
      * @param inputLayer
      * @return la misma matriz de entrada o una equivalente
      */
-    DoubleMatriz seInputLayer(DoubleMatriz inputLayer);
+    NumericMatriz<N> seInputLayer(org.tensa.tensada.matrix.NumericMatriz<N> inputLayer);
     
     /**
      * se obtienen pesos utilizados por la capa
      * @return retorna matriz de pesos
      */
-    DoubleMatriz getWeights();
+    NumericMatriz<N> getWeights();
     
     /**
      * consume datos de entrada y realiza proceso por los pesos

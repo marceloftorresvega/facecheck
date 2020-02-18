@@ -24,38 +24,39 @@
 package org.tensa.facecheck.layer;
 
 import java.util.List;
-import org.tensa.tensada.matrix.DoubleMatriz;
+import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
  * ejecucion de metodos backpropagation
  * calcula valores de error y propaga
  * @author Marcelo
+ * @param <N>
  */
-public interface LayerLearning {
+public interface LayerLearning<N extends Number> {
     
     /**
      * resultados para la propagacion del error
      * @return the org.tensa.tensada.matrix.DoubleMatriz
      */
-    DoubleMatriz getPropagationError();
+    NumericMatriz<N> getPropagationError();
     
     /**
      * error medio de la capa
      * @return matriz de error (1 valor)
      */
-    DoubleMatriz getError();
+    NumericMatriz<N> getError();
     
     /**
      * retorna valor de ajuste para los pesos
      * @return the java.lang.Double
      */
-    Double getLeanringFactor();
+    N getLeanringFactor();
     
     /**
      * se adquiere valores deseados para aprendisaje supervizado
      * @param learningData matriz de valores para comparar
      */
-    void setLearningData(DoubleMatriz learningData);
+    void setLearningData(NumericMatriz<N> learningData);
     
     /**
      * procesa valores deseados versus valores producidos y propaga error
@@ -66,5 +67,5 @@ public interface LayerLearning {
      * retorna el listado de capas que reciben la propagacion del error
      * @return listado de capas
      */
-    List<LayerLearning> getProducers();
+    List<LayerLearning<N>> getProducers();
 }
