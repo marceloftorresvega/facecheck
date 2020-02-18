@@ -1,6 +1,5 @@
 package org.tensa.facecheck.main;
 
-import com.sun.glass.ui.Cursor;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -30,9 +29,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.OptionalDouble;
-import java.util.function.ToDoubleFunction;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.SpinnerListModel;
@@ -45,15 +42,12 @@ import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.filter.MaskOp;
 import org.tensa.facecheck.layer.impl.HiddenSigmoidLayer;
 import org.tensa.facecheck.layer.impl.PixelDirectLinealLeanringLayer;
-import org.tensa.facecheck.layer.impl.PixelDirectSigmoidLeanringLayer;
-import org.tensa.facecheck.layer.impl.PixelsDirectSigmoidOutputLayer;
 import org.tensa.facecheck.layer.impl.PixelsDirectInputLayer;
 import org.tensa.facecheck.layer.impl.PixelsLinealDirectOutputLayer;
 import org.tensa.tensada.matrix.BlockMatriz;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
 import org.tensa.tensada.matrix.Indice;
-import org.tensa.tensada.matrix.Matriz;
 import org.tensa.tensada.matrix.NumericMatriz;
 import org.tensa.tensada.matrix.ParOrdenado;
 
@@ -777,7 +771,7 @@ public class VisLoad extends javax.swing.JFrame {
                             PixelsDirectInputLayer simplePixelsCompareLayer = new PixelsDirectInputLayer();
                             HiddenSigmoidLayer hiddenLayer = new HiddenSigmoidLayer(weightsH,  (Double)hiddenLearningRate.getValue());
                             PixelDirectLinealLeanringLayer pixelLeanringLayer = new PixelDirectLinealLeanringLayer(weightsO, (Double)outputLearningRate.getValue());
-                            PixelsLinealDirectOutputLayer pixelsOutputLayer = new PixelsLinealDirectOutputLayer(null);
+                            PixelsLinealDirectOutputLayer pixelsOutputLayer = new PixelsLinealDirectOutputLayer();
 
                             simplePixelsInputLayer.getConsumers().add(hiddenLayer);
                             hiddenLayer.getConsumers().add(pixelLeanringLayer);
