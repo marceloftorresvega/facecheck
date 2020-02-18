@@ -23,150 +23,16 @@
  */
 package org.tensa.facecheck.layer.impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tensa.facecheck.layer.LayerConsumer;
-import org.tensa.facecheck.layer.LayerProducer;
-import org.tensa.tensada.matrix.Dominio;
-import org.tensa.tensada.matrix.DoubleMatriz;
 import org.tensa.tensada.matrix.NumericMatriz;
-import org.tensa.facecheck.layer.LayerLearning;
 
 /**
  *
  * @author Marcelo
  */
-public class PixelDirectLinealLeanringLayer implements LayerConsumer, LayerLearning, LayerProducer {
-    
-    private final Logger log = LoggerFactory.getLogger(PixelDirectLinealLeanringLayer.class);
-    
-    private final DoubleMatriz weights;
-    private int status;
-    private DoubleMatriz outputLayer;
-    private DoubleMatriz inputLayer;
-    
-    private DoubleMatriz propagationError;
-    private DoubleMatriz learningData;
-    private DoubleMatriz error;
-    private final Double learningFactor;
-    private final List<LayerConsumer> consumers;
-    private final List<LayerLearning> producers;
+public class PixelDirectLinealLeanringLayer extends DoubleLinealLearningLayerImpl {
 
-    public PixelDirectLinealLeanringLayer(DoubleMatriz weights, Double learningStep) {
-        this.weights = weights;
-        this.learningFactor = learningStep;
-        this.consumers = new ArrayList<>();
-        this.producers = new ArrayList<>();
+    public PixelDirectLinealLeanringLayer(NumericMatriz<Double> weights, Double learningFactor) {
+        super(weights, learningFactor);
     }
-
-    @Override
-    public DoubleMatriz seInputLayer(DoubleMatriz inputLayer) {
-        this.inputLayer = inputLayer;
-        return inputLayer;
-    }
-
-    @Override
-    public DoubleMatriz getWeights() {
-        return weights;
-    }
-
-    @Override
-    public void layerComplete(int status) {
-        this.status = status;
-        if (status == LayerConsumer.SUCCESS_STATUS) {
-            this.startProduction();
-        }
-    }
-
-    @Override
-    public DoubleMatriz getPropagationError() {
-        return propagationError;
-    }
-
-    @Override
-    public void setLearningData(DoubleMatriz learningData) {
-        this.learningData = learningData;
-    }
-
-    @Override
-    public void startLearning() {
-        try {
-            error = (DoubleMatriz)learningData.substraccion(outputLayer);
-    //        propagationError = (DoubleMatriz) weights.productoPunto(error);
-            try (NumericMatriz<Double> punto = error.productoPunto(weights)) {
-                
-                propagationError = (DoubleMatriz) punto.transpuesta();
-            }
-            
-            try (
-                NumericMatriz<Double> tensor = error.productoTensorial(inputLayer);
-                NumericMatriz<Double> delta = tensor.productoEscalar(learningFactor);
-                NumericMatriz<Double> adicion = weights.adicion(delta);) {
-
-                synchronized(weights){
-                    weights.putAll(adicion);
-
-                }
-            }
-        } catch (IOException ex) {
-            log.error("startLearning", ex);
-        }
-        
-        for(LayerLearning back : getProducers()) {
-            back.setLearningData(propagationError);
-            back.startLearning();
-        }
-        producers.clear();
-        
-    }
-
-    @Override
-    public DoubleMatriz getError() {
-        if( error!=null)
-            return (DoubleMatriz)error.distanciaE2().productoEscalar(1.0/2);
-        else
-            return new DoubleMatriz(new Dominio(1, 1));
-    }
-
-    @Override
-    public Double getLeanringFactor() {
-        return learningFactor;
-    }
-
-    @Override
-    public List<LayerLearning> getProducers() {
-        return producers;
-    }
-
-    @Override
-    public DoubleMatriz getOutputLayer() {
-        return outputLayer;
-    }
-
-    @Override
-    public void startProduction() {
-        
-            outputLayer = weights.producto(inputLayer);
-            
-            for(LayerConsumer lc : consumers) {
-                lc.seInputLayer(outputLayer);
-                lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
-                
-                if(lc instanceof LayerLearning) {
-                    ((LayerLearning)lc).getProducers().add(this);
-                }
-            }
-
-    }
-
-    @Override
-    public List<LayerConsumer> getConsumers() {
-        return consumers;
-    }
-    
-    
     
 }

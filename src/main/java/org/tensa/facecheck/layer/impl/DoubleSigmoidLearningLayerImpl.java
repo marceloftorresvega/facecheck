@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2019 Marcelo.
+ * Copyright 2020 lorenzo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,26 +24,47 @@
 package org.tensa.facecheck.layer.impl;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tensa.facecheck.layer.LayerConsumer;
-import org.tensa.facecheck.layer.LayerProducer;
+import org.tensa.tensada.matrix.Dominio;
+import org.tensa.tensada.matrix.DoubleMatriz;
 import org.tensa.tensada.matrix.NumericMatriz;
-import org.tensa.facecheck.layer.LayerLearning;
 import org.tensa.tensada.matrix.ParOrdenado;
 
 /**
  *
- * @author Marcelo
- * @param <N>
+ * @author lorenzo
  */
-public class HiddenSigmoidLayer extends DoubleSigmoidHiddenLayerImpl {
+public class DoubleSigmoidLearningLayerImpl extends LearningLayer<Double> {
 
-    public HiddenSigmoidLayer(NumericMatriz<Double> weights, Double learningFactor) {
+    public DoubleSigmoidLearningLayerImpl(NumericMatriz<Double> weights, Double learningFactor) {
         super(weights, learningFactor);
+    }
+
+    @Override
+    public Double mediaError() {
+        return 0.5;
+    }
+
+    @Override
+    public void learningFunctionOperation() {
+            error = learningData.substraccion(outputLayer);
+            error.replaceAll((i,v) -> v * outputLayer.get(i) * learningData.get(i));
+    //        propagationError = (DoubleMatriz) weights.productoPunto(error);
+            try (NumericMatriz<Double> punto = error.productoPunto(weights)) {
+                
+                propagationError = punto.transpuesta();
+            } catch (IOException ex) {
+                log.error("learningFunctionOperation", ex);
+            }
+    }
+
+    @Override
+    public Double activateFunction(ParOrdenado i, Double value) {
+        return value * outputLayer.get(i) * learningData.get(i);
+    }
+
+    @Override
+    protected NumericMatriz<Double> supplier() {
+        return new DoubleMatriz(new Dominio(1, 1));
     }
 
 }

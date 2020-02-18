@@ -23,61 +23,13 @@
  */
 package org.tensa.facecheck.layer.impl;
 
-import java.awt.image.BufferedImage;
-import org.tensa.facecheck.layer.LayerConsumer;
-import org.tensa.tensada.matrix.DoubleMatriz;
-import org.tensa.tensada.matrix.Indice;
-
 /**
  *
  * @author Marcelo
  */
-public class PixelsLinealDirectOutputLayer implements LayerConsumer {
+public class PixelsLinealDirectOutputLayer extends DoublePixelsDirectOutputLayerImpl {
+
+    public PixelsLinealDirectOutputLayer() {
+    }
     
-    private DoubleMatriz weights;
-    private int status;
-    private DoubleMatriz inputLayer;
-    
-    private BufferedImage dest;
-
-    public PixelsLinealDirectOutputLayer(DoubleMatriz weights) {
-        this.weights = weights;
-    }
-
-    @Override
-    public DoubleMatriz seInputLayer(DoubleMatriz inputLayer) {
-        this.inputLayer = inputLayer;
-        return inputLayer;
-    }
-
-    @Override
-    public DoubleMatriz getWeights() {
-        return weights;
-    }
-
-    @Override
-    public void layerComplete(int status) {
-        this.status = status;
-        if (status == LayerConsumer.SUCCESS_STATUS) {
-            
-            double[] pixels = new double[inputLayer.getDominio().getFila()];
-            for( int i =0; i< pixels.length; i++) {
-                pixels[i] = 255 * inputLayer.get(new Indice(i + 1, 1));
-            }
-            
-            int width = dest.getWidth();
-            int height = dest.getHeight();
-            dest.getRaster().setPixels(0, 0, width, height, pixels);
-            
-        }
-    }
-
-    public BufferedImage getDest() {
-        return dest;
-    }
-
-    public void setDest(BufferedImage dest) {
-        this.dest = dest;
-    }
-
 }

@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2019 Marcelo.
+ * Copyright 2020 lorenzo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,15 +23,38 @@
  */
 package org.tensa.facecheck.layer.impl;
 
+import java.io.IOException;
 import org.tensa.tensada.matrix.NumericMatriz;
+import org.tensa.tensada.matrix.ParOrdenado;
 
 /**
  *
  * @author Marcelo
  */
-public class PixelDirectSigmoidLeanringLayer extends DoubleSigmoidLearningLayerImpl {    
+public class FloatSigmoidHiddenLayerImpl extends HiddenLayer<Float> {
 
-    public PixelDirectSigmoidLeanringLayer(NumericMatriz<Double> weights, Double learningFactor) {
+    public FloatSigmoidHiddenLayerImpl(NumericMatriz<Float> weights, Float learningFactor) {
         super(weights, learningFactor);
     }
+
+    @Override
+    public void learningFunctionOperation() {
+            try (final NumericMatriz<Float> m1 = outputLayer.matrizUno()) {
+                error = (NumericMatriz<Float>) m1.substraccion(outputLayer);
+                error.replaceAll((ParOrdenado i, Float v) -> v * outputLayer.get(i) * learningData.get(i));
+            } catch (IOException ex) {
+                log.error("learningFunctionOperation", ex);
+            }
+    }
+
+    @Override
+    public Float activateFunction(ParOrdenado i, Float value) {
+        return (float) (1 / (1 + Math.exp(-value.doubleValue())));
+    }
+
+    @Override
+    public Float mediaError() {
+        return 0.5f;
+    }
+
 }
