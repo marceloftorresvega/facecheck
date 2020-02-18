@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2020 lorenzo.
+ * Copyright 2020 Marcelo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,45 +25,45 @@ package org.tensa.facecheck.layer.impl;
 
 import java.io.IOException;
 import org.tensa.tensada.matrix.Dominio;
-import org.tensa.tensada.matrix.DoubleMatriz;
+import org.tensa.tensada.matrix.FloatMatriz;
 import org.tensa.tensada.matrix.NumericMatriz;
 import org.tensa.tensada.matrix.ParOrdenado;
 
 /**
  *
- * @author lorenzo
+ * @author Marcelo
  */
-public class DoubleLinealLearningLayerImpl extends LearningLayer<Double> {
+public class FloatLinealLearningLayerImpl extends LearningLayer<Float>{
 
-    public DoubleLinealLearningLayerImpl(NumericMatriz<Double> weights, Double learningFactor) {
+    public FloatLinealLearningLayerImpl(NumericMatriz<Float> weights, Float learningFactor) {
         super(weights, learningFactor);
     }
 
     @Override
-    public Double mediaError() {
-        return 0.5;
+    public Float mediaError() {
+        return 0.5f;
     }
 
     @Override
     public void learningFunctionOperation() {
-        error = learningData.substraccion(outputLayer);
-//        propagationError = (NumericMatriz<N>) weights.productoPunto(error);
-        try ( NumericMatriz<Double> punto = error.productoPunto(weights)) {
-
-            propagationError =  punto.transpuesta();
-        } catch (IOException ex) {
-            log.error("learningFunctionOperation", ex);
-        }
+            error = learningData.substraccion(outputLayer);
+    //        propagationError = (NumericMatriz<N>) weights.productoPunto(error);
+            try ( NumericMatriz<Float> punto = error.productoPunto(weights)) {
+                
+                propagationError =  punto.transpuesta();
+            } catch (IOException ex) {
+                log.error("learningFunctionOperation", ex);
+            }
     }
 
     @Override
-    public Double activateFunction(ParOrdenado i, Double value) {
+    public Float activateFunction(ParOrdenado i, Float value) {
         return value;
     }
 
     @Override
-    protected NumericMatriz<Double> supplier() {
-        return new DoubleMatriz(new Dominio(1, 1));
+    protected NumericMatriz<Float> supplier() {
+        return new FloatMatriz(new Dominio(1, 1));
     }
     
 }

@@ -23,17 +23,7 @@
  */
 package org.tensa.facecheck.layer.impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tensa.facecheck.layer.LayerConsumer;
-import org.tensa.facecheck.layer.LayerProducer;
 import org.tensa.tensada.matrix.NumericMatriz;
-import org.tensa.facecheck.layer.LayerLearning;
-import org.tensa.tensada.matrix.ParOrdenado;
 
 /**
  *
