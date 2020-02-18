@@ -47,6 +47,12 @@ public interface LayerLearning<N extends Number> {
     NumericMatriz<N> getError();
     
     /**
+     * factor de error 1/2
+     * @return N
+     */
+    N mediaError();
+    
+    /**
      * retorna valor de ajuste para los pesos
      * @return the java.lang.Double
      */
@@ -68,4 +74,9 @@ public interface LayerLearning<N extends Number> {
      * @return listado de capas
      */
     List<LayerLearning<N>> getProducers();
+    
+    /**
+     * funcion de aprendisaje
+     */
+    void learningFunctionOperation();
 }

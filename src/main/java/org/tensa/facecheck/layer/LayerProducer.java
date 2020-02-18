@@ -25,6 +25,7 @@ package org.tensa.facecheck.layer;
 
 import java.util.List;
 import org.tensa.tensada.matrix.NumericMatriz;
+import org.tensa.tensada.matrix.ParOrdenado;
 
 /**
  * produccion de resultados
@@ -49,5 +50,12 @@ public interface LayerProducer<N extends Number> {
      * @return
      */
     List<LayerConsumer<N>> getConsumers();
-    
+
+    /**
+     * funcion de activacion
+     * @param i
+     * @param value
+     * @return 
+     */
+    N activateFunction(ParOrdenado i, N value);
 }
