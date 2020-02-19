@@ -48,13 +48,6 @@ public class BigDecimalLinealLearningLayerImpl extends LearningLayer<BigDecimal>
     @Override
     public void learningFunctionOperation() {
         error = learningData.substraccion(outputLayer);
-//        propagationError = (NumericMatriz<N>) weights.productoPunto(error);
-        try ( NumericMatriz<BigDecimal> punto = error.productoPunto(weights)) {
-
-            propagationError =  punto.transpuesta();
-        } catch (IOException ex) {
-            log.error("learningFunctionOperation", ex);
-        }
     }
 
     @Override

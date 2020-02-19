@@ -50,17 +50,11 @@ public class BigDecimalSigmoidLearningLayerImpl extends LearningLayer<BigDecimal
             error = learningData.substraccion(outputLayer);
             error.replaceAll((i,v) -> v.multiply(outputLayer.get(i)).multiply(learningData.get(i)));
     //        propagationError = (DoubleMatriz) weights.productoPunto(error);
-            try (NumericMatriz<BigDecimal> punto = error.productoPunto(weights)) {
-                
-                propagationError = punto.transpuesta();
-            } catch (IOException ex) {
-                log.error("learningFunctionOperation", ex);
-            }
     }
 
     @Override
     public BigDecimal activateFunction(ParOrdenado i, BigDecimal value) {
-        return value.multiply(outputLayer.get(i)).multiply(learningData.get(i));
+        return BigDecimal.ONE.divide((BigDecimal.ONE.add(BigDecimal.valueOf(Math.exp(-value.doubleValue())))));
     }
 
     @Override

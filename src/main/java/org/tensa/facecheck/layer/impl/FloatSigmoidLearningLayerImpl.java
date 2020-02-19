@@ -58,8 +58,8 @@ public class FloatSigmoidLearningLayerImpl extends LearningLayer<Float> {
     }
 
     @Override
-    public Float activateFunction(ParOrdenado i, Float value) {
-        return value * outputLayer.get(i) * learningData.get(i);
+    public Float activateFunction(ParOrdenado i, Float value) {        
+        return (float)(1/(1 + Math.exp( - value.doubleValue() )));
     }
 
     @Override

@@ -49,17 +49,11 @@ public class DoubleSigmoidLearningLayerImpl extends LearningLayer<Double> {
             error = learningData.substraccion(outputLayer);
             error.replaceAll((i,v) -> v * outputLayer.get(i) * learningData.get(i));
     //        propagationError = (DoubleMatriz) weights.productoPunto(error);
-            try (NumericMatriz<Double> punto = error.productoPunto(weights)) {
-                
-                propagationError = punto.transpuesta();
-            } catch (IOException ex) {
-                log.error("learningFunctionOperation", ex);
-            }
     }
 
     @Override
     public Double activateFunction(ParOrdenado i, Double value) {
-        return value * outputLayer.get(i) * learningData.get(i);
+        return 1/(1 + Math.exp( - value ));
     }
 
     @Override

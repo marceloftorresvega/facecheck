@@ -47,13 +47,6 @@ public class FloatLinealLearningLayerImpl extends LearningLayer<Float>{
     @Override
     public void learningFunctionOperation() {
             error = learningData.substraccion(outputLayer);
-    //        propagationError = (NumericMatriz<N>) weights.productoPunto(error);
-            try ( NumericMatriz<Float> punto = error.productoPunto(weights)) {
-                
-                propagationError =  punto.transpuesta();
-            } catch (IOException ex) {
-                log.error("learningFunctionOperation", ex);
-            }
     }
 
     @Override
