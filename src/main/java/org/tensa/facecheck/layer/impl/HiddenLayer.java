@@ -117,7 +117,7 @@ public abstract class HiddenLayer<N extends Number> implements LayerConsumer<N>,
 //                error = (NumericMatriz<N>) m1.substraccion(outputLayer);
 //                error.replaceAll((ParOrdenado i, N v) -> outputLayer.productoDirecto(outputLayer.productoDirecto(v, outputLayer.get(i)), learningData.get(i)));
 //            }
-            this.learningFunctionOperation();
+            this.calculateErrorOperation();
             
             //        propagationError = (NumericMatriz<N>) weights.productoPunto(error);
             try (final NumericMatriz<N> punto = error.productoPunto(weights)) {
@@ -145,7 +145,7 @@ public abstract class HiddenLayer<N extends Number> implements LayerConsumer<N>,
 
     @Override
     public NumericMatriz<N> getError() {
-        return (NumericMatriz<N>) error.distanciaE2().productoEscalar(this.mediaError());
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override

@@ -92,7 +92,7 @@ public abstract class LearningLayer<N extends Number> implements LayerConsumer<N
     @Override
     public void startLearning() {
         try {
-            this.learningFunctionOperation();
+            this.calculateErrorOperation();
             //        propagationError = (NumericMatriz<N>) weights.productoPunto(error);
             try (final NumericMatriz<N> punto = error.productoPunto(weights)) {
                 propagationError = (NumericMatriz<N>) punto.transpuesta();
@@ -161,7 +161,7 @@ public abstract class LearningLayer<N extends Number> implements LayerConsumer<N
     public abstract N mediaError();
 
     @Override
-    public abstract void learningFunctionOperation();
+    public abstract void calculateErrorOperation();
 
     @Override
     public abstract N activateFunction(ParOrdenado i, N value);

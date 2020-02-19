@@ -44,7 +44,7 @@ public class BigDecimalSigmoidHiddenLayerImpl extends HiddenLayer<BigDecimal> {
     }
 
     @Override
-    public void learningFunctionOperation() {
+    public void calculateErrorOperation() {
             
             try (final NumericMatriz<BigDecimal> m1 = outputLayer.matrizUno()) {
                 error = (NumericMatriz<BigDecimal>) m1.substraccion(outputLayer);

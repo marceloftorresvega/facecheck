@@ -38,7 +38,7 @@ public class DoubleSigmoidHiddenLayerImpl extends HiddenLayer<Double> {
     }
 
     @Override
-    public void learningFunctionOperation() {
+    public void calculateErrorOperation() {
             
             try (final NumericMatriz<Double> m1 = outputLayer.matrizUno()) {
                 error = (NumericMatriz<Double>) m1.substraccion(outputLayer);

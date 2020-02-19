@@ -38,7 +38,7 @@ public class FloatSigmoidHiddenLayerImpl extends HiddenLayer<Float> {
     }
 
     @Override
-    public void learningFunctionOperation() {
+    public void calculateErrorOperation() {
             try (final NumericMatriz<Float> m1 = outputLayer.matrizUno()) {
                 error = (NumericMatriz<Float>) m1.substraccion(outputLayer);
                 error.replaceAll((ParOrdenado i, Float v) -> v * outputLayer.get(i) * learningData.get(i));

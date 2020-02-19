@@ -46,7 +46,7 @@ public class BigDecimalLinealLearningLayerImpl extends LearningLayer<BigDecimal>
     }
 
     @Override
-    public void learningFunctionOperation() {
+    public void calculateErrorOperation() {
         error = learningData.substraccion(outputLayer);
     }
 

@@ -78,5 +78,5 @@ public interface LayerLearning<N extends Number> {
     /**
      * funcion de aprendisaje
      */
-    void learningFunctionOperation();
+    void calculateErrorOperation();
 }

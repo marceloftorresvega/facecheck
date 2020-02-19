@@ -46,7 +46,7 @@ public class BigDecimalSigmoidLearningLayerImpl extends LearningLayer<BigDecimal
     }
 
     @Override
-    public void learningFunctionOperation() {
+    public void calculateErrorOperation() {
             error = learningData.substraccion(outputLayer);
             error.replaceAll((i,v) -> v.multiply(outputLayer.get(i)).multiply(learningData.get(i)));
     //        propagationError = (DoubleMatriz) weights.productoPunto(error);

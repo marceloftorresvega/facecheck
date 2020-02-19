@@ -45,7 +45,7 @@ public class FloatSigmoidLearningLayerImpl extends LearningLayer<Float> {
     }
 
     @Override
-    public void learningFunctionOperation() {
+    public void calculateErrorOperation() {
         error = learningData.substraccion(outputLayer);
         error.replaceAll((i,v) -> v * outputLayer.get(i) * learningData.get(i));
 //        propagationError = (DoubleMatriz) weights.productoPunto(error);

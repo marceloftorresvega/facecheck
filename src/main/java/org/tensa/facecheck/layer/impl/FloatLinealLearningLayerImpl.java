@@ -45,7 +45,7 @@ public class FloatLinealLearningLayerImpl extends LearningLayer<Float>{
     }
 
     @Override
-    public void learningFunctionOperation() {
+    public void calculateErrorOperation() {
             error = learningData.substraccion(outputLayer);
     }
 

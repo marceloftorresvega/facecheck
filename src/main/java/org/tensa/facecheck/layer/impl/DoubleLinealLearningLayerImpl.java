@@ -45,7 +45,7 @@ public class DoubleLinealLearningLayerImpl extends LearningLayer<Double> {
     }
 
     @Override
-    public void learningFunctionOperation() {
+    public void calculateErrorOperation() {
         error = learningData.substraccion(outputLayer);
     }
 
