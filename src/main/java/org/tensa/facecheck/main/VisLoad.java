@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -29,6 +31,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.OptionalDouble;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -69,16 +72,17 @@ public class VisLoad extends javax.swing.JFrame {
     private final int kwidth = 27;
     private float[] data;
     private BufferedImage bufferImageFiltered;
-    private DoubleMatriz weightsH;
-    private DoubleMatriz weightsO;
-    private DoubleMatriz errorGraph;
+    private NumericMatriz weightsH;
+    private NumericMatriz weightsO;
+    private NumericMatriz errorGraph;
     private int inStep;
     private int outStep;
     private int hidStep;
     private Rectangle learnArea;
     private final LinkedList<Rectangle> areaQeue;
     private SeletionStatus areaStatus = SeletionStatus.MODIFY;
-    private final FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("pesos", "dat");
+    private final FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("pesos double", "dat");
+    private final FileNameExtensionFilter fileNameExtensionFilterX2 = new FileNameExtensionFilter("pesos multi tipo", "da2");
     private final FileNameExtensionFilter fileNameExtensionFilterImage = new FileNameExtensionFilter("JPEG", "jpg");
     private ParOrdenado[] proccesDomain;
     private final Rectangle leftTopPoint;
@@ -174,8 +178,8 @@ public class VisLoad extends javax.swing.JFrame {
         hiddNeurs = new javax.swing.JSpinner();
         jLabel3 = new javax.swing.JLabel();
         outNeurs = new javax.swing.JSpinner();
-        hdCreationStyle = new javax.swing.JComboBox<>();
-        outCreationStyle = new javax.swing.JComboBox<>();
+        hdCreationStyle = new javax.swing.JComboBox<String>();
+        outCreationStyle = new javax.swing.JComboBox<String>();
         jPanel4 = new javax.swing.JPanel();
         procesar = new javax.swing.JButton();
         entrenar = new javax.swing.JCheckBox();
@@ -198,10 +202,12 @@ public class VisLoad extends javax.swing.JFrame {
         jFileChooserPesosSave.setCurrentDirectory(new File(System.getProperty("user.dir")));
         jFileChooserPesosSave.setDialogTitle("Guardar pesos");
         jFileChooserPesosSave.setFileFilter(getFileNameExtensionFilter());
+        addFileNameExtensionFilter(jFileChooserPesosSave);
 
         jFileChooserPesosLoad.setCurrentDirectory(new File(System.getProperty("user.dir")));
         jFileChooserPesosLoad.setDialogTitle("Carga Pesos");
         jFileChooserPesosLoad.setFileFilter(getFileNameExtensionFilter());
+        addFileNameExtensionFilter(jFileChooserPesosLoad);
 
         jFileChooserImagenSalva.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
         jFileChooserImagenSalva.setCurrentDirectory(new File(System.getProperty("user.dir")));
@@ -438,10 +444,10 @@ public class VisLoad extends javax.swing.JFrame {
         outNeurs.setModel(new javax.swing.SpinnerNumberModel(101, 3, 1000, 1));
         outNeurs.setToolTipText("Neuronas de salida (pixels)");
 
-        hdCreationStyle.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "simple", "reflectante", "normalizada" }));
+        hdCreationStyle.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "simple", "reflectante", "normalizada" }));
         hdCreationStyle.setToolTipText("metodo de iniciación");
 
-        outCreationStyle.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "simple", "reflactante", "normalizada" }));
+        outCreationStyle.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "simple", "reflactante", "normalizada" }));
         outCreationStyle.setToolTipText("metodo de iniciación");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -1024,7 +1030,14 @@ public class VisLoad extends javax.swing.JFrame {
     private void salvaActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salvaActionPerformed1
         int showSaveDialog = jFileChooserPesosSave.showSaveDialog(null);
         if (showSaveDialog == javax.swing.JFileChooser.APPROVE_OPTION) {
-            salvaPesos(jFileChooserPesosSave.getSelectedFile().getPath());
+            if ( jFileChooserPesosSave.getSelectedFile().getPath().contains("dat") ) {
+                
+                salvaPesos(jFileChooserPesosSave.getSelectedFile().getPath());
+            } else if (jFileChooserPesosSave.getSelectedFile().getPath().contains("da2") ) {
+                
+                salvaPesosX2(jFileChooserPesosSave.getSelectedFile().getPath());
+            }
+            
         }
     }//GEN-LAST:event_salvaActionPerformed1
 
@@ -1032,7 +1045,13 @@ public class VisLoad extends javax.swing.JFrame {
         int showOpenDialog = jFileChooserPesosLoad.showOpenDialog(null);
         if (showOpenDialog == javax.swing.JFileChooser.APPROVE_OPTION) {
             log.info("jFileChooserPesosLoad");
-            cargaPesos(jFileChooserPesosLoad.getSelectedFile().getPath());
+            if ( jFileChooserPesosSave.getSelectedFile().getPath().contains("dat")) {
+                
+                cargaPesos(jFileChooserPesosLoad.getSelectedFile().getPath());
+            } else if (jFileChooserPesosSave.getSelectedFile().getPath().contains("da2")) {
+                
+                cargaPesosX2(jFileChooserPesosLoad.getSelectedFile().getPath());
+            }
         }
     }//GEN-LAST:event_cargarActionPerformed
 
@@ -1227,6 +1246,25 @@ public class VisLoad extends javax.swing.JFrame {
         }
     }
     
+    private void cargaPesosX2(String archivo) {
+        log.info("cargaPesosX2 <{}>",archivo);
+        try (
+                InputStream fis = Files.newInputStream(Paths.get(archivo));
+                BufferedInputStream bis = new BufferedInputStream(fis);
+                GzipCompressorInputStream gzIn = new GzipCompressorInputStream(bis);
+                ObjectInputStream ois = new ObjectInputStream(gzIn)
+                ) {
+            weightsH = (NumericMatriz)ois.readObject();
+            weightsO = (NumericMatriz)ois.readObject();
+        } catch ( FileNotFoundException ex) {
+            log.error("error al cargar pesos", ex);
+        } catch (IOException ex) {
+            log.error("error al cargar pesos", ex);
+        } catch (ClassNotFoundException ex) {
+            log.error("error al cargar pesos", ex);
+        }
+    }
+    
     private DoubleMatriz cargaMatriz( DataInputStream dis) throws IOException {
         
         Integer fila;
@@ -1269,7 +1307,25 @@ public class VisLoad extends javax.swing.JFrame {
          }
     }
     
-    private void salvaMatriz(DoubleMatriz weights, DataOutputStream dos) throws IOException {
+    private void salvaPesosX2(String archivo) {
+        log.info("salvaPesosX2 <{}>", archivo);
+
+         try( 
+                 OutputStream fos = Files.newOutputStream(Paths.get(archivo));
+                 BufferedOutputStream out = new BufferedOutputStream(fos);
+                 GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(out);
+                 ObjectOutputStream oos = new ObjectOutputStream(gzOut); ) {
+            oos.writeObject(weightsH);
+            oos.writeObject(weightsO);
+             
+         }catch (FileNotFoundException ex) {
+             log.error("error al guardar  pesos", ex);
+         } catch (IOException ex) {
+             log.error("error al guardar  pesos", ex);             
+         }
+    }
+    
+    private void salvaMatriz(NumericMatriz weights, DataOutputStream dos) throws IOException {
         
         Dominio dominio = weights.getDominio();
         Integer fila = dominio.getFila();
@@ -1281,7 +1337,7 @@ public class VisLoad extends javax.swing.JFrame {
         for ( ParOrdenado indice : dominio) {
             dos.writeInt(indice.getFila());
             dos.writeInt(indice.getColumna());
-            dos.writeDouble(weights.get(indice));
+            dos.writeDouble(weights.get(indice).doubleValue());
 
         }
     }
@@ -1379,7 +1435,7 @@ public class VisLoad extends javax.swing.JFrame {
             protected void paintComponent(Graphics grphcs) {
                 super.paintComponent(grphcs); 
                 if (Objects.nonNull(errorGraph)) {
-                    OptionalDouble maxError = errorGraph.values().stream().mapToDouble( i -> i).max();
+                    OptionalDouble maxError = errorGraph.values().stream().mapToDouble((i) -> (Double)i).max();
                     
                     double size = (double) proccesDomain.length;
                     
@@ -1394,7 +1450,7 @@ public class VisLoad extends javax.swing.JFrame {
                     int adv = 0;
                     
                     for (ParOrdenado idx : proccesDomain) {
-                        Double errorPoint = errorGraph.get(idx);
+                        Double errorPoint = (Double)errorGraph.get(idx);
                         Shape shape = new Rectangle2D.Double( adv++, 0, 1, errorPoint);
                         gr2.draw(shape);
                         
@@ -1530,6 +1586,11 @@ public class VisLoad extends javax.swing.JFrame {
 
     public FileNameExtensionFilter getFileNameExtensionFilter() {
         return fileNameExtensionFilter;
+    }
+    
+    public void addFileNameExtensionFilter(javax.swing.JFileChooser jFileChooser) {
+        jFileChooser.addChoosableFileFilter(fileNameExtensionFilter);
+        jFileChooser.addChoosableFileFilter(fileNameExtensionFilterX2);
     }
 
     public FileNameExtensionFilter getFileNameExtensionFilterImage() {

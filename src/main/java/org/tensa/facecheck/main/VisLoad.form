@@ -15,6 +15,9 @@
           <Connection code="getFileNameExtensionFilter()" type="code"/>
         </Property>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="addFileNameExtensionFilter(jFileChooserPesosSave);&#xa;"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JFileChooser" name="jFileChooserPesosLoad">
       <Properties>
@@ -26,6 +29,9 @@
           <Connection code="getFileNameExtensionFilter()" type="code"/>
         </Property>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="addFileNameExtensionFilter(jFileChooserPesosLoad);"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JFileChooser" name="jFileChooserImagenSalva">
       <Properties>
