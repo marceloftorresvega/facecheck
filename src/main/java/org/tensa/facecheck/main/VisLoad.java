@@ -1030,10 +1030,10 @@ public class VisLoad extends javax.swing.JFrame {
     private void salvaActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salvaActionPerformed1
         int showSaveDialog = jFileChooserPesosSave.showSaveDialog(null);
         if (showSaveDialog == javax.swing.JFileChooser.APPROVE_OPTION) {
-            if ( jFileChooserPesosSave.getSelectedFile().getPath().contains("dat") ) {
+            if ( jFileChooserPesosSave.getSelectedFile().getPath().endsWith("dat") ) {
                 
                 salvaPesos(jFileChooserPesosSave.getSelectedFile().getPath());
-            } else if (jFileChooserPesosSave.getSelectedFile().getPath().contains("da2") ) {
+            } else if (jFileChooserPesosSave.getSelectedFile().getPath().endsWith("da2") ) {
                 
                 salvaPesosX2(jFileChooserPesosSave.getSelectedFile().getPath());
             }
@@ -1045,10 +1045,10 @@ public class VisLoad extends javax.swing.JFrame {
         int showOpenDialog = jFileChooserPesosLoad.showOpenDialog(null);
         if (showOpenDialog == javax.swing.JFileChooser.APPROVE_OPTION) {
             log.info("jFileChooserPesosLoad");
-            if ( jFileChooserPesosSave.getSelectedFile().getPath().contains("dat")) {
+            if ( jFileChooserPesosLoad.getSelectedFile().getPath().endsWith("dat")) {
                 
                 cargaPesos(jFileChooserPesosLoad.getSelectedFile().getPath());
-            } else if (jFileChooserPesosSave.getSelectedFile().getPath().contains("da2")) {
+            } else if (jFileChooserPesosLoad.getSelectedFile().getPath().endsWith("da2")) {
                 
                 cargaPesosX2(jFileChooserPesosLoad.getSelectedFile().getPath());
             }
@@ -1255,7 +1255,21 @@ public class VisLoad extends javax.swing.JFrame {
                 ObjectInputStream ois = new ObjectInputStream(gzIn)
                 ) {
             weightsH = (NumericMatriz)ois.readObject();
+            Integer fila = weightsH.getDominio().getFila();
+            Integer columna = weightsH.getDominio().getColumna();
+            
+            inNeurs.setValue((int)Math.sqrt(columna/3));
+            hiddNeurs.setValue(fila);
             weightsO = (NumericMatriz)ois.readObject();
+            fila = weightsO.getDominio().getFila();
+//            columna = weightsO.getDominio().getColumna();
+            
+            outNeurs.setValue((int)Math.sqrt(fila/3));
+            
+            inStep = (Integer)inNeurs.getValue();
+            hidStep = (Integer)hiddNeurs.getValue();
+            outStep = (Integer)outNeurs.getValue();
+            
         } catch ( FileNotFoundException ex) {
             log.error("error al cargar pesos", ex);
         } catch (IOException ex) {
