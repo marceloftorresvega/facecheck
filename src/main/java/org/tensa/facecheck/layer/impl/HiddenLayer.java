@@ -23,7 +23,7 @@
  */
 package org.tensa.facecheck.layer.impl;
 
-import org.tensa.facecheck.layer.facade.HiddenSigmoidLayer;
+import org.tensa.facecheck.layer.facade.SigmoidHiddenLayer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +40,7 @@ import org.tensa.tensada.matrix.NumericMatriz;
  * @param <N>
  */
 public abstract class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLearning<N>, LayerProducer<N> {
-    protected final Logger log = LoggerFactory.getLogger(HiddenSigmoidLayer.class);
+    protected final Logger log = LoggerFactory.getLogger(SigmoidHiddenLayer.class);
     protected final NumericMatriz<N> weights;
     protected int status;
     protected NumericMatriz<N> outputLayer;

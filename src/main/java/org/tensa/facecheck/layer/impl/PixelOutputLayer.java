@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2019 Marcelo.
+ * Copyright 2020 lorenzo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,19 +21,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.tensa.facecheck.layer.facade;
+package org.tensa.facecheck.layer.impl;
 
-import org.tensa.facecheck.layer.impl.DoubleLinealLearningLayerImpl;
+import java.awt.image.BufferedImage;
+import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
  *
- * @author Marcelo
+ * @author lorenzo
+ * @param <N>
  */
-final public class PixelDirectLinealLeanringLayer extends DoubleLinealLearningLayerImpl {
+public abstract class PixelOutputLayer<N extends Number> implements LayerConsumer<N> {
+    protected int status;
+    protected NumericMatriz<N> inputLayer;
+    protected BufferedImage dest;
 
-    public PixelDirectLinealLeanringLayer(NumericMatriz<Double> weights, Double learningFactor) {
-        super(weights, learningFactor);
+    public PixelOutputLayer() {
+    }
+
+    
+
+    @Override
+    public NumericMatriz<N> seInputLayer(NumericMatriz<N> inputLayer) {
+        this.inputLayer = inputLayer;
+        return inputLayer;
+    }
+
+    @Override
+    public NumericMatriz<N> getWeights() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+
+    @Override
+    public abstract void layerComplete(int status);
+
+    public BufferedImage getDest() {
+        return dest;
+    }
+
+    public void setDest(BufferedImage dest) {
+        this.dest = dest;
     }
     
 }

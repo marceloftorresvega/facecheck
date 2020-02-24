@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2020 Marcelo.
+ * Copyright 2020 lorenzo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,27 +23,24 @@
  */
 package org.tensa.facecheck.layer.impl;
 
-import java.math.BigDecimal;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.tensada.matrix.Indice;
 
-/**
- *
- * @author Marcelo
- */
-public class BigDecimalPixelsDirectOutputLayerImpl extends PixelsDirectOutputLayer<BigDecimal> {
 
-    public BigDecimalPixelsDirectOutputLayerImpl() {
+public class FloatPixelOutputLayerImpl extends PixelOutputLayer<Float> {
+
+    public FloatPixelOutputLayerImpl() {
     }
 
+    
     @Override
     public void layerComplete(int status) {
         this.status = status;
         if (status == LayerConsumer.SUCCESS_STATUS) {
             
-            double[] pixels = new double[inputLayer.getDominio().getFila()];
+            float[] pixels = new float[inputLayer.getDominio().getFila()];
             for( int i =0; i< pixels.length; i++) {
-                pixels[i] = 255 * inputLayer.get(new Indice(i + 1, 1)).doubleValue();
+                pixels[i] = 255 * inputLayer.get(new Indice(i + 1, 1));
             }
             int width = dest.getWidth();
             int height = dest.getHeight();

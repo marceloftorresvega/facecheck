@@ -43,10 +43,10 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.filter.MaskOp;
-import org.tensa.facecheck.layer.facade.HiddenSigmoidLayer;
-import org.tensa.facecheck.layer.facade.PixelDirectLinealLeanringLayer;
-import org.tensa.facecheck.layer.facade.PixelsDirectInputLayer;
-import org.tensa.facecheck.layer.facade.PixelsLinealDirectOutputLayer;
+import org.tensa.facecheck.layer.facade.SigmoidHiddenLayer;
+import org.tensa.facecheck.layer.facade.LinealLeanringLayer;
+import org.tensa.facecheck.layer.facade.InputLayer;
+import org.tensa.facecheck.layer.facade.OutputLayer;
 import org.tensa.tensada.matrix.BlockMatriz;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
@@ -773,11 +773,11 @@ public class VisLoad extends javax.swing.JFrame {
                             int i = idx.getFila();
                             int j = idx.getColumna();
 
-                            PixelsDirectInputLayer simplePixelsInputLayer = new PixelsDirectInputLayer();
-                            PixelsDirectInputLayer simplePixelsCompareLayer = new PixelsDirectInputLayer();
-                            HiddenSigmoidLayer hiddenLayer = new HiddenSigmoidLayer(weightsH,  (Double)hiddenLearningRate.getValue());
-                            PixelDirectLinealLeanringLayer pixelLeanringLayer = new PixelDirectLinealLeanringLayer(weightsO, (Double)outputLearningRate.getValue());
-                            PixelsLinealDirectOutputLayer pixelsOutputLayer = new PixelsLinealDirectOutputLayer();
+                            InputLayer simplePixelsInputLayer = new InputLayer();
+                            InputLayer simplePixelsCompareLayer = new InputLayer();
+                            SigmoidHiddenLayer hiddenLayer = new SigmoidHiddenLayer(weightsH,  (Double)hiddenLearningRate.getValue());
+                            LinealLeanringLayer pixelLeanringLayer = new LinealLeanringLayer(weightsO, (Double)outputLearningRate.getValue());
+                            OutputLayer pixelsOutputLayer = new OutputLayer();
 
                             simplePixelsInputLayer.getConsumers().add(hiddenLayer);
                             hiddenLayer.getConsumers().add(pixelLeanringLayer);

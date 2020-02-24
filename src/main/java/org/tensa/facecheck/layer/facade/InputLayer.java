@@ -23,16 +23,20 @@
  */
 package org.tensa.facecheck.layer.facade;
 
-import org.tensa.facecheck.layer.impl.DoubleSigmoidLearningLayerImpl;
-import org.tensa.tensada.matrix.NumericMatriz;
+import java.awt.image.BufferedImage;
+import org.tensa.facecheck.layer.impl.DoublePixelInputLayerImpl;
 
 /**
  *
  * @author Marcelo
  */
-final public class PixelDirectSigmoidLeanringLayer extends DoubleSigmoidLearningLayerImpl {    
+final public class InputLayer extends DoublePixelInputLayerImpl {
 
-    public PixelDirectSigmoidLeanringLayer(NumericMatriz<Double> weights, Double learningFactor) {
-        super(weights, learningFactor);
+    public InputLayer() {
     }
+
+    public InputLayer(BufferedImage src, boolean normalizar) {
+        super(src, normalizar);
+    }
+    
 }

@@ -23,7 +23,7 @@
  */
 package org.tensa.facecheck.layer.impl;
 
-import org.tensa.facecheck.layer.facade.PixelDirectLinealLeanringLayer;
+import org.tensa.facecheck.layer.facade.LinealLeanringLayer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,7 @@ import org.tensa.tensada.matrix.ParOrdenado;
  * @param <N>
  */
 public abstract class LearningLayer<N extends Number> implements LayerConsumer<N>, LayerLearning<N>, LayerProducer<N> {
-    protected final Logger log = LoggerFactory.getLogger(PixelDirectLinealLeanringLayer.class);
+    protected final Logger log = LoggerFactory.getLogger(LinealLeanringLayer.class);
     protected final NumericMatriz<N> weights;
     protected int status;
     protected NumericMatriz<N> outputLayer;

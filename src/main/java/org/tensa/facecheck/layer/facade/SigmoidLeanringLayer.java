@@ -21,35 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.tensa.facecheck.layer.impl;
+package org.tensa.facecheck.layer.facade;
 
-import org.tensa.facecheck.layer.LayerConsumer;
-import org.tensa.tensada.matrix.Indice;
+import org.tensa.facecheck.layer.impl.DoubleSigmoidLearningLayerImpl;
+import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
  *
  * @author Marcelo
  */
-public class DoublePixelsDirectOutputLayerImpl extends PixelsDirectOutputLayer<Double> {
+final public class SigmoidLeanringLayer extends DoubleSigmoidLearningLayerImpl {    
 
-    public DoublePixelsDirectOutputLayerImpl() {
+    public SigmoidLeanringLayer(NumericMatriz<Double> weights, Double learningFactor) {
+        super(weights, learningFactor);
     }
-
-
-    @Override
-    public void layerComplete(int status) {
-        this.status = status;
-        if (status == LayerConsumer.SUCCESS_STATUS) {
-            
-            double[] pixels = new double[inputLayer.getDominio().getFila()];
-            for( int i =0; i< pixels.length; i++) {
-                pixels[i] = 255 * inputLayer.get(new Indice(i + 1, 1));
-            }
-            int width = dest.getWidth();
-            int height = dest.getHeight();
-            dest.getRaster().setPixels(0, 0, width, height, pixels);
-            
-        }
-    }
-
 }

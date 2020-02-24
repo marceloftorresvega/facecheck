@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2020 lorenzo.
+ * Copyright 2020 Marcelo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,46 +23,33 @@
  */
 package org.tensa.facecheck.layer.impl;
 
-import java.awt.image.BufferedImage;
+import java.math.BigDecimal;
 import org.tensa.facecheck.layer.LayerConsumer;
-import org.tensa.tensada.matrix.NumericMatriz;
+import org.tensa.tensada.matrix.Indice;
 
 /**
  *
- * @author lorenzo
- * @param <N>
+ * @author Marcelo
  */
-public abstract class PixelsDirectOutputLayer<N extends Number> implements LayerConsumer<N> {
-    protected int status;
-    protected NumericMatriz<N> inputLayer;
-    protected BufferedImage dest;
+public class BigDecimalPixelOutputLayerImpl extends PixelOutputLayer<BigDecimal> {
 
-    public PixelsDirectOutputLayer() {
-    }
-
-    
-
-    @Override
-    public NumericMatriz<N> seInputLayer(NumericMatriz<N> inputLayer) {
-        this.inputLayer = inputLayer;
-        return inputLayer;
+    public BigDecimalPixelOutputLayerImpl() {
     }
 
     @Override
-    public NumericMatriz<N> getWeights() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-
-    @Override
-    public abstract void layerComplete(int status);
-
-    public BufferedImage getDest() {
-        return dest;
-    }
-
-    public void setDest(BufferedImage dest) {
-        this.dest = dest;
+    public void layerComplete(int status) {
+        this.status = status;
+        if (status == LayerConsumer.SUCCESS_STATUS) {
+            
+            double[] pixels = new double[inputLayer.getDominio().getFila()];
+            for( int i =0; i< pixels.length; i++) {
+                pixels[i] = 255 * inputLayer.get(new Indice(i + 1, 1)).doubleValue();
+            }
+            int width = dest.getWidth();
+            int height = dest.getHeight();
+            dest.getRaster().setPixels(0, 0, width, height, pixels);
+            
+        }
     }
     
 }

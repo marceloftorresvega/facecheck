@@ -23,20 +23,15 @@
  */
 package org.tensa.facecheck.layer.facade;
 
-import java.awt.image.BufferedImage;
-import org.tensa.facecheck.layer.impl.DoublePixelInputLayerImpl;
+import org.tensa.facecheck.layer.impl.DoublePixelOutputLayerImpl;
 
 /**
  *
  * @author Marcelo
  */
-final public class PixelsDirectInputLayer extends DoublePixelInputLayerImpl {
+final public class OutputLayer extends DoublePixelOutputLayerImpl {
 
-    public PixelsDirectInputLayer() {
-    }
-
-    public PixelsDirectInputLayer(BufferedImage src, boolean normalizar) {
-        super(src, normalizar);
+    public OutputLayer() {
     }
     
 }

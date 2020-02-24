@@ -21,17 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.tensa.facecheck.layer.facade;
+package org.tensa.facecheck.layer.impl;
 
-import org.tensa.facecheck.layer.impl.DoublePixelsDirectOutputLayerImpl;
+import org.tensa.facecheck.layer.LayerConsumer;
+import org.tensa.tensada.matrix.Indice;
 
 /**
  *
  * @author Marcelo
  */
-final public class PixelsLinealDirectOutputLayer extends DoublePixelsDirectOutputLayerImpl {
+public class DoublePixelOutputLayerImpl extends PixelOutputLayer<Double> {
 
-    public PixelsLinealDirectOutputLayer() {
+    public DoublePixelOutputLayerImpl() {
     }
-    
+
+
+    @Override
+    public void layerComplete(int status) {
+        this.status = status;
+        if (status == LayerConsumer.SUCCESS_STATUS) {
+            
+            double[] pixels = new double[inputLayer.getDominio().getFila()];
+            for( int i =0; i< pixels.length; i++) {
+                pixels[i] = 255 * inputLayer.get(new Indice(i + 1, 1));
+            }
+            int width = dest.getWidth();
+            int height = dest.getHeight();
+            dest.getRaster().setPixels(0, 0, width, height, pixels);
+            
+        }
+    }
+
 }
