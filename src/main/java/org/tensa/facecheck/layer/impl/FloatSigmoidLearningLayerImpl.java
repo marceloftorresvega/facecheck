@@ -23,7 +23,6 @@
  */
 package org.tensa.facecheck.layer.impl;
 
-import java.io.IOException;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.FloatMatriz;
 import org.tensa.tensada.matrix.NumericMatriz;
@@ -48,13 +47,6 @@ public class FloatSigmoidLearningLayerImpl extends LearningLayer<Float> {
     public void calculateErrorOperation() {
         error = learningData.substraccion(outputLayer);
         error.replaceAll((i,v) -> v * outputLayer.get(i) * learningData.get(i));
-//        propagationError = (DoubleMatriz) weights.productoPunto(error);
-        try (NumericMatriz<Float> punto = error.productoPunto(weights)) {
-
-            propagationError = punto.transpuesta();
-        } catch (IOException ex) {
-            log.error("learningFunctionOperation", ex);
-        }
     }
 
     @Override

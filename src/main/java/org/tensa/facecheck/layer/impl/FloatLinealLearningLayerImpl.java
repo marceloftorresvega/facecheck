@@ -23,7 +23,6 @@
  */
 package org.tensa.facecheck.layer.impl;
 
-import java.io.IOException;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.FloatMatriz;
 import org.tensa.tensada.matrix.NumericMatriz;

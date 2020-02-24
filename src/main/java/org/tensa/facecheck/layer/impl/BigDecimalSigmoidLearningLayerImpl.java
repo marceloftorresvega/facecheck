@@ -23,7 +23,6 @@
  */
 package org.tensa.facecheck.layer.impl;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import org.tensa.tensada.matrix.BigDecimalMatriz;
 import org.tensa.tensada.matrix.Dominio;
@@ -49,7 +48,6 @@ public class BigDecimalSigmoidLearningLayerImpl extends LearningLayer<BigDecimal
     public void calculateErrorOperation() {
             error = learningData.substraccion(outputLayer);
             error.replaceAll((i,v) -> v.multiply(outputLayer.get(i)).multiply(learningData.get(i)));
-    //        propagationError = (DoubleMatriz) weights.productoPunto(error);
     }
 
     @Override

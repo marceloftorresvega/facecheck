@@ -23,7 +23,6 @@
  */
 package org.tensa.facecheck.layer.impl;
 
-import java.io.IOException;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
 import org.tensa.tensada.matrix.NumericMatriz;
@@ -48,7 +47,6 @@ public class DoubleSigmoidLearningLayerImpl extends LearningLayer<Double> {
     public void calculateErrorOperation() {
             error = learningData.substraccion(outputLayer);
             error.replaceAll((i,v) -> v * outputLayer.get(i) * learningData.get(i));
-    //        propagationError = (DoubleMatriz) weights.productoPunto(error);
     }
 
     @Override

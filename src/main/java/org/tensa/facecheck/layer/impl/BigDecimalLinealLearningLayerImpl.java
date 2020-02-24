@@ -23,7 +23,6 @@
  */
 package org.tensa.facecheck.layer.impl;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import org.tensa.tensada.matrix.BigDecimalMatriz;
 import org.tensa.tensada.matrix.Dominio;
