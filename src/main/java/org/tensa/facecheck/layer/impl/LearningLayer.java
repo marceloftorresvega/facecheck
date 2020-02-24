@@ -108,7 +108,7 @@ public abstract class LearningLayer<N extends Number> implements LayerConsumer<N
         } catch (IOException ex) {
             log.error("startLearning", ex);
         }
-        for (LayerLearning back : getProducers()) {
+        for (LayerLearning<N> back : getProducers()) {
             back.setLearningData(propagationError);
             back.startLearning();
         }
@@ -144,11 +144,11 @@ public abstract class LearningLayer<N extends Number> implements LayerConsumer<N
         outputLayer = weights.producto(inputLayer);
         outputLayer.replaceAll(this::activateFunction);
         
-        for (LayerConsumer lc : consumers) {
+        for (LayerConsumer<N> lc : consumers) {
             lc.seInputLayer(outputLayer);
             lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
             if (lc instanceof LayerLearning) {
-                ((LayerLearning) lc).getProducers().add(this);
+                ((LayerLearning<N>) lc).getProducers().add(this);
             }
         }
     }

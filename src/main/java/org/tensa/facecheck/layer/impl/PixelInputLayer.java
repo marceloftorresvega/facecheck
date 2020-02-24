@@ -88,7 +88,7 @@ public abstract class PixelInputLayer<N extends Number> implements LayerProducer
     @Override
     public void startProduction() {
         outputLayer = scanInput();
-        for (LayerConsumer lc : consumers) {
+        for (LayerConsumer<N> lc : consumers) {
             lc.seInputLayer(outputLayer);
             lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
         }
