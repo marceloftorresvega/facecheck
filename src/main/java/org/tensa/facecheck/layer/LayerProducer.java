@@ -25,7 +25,6 @@ package org.tensa.facecheck.layer;
 
 import java.util.List;
 import org.tensa.tensada.matrix.NumericMatriz;
-import org.tensa.tensada.matrix.ParOrdenado;
 
 /**
  * produccion de resultados

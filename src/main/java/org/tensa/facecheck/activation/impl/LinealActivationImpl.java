@@ -26,7 +26,6 @@ package org.tensa.facecheck.activation.impl;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.tensa.tensada.matrix.NumericMatriz;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  *

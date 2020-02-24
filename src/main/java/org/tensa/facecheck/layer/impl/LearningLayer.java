@@ -35,7 +35,6 @@ import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerLearning;
 import org.tensa.facecheck.layer.LayerProducer;
 import org.tensa.tensada.matrix.NumericMatriz;
-import org.tensa.tensada.matrix.ParOrdenado;
 
 /**
  *

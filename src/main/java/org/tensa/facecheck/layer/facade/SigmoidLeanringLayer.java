@@ -23,7 +23,6 @@
  */
 package org.tensa.facecheck.layer.facade;
 
-import java.util.function.Function;
 import org.tensa.facecheck.activation.impl.LearningSigmoidActivationImpl;
 import org.tensa.facecheck.layer.impl.LearningLayer;
 import org.tensa.tensada.matrix.NumericMatriz;

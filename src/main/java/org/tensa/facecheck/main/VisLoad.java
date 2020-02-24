@@ -31,7 +31,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.OptionalDouble;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
