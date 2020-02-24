@@ -158,12 +158,6 @@ public abstract class LearningLayer<N extends Number> implements LayerConsumer<N
         return consumers;
     }
 
-    @Override
-    public abstract void calculateErrorOperation();
-
-    @Override
-    public abstract N activateFunction(ParOrdenado i, N value);
-
     public abstract N mediaError(double v);
     
     protected abstract NumericMatriz<N> supplier();
