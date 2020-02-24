@@ -27,8 +27,10 @@ import org.tensa.facecheck.layer.facade.LinealLeanringLayer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tensa.facecheck.activation.Activation;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerLearning;
 import org.tensa.facecheck.layer.LayerProducer;
@@ -52,12 +54,16 @@ public abstract class LearningLayer<N extends Number> implements LayerConsumer<N
     protected final N learningFactor;
     protected final List<LayerConsumer<N>> consumers;
     protected final List<LayerLearning<N>> producers;
+    protected final Activation<N> activation;
+    protected final Function<Double,N> mapper;
 
-    public LearningLayer(NumericMatriz<N> weights, N learningFactor) {
+    public LearningLayer(NumericMatriz<N> weights, N learningFactor, Activation<N> activation) {
         this.weights = weights;
         this.learningFactor = learningFactor;
         this.consumers = new ArrayList<>();
         this.producers = new ArrayList<>();
+        this.activation = activation;
+        this.mapper = activation.getMapper();
     }
 
 
@@ -93,10 +99,10 @@ public abstract class LearningLayer<N extends Number> implements LayerConsumer<N
     @Override
     public void startLearning() {
         try {
-            this.calculateErrorOperation();
-            //        propagationError = (NumericMatriz<N>) weights.productoPunto(error);
+            error = activation.getError().apply(learningData, outputLayer);
+            //propagationError = (NumericMatriz<N>) weights.productoPunto(error);
             try (final NumericMatriz<N> punto = error.productoPunto(weights)) {
-                propagationError = (NumericMatriz<N>) punto.transpuesta();
+                propagationError =  punto.transpuesta();
             }
             try (final NumericMatriz<N> tensor = error.productoTensorial(inputLayer);
                 final NumericMatriz<N> delta = tensor.productoEscalar(learningFactor);
@@ -117,11 +123,7 @@ public abstract class LearningLayer<N extends Number> implements LayerConsumer<N
 
     @Override
     public NumericMatriz<N> getError() {
-        if (error != null) {
-            return error.distanciaE2().productoEscalar(mediaError(0.5));
-        } else {
-            return supplier();
-        }
+        return error.distanciaE2().productoEscalar(mapper.apply(0.5));
     }
 
     @Override
@@ -142,7 +144,7 @@ public abstract class LearningLayer<N extends Number> implements LayerConsumer<N
     @Override
     public void startProduction() {
         outputLayer = weights.producto(inputLayer);
-        outputLayer.replaceAll(this::activateFunction);
+        activation.getActivation().apply(outputLayer);
         
         for (LayerConsumer<N> lc : consumers) {
             lc.seInputLayer(outputLayer);
@@ -158,8 +160,5 @@ public abstract class LearningLayer<N extends Number> implements LayerConsumer<N
         return consumers;
     }
 
-    public abstract N mediaError(double v);
-    
-    protected abstract NumericMatriz<N> supplier();
     
 }

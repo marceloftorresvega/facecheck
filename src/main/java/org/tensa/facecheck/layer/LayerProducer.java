@@ -51,11 +51,4 @@ public interface LayerProducer<N extends Number> {
      */
     List<LayerConsumer<N>> getConsumers();
 
-    /**
-     * funcion de activacion
-     * @param i
-     * @param value
-     * @return 
-     */
-    N activateFunction(ParOrdenado i, N value);
 }

@@ -26,8 +26,10 @@ package org.tensa.facecheck.layer.impl;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerProducer;
+import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.Indice;
 import org.tensa.tensada.matrix.NumericMatriz;
 
@@ -44,32 +46,44 @@ public abstract class PixelInputLayer<N extends Number> implements LayerProducer
     protected boolean preventCeroUno;
     protected boolean escalar;
     protected final List<LayerConsumer<N>> consumers;
+    protected final Function<Dominio,NumericMatriz<N>> supplier;
+    protected final Function<Double,N> mapper;
 
-    public PixelInputLayer(BufferedImage src, boolean normalizar) {
+    public PixelInputLayer(BufferedImage src, Function<Dominio, NumericMatriz<N>> supplier, Function<Double,N> mapper, boolean normalizar) {
         this.src = src;
         this.normalizar = normalizar;
         this.consumers = new ArrayList<>();
+        this.supplier = supplier;
+        this.mapper = mapper;
     }
-
-    
 
     protected NumericMatriz<N> scanInput() {
         if (src == null) {
             throw new NullPointerException("src image is null");
         }
-        NumericMatriz<N> dm = rawScan();
+        
+        int width = src.getWidth();
+        int height = src.getHeight();
+        
+        double[] pixels = src.getRaster().getPixels(0, 0, width, height, (double[])null);
+        NumericMatriz<N> dm = supplier.apply(new Dominio(pixels.length, 1));
+                
+        for(int k=0;k<pixels.length;k++){
+            dm.indexa(k + 1, 1, mapper.apply(pixels[k]));
+        }
+        
         if (preventCeroUno) {
-            N escala = supplier(254.0 / 255.0);
-            NumericMatriz<N> margen = dm.matrizUno().productoEscalar(supplier(0.5));
+            N escala = mapper.apply(254.0 / 255.0);
+            NumericMatriz<N> margen = dm.matrizUno().productoEscalar(mapper.apply(0.5));
             dm = dm.productoEscalar(escala).adicion(margen);
         }
         if (escalar) {
-            N escala = supplier(1 / 255.0);
+            N escala = mapper.apply(1 / 255.0);
             dm = dm.productoEscalar(escala);
         }
         if (normalizar) {
             NumericMatriz<N> d = dm.distanciaE2();
-            N normalizador = dm.inversoMultiplicativo(supplier(Math.sqrt(d.get(Indice.D1).doubleValue())));
+            N normalizador = dm.inversoMultiplicativo(mapper.apply(Math.sqrt(d.get(Indice.D1).doubleValue())));
             dm = dm.productoEscalar(normalizador);
         }
         if (reflectancia) {
@@ -136,9 +150,5 @@ public abstract class PixelInputLayer<N extends Number> implements LayerProducer
     public void setEscalar(boolean escalar) {
         this.escalar = escalar;
     }
-
-    protected abstract N supplier(double n);
-
-    protected abstract NumericMatriz<N> rawScan();
     
 }

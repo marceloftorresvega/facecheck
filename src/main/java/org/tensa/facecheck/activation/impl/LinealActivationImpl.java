@@ -21,38 +21,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.tensa.facecheck.layer.impl;
+package org.tensa.facecheck.activation.impl;
 
-import java.io.IOException;
-import java.math.BigDecimal;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import org.tensa.tensada.matrix.NumericMatriz;
-import org.tensa.tensada.matrix.ParOrdenado;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  *
  * @author Marcelo
  */
-public class BigDecimalSigmoidHiddenLayerImpl extends HiddenLayer<BigDecimal> {
+public class LinealActivationImpl<N extends Number> implements org.tensa.facecheck.activation.Activation<N> {
+    private final Function<Double, N> mapper;
 
-    public BigDecimalSigmoidHiddenLayerImpl(NumericMatriz<BigDecimal> weights, BigDecimal learningFactor) {
-        super(weights, learningFactor);
+    public LinealActivationImpl(Function<Double, N> mapper) {
+        this.mapper = mapper;
+    }
+
+
+    @Override
+    public Function<NumericMatriz<N>, NumericMatriz<N>> getActivation() {
+        return Function.identity();
     }
 
     @Override
-    public void calculateErrorOperation() {
-            
-            try (final NumericMatriz<BigDecimal> m1 = outputLayer.matrizUno()) {
-                error = (NumericMatriz<BigDecimal>) m1.substraccion(outputLayer);
-                error.replaceAll((ParOrdenado i, BigDecimal v) -> 
-                        v.multiply(outputLayer.get(i)).multiply(learningData.get(i)));
-            } catch (IOException ex) {
-                log.error("learningFunctionOperation", ex);
-            }
+    public BiFunction<NumericMatriz<N>, NumericMatriz<N>, NumericMatriz<N>> getError() {
+        return (learning,output) -> learning.substraccion(output);
     }
 
     @Override
-    public BigDecimal activateFunction(ParOrdenado i, BigDecimal value) {
-        return BigDecimal.ONE.divide((BigDecimal.ONE.add(BigDecimal.valueOf(Math.exp(-value.doubleValue())))));
+    public Function<Double, N> getMapper() {
+        return mapper;
     }
-    
+
 }

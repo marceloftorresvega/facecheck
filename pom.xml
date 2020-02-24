@@ -3,17 +3,25 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.tensa</groupId>
     <artifactId>facecheck</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
+        <compilerArgument>-Xlint:unchecked</compilerArgument>
     </properties>
     <name>face-check</name>
     <description>identifica rostros en una foro</description>
     <build>
         <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <compilerArgument>${compilerArgument}</compilerArgument>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -48,7 +56,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-		<version>3.2.1</version>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>

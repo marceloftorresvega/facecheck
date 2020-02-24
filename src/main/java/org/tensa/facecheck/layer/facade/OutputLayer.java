@@ -23,13 +23,13 @@
  */
 package org.tensa.facecheck.layer.facade;
 
-import org.tensa.facecheck.layer.impl.DoublePixelOutputLayerImpl;
+import org.tensa.facecheck.layer.impl.PixelOutputLayer;
 
 /**
  *
  * @author Marcelo
  */
-final public class OutputLayer extends DoublePixelOutputLayerImpl {
+final public class OutputLayer extends PixelOutputLayer<Double> {
 
     public OutputLayer() {
     }

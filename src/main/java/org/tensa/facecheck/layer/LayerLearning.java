@@ -69,8 +69,4 @@ public interface LayerLearning<N extends Number> {
      */
     List<LayerLearning<N>> getProducers();
     
-    /**
-     * funcion de aprendisaje
-     */
-    void calculateErrorOperation();
 }
