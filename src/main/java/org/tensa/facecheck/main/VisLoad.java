@@ -1098,6 +1098,9 @@ public class VisLoad extends javax.swing.JFrame {
     }//GEN-LAST:event_iteracionesStateChanged
 
     private void vistaMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_vistaMouseMoved
+        int x = evt.getX();
+        int y = evt.getY();
+                                 
         switch (areaStatus) {
             case MODIFY_POSITION:
                 vista.setCursor(new java.awt.Cursor(java.awt.Cursor.MOVE_CURSOR));
@@ -1107,6 +1110,11 @@ public class VisLoad extends javax.swing.JFrame {
                 break;
             case MODIFY:
                 vista.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                if (leftTopPoint.contains(x,y)) {
+                    vista.setCursor(new java.awt.Cursor(java.awt.Cursor.MOVE_CURSOR));
+                } else if (widthHwightpoint.contains(x, y)) {
+                    vista.setCursor(new java.awt.Cursor(java.awt.Cursor.SE_RESIZE_CURSOR));
+                }
                 break;
             case ADD:
             case CHOOSE:
@@ -1119,6 +1127,9 @@ public class VisLoad extends javax.swing.JFrame {
     }//GEN-LAST:event_vistaMouseMoved
 
     private void vistaMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_vistaMouseDragged
+        int x = evt.getX();
+        int y = evt.getY();
+                               
         switch (areaStatus) {
             case MODIFY_POSITION:
                 vista.setCursor(new java.awt.Cursor(java.awt.Cursor.MOVE_CURSOR));
@@ -1128,6 +1139,11 @@ public class VisLoad extends javax.swing.JFrame {
                 break;
             case MODIFY:
                 vista.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                if (leftTopPoint.contains(x,y)) {
+                    areaStatus = SeletionStatus.MODIFY_POSITION;
+                } else if (widthHwightpoint.contains(x, y)) {
+                    areaStatus = SeletionStatus.MODIFY_SIZE;                    
+                }
                 break;
             case ADD:
             case CHOOSE:
@@ -1313,34 +1329,43 @@ public class VisLoad extends javax.swing.JFrame {
                         evalArea.width = (int) (evalArea.width * escala);
                         evalArea.height = (int) (evalArea.height * escala);
                         switch (areaStatus) {
-                            case MODIFY:
-                                if (a.equals(learnArea)) {
-                                    localg.setColor(Color.RED);
-                                    leftTopPoint.setSize(10, 10);
-                                    leftTopPoint.setLocation(evalArea.x - 5, evalArea.y - 5);
-                                    
-                                    widthHwightpoint.setSize(10,10);
-                                    widthHwightpoint.setLocation(
-                                            evalArea.width + evalArea.x - 5,
-                                            evalArea.height + evalArea.y - 5);
-                                    
-                                } else {
-                                    localg.setColor(Color.BLACK);
-                                }
-                                break;
-                            case CHOOSE:
-                                if (a.equals(learnArea)) {
-                                    localg.setColor(Color.RED);
-                                } else {
-                                    localg.setColor(Color.BLUE);
-                                }
-                            case DELETE:
+                        case MODIFY:
+                            if (a.equals(learnArea)) {
+                                leftTopPoint.setSize(10, 10);
+                                leftTopPoint.setLocation(evalArea.x - 5, evalArea.y - 5);
+
+                                widthHwightpoint.setSize(10,10);
+                                widthHwightpoint.setLocation(
+                                        evalArea.width + evalArea.x - 5,
+                                        evalArea.height + evalArea.y - 5);
+
                                 localg.setColor(Color.RED);
-                                break;
-                            case ADD:
+                            } else {
                                 localg.setColor(Color.BLACK);
-                                break;
-                                
+                            }
+                            break;
+                        case CHOOSE:
+                            if (a.equals(learnArea)) {
+                                localg.setColor(Color.RED);
+                            } else {
+                                localg.setColor(Color.BLUE);
+                            }
+                            break;
+                        case MODIFY_POSITION:
+                        case MODIFY_SIZE:
+                            if (a.equals(learnArea)) {
+                                localg.setColor(Color.BLUE);
+                            } else {
+                                localg.setColor(Color.BLACK);
+                            }
+                            break;
+                        case DELETE:
+                            localg.setColor(Color.RED);
+                            break;
+                        case ADD:
+                            localg.setColor(Color.BLACK);
+                            break;
+
                         }
                         localg.draw(evalArea);
                         if (SeletionStatus.MODIFY.equals(areaStatus)) {
