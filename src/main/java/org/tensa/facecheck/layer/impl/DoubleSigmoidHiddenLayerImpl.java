@@ -53,9 +53,4 @@ public class DoubleSigmoidHiddenLayerImpl extends HiddenLayer<Double> {
         return 1 / (1 + Math.exp(-value));
     }
 
-    @Override
-    public Double mediaError() {
-        return 0.5;
-    }
-
 }

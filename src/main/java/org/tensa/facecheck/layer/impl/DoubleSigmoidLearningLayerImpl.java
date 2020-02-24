@@ -40,8 +40,8 @@ public class DoubleSigmoidLearningLayerImpl extends LearningLayer<Double> {
     }
 
     @Override
-    public Double mediaError() {
-        return 0.5;
+    public Double mediaError(double v) {
+        return v;
     }
 
     @Override

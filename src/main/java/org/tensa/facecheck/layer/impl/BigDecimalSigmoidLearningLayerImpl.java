@@ -41,8 +41,8 @@ public class BigDecimalSigmoidLearningLayerImpl extends LearningLayer<BigDecimal
     }
 
     @Override
-    public BigDecimal mediaError() {
-        return BigDecimal.valueOf(0.5);
+    public BigDecimal mediaError(double v) {
+        return BigDecimal.valueOf(v);
     }
 
     @Override

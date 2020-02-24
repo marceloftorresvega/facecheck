@@ -21,19 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.tensa.facecheck.layer.impl;
+package org.tensa.facecheck.layer.facade;
 
-import org.tensa.tensada.matrix.NumericMatriz;
+import java.awt.image.BufferedImage;
+import org.tensa.facecheck.layer.impl.DoublePixelInputLayerImpl;
 
 /**
  *
  * @author Marcelo
- * @param <N>
  */
-public class HiddenSigmoidLayer extends DoubleSigmoidHiddenLayerImpl {
+final public class PixelsDirectInputLayer extends DoublePixelInputLayerImpl {
 
-    public HiddenSigmoidLayer(NumericMatriz<Double> weights, Double learningFactor) {
-        super(weights, learningFactor);
+    public PixelsDirectInputLayer() {
     }
 
+    public PixelsDirectInputLayer(BufferedImage src, boolean normalizar) {
+        super(src, normalizar);
+    }
+    
 }

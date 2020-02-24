@@ -46,9 +46,4 @@ public class DoubleLinealHiddenLayerImpl extends HiddenLayer<Double> {
         return value;
     }
 
-    @Override
-    public Double mediaError() {
-        return 0.5;
-    }
-
 }

@@ -52,9 +52,4 @@ public class FloatSigmoidHiddenLayerImpl extends HiddenLayer<Float> {
         return (float) (1 / (1 + Math.exp(-value.doubleValue())));
     }
 
-    @Override
-    public Float mediaError() {
-        return 0.5f;
-    }
-
 }

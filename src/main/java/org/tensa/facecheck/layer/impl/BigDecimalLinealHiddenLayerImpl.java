@@ -38,11 +38,6 @@ public class BigDecimalLinealHiddenLayerImpl extends HiddenLayer<BigDecimal> {
     }
 
     @Override
-    public BigDecimal mediaError() {
-        return BigDecimal.valueOf(0.5);
-    }
-
-    @Override
     public void calculateErrorOperation() {
         error = learningData.substraccion(outputLayer);
     }

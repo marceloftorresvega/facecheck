@@ -39,11 +39,6 @@ public class BigDecimalSigmoidHiddenLayerImpl extends HiddenLayer<BigDecimal> {
     }
 
     @Override
-    public BigDecimal mediaError() {
-        return BigDecimal.valueOf(0.5);
-    }
-
-    @Override
     public void calculateErrorOperation() {
             
             try (final NumericMatriz<BigDecimal> m1 = outputLayer.matrizUno()) {

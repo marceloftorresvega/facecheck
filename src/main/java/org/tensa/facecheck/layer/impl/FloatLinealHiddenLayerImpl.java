@@ -46,9 +46,4 @@ public class FloatLinealHiddenLayerImpl extends HiddenLayer<Float> {
         return value;
     }
 
-    @Override
-    public Float mediaError() {
-        return 0.5f;
-    }
-
 }

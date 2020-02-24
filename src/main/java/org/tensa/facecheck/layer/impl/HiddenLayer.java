@@ -23,6 +23,7 @@
  */
 package org.tensa.facecheck.layer.impl;
 
+import org.tensa.facecheck.layer.facade.HiddenSigmoidLayer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

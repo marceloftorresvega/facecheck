@@ -40,8 +40,8 @@ public class FloatSigmoidLearningLayerImpl extends LearningLayer<Float> {
     }
 
     @Override
-    public Float mediaError() {
-        return 0.5f;
+    public Float mediaError(double v) {
+        return (float)v;
     }
 
     @Override

@@ -23,6 +23,7 @@
  */
 package org.tensa.facecheck.layer.impl;
 
+import org.tensa.facecheck.layer.facade.PixelDirectLinealLeanringLayer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -117,7 +118,7 @@ public abstract class LearningLayer<N extends Number> implements LayerConsumer<N
     @Override
     public NumericMatriz<N> getError() {
         if (error != null) {
-            return error.distanciaE2().productoEscalar(mediaError());
+            return error.distanciaE2().productoEscalar(mediaError(0.5));
         } else {
             return supplier();
         }
@@ -158,13 +159,12 @@ public abstract class LearningLayer<N extends Number> implements LayerConsumer<N
     }
 
     @Override
-    public abstract N mediaError();
-
-    @Override
     public abstract void calculateErrorOperation();
 
     @Override
     public abstract N activateFunction(ParOrdenado i, N value);
+
+    public abstract N mediaError(double v);
     
     protected abstract NumericMatriz<N> supplier();
     

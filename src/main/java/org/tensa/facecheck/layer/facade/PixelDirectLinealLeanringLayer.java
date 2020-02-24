@@ -21,17 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.tensa.facecheck.layer.impl;
+package org.tensa.facecheck.layer.facade;
 
+import org.tensa.facecheck.layer.impl.DoubleLinealLearningLayerImpl;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
  *
  * @author Marcelo
  */
-public class PixelDirectSigmoidLeanringLayer extends DoubleSigmoidLearningLayerImpl {    
+final public class PixelDirectLinealLeanringLayer extends DoubleLinealLearningLayerImpl {
 
-    public PixelDirectSigmoidLeanringLayer(NumericMatriz<Double> weights, Double learningFactor) {
+    public PixelDirectLinealLeanringLayer(NumericMatriz<Double> weights, Double learningFactor) {
         super(weights, learningFactor);
     }
+    
 }

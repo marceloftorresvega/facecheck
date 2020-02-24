@@ -21,13 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.tensa.facecheck.layer.impl;
+package org.tensa.facecheck.layer.facade;
+
+import org.tensa.facecheck.layer.impl.DoublePixelsDirectOutputLayerImpl;
 
 /**
  *
  * @author Marcelo
  */
-public class PixelsLinealDirectOutputLayer extends DoublePixelsDirectOutputLayerImpl {
+final public class PixelsLinealDirectOutputLayer extends DoublePixelsDirectOutputLayerImpl {
 
     public PixelsLinealDirectOutputLayer() {
     }
