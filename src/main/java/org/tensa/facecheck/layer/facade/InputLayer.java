@@ -24,9 +24,9 @@
 package org.tensa.facecheck.layer.facade;
 
 import java.awt.image.BufferedImage;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.tensa.facecheck.layer.impl.PixelInputLayer;
-import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
 import org.tensa.tensada.matrix.NumericMatriz;
 
@@ -36,20 +36,17 @@ import org.tensa.tensada.matrix.NumericMatriz;
  */
 final public class InputLayer extends PixelInputLayer<Double> {
 
-    public InputLayer(BufferedImage src, Function<Dominio, NumericMatriz<Double>> supplier, Function<Double, Double> mapper, boolean normalizar) {
-        super(src, supplier, mapper, normalizar);
-    }
-
-    public InputLayer() {
-        super(null, DoubleMatriz::new, Double::valueOf, true);
-    }
-
-    public InputLayer(boolean normalizar) {
-        super(null, DoubleMatriz::new, Double::valueOf, normalizar);
+    public InputLayer(BufferedImage src, BiFunction<NumericMatriz<Double>, Function<Double, Double>, NumericMatriz<Double>> responceEscale) {
+        super(src, DoubleMatriz::new, Double::valueOf, responceEscale);
     }
     
-    public InputLayer(BufferedImage src, boolean normalizar) {
-        super(src, DoubleMatriz::new, Double::valueOf, normalizar);
+    public InputLayer(BiFunction<NumericMatriz<Double>, Function<Double, Double>, NumericMatriz<Double>> responceEscale) {
+        super(null, DoubleMatriz::new, Double::valueOf, responceEscale);
     }
+           
+    public InputLayer() {
+        super(null, DoubleMatriz::new, Double::valueOf, null);
+    }
+
     
 }
