@@ -773,7 +773,7 @@ public class VisLoad extends javax.swing.JFrame {
                             int j = idx.getColumna();
 
                             InputLayer simplePixelsInputLayer = new InputLayer();
-                            InputLayer simplePixelsCompareLayer = new InputLayer();
+                            InputLayer simplePixelsCompareLayer = new InputLayer(false);
                             SigmoidHiddenLayer hiddenLayer = new SigmoidHiddenLayer((NumericMatriz<Double>)weightsH,  (Double)hiddenLearningRate.getValue());
                             LinealLeanringLayer pixelLeanringLayer = new LinealLeanringLayer((NumericMatriz<Double>)weightsO, (Double)outputLearningRate.getValue());
                             OutputLayer pixelsOutputLayer = new OutputLayer();
