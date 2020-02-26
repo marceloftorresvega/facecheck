@@ -1,0 +1,369 @@
+/*
+ * The MIT License
+ *
+ * Copyright 2020 Marcelo.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+package org.tensa.facecheck.network;
+
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.IndexColorModel;
+import java.awt.image.WritableRaster;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tensa.facecheck.layer.facade.InputLayer;
+import org.tensa.facecheck.layer.facade.LinealLeanringLayer;
+import org.tensa.facecheck.layer.facade.OutputLayer;
+import org.tensa.facecheck.layer.facade.SigmoidHiddenLayer;
+import org.tensa.facecheck.layer.impl.OutputScale;
+import org.tensa.tensada.matrix.BlockMatriz;
+import org.tensa.tensada.matrix.Dominio;
+import org.tensa.tensada.matrix.Indice;
+import org.tensa.tensada.matrix.Matriz;
+import org.tensa.tensada.matrix.NumericMatriz;
+import org.tensa.tensada.matrix.ParOrdenado;
+
+/**
+ * back propagation inicial
+ * @author Marcelo
+ */
+public class Manager<N extends Number> {
+    private final Logger log = LoggerFactory.getLogger(Manager.class);
+    
+    private NumericMatriz<N> weightsH;
+    private NumericMatriz<N> weightsO;
+    private NumericMatriz<N> errorGraph;
+    private Function<Dominio,NumericMatriz<N>> supplier;
+    private UnaryOperator<NumericMatriz<Double>> inputScale;
+    
+    private int inStep;
+    private int outStep;
+    private int hidStep;
+    
+    private N hiddenLearningRate;
+    private N outputLearningRate;
+    
+    private BufferedImage outputImage;
+    private BufferedImage inputImage ;
+    private BufferedImage compareImage ;
+    
+    private final LinkedList<Rectangle> areaQeue = new LinkedList<>();
+    private ParOrdenado[] proccesDomain;
+    
+    private boolean trainingMode;
+    private int iterateTo;
+    private boolean emergencyBreak;
+    private int iterateCurrent;
+    
+    private boolean useSelection;
+    
+        
+    public NumericMatriz<N> getWeightsH() {
+        return weightsH;
+    }
+
+    public void setWeightsH(NumericMatriz<N> weightsH) {
+        this.weightsH = weightsH;
+    }
+
+    public NumericMatriz<N> getWeightsO() {
+        return weightsO;
+    }
+
+    public void setWeightsO(NumericMatriz<N> weightsO) {
+        this.weightsO = weightsO;
+    }
+
+    public NumericMatriz<N> getErrorGraph() {
+        return errorGraph;
+    }
+
+    public void setErrorGraph(NumericMatriz<N> errorGraph) {
+        this.errorGraph = errorGraph;
+    }
+    
+    
+    public void cargaPesosX2(String archivo) {
+        log.info("cargaPesosX2 <{}>",archivo);
+        try (
+                InputStream fis = Files.newInputStream(Paths.get(archivo));
+                BufferedInputStream bis = new BufferedInputStream(fis);
+                GzipCompressorInputStream gzIn = new GzipCompressorInputStream(bis);
+                ObjectInputStream ois = new ObjectInputStream(gzIn)
+                ) {
+            weightsH = (NumericMatriz<N>)ois.readObject();
+            Integer fila = weightsH.getDominio().getFila();
+            Integer columna = weightsH.getDominio().getColumna();
+            
+            weightsO = (NumericMatriz<N>)ois.readObject();
+            fila = weightsO.getDominio().getFila();
+            
+            inStep = (int) Math.sqrt(columna/3);
+            hidStep = fila;
+            outStep = (int) Math.sqrt(fila/3);
+            
+        } catch ( FileNotFoundException ex) {
+            log.error("error al cargar pesos", ex);
+        } catch (IOException ex) {
+            log.error("error al cargar pesos", ex);
+        } catch (ClassNotFoundException ex) {
+            log.error("error al cargar pesos", ex);
+        }
+    }
+    
+    public void salvaPesosX2(String archivo) {
+        log.info("salvaPesosX2 <{}>", archivo);
+
+         try( 
+                 OutputStream fos = Files.newOutputStream(Paths.get(archivo));
+                 BufferedOutputStream out = new BufferedOutputStream(fos);
+                 GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(out);
+                 ObjectOutputStream oos = new ObjectOutputStream(gzOut); ) {
+            oos.writeObject(weightsH);
+            oos.writeObject(weightsO);
+             
+         }catch (FileNotFoundException ex) {
+             log.error("error al guardar  pesos", ex);
+         } catch (IOException ex) {
+             log.error("error al guardar  pesos", ex);             
+         }
+    }
+
+    public int getInStep() {
+        return inStep;
+    }
+
+    public void setInStep(int inStep) {
+        this.inStep = inStep;
+    }
+
+    public int getOutStep() {
+        return outStep;
+    }
+
+    public void setOutStep(int outStep) {
+        this.outStep = outStep;
+    }
+
+    public int getHidStep() {
+        return hidStep;
+    }
+
+    public void setHidStep(int hidStep) {
+        this.hidStep = hidStep;
+    }
+    
+    private NumericMatriz<N> createMatrix(int innerSize, int outerSize, UnaryOperator<NumericMatriz<N>> creation) {
+        
+        log.info("iniciando 1..<{},{}>",outerSize, innerSize);
+        try (BlockMatriz<N> hiddenBlockMatriz = new BlockMatriz<>(new Dominio(outerSize, 1))) {
+            hiddenBlockMatriz.getDominio().forEach( (ParOrdenado idx) -> {
+                final NumericMatriz<N> tmpm = supplier.apply(new Dominio(1, innerSize));
+                tmpm.getDominio().forEach((i) -> {
+                    tmpm.put(i, tmpm.mapper(1-2*Math.random()));
+                });
+                hiddenBlockMatriz.put(idx, creation.apply(tmpm));
+                tmpm.clear();
+            });
+
+            log.info("iniciando 2..<{},{}>",outerSize, innerSize);
+            Matriz<N> merged = hiddenBlockMatriz.merge();
+
+            return supplier.apply(new Dominio(Indice.D1))
+                    .instancia(merged.getDominio(), merged);
+            
+        } catch (IOException ex) {
+            
+            log.error("createMatrix", ex);
+            throw new RuntimeException(ex);
+        }
+    }
+    
+    public void initMatrix( UnaryOperator<NumericMatriz<N>> creationH, UnaryOperator<NumericMatriz<N>> creationO){
+        
+        int inSize = inStep*inStep*3;
+        int outSize = outStep*outStep*3;
+        
+        weightsH = createMatrix(inSize, hidStep, creationH);
+        weightsO = createMatrix(hidStep, outSize, creationO);
+        
+    }
+    
+    public BufferedImage createCompatibleDestImage(BufferedImage src, ColorModel destCM) {
+        BufferedImage image;
+
+        int w = src.getWidth();
+        int h = src.getHeight();
+
+        WritableRaster wr = null;
+
+        if (destCM == null) {
+            destCM = src.getColorModel();
+            // Not much support for ICM
+            if (destCM instanceof IndexColorModel) {
+                destCM = ColorModel.getRGBdefault();
+            } else {
+                /* Create destination image as similar to the source
+                 *  as it possible...
+                 */
+                wr = src.getData().createCompatibleWritableRaster(w, h);
+            }
+        }
+
+        if (wr == null) {
+            /* This is the case when destination color model
+             * was explicitly specified (and it may be not compatible
+             * with source raster structure) or source is indexed image.
+             * We should use destination color model to create compatible
+             * destination raster here.
+             */
+            wr = destCM.createCompatibleWritableRaster(w, h);
+        }
+
+        image = new BufferedImage (destCM, wr,
+                                   destCM.isAlphaPremultiplied(), null);
+
+        return image;
+    }
+    private NumericMatriz<N> simpleCreationStyle(NumericMatriz<N> tmpm) {
+        return tmpm;
+    }
+    
+    private NumericMatriz<N> reflectCreationStyle(NumericMatriz<N> tmpm) {
+        double punto = tmpm.values().stream()
+                .mapToDouble(v -> Math.abs(v.doubleValue()))
+                .sum();
+        punto = 1 / punto;
+        return tmpm.productoEscalar( tmpm.mapper(punto) );
+    }
+    
+    private NumericMatriz<N> normalCreationStyle(NumericMatriz<N> tmpm) {
+            double punto = tmpm.values().stream()
+                    .mapToDouble(Number::doubleValue)
+                    .map(v -> v * v)
+                    .sum();
+            punto = 1 / Math.sqrt(punto);
+        return tmpm.productoEscalar( tmpm.mapper(punto) );
+    }
+
+    public N getHiddenLearningRate() {
+        return hiddenLearningRate;
+    }
+
+    public void setHiddenLearningRate(N hiddenLearningRate) {
+        this.hiddenLearningRate = hiddenLearningRate;
+    }
+
+    public N getOutputLearningRate() {
+        return outputLearningRate;
+    }
+
+    public void setOutputLearningRate(N outputLearningRate) {
+        this.outputLearningRate = outputLearningRate;
+    }
+    
+    public void Process() {
+        
+            log.info("iniciando proceso...");
+            outputImage = createCompatibleDestImage(inputImage, null);
+
+            int width = inputImage.getWidth();
+            int height = inputImage.getHeight();
+            
+            log.info("procesando...");
+
+            for(iterateCurrent=0; (!emergencyBreak) && ((!trainingMode) && iterateCurrent<1 || trainingMode && iterateCurrent<((Integer) iterateTo)); iterateCurrent++) {
+
+                log.info("iteracion <{}>", iterateCurrent);
+                Dominio dominio = new Dominio(width-inStep, height-inStep);
+                
+                proccesDomain = dominio.stream()
+                        .filter( idx -> (( (idx.getFila()-(inStep-outStep)/2) % outStep ==0) && ((idx.getColumna()-(inStep-outStep)/2)% outStep == 0)))
+                        .filter(idx -> (!useSelection) || ( areaQeue.stream().anyMatch(a -> a.contains(idx.getFila(), idx.getColumna()))) )
+                        .collect(Collectors.toList())
+                        .toArray(new ParOrdenado[1]);
+                errorGraph = supplier.apply(dominio);
+                Arrays.stream(proccesDomain)
+                        .sorted((idx1,idx2) -> (int)(2.0*Math.random()-1.0))
+                        .parallel()
+                        .filter(idx -> !emergencyBreak)
+                        .forEach((ParOrdenado idx) -> {
+                            int i = idx.getFila();
+                            int j = idx.getColumna();
+
+                            InputLayer simplePixelsInputLayer = new InputLayer(inputScale);
+                            
+                            InputLayer simplePixelsCompareLayer = new InputLayer(OutputScale::scale);
+                            SigmoidHiddenLayer hiddenLayer = new SigmoidHiddenLayer((NumericMatriz<Double>)weightsH,  (Double)hiddenLearningRate);
+                            LinealLeanringLayer pixelLeanringLayer = new LinealLeanringLayer((NumericMatriz<Double>)weightsO, (Double)outputLearningRate);
+                            OutputLayer pixelsOutputLayer = new OutputLayer();
+
+                            simplePixelsInputLayer.getConsumers().add(hiddenLayer);
+                            hiddenLayer.getConsumers().add(pixelLeanringLayer);
+                            pixelLeanringLayer.getConsumers().add(pixelsOutputLayer);
+
+        //                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
+                            pixelsOutputLayer.setDest(outputImage.getSubimage(i + (inStep-outStep)/2, j + (inStep-outStep)/2, outStep, outStep));
+                            BufferedImage src = inputImage.getSubimage(i, j, inStep, inStep);
+                            simplePixelsInputLayer.setSrc(src);
+                            simplePixelsInputLayer.startProduction();
+
+                            if(trainingMode){
+        //                        log.info("cargando bloque comparacion <{}><{}>", i, j);
+                                BufferedImage comp = compareImage.getSubimage(i + (inStep-outStep)/2, j + (inStep-outStep)/2, outStep, outStep);
+                                
+                                simplePixelsCompareLayer.setSrc(comp);
+                                simplePixelsCompareLayer.startProduction();
+                                pixelLeanringLayer.setLearningData(simplePixelsCompareLayer.getOutputLayer());
+
+                                pixelLeanringLayer.startLearning();
+                                Double errorVal = pixelLeanringLayer.getError().get(Indice.D1);
+                                    
+                                synchronized(errorGraph) {
+                                    errorGraph.put(idx, errorGraph.mapper(errorVal));
+                                }
+                                log.info("diferencia <{}>", errorVal);                                
+                            }
+                        });
+
+            }
+            
+        
+    }
+}
