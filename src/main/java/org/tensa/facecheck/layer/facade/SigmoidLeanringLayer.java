@@ -34,6 +34,6 @@ import org.tensa.tensada.matrix.NumericMatriz;
 final public class SigmoidLeanringLayer extends LearningLayer<Double> {    
 
     public SigmoidLeanringLayer(NumericMatriz<Double> weights, Double learningFactor) {
-        super(weights, learningFactor, new LearningSigmoidActivationImpl<>(Double::valueOf));
+        super(weights, learningFactor, new LearningSigmoidActivationImpl<>());
     }
 }

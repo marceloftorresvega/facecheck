@@ -34,7 +34,7 @@ import org.tensa.tensada.matrix.NumericMatriz;
 final public class LinealLeanringLayer extends LearningLayer<Double> {
 
     public LinealLeanringLayer(NumericMatriz<Double> weights, Double learningFactor) {
-        super(weights, learningFactor, new LinealActivationImpl<Double>(Double::valueOf));
+        super(weights, learningFactor, new LinealActivationImpl<>());
     }
 
     

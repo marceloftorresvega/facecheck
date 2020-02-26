@@ -35,7 +35,7 @@ import org.tensa.tensada.matrix.NumericMatriz;
 final public class SigmoidHiddenLayer extends HiddenLayer<Double> {
 
     public SigmoidHiddenLayer(NumericMatriz<Double> weights, Double learningFactor) {
-        super(weights, learningFactor, new HiddenSigmoidActivationImpl<>(Double::valueOf));
+        super(weights, learningFactor, new HiddenSigmoidActivationImpl<>());
     }
 
 }

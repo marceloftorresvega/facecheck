@@ -32,13 +32,10 @@ import org.tensa.tensada.matrix.NumericMatriz;
 
 public abstract class SigmoidActivationImpl<N extends Number> implements Activation<N> {
     protected final Logger log = LoggerFactory.getLogger(SigmoidActivationImpl.class);
-    private Function<Double, N> mapper;
 
-    public SigmoidActivationImpl(Function<Double, N> mapper) {
-        this.mapper = mapper;
+    public SigmoidActivationImpl() {
     }
-    
-    
+     
     @Override
     public Function<NumericMatriz<N>, NumericMatriz<N>> getActivation() {
         return (m)-> {

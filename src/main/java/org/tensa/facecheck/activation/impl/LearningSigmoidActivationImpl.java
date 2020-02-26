@@ -32,9 +32,9 @@ import org.tensa.tensada.matrix.ParOrdenado;
 
 public class LearningSigmoidActivationImpl<N extends Number> extends SigmoidActivationImpl<N> {
 
-    public LearningSigmoidActivationImpl(Function<Double, N> mapper) {
-        super(mapper);
+    public LearningSigmoidActivationImpl() {
     }
+    
 
     @Override
     public BiFunction<NumericMatriz<N>, NumericMatriz<N>, NumericMatriz<N>> getError() {

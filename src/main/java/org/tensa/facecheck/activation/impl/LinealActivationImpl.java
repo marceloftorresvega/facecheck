@@ -32,12 +32,10 @@ import org.tensa.tensada.matrix.NumericMatriz;
  * @author Marcelo
  */
 public class LinealActivationImpl<N extends Number> implements org.tensa.facecheck.activation.Activation<N> {
-    private final Function<Double, N> mapper;
 
-    public LinealActivationImpl(Function<Double, N> mapper) {
-        this.mapper = mapper;
+    public LinealActivationImpl() {
     }
-
+    
 
     @Override
     public Function<NumericMatriz<N>, NumericMatriz<N>> getActivation() {
