@@ -49,9 +49,5 @@ public class LinealActivationImpl<N extends Number> implements org.tensa.faceche
         return (learning,output) -> learning.substraccion(output);
     }
 
-    @Override
-    public Function<Double, N> getMapper() {
-        return mapper;
-    }
 
 }

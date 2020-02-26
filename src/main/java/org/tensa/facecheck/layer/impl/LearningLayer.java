@@ -27,7 +27,6 @@ import org.tensa.facecheck.layer.facade.LinealLeanringLayer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.activation.Activation;
@@ -54,7 +53,6 @@ public abstract class LearningLayer<N extends Number> implements LayerConsumer<N
     protected final List<LayerConsumer<N>> consumers;
     protected final List<LayerLearning<N>> producers;
     protected final Activation<N> activation;
-    protected final Function<Double,N> mapper;
 
     public LearningLayer(NumericMatriz<N> weights, N learningFactor, Activation<N> activation) {
         this.weights = weights;
@@ -62,7 +60,6 @@ public abstract class LearningLayer<N extends Number> implements LayerConsumer<N
         this.consumers = new ArrayList<>();
         this.producers = new ArrayList<>();
         this.activation = activation;
-        this.mapper = activation.getMapper();
     }
 
 
@@ -122,7 +119,7 @@ public abstract class LearningLayer<N extends Number> implements LayerConsumer<N
 
     @Override
     public NumericMatriz<N> getError() {
-        return error.distanciaE2().productoEscalar(mapper.apply(0.5));
+        return error.distanciaE2().productoEscalar(error.mapper(0.5));
     }
 
     @Override

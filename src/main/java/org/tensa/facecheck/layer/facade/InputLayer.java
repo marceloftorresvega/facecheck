@@ -24,8 +24,7 @@
 package org.tensa.facecheck.layer.facade;
 
 import java.awt.image.BufferedImage;
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import org.tensa.facecheck.layer.impl.PixelInputLayer;
 import org.tensa.tensada.matrix.DoubleMatriz;
 import org.tensa.tensada.matrix.NumericMatriz;
@@ -36,16 +35,16 @@ import org.tensa.tensada.matrix.NumericMatriz;
  */
 final public class InputLayer extends PixelInputLayer<Double> {
 
-    public InputLayer(BufferedImage src, BiFunction<NumericMatriz<Double>, Function<Double, Double>, NumericMatriz<Double>> responceEscale) {
-        super(src, DoubleMatriz::new, Double::valueOf, responceEscale);
+    public InputLayer(BufferedImage src, UnaryOperator<NumericMatriz<Double>> responceEscale) {
+        super(src, DoubleMatriz::new, responceEscale);
     }
     
-    public InputLayer(BiFunction<NumericMatriz<Double>, Function<Double, Double>, NumericMatriz<Double>> responceEscale) {
-        super(null, DoubleMatriz::new, Double::valueOf, responceEscale);
+    public InputLayer(UnaryOperator<NumericMatriz<Double>> responceEscale) {
+        super(null, DoubleMatriz::new, responceEscale);
     }
            
     public InputLayer() {
-        super(null, DoubleMatriz::new, Double::valueOf, null);
+        super(null, DoubleMatriz::new, null);
     }
 
     

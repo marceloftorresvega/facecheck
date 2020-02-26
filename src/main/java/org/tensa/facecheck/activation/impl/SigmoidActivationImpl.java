@@ -45,17 +45,13 @@ public abstract class SigmoidActivationImpl<N extends Number> implements Activat
             m.replaceAll((indice,v) -> {
                 return m.inversoMultiplicativo(m.sumaDirecta(
                         m.getUnoValue(),
-                        getMapper().apply(Math.exp(-v.doubleValue()))
+                        m.mapper(Math.exp(-v.doubleValue()))
                         ));
             });
             return m;
         };
     }
 
-    @Override
-    public Function<Double, N> getMapper() {
-        return mapper;
-    }
     
     
 }

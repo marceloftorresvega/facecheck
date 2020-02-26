@@ -27,8 +27,8 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerProducer;
 import org.tensa.tensada.matrix.Dominio;
@@ -44,14 +44,12 @@ public abstract class PixelInputLayer<N extends Number> implements LayerProducer
     protected NumericMatriz<N> outputLayer;
     protected final List<LayerConsumer<N>> consumers;
     protected final Function<Dominio,NumericMatriz<N>> supplier;
-    protected final BiFunction<NumericMatriz<N>, Function<Double, N>, NumericMatriz<N>> responceEscale;
-    protected final Function<Double,N> mapper;
+    protected final UnaryOperator<NumericMatriz<N>> responceEscale;
 
-    public PixelInputLayer(BufferedImage src, Function<Dominio, NumericMatriz<N>> supplier, Function<Double,N> mapper, BiFunction<NumericMatriz<N>, Function<Double, N>, NumericMatriz<N>> responceEscale) {
+    public PixelInputLayer(BufferedImage src, Function<Dominio, NumericMatriz<N>> supplier, UnaryOperator<NumericMatriz<N>> responceEscale) {
         this.src = src;
         this.consumers = new ArrayList<>();
         this.supplier = supplier;
-        this.mapper = mapper;
         this.responceEscale = responceEscale;
     }
 
@@ -67,11 +65,11 @@ public abstract class PixelInputLayer<N extends Number> implements LayerProducer
         NumericMatriz<N> dm = supplier.apply(new Dominio(pixels.length, 1));
                 
         for(int k=0;k<pixels.length;k++){
-            dm.indexa(k + 1, 1, mapper.apply(pixels[k]));
+            dm.indexa(k + 1, 1, dm.mapper(pixels[k]));
         }
                 
         if (Objects.nonNull(responceEscale)) {
-            dm = responceEscale.apply(dm, mapper);
+            dm = responceEscale.apply(dm);
         }
         return dm;
     }

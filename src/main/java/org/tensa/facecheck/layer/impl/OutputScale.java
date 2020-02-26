@@ -25,7 +25,6 @@ package org.tensa.facecheck.layer.impl;
 
 import java.io.IOException;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.function.Function;
 import org.tensa.tensada.matrix.Indice;
 import org.tensa.tensada.matrix.NumericMatriz;
 
@@ -37,15 +36,15 @@ public class OutputScale {
     private OutputScale() {
     }
     
-    public static <N extends Number> NumericMatriz<N> sameEscale(NumericMatriz<N> matriz, Function<Double, N> mapper) {
+    public static <N extends Number> NumericMatriz<N> sameEscale(NumericMatriz<N> matriz) {
         return matriz;
     }
     
-    public static <N extends Number> NumericMatriz<N> prevent01(NumericMatriz<N> matriz, Function<Double, N> mapper) {
-        N escala = mapper.apply(254.0 / 255.0);
+    public static <N extends Number> NumericMatriz<N> prevent01(NumericMatriz<N> matriz) {
+        N escala = matriz.mapper(254.0 / 255.0);
         try (
                 NumericMatriz<N> uno = matriz.matrizUno();
-                NumericMatriz<N> margen = uno.productoEscalar(mapper.apply(0.5));
+                NumericMatriz<N> margen = uno.productoEscalar(matriz.mapper(0.5));
                 NumericMatriz<N> escalado = matriz.productoEscalar(escala)) {
             
             return escalado.adicion(margen);
@@ -55,14 +54,14 @@ public class OutputScale {
     
     }
     
-    public static <N extends Number> NumericMatriz<N> scale(NumericMatriz<N> matriz, Function<Double, N> mapper) {
-        N escala = mapper.apply(1 / 255.0);
+    public static <N extends Number> NumericMatriz<N> scale(NumericMatriz<N> matriz) {
+        N escala = matriz.mapper(1 / 255.0);
         return matriz.productoEscalar(escala);
     }
     
-     public static <N extends Number> NumericMatriz<N> normalized(NumericMatriz<N> matriz, Function<Double, N> mapper) {
+     public static <N extends Number> NumericMatriz<N> normalized(NumericMatriz<N> matriz) {
          try (NumericMatriz<N> d = matriz.distanciaE2();) {
-            N normalizador = matriz.inversoMultiplicativo(mapper.apply(Math.sqrt(d.get(Indice.D1).doubleValue())));
+            N normalizador = matriz.inversoMultiplicativo(matriz.mapper(Math.sqrt(d.get(Indice.D1).doubleValue())));
             return matriz.productoEscalar(normalizador);
          
         } catch( IOException ex) {
@@ -71,7 +70,7 @@ public class OutputScale {
             
      }
     
-     public static <N extends Number> NumericMatriz<N> reflectance(NumericMatriz<N> matriz, Function<Double, N> mapper) {
+     public static <N extends Number> NumericMatriz<N> reflectance(NumericMatriz<N> matriz) {
          try (NumericMatriz<N> r = matriz.productoPunto(matriz.matrizUno());) {
             
             N reflector = matriz.inversoMultiplicativo(r.get(Indice.D1));
