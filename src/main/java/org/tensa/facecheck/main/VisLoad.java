@@ -784,14 +784,19 @@ public class VisLoad extends javax.swing.JFrame {
                             int j = idx.getColumna();
 
                             InputLayer simplePixelsInputLayer;
-                            if (adaptInputButtonGroup.getSelection().equals(scaleJRadioButton.getModel())) {
+                            
+                            if (scaleJRadioButton.isSelected()) {
                                 simplePixelsInputLayer = new InputLayer(OutputScale::scale);
-                            } else if (adaptInputButtonGroup.getSelection().equals(normalizeJRadioButton.getModel())) {
+                                
+                            } else if (normalizeJRadioButton.isSelected()) {
                                 simplePixelsInputLayer = new InputLayer(OutputScale::normalized);
-                            } else if (adaptInputButtonGroup.getSelection().equals(reflectJRadioButton.getModel())) {
+                                
+                            } else if (reflectJRadioButton.isSelected()) {
                                 simplePixelsInputLayer = new InputLayer(OutputScale::reflectance);
-                            } else if (adaptInputButtonGroup.getSelection().equals(preventJRadioButton.getModel())) {
+                                
+                            } else if (preventJRadioButton.isSelected()) {
                                 simplePixelsInputLayer = new InputLayer(OutputScale::prevent01);
+                                
                             } else {
                                 simplePixelsInputLayer = new InputLayer();
                             }
