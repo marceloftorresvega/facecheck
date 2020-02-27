@@ -40,7 +40,7 @@ import org.tensa.tensada.matrix.NumericMatriz;
  * @author Marcelo
  * @param <N>
  */
-public abstract class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLearning<N>, LayerProducer<N> {
+public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLearning<N>, LayerProducer<N> {
     protected final Logger log = LoggerFactory.getLogger(SigmoidHiddenLayer.class);
     protected final NumericMatriz<N> weights;
     protected int status;

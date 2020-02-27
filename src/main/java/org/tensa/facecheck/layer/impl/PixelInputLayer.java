@@ -39,7 +39,7 @@ import org.tensa.tensada.matrix.NumericMatriz;
  * @author Marcelo
  * @param <N>
  */
-public abstract class PixelInputLayer<N extends Number> implements LayerProducer<N> {
+public class PixelInputLayer<N extends Number> implements LayerProducer<N> {
     protected BufferedImage src;
     protected NumericMatriz<N> outputLayer;
     protected final List<LayerConsumer<N>> consumers;

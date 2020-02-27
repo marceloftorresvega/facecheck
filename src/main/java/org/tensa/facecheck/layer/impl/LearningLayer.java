@@ -40,7 +40,7 @@ import org.tensa.tensada.matrix.NumericMatriz;
  * @author lorenzo
  * @param <N>
  */
-public abstract class LearningLayer<N extends Number> implements LayerConsumer<N>, LayerLearning<N>, LayerProducer<N> {
+public class LearningLayer<N extends Number> implements LayerConsumer<N>, LayerLearning<N>, LayerProducer<N> {
     protected final Logger log = LoggerFactory.getLogger(LinealLeanringLayer.class);
     protected final NumericMatriz<N> weights;
     protected int status;
