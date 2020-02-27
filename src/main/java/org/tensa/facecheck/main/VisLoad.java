@@ -180,7 +180,6 @@ public class VisLoad extends javax.swing.JFrame {
         seleccion = new javax.swing.JCheckBox();
         addSelectionButton = new javax.swing.JButton();
         deleteSelectionButton = new javax.swing.JButton();
-        alterSelectionButton = new javax.swing.JButton();
         jProgressBar1 = new javax.swing.JProgressBar();
         jErrorGraf = getNuevaErrorGram();
 
@@ -601,13 +600,6 @@ public class VisLoad extends javax.swing.JFrame {
             }
         });
 
-        alterSelectionButton.setText("Modifica selección");
-        alterSelectionButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                alterSelectionButtonActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -619,9 +611,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(addSelectionButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(deleteSelectionButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(alterSelectionButton)
-                .addContainerGap(334, Short.MAX_VALUE))
+                .addContainerGap(476, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -629,8 +619,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(seleccion)
                     .addComponent(addSelectionButton)
-                    .addComponent(deleteSelectionButton)
-                    .addComponent(alterSelectionButton))
+                    .addComponent(deleteSelectionButton))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -897,23 +886,17 @@ public class VisLoad extends javax.swing.JFrame {
                         .filter( a -> a.contains((int) (x * escala), (int) (y * escala)))
                         .findFirst()
                         .ifPresent( a -> areaQeue.removeFirstOccurrence(a));
-                areaStatus = SeletionStatus.CHOOSE;
-                learnArea = areaQeue.getLast();
-                break;
-            case CHOOSE:
-                areaQeue.stream()
-                        .filter( a -> a.contains((int) (x * escala), (int) (y * escala)))
-                        .findFirst()
-                        .ifPresent( a -> learnArea = a);
                 areaStatus = SeletionStatus.MODIFY;
+                learnArea = areaQeue.getLast();
                 break;
             case MODIFY:
                 if (leftTopPoint.contains(x,y)) {
                     areaStatus = SeletionStatus.MODIFY_POSITION;
+                    break;
                 } else if (widthHwightpoint.contains(x, y)) {
                     areaStatus = SeletionStatus.MODIFY_SIZE;                    
+                    break;
                 }
-                break;
             case ADD:
                 areaStatus = SeletionStatus.MODIFY_POSITION;
                 break;
@@ -955,13 +938,6 @@ public class VisLoad extends javax.swing.JFrame {
     private void cleanCopyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanCopyActionPerformed
         cleanActionPerformed(evt);
     }//GEN-LAST:event_cleanCopyActionPerformed
-
-    private void alterSelectionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alterSelectionButtonActionPerformed
-        areaStatus = SeletionStatus.CHOOSE;
-        java.awt.EventQueue.invokeLater(() -> {
-            vista.repaint();
-        });
-    }//GEN-LAST:event_alterSelectionButtonActionPerformed
 
     private void cargaOriginalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargaOriginalActionPerformed
         destBuffImage = buffImage;
@@ -1056,8 +1032,15 @@ public class VisLoad extends javax.swing.JFrame {
     }//GEN-LAST:event_iteracionesStateChanged
 
     private void vistaMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_vistaMouseMoved
+        
+        if (buffImage == null ) {
+            return;
+        }
         int x = evt.getX();
         int y = evt.getY();
+        
+        LinkedList<Rectangle> areaQeue = networkManager.getAreaQeue();
+        float escala = (float)buffImage.getWidth() / (float)vista.getBounds().width;
                                  
         switch (areaStatus) {
             case MODIFY_POSITION:
@@ -1067,16 +1050,22 @@ public class VisLoad extends javax.swing.JFrame {
                 vista.setCursor(new java.awt.Cursor(java.awt.Cursor.SE_RESIZE_CURSOR));
                 break;
             case MODIFY:
-                vista.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                 if (leftTopPoint.contains(x,y)) {
                     vista.setCursor(new java.awt.Cursor(java.awt.Cursor.MOVE_CURSOR));
                 } else if (widthHwightpoint.contains(x, y)) {
                     vista.setCursor(new java.awt.Cursor(java.awt.Cursor.SE_RESIZE_CURSOR));
+                } else if (areaQeue.stream()
+                        .anyMatch( a -> a.contains((int) (x * escala), (int) (y * escala)))) {
+                    
+                    vista.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
+                } else {
+                    vista.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                    
                 }
+                    
                 break;
             case ADD:
-            case CHOOSE:
-                vista.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
+                    vista.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
                 break;
             case DELETE:
                 vista.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -1102,13 +1091,6 @@ public class VisLoad extends javax.swing.JFrame {
                 } else if (widthHwightpoint.contains(x, y)) {
                     areaStatus = SeletionStatus.MODIFY_SIZE;                    
                 }
-                break;
-            case ADD:
-            case CHOOSE:
-                vista.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
-                break;
-            case DELETE:
-                vista.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
                 break;
         }
     }//GEN-LAST:event_vistaMouseDragged
@@ -1279,13 +1261,6 @@ public class VisLoad extends javax.swing.JFrame {
                                 localg.setColor(Color.BLACK);
                             }
                             break;
-                        case CHOOSE:
-                            if (a.equals(learnArea)) {
-                                localg.setColor(Color.RED);
-                            } else {
-                                localg.setColor(Color.BLUE);
-                            }
-                            break;
                         case MODIFY_POSITION:
                         case MODIFY_SIZE:
                             if (a.equals(learnArea)) {
@@ -1374,7 +1349,7 @@ public class VisLoad extends javax.swing.JFrame {
     }
         
     private enum SeletionStatus {
-        MODIFY,MODIFY_POSITION,MODIFY_SIZE,ADD,CHOOSE,DELETE
+        MODIFY,MODIFY_POSITION,MODIFY_SIZE,ADD,DELETE
     }
     
     /**
@@ -1417,7 +1392,6 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JCheckBox actualizacion;
     private javax.swing.ButtonGroup adaptInputButtonGroup;
     private javax.swing.JButton addSelectionButton;
-    private javax.swing.JButton alterSelectionButton;
     private javax.swing.JButton cargaImagen;
     private javax.swing.JButton cargaOriginal;
     private javax.swing.JButton cargaPreparada;
