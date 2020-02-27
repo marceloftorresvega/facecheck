@@ -377,6 +377,11 @@ public class Manager<N extends Number> {
                                 }
                                 log.info("diferencia <{}>", errorVal);                                
                             }
+                            simplePixelsInputLayer.getOutputLayer().clear();
+                            hiddenLayer.getOutputLayer().clear();
+                            hiddenLayer.getPropagationError().clear();
+                            pixelLeanringLayer.getOutputLayer().clear();
+                            pixelLeanringLayer.getPropagationError().clear();
                         });
 
             }
