@@ -24,14 +24,14 @@
 package org.tensa.facecheck.layer.facade;
 
 import org.tensa.facecheck.activation.impl.LearningSigmoidActivationImpl;
-import org.tensa.facecheck.layer.impl.LearningLayer;
+import org.tensa.facecheck.layer.impl.HiddenLayer;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
  *
  * @author Marcelo
  */
-final public class SigmoidLeanringLayer extends LearningLayer<Double> {    
+final public class SigmoidLeanringLayer extends HiddenLayer<Double> {    
 
     public SigmoidLeanringLayer(NumericMatriz<Double> weights, Double learningFactor) {
         super(weights, learningFactor, new LearningSigmoidActivationImpl<>());

@@ -45,8 +45,9 @@ public class PixelOutputLayer<N extends Number> implements LayerConsumer<N> {
 
     @Override
     public NumericMatriz<N> seInputLayer(NumericMatriz<N> inputLayer) {
+        NumericMatriz<N> last = this.inputLayer;
         this.inputLayer = inputLayer;
-        return inputLayer;
+        return last;
     }
 
     @Override

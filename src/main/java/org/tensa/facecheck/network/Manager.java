@@ -50,7 +50,6 @@ import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.activation.impl.HiddenSigmoidActivationImpl;
 import org.tensa.facecheck.activation.impl.LinealActivationImpl;
 import org.tensa.facecheck.layer.impl.HiddenLayer;
-import org.tensa.facecheck.layer.impl.LearningLayer;
 import org.tensa.facecheck.layer.impl.OutputScale;
 import org.tensa.facecheck.layer.impl.PixelInputLayer;
 import org.tensa.facecheck.layer.impl.PixelOutputLayer;
@@ -349,7 +348,7 @@ public class Manager<N extends Number> {
                             
                             PixelInputLayer<N> simplePixelsCompareLayer = new PixelInputLayer<>(null, supplier, OutputScale::scale);
                             HiddenLayer<N> hiddenLayer = new HiddenLayer<>(weightsH,  hiddenLearningRate,new HiddenSigmoidActivationImpl<>());
-                            LearningLayer<N> pixelLeanringLayer = new LearningLayer<>(weightsO, outputLearningRate, new LinealActivationImpl<>());
+                            HiddenLayer<N> pixelLeanringLayer = new HiddenLayer<>(weightsO, outputLearningRate, new LinealActivationImpl<>());
                             PixelOutputLayer<N> pixelsOutputLayer = new PixelOutputLayer<>();
 
                             simplePixelsInputLayer.getConsumers().add(hiddenLayer);

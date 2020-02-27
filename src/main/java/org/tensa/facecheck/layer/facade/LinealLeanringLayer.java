@@ -24,14 +24,14 @@
 package org.tensa.facecheck.layer.facade;
 
 import org.tensa.facecheck.activation.impl.LinealActivationImpl;
-import org.tensa.facecheck.layer.impl.LearningLayer;
+import org.tensa.facecheck.layer.impl.HiddenLayer;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
  *
  * @author Marcelo
  */
-final public class LinealLeanringLayer extends LearningLayer<Double> {
+final public class LinealLeanringLayer extends HiddenLayer<Double> {
 
     public LinealLeanringLayer(NumericMatriz<Double> weights, Double learningFactor) {
         super(weights, learningFactor, new LinealActivationImpl<>());
