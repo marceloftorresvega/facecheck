@@ -38,8 +38,8 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
@@ -47,11 +47,13 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tensa.facecheck.layer.facade.InputLayer;
-import org.tensa.facecheck.layer.facade.LinealLeanringLayer;
-import org.tensa.facecheck.layer.facade.OutputLayer;
-import org.tensa.facecheck.layer.facade.SigmoidHiddenLayer;
+import org.tensa.facecheck.activation.impl.HiddenSigmoidActivationImpl;
+import org.tensa.facecheck.activation.impl.LinealActivationImpl;
+import org.tensa.facecheck.layer.impl.HiddenLayer;
+import org.tensa.facecheck.layer.impl.LearningLayer;
 import org.tensa.facecheck.layer.impl.OutputScale;
+import org.tensa.facecheck.layer.impl.PixelInputLayer;
+import org.tensa.facecheck.layer.impl.PixelOutputLayer;
 import org.tensa.tensada.matrix.BlockMatriz;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.Indice;
@@ -65,12 +67,29 @@ import org.tensa.tensada.matrix.ParOrdenado;
  */
 public class Manager<N extends Number> {
     private final Logger log = LoggerFactory.getLogger(Manager.class);
+
+    public Manager(Function<Dominio, NumericMatriz<N>> supplier, int inStep, int outStep, int hidStep, BufferedImage outputImage, BufferedImage inputImage, BufferedImage compareImage, int iterateTo) {
+        this.supplier = supplier;
+        this.inStep = inStep;
+        this.outStep = outStep;
+        this.hidStep = hidStep;
+        this.outputImage = outputImage;
+        this.inputImage = inputImage;
+        this.compareImage = compareImage;
+        this.iterateTo = iterateTo;
+    }
+    public Manager(Function<Dominio, NumericMatriz<N>> supplier) {
+        this.supplier = supplier;
+    }
+
+    public Manager() {
+    }
     
     private NumericMatriz<N> weightsH;
     private NumericMatriz<N> weightsO;
     private NumericMatriz<N> errorGraph;
     private Function<Dominio,NumericMatriz<N>> supplier;
-    private UnaryOperator<NumericMatriz<Double>> inputScale;
+    private UnaryOperator<NumericMatriz<N>> inputScale;
     
     private int inStep;
     private int outStep;
@@ -84,7 +103,7 @@ public class Manager<N extends Number> {
     private BufferedImage compareImage ;
     
     private final LinkedList<Rectangle> areaQeue = new LinkedList<>();
-    private ParOrdenado[] proccesDomain;
+    private List<ParOrdenado> proccesDomain;
     
     private boolean trainingMode;
     private int iterateTo;
@@ -261,11 +280,11 @@ public class Manager<N extends Number> {
 
         return image;
     }
-    private NumericMatriz<N> simpleCreationStyle(NumericMatriz<N> tmpm) {
+    public NumericMatriz<N> simpleCreationStyle(NumericMatriz<N> tmpm) {
         return tmpm;
     }
     
-    private NumericMatriz<N> reflectCreationStyle(NumericMatriz<N> tmpm) {
+    public NumericMatriz<N> reflectCreationStyle(NumericMatriz<N> tmpm) {
         double punto = tmpm.values().stream()
                 .mapToDouble(v -> Math.abs(v.doubleValue()))
                 .sum();
@@ -273,7 +292,7 @@ public class Manager<N extends Number> {
         return tmpm.productoEscalar( tmpm.mapper(punto) );
     }
     
-    private NumericMatriz<N> normalCreationStyle(NumericMatriz<N> tmpm) {
+    public NumericMatriz<N> normalCreationStyle(NumericMatriz<N> tmpm) {
             double punto = tmpm.values().stream()
                     .mapToDouble(Number::doubleValue)
                     .map(v -> v * v)
@@ -298,7 +317,7 @@ public class Manager<N extends Number> {
         this.outputLearningRate = outputLearningRate;
     }
     
-    public void Process() {
+    public void process() {
         
             log.info("iniciando proceso...");
             outputImage = createCompatibleDestImage(inputImage, null);
@@ -316,10 +335,9 @@ public class Manager<N extends Number> {
                 proccesDomain = dominio.stream()
                         .filter( idx -> (( (idx.getFila()-(inStep-outStep)/2) % outStep ==0) && ((idx.getColumna()-(inStep-outStep)/2)% outStep == 0)))
                         .filter(idx -> (!useSelection) || ( areaQeue.stream().anyMatch(a -> a.contains(idx.getFila(), idx.getColumna()))) )
-                        .collect(Collectors.toList())
-                        .toArray(new ParOrdenado[1]);
+                        .collect(Collectors.toList());
                 errorGraph = supplier.apply(dominio);
-                Arrays.stream(proccesDomain)
+                proccesDomain.stream()
                         .sorted((idx1,idx2) -> (int)(2.0*Math.random()-1.0))
                         .parallel()
                         .filter(idx -> !emergencyBreak)
@@ -327,12 +345,12 @@ public class Manager<N extends Number> {
                             int i = idx.getFila();
                             int j = idx.getColumna();
 
-                            InputLayer simplePixelsInputLayer = new InputLayer(inputScale);
+                            PixelInputLayer<N> simplePixelsInputLayer = new PixelInputLayer<>(null, supplier, inputScale);
                             
-                            InputLayer simplePixelsCompareLayer = new InputLayer(OutputScale::scale);
-                            SigmoidHiddenLayer hiddenLayer = new SigmoidHiddenLayer((NumericMatriz<Double>)weightsH,  (Double)hiddenLearningRate);
-                            LinealLeanringLayer pixelLeanringLayer = new LinealLeanringLayer((NumericMatriz<Double>)weightsO, (Double)outputLearningRate);
-                            OutputLayer pixelsOutputLayer = new OutputLayer();
+                            PixelInputLayer<N> simplePixelsCompareLayer = new PixelInputLayer<>(null, supplier, OutputScale::scale);
+                            HiddenLayer<N> hiddenLayer = new HiddenLayer<>(weightsH,  hiddenLearningRate,new HiddenSigmoidActivationImpl<>());
+                            LearningLayer<N> pixelLeanringLayer = new LearningLayer<>(weightsO, outputLearningRate, new LinealActivationImpl<>());
+                            PixelOutputLayer<N> pixelsOutputLayer = new PixelOutputLayer<>();
 
                             simplePixelsInputLayer.getConsumers().add(hiddenLayer);
                             hiddenLayer.getConsumers().add(pixelLeanringLayer);
@@ -353,10 +371,10 @@ public class Manager<N extends Number> {
                                 pixelLeanringLayer.setLearningData(simplePixelsCompareLayer.getOutputLayer());
 
                                 pixelLeanringLayer.startLearning();
-                                Double errorVal = pixelLeanringLayer.getError().get(Indice.D1);
+                                N errorVal = pixelLeanringLayer.getError().get(Indice.D1);
                                     
                                 synchronized(errorGraph) {
-                                    errorGraph.put(idx, errorGraph.mapper(errorVal));
+                                    errorGraph.put(idx, errorGraph.mapper(errorVal.doubleValue()));
                                 }
                                 log.info("diferencia <{}>", errorVal);                                
                             }
@@ -365,5 +383,73 @@ public class Manager<N extends Number> {
             }
             
         
+    }
+
+    public void setSupplier(Function<Dominio,NumericMatriz<N>> supplier) {
+        this.supplier = supplier;
+    }
+
+    public void setInputScale(UnaryOperator<NumericMatriz<N>> inputScale) {
+        this.inputScale = inputScale;
+    }
+
+    public void setInputImage(BufferedImage inputImage) {
+        this.inputImage = inputImage;
+    }
+
+    public void setCompareImage(BufferedImage compareImage) {
+        this.compareImage = compareImage;
+    }
+
+    public BufferedImage getOutputImage() {
+        return outputImage;
+    }
+
+    public void setOutputImage(BufferedImage outputImage) {
+        this.outputImage = outputImage;
+    }
+
+    public boolean isTrainingMode() {
+        return trainingMode;
+    }
+
+    public void setTrainingMode(boolean trainingMode) {
+        this.trainingMode = trainingMode;
+    }
+
+    public int getIterateTo() {
+        return iterateTo;
+    }
+
+    public void setIterateTo(int iterateTo) {
+        this.iterateTo = iterateTo;
+    }
+
+    public boolean isEmergencyBreak() {
+        return emergencyBreak;
+    }
+
+    public void setEmergencyBreak(boolean emergencyBreak) {
+        this.emergencyBreak = emergencyBreak;
+    }
+
+    public boolean isUseSelection() {
+        return useSelection;
+    }
+
+    public void setUseSelection(boolean useSelection) {
+        this.useSelection = useSelection;
+    }
+
+    public LinkedList<Rectangle> getAreaQeue() {
+        return areaQeue;
+    }
+
+    public List<ParOrdenado> getProccesDomain() {
+        return proccesDomain;
+    }
+
+    public int getIterateCurrent() {
+        return iterateCurrent;
     }
 }
