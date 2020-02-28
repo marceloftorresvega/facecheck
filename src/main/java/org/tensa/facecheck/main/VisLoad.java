@@ -113,7 +113,7 @@ public class VisLoad extends javax.swing.JFrame {
         learnArea.setLocation(10, 10);
         leftTopPoint = new Rectangle();
         widthHwightpoint = new Rectangle();
-        networkManager = new Manager();
+        networkManager = new Manager<>();
         networkManager.setSupplier((Dominio dominio) -> new DoubleMatriz(dominio));
         networkManager.getAreaQeue().add(learnArea);
     }

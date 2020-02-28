@@ -345,9 +345,9 @@ public class Manager<N extends Number> {
                             int j = idx.getColumna();
 
                             PixelInputLayer<N> simplePixelsInputLayer = new PixelInputLayer<>(null, supplier, inputScale);
-                            PixelInputLayer<N> simplePixelsCompareLayer = new PixelInputLayer<>(null, supplier, OutputScale::scale);
                             HiddenLayer<N> hiddenLayer = new HiddenLayer<>(weightsH,  hiddenLearningRate,new HiddenSigmoidActivationImpl<>());
                             HiddenLayer<N> pixelLeanringLayer = new HiddenLayer<>(weightsO, outputLearningRate, new LinealActivationImpl<>());
+                            PixelInputLayer<N> simplePixelsCompareLayer = new PixelInputLayer<>(null, supplier, OutputScale::scale);
                             PixelOutputLayer<N> pixelsOutputLayer = new PixelOutputLayer<>();
 
                             relate(simplePixelsInputLayer, hiddenLayer);
@@ -381,6 +381,7 @@ public class Manager<N extends Number> {
                             hiddenLayer.getPropagationError().clear();
                             pixelLeanringLayer.getOutputLayer().clear();
                             pixelLeanringLayer.getPropagationError().clear();
+                            simplePixelsCompareLayer.getOutputLayer().clear();
                         });
 
             }
