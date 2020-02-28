@@ -107,9 +107,6 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
             for (LayerConsumer<N> lc : consumers) {
                 lc.seInputLayer(outputLayer);
                 lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
-                if (lc instanceof LayerLearning) {
-                    ((LayerLearning<N>) lc).getProducers().add(this);
-                }
             }
         }
     }
@@ -146,7 +143,6 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
             back.setLearningData(propagationError);
             back.startLearning();
         }
-        getProducers().clear();
     }
 
     @Override
