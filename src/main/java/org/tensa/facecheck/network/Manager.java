@@ -351,9 +351,9 @@ public class Manager<N extends Number> {
                             HiddenLayer<N> pixelLeanringLayer = new HiddenLayer<>(weightsO, outputLearningRate, new LinealActivationImpl<>());
                             PixelOutputLayer<N> pixelsOutputLayer = new PixelOutputLayer<>();
 
-                            simplePixelsInputLayer.getConsumers().add(hiddenLayer);
-                            hiddenLayer.getConsumers().add(pixelLeanringLayer);
-                            pixelLeanringLayer.getConsumers().add(pixelsOutputLayer);
+                            relate(simplePixelsInputLayer, hiddenLayer);
+                            relate(hiddenLayer, pixelLeanringLayer);
+                            relate(pixelLeanringLayer, pixelsOutputLayer);
 
         //                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
                             pixelsOutputLayer.setDest(outputImage.getSubimage(i + (inStep-outStep)/2, j + (inStep-outStep)/2, outStep, outStep));
@@ -386,6 +386,22 @@ public class Manager<N extends Number> {
 
             }
             
+        
+    }
+    
+    private void relate(HiddenLayer<N> origen, HiddenLayer<N> destino) {
+        origen.getConsumers().add(destino);
+        destino.getProducers().add(origen);
+        
+    }
+    
+    private void relate(PixelInputLayer<N> origen, HiddenLayer<N> destino) {
+        origen.getConsumers().add(destino);
+        
+    }
+    
+    private void relate(HiddenLayer<N> origen, PixelOutputLayer<N> destino) {
+        origen.getConsumers().add(destino);
         
     }
 
