@@ -375,13 +375,14 @@ public class Manager<N extends Number> {
                                     errorGraph.put(idx, errorGraph.mapper(errorVal.doubleValue()));
                                 }
                                 log.info("diferencia <{}>", errorVal);                                
+                                
+                                simplePixelsCompareLayer.getOutputLayer().clear();
+                                hiddenLayer.getPropagationError().clear();
+                                pixelLeanringLayer.getPropagationError().clear();
                             }
                             simplePixelsInputLayer.getOutputLayer().clear();
                             hiddenLayer.getOutputLayer().clear();
-                            hiddenLayer.getPropagationError().clear();
                             pixelLeanringLayer.getOutputLayer().clear();
-                            pixelLeanringLayer.getPropagationError().clear();
-                            simplePixelsCompareLayer.getOutputLayer().clear();
                         });
 
             }
