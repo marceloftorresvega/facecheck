@@ -23,7 +23,6 @@
  */
 package org.tensa.facecheck.layer.impl;
 
-import org.tensa.facecheck.layer.facade.SigmoidHiddenLayer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +32,7 @@ import org.tensa.facecheck.activation.Activation;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerLearning;
 import org.tensa.facecheck.layer.LayerProducer;
+import org.tensa.facecheck.layer.facade.SigmoidHiddenLayer;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**

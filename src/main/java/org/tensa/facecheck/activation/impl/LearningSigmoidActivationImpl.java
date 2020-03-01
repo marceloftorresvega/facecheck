@@ -23,9 +23,7 @@
  */
 package org.tensa.facecheck.activation.impl;
 
-import org.tensa.facecheck.activation.impl.SigmoidActivationImpl;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import org.tensa.tensada.matrix.NumericMatriz;
 import org.tensa.tensada.matrix.ParOrdenado;
 
