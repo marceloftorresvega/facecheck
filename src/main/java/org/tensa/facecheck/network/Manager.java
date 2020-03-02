@@ -242,43 +242,6 @@ public class Manager<N extends Number> {
         weightsO = createMatrix(hidStep, outSize, creationO);
         
     }
-    
-    public BufferedImage createCompatibleDestImage(BufferedImage src, ColorModel destCM) {
-        BufferedImage image;
-
-        int w = src.getWidth();
-        int h = src.getHeight();
-
-        WritableRaster wr = null;
-
-        if (destCM == null) {
-            destCM = src.getColorModel();
-            // Not much support for ICM
-            if (destCM instanceof IndexColorModel) {
-                destCM = ColorModel.getRGBdefault();
-            } else {
-                /* Create destination image as similar to the source
-                 *  as it possible...
-                 */
-                wr = src.getData().createCompatibleWritableRaster(w, h);
-            }
-        }
-
-        if (wr == null) {
-            /* This is the case when destination color model
-             * was explicitly specified (and it may be not compatible
-             * with source raster structure) or source is indexed image.
-             * We should use destination color model to create compatible
-             * destination raster here.
-             */
-            wr = destCM.createCompatibleWritableRaster(w, h);
-        }
-
-        image = new BufferedImage (destCM, wr,
-                                   destCM.isAlphaPremultiplied(), null);
-
-        return image;
-    }
     public NumericMatriz<N> simpleCreationStyle(NumericMatriz<N> tmpm) {
         return tmpm;
     }
@@ -319,7 +282,6 @@ public class Manager<N extends Number> {
     public void process() {
         
             log.info("iniciando proceso...");
-            outputImage = createCompatibleDestImage(inputImage, null);
 
             int width = inputImage.getWidth();
             int height = inputImage.getHeight();

@@ -9,8 +9,11 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.ConvolveOp;
+import java.awt.image.IndexColorModel;
 import java.awt.image.Kernel;
+import java.awt.image.WritableRaster;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
@@ -725,9 +728,10 @@ public class VisLoad extends javax.swing.JFrame {
         procesar.setEnabled(false);
         cleanCopy.setEnabled(false);
         clean.setEnabled(false);
+        bufferImageFiltered = createCompatibleDestImage(buffImage, null);
         
         networkManager.setInputImage(buffImage);
-//        networkManager.setOutputImage(bufferImageFiltered);
+        networkManager.setOutputImage(bufferImageFiltered);
         networkManager.setCompareImage(destBuffImage);
         networkManager.setTrainingMode(entrenar.isSelected());
         networkManager.setHiddenLearningRate((Double)hiddenLearningRate.getValue());
@@ -1222,6 +1226,43 @@ public class VisLoad extends javax.swing.JFrame {
             dos.writeDouble(weights.get(indice).doubleValue());
 
         }
+    }
+    
+    public BufferedImage createCompatibleDestImage(BufferedImage src, ColorModel destCM) {
+        BufferedImage image;
+
+        int w = src.getWidth();
+        int h = src.getHeight();
+
+        WritableRaster wr = null;
+
+        if (destCM == null) {
+            destCM = src.getColorModel();
+            // Not much support for ICM
+            if (destCM instanceof IndexColorModel) {
+                destCM = ColorModel.getRGBdefault();
+            } else {
+                /* Create destination image as similar to the source
+                 *  as it possible...
+                 */
+                wr = src.getData().createCompatibleWritableRaster(w, h);
+            }
+        }
+
+        if (wr == null) {
+            /* This is the case when destination color model
+             * was explicitly specified (and it may be not compatible
+             * with source raster structure) or source is indexed image.
+             * We should use destination color model to create compatible
+             * destination raster here.
+             */
+            wr = destCM.createCompatibleWritableRaster(w, h);
+        }
+
+        image = new BufferedImage (destCM, wr,
+                                   destCM.isAlphaPremultiplied(), null);
+
+        return image;
     }
     
     private javax.swing.JPanel getNuevaVista(){
