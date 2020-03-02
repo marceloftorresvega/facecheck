@@ -25,9 +25,6 @@ package org.tensa.facecheck.network;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.IndexColorModel;
-import java.awt.image.WritableRaster;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
@@ -207,11 +204,11 @@ public class Manager<N extends Number> {
         this.hidStep = hidStep;
     }
     
-    private NumericMatriz<N> createMatrix(int innerSize, int outerSize, UnaryOperator<NumericMatriz<N>> creation) {
+    public NumericMatriz<N> createMatrix(int innerSize, int outerSize, UnaryOperator<NumericMatriz<N>> creation) {
         
         log.info("iniciando 1..<{},{}>",outerSize, innerSize);
         try (BlockMatriz<N> hiddenBlockMatriz = new BlockMatriz<>(new Dominio(outerSize, 1))) {
-            hiddenBlockMatriz.getDominio().forEach( (ParOrdenado idx) -> {
+            hiddenBlockMatriz.getDominio().forEach((ParOrdenado idx) -> {
                 final NumericMatriz<N> tmpm = supplier.apply(new Dominio(1, innerSize));
                 tmpm.getDominio().forEach((i) -> {
                     tmpm.put(i, tmpm.mapper(1-2*Math.random()));
@@ -241,26 +238,6 @@ public class Manager<N extends Number> {
         weightsH = createMatrix(inSize, hidStep, creationH);
         weightsO = createMatrix(hidStep, outSize, creationO);
         
-    }
-    public NumericMatriz<N> simpleCreationStyle(NumericMatriz<N> tmpm) {
-        return tmpm;
-    }
-    
-    public NumericMatriz<N> reflectCreationStyle(NumericMatriz<N> tmpm) {
-        double punto = tmpm.values().stream()
-                .mapToDouble(v -> Math.abs(v.doubleValue()))
-                .sum();
-        punto = 1 / punto;
-        return tmpm.productoEscalar( tmpm.mapper(punto) );
-    }
-    
-    public NumericMatriz<N> normalCreationStyle(NumericMatriz<N> tmpm) {
-            double punto = tmpm.values().stream()
-                    .mapToDouble(Number::doubleValue)
-                    .map(v -> v * v)
-                    .sum();
-            punto = 1 / Math.sqrt(punto);
-        return tmpm.productoEscalar( tmpm.mapper(punto) );
     }
 
     public N getHiddenLearningRate() {
@@ -348,7 +325,6 @@ public class Manager<N extends Number> {
                         });
 
             }
-            
         
     }
     

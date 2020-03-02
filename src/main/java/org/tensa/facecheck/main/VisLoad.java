@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.filter.MaskOp;
 import org.tensa.facecheck.layer.impl.OutputScale;
 import org.tensa.facecheck.network.Manager;
+import org.tensa.facecheck.layer.impl.WeightCreationStyle;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
 import org.tensa.tensada.matrix.NumericMatriz;
@@ -811,8 +812,8 @@ public class VisLoad extends javax.swing.JFrame {
         int hidStep = (int)hiddNeurs.getValue();
         int outStep = (int)outNeurs.getValue();
         
-        UnaryOperator<NumericMatriz<Double>> hiddenCreationStyle = networkManager::simpleCreationStyle;
-        UnaryOperator<NumericMatriz<Double>> outputCreationStyle = networkManager::simpleCreationStyle;
+        UnaryOperator<NumericMatriz<Double>> hiddenCreationStyle = WeightCreationStyle::simpleCreationStyle;
+        UnaryOperator<NumericMatriz<Double>> outputCreationStyle = WeightCreationStyle::simpleCreationStyle;
         
         networkManager.setInStep(inStep);
         networkManager.setHidStep(hidStep);
@@ -822,25 +823,25 @@ public class VisLoad extends javax.swing.JFrame {
         
         switch (hdCreationStyle.getSelectedIndex()) {
             case 0:
-                hiddenCreationStyle = networkManager::simpleCreationStyle;
+                hiddenCreationStyle = WeightCreationStyle::simpleCreationStyle;
                 break;
             case 1:
-                hiddenCreationStyle = networkManager::reflectCreationStyle;
+                hiddenCreationStyle = WeightCreationStyle::reflectCreationStyle;
                 break;
             case 2:
-                hiddenCreationStyle = networkManager::normalCreationStyle;
+                hiddenCreationStyle = WeightCreationStyle::normalCreationStyle;
                 break;
         }
         
         switch (outCreationStyle.getSelectedIndex()) {
             case 0:
-                outputCreationStyle = networkManager::simpleCreationStyle;
+                outputCreationStyle = WeightCreationStyle::simpleCreationStyle;
                 break;
             case 1:
-                outputCreationStyle = networkManager::reflectCreationStyle;
+                outputCreationStyle = WeightCreationStyle::reflectCreationStyle;
                 break;
             case 2:
-                outputCreationStyle = networkManager::normalCreationStyle;
+                outputCreationStyle = WeightCreationStyle::normalCreationStyle;
                 break;
         }
         
