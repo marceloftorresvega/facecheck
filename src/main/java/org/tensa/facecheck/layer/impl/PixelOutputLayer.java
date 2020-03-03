@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2019 Marcelo.
+ * Copyright 2020 lorenzo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,52 +25,37 @@ package org.tensa.facecheck.layer.impl;
 
 import java.awt.image.BufferedImage;
 import org.tensa.facecheck.layer.LayerConsumer;
-import org.tensa.tensada.matrix.DoubleMatriz;
-import org.tensa.tensada.matrix.Indice;
+import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
  *
- * @author Marcelo
+ * @author lorenzo
+ * @param <N>
  */
-public class PixelsDirectSigmoidOutputLayer implements LayerConsumer {
-    
-    private DoubleMatriz weights;
-    private int status;
-    private DoubleMatriz inputLayer;
-    
-    private BufferedImage dest;
+public abstract class PixelOutputLayer<N extends Number> implements LayerConsumer<N> {
+    protected int status;
+    protected NumericMatriz<N> inputLayer;
+    protected BufferedImage dest;
 
-    public PixelsDirectSigmoidOutputLayer(DoubleMatriz weights) {
-        this.weights = weights;
+    public PixelOutputLayer() {
     }
 
+    
+
     @Override
-    public DoubleMatriz seInputLayer(DoubleMatriz inputLayer) {
+    public NumericMatriz<N> seInputLayer(NumericMatriz<N> inputLayer) {
         this.inputLayer = inputLayer;
         return inputLayer;
     }
 
     @Override
-    public DoubleMatriz getWeights() {
-        return weights;
+    public NumericMatriz<N> getWeights() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+
     @Override
-    public void layerComplete(int status) {
-        this.status = status;
-        if (status == LayerConsumer.SUCCESS_STATUS) {
-            
-            double[] pixels = new double[inputLayer.getDominio().getFila()];
-            for( int i =0; i< pixels.length; i++) {
-                pixels[i] = 255 * inputLayer.get(new Indice(i + 1, 1));
-            }
-            
-            int width = dest.getWidth();
-            int height = dest.getHeight();
-            dest.getRaster().setPixels(0, 0, width, height, pixels);
-            
-        }
-    }
+    public abstract void layerComplete(int status);
 
     public BufferedImage getDest() {
         return dest;
@@ -79,5 +64,5 @@ public class PixelsDirectSigmoidOutputLayer implements LayerConsumer {
     public void setDest(BufferedImage dest) {
         this.dest = dest;
     }
-
+    
 }

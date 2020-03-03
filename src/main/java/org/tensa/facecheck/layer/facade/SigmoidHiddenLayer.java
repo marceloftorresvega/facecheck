@@ -21,56 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.tensa.facecheck.layer;
+package org.tensa.facecheck.layer.facade;
 
-import java.util.List;
+import org.tensa.facecheck.layer.impl.DoubleSigmoidHiddenLayerImpl;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
- * ejecucion de metodos backpropagation
- * calcula valores de error y propaga
+ *
  * @author Marcelo
  * @param <N>
  */
-public interface LayerLearning<N extends Number> {
-    
-    /**
-     * resultados para la propagacion del error
-     * @return the org.tensa.tensada.matrix.DoubleMatriz
-     */
-    NumericMatriz<N> getPropagationError();
-    
-    /**
-     * error medio de la capa
-     * @return matriz de error (1 valor)
-     */
-    NumericMatriz<N> getError();
-    
-    /**
-     * retorna valor de ajuste para los pesos
-     * @return the java.lang.Double
-     */
-    N getLeanringFactor();
-    
-    /**
-     * se adquiere valores deseados para aprendisaje supervizado
-     * @param learningData matriz de valores para comparar
-     */
-    void setLearningData(NumericMatriz<N> learningData);
-    
-    /**
-     * procesa valores deseados versus valores producidos y propaga error
-     */
-    void startLearning();
-    
-    /**
-     * retorna el listado de capas que reciben la propagacion del error
-     * @return listado de capas
-     */
-    List<LayerLearning<N>> getProducers();
-    
-    /**
-     * funcion de aprendisaje
-     */
-    void calculateErrorOperation();
+final public class SigmoidHiddenLayer extends DoubleSigmoidHiddenLayerImpl {
+
+    public SigmoidHiddenLayer(NumericMatriz<Double> weights, Double learningFactor) {
+        super(weights, learningFactor);
+    }
+
 }

@@ -24,19 +24,21 @@
 package org.tensa.facecheck.layer;
 
 import java.util.List;
-import org.tensa.tensada.matrix.DoubleMatriz;
+import org.tensa.tensada.matrix.NumericMatriz;
+import org.tensa.tensada.matrix.ParOrdenado;
 
 /**
  * produccion de resultados
  * @author Marcelo
+ * @param <N>
  */
-public interface LayerProducer {
+public interface LayerProducer<N extends Number> {
     
     /**
      * resultados salida producidos por la capa
      * @return
      */
-    DoubleMatriz getOutputLayer();
+    NumericMatriz<N> getOutputLayer();
     
     /**
      * realiza produccion de la salida
@@ -47,6 +49,13 @@ public interface LayerProducer {
      * retorna listado de consumidores de la salida de la capa
      * @return
      */
-    List<LayerConsumer> getConsumers();
-    
+    List<LayerConsumer<N>> getConsumers();
+
+    /**
+     * funcion de activacion
+     * @param i
+     * @param value
+     * @return 
+     */
+    N activateFunction(ParOrdenado i, N value);
 }
