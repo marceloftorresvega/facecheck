@@ -31,7 +31,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.OptionalDouble;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -47,6 +46,7 @@ import org.tensa.facecheck.layer.facade.SigmoidHiddenLayer;
 import org.tensa.facecheck.layer.facade.LinealLeanringLayer;
 import org.tensa.facecheck.layer.facade.InputLayer;
 import org.tensa.facecheck.layer.facade.OutputLayer;
+import org.tensa.facecheck.layer.impl.OutputScale;
 import org.tensa.tensada.matrix.BlockMatriz;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
@@ -156,10 +156,11 @@ public class VisLoad extends javax.swing.JFrame {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         cargaImagen = new javax.swing.JButton();
-        preventZeroJCheckBox = new javax.swing.JCheckBox();
         scaleJRadioButton = new javax.swing.JRadioButton();
         normalizeJRadioButton = new javax.swing.JRadioButton();
         reflectJRadioButton = new javax.swing.JRadioButton();
+        preventJRadioButton = new javax.swing.JRadioButton();
+        libreJRadioButton = new javax.swing.JRadioButton();
         jPanel2 = new javax.swing.JPanel();
         suavizaResultado = new javax.swing.JButton();
         enmascaraResultado = new javax.swing.JButton();
@@ -178,8 +179,8 @@ public class VisLoad extends javax.swing.JFrame {
         hiddNeurs = new javax.swing.JSpinner();
         jLabel3 = new javax.swing.JLabel();
         outNeurs = new javax.swing.JSpinner();
-        hdCreationStyle = new javax.swing.JComboBox<String>();
-        outCreationStyle = new javax.swing.JComboBox<String>();
+        hdCreationStyle = new javax.swing.JComboBox<>();
+        outCreationStyle = new javax.swing.JComboBox<>();
         jPanel4 = new javax.swing.JPanel();
         procesar = new javax.swing.JButton();
         entrenar = new javax.swing.JCheckBox();
@@ -281,8 +282,6 @@ public class VisLoad extends javax.swing.JFrame {
             }
         });
 
-        preventZeroJCheckBox.setText("previene ceros");
-
         adaptInputButtonGroup.add(scaleJRadioButton);
         scaleJRadioButton.setText("Escalar");
 
@@ -293,6 +292,12 @@ public class VisLoad extends javax.swing.JFrame {
         adaptInputButtonGroup.add(reflectJRadioButton);
         reflectJRadioButton.setText("Reflectancia");
 
+        adaptInputButtonGroup.add(preventJRadioButton);
+        preventJRadioButton.setText("Previene ceros");
+
+        adaptInputButtonGroup.add(libreJRadioButton);
+        libreJRadioButton.setText("Libre");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -301,13 +306,15 @@ public class VisLoad extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(cargaImagen)
                 .addGap(18, 18, 18)
-                .addComponent(preventZeroJCheckBox)
-                .addGap(18, 18, 18)
                 .addComponent(scaleJRadioButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(normalizeJRadioButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(reflectJRadioButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(preventJRadioButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(libreJRadioButton)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -315,10 +322,11 @@ public class VisLoad extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cargaImagen)
-                    .addComponent(preventZeroJCheckBox)
                     .addComponent(scaleJRadioButton)
                     .addComponent(normalizeJRadioButton)
-                    .addComponent(reflectJRadioButton))
+                    .addComponent(reflectJRadioButton)
+                    .addComponent(preventJRadioButton)
+                    .addComponent(libreJRadioButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -444,10 +452,10 @@ public class VisLoad extends javax.swing.JFrame {
         outNeurs.setModel(new javax.swing.SpinnerNumberModel(101, 3, 1000, 1));
         outNeurs.setToolTipText("Neuronas de salida (pixels)");
 
-        hdCreationStyle.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "simple", "reflectante", "normalizada" }));
+        hdCreationStyle.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "simple", "reflectante", "normalizada" }));
         hdCreationStyle.setToolTipText("metodo de iniciación");
 
-        outCreationStyle.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "simple", "reflactante", "normalizada" }));
+        outCreationStyle.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "simple", "reflactante", "normalizada" }));
         outCreationStyle.setToolTipText("metodo de iniciación");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -769,12 +777,29 @@ public class VisLoad extends javax.swing.JFrame {
                         .sorted((idx1,idx2) -> (int)(2.0*Math.random()-1.0))
                         .parallel()
                         .filter(idx -> !freno.isSelected())
-                        .forEach(idx -> {
+                        .forEach((ParOrdenado idx) -> {
                             int i = idx.getFila();
                             int j = idx.getColumna();
 
-                            InputLayer simplePixelsInputLayer = new InputLayer();
-                            InputLayer simplePixelsCompareLayer = new InputLayer();
+                            InputLayer simplePixelsInputLayer;
+                            
+                            if (scaleJRadioButton.isSelected()) {
+                                simplePixelsInputLayer = new InputLayer(OutputScale::scale);
+                                
+                            } else if (normalizeJRadioButton.isSelected()) {
+                                simplePixelsInputLayer = new InputLayer(OutputScale::normalized);
+                                
+                            } else if (reflectJRadioButton.isSelected()) {
+                                simplePixelsInputLayer = new InputLayer(OutputScale::reflectance);
+                                
+                            } else if (preventJRadioButton.isSelected()) {
+                                simplePixelsInputLayer = new InputLayer(OutputScale::prevent01);
+                                
+                            } else {
+                                simplePixelsInputLayer = new InputLayer();
+                            }
+                            
+                            InputLayer simplePixelsCompareLayer = new InputLayer(OutputScale::scale);
                             SigmoidHiddenLayer hiddenLayer = new SigmoidHiddenLayer((NumericMatriz<Double>)weightsH,  (Double)hiddenLearningRate.getValue());
                             LinealLeanringLayer pixelLeanringLayer = new LinealLeanringLayer((NumericMatriz<Double>)weightsO, (Double)outputLearningRate.getValue());
                             OutputLayer pixelsOutputLayer = new OutputLayer();
@@ -786,22 +811,13 @@ public class VisLoad extends javax.swing.JFrame {
         //                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
                             pixelsOutputLayer.setDest(bufferImageFiltered.getSubimage(i + (inStep-outStep)/2, j + (inStep-outStep)/2, outStep, outStep));
                             BufferedImage src = buffImage.getSubimage(i, j, inStep, inStep);
-                            if (adaptInputButtonGroup.getSelection().equals(scaleJRadioButton.getModel())) {
-                                simplePixelsInputLayer.setEscalar(true);
-                            }
-                            if (adaptInputButtonGroup.getSelection().equals(normalizeJRadioButton.getModel())) {
-                                simplePixelsInputLayer.setNormalizar(true);
-                            }
-                            if (adaptInputButtonGroup.getSelection().equals(reflectJRadioButton.getModel())) {
-                                simplePixelsInputLayer.setReflectancia(true);
-                            }
                             simplePixelsInputLayer.setSrc(src);
                             simplePixelsInputLayer.startProduction();
 
                             if(entrenar.isSelected()){
         //                        log.info("cargando bloque comparacion <{}><{}>", i, j);
                                 BufferedImage comp = destBuffImage.getSubimage(i + (inStep-outStep)/2, j + (inStep-outStep)/2, outStep, outStep);
-                                simplePixelsCompareLayer.setEscalar(true);
+                                
                                 simplePixelsCompareLayer.setSrc(comp);
                                 simplePixelsCompareLayer.startProduction();
                                 pixelLeanringLayer.setLearningData(simplePixelsCompareLayer.getOutputLayer());
@@ -1606,11 +1622,12 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JRadioButton libreJRadioButton;
     private javax.swing.JRadioButton normalizeJRadioButton;
     private javax.swing.JComboBox<String> outCreationStyle;
     private javax.swing.JSpinner outNeurs;
     private javax.swing.JSpinner outputLearningRate;
-    private javax.swing.JCheckBox preventZeroJCheckBox;
+    private javax.swing.JRadioButton preventJRadioButton;
     private javax.swing.JButton procesar;
     private javax.swing.JRadioButton reflectJRadioButton;
     private javax.swing.JPanel respuesta;

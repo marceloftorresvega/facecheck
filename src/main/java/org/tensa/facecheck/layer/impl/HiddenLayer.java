@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tensa.facecheck.activation.Activation;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerLearning;
 import org.tensa.facecheck.layer.LayerProducer;
@@ -51,13 +52,15 @@ public abstract class HiddenLayer<N extends Number> implements LayerConsumer<N>,
     protected final N learningFactor;
     protected final List<LayerConsumer<N>> consumers;
     protected final List<LayerLearning<N>> producers;
+    protected final Activation<N> activation;
 
 
-    public HiddenLayer(NumericMatriz<N> weights, N learningFactor) {
+    public HiddenLayer(NumericMatriz<N> weights, N learningFactor, Activation<N> activation) {
         this.weights = weights;
         this.learningFactor = learningFactor;
         this.consumers = new ArrayList<>();
         this.producers = new ArrayList<>();
+        this.activation = activation;
     }
 
     @Override
@@ -87,7 +90,7 @@ public abstract class HiddenLayer<N extends Number> implements LayerConsumer<N>,
             //            outputLayer = (NumericMatriz<N>)producto
             //                    .productoEscalar( 1 / Math.sqrt(distanciaE2.get(Indice.D1)));
             outputLayer = weights.producto(inputLayer);
-            outputLayer.replaceAll(this::activateFunction);
+            activation.getActivation().apply(outputLayer);
             //outputLayer.replaceAll((ParOrdenado i, N v) -> 1 / (1 + Math.exp(-v.doubleValue())));
             
             for (LayerConsumer<N> lc : consumers) {
@@ -118,7 +121,7 @@ public abstract class HiddenLayer<N extends Number> implements LayerConsumer<N>,
 //                error = (NumericMatriz<N>) m1.substraccion(outputLayer);
 //                error.replaceAll((ParOrdenado i, N v) -> outputLayer.productoDirecto(outputLayer.productoDirecto(v, outputLayer.get(i)), learningData.get(i)));
 //            }
-            this.calculateErrorOperation();
+            error = activation.getError().apply(learningData, outputLayer);
             
             //        propagationError = (NumericMatriz<N>) weights.productoPunto(error);
             try (final NumericMatriz<N> punto = error.productoPunto(weights)) {

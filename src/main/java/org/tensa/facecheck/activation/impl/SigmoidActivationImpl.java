@@ -21,42 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.tensa.facecheck.layer.impl;
+package org.tensa.facecheck.activation.impl;
 
-import java.math.BigDecimal;
-import org.tensa.tensada.matrix.BigDecimalMatriz;
-import org.tensa.tensada.matrix.Dominio;
+import java.util.function.Function;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tensa.facecheck.activation.Activation;
 import org.tensa.tensada.matrix.NumericMatriz;
-import org.tensa.tensada.matrix.ParOrdenado;
 
-/**
- *
- * @author Marcelo
- */
-public class BigDecimalLinealLearningLayerImpl extends LearningLayer<BigDecimal> {
 
-    public BigDecimalLinealLearningLayerImpl(NumericMatriz<BigDecimal> weights, BigDecimal learningFactor) {
-        super(weights, learningFactor);
+public abstract class SigmoidActivationImpl<N extends Number> implements Activation<N> {
+    protected final Logger log = LoggerFactory.getLogger(SigmoidActivationImpl.class);
+
+    public SigmoidActivationImpl() {
     }
-
+     
     @Override
-    public BigDecimal mediaError(double v) {
-        return BigDecimal.valueOf(v);
+    public Function<NumericMatriz<N>, NumericMatriz<N>> getActivation() {
+        return (m)-> {
+            m.replaceAll((indice,v) -> {
+                return m.inversoMultiplicativo(m.sumaDirecta(
+                        m.getUnoValue(),
+                        m.mapper(Math.exp(-v.doubleValue()))
+                        ));
+            });
+            return m;
+        };
     }
 
-    @Override
-    public void calculateErrorOperation() {
-        error = learningData.substraccion(outputLayer);
-    }
-
-    @Override
-    public BigDecimal activateFunction(ParOrdenado i, BigDecimal value) {
-        return value;
-    }
-
-    @Override
-    protected NumericMatriz<BigDecimal> supplier() {
-        return new BigDecimalMatriz(new Dominio(1, 1));
-    }
+    
     
 }

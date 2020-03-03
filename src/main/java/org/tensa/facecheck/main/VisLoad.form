@@ -242,14 +242,16 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="cargaImagen" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="preventZeroJCheckBox" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                           <Component id="scaleJRadioButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="normalizeJRadioButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="reflectJRadioButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="preventJRadioButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="libreJRadioButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -259,10 +261,11 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="cargaImagen" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="preventZeroJCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="scaleJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="normalizeJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="reflectJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="preventJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="libreJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="32767" attributes="0"/>
                       </Group>
@@ -277,11 +280,6 @@
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cargaImagenActionPerformed"/>
                   </Events>
-                </Component>
-                <Component class="javax.swing.JCheckBox" name="preventZeroJCheckBox">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="previene ceros"/>
-                  </Properties>
                 </Component>
                 <Component class="javax.swing.JRadioButton" name="scaleJRadioButton">
                   <Properties>
@@ -306,6 +304,22 @@
                       <ComponentRef name="adaptInputButtonGroup"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Reflectancia"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JRadioButton" name="preventJRadioButton">
+                  <Properties>
+                    <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                      <ComponentRef name="adaptInputButtonGroup"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Previene ceros"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JRadioButton" name="libreJRadioButton">
+                  <Properties>
+                    <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                      <ComponentRef name="adaptInputButtonGroup"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Libre"/>
                   </Properties>
                 </Component>
               </SubComponents>

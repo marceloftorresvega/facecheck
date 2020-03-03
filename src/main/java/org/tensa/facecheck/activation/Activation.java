@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2020 lorenzo.
+ * Copyright 2020 Marcelo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,29 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.tensa.facecheck.layer.impl;
+package org.tensa.facecheck.activation;
 
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import org.tensa.tensada.matrix.NumericMatriz;
-import org.tensa.tensada.matrix.ParOrdenado;
 
 /**
  *
  * @author Marcelo
  */
-public class DoubleLinealHiddenLayerImpl extends HiddenLayer<Double> {
-
-    public DoubleLinealHiddenLayerImpl(NumericMatriz<Double> weights, Double learningFactor) {
-        super(weights, learningFactor);
-    }
-
-    @Override
-    public void calculateErrorOperation() {
-        error = learningData.substraccion(outputLayer);
-    }
-
-    @Override
-    public Double activateFunction(ParOrdenado i, Double value) {
-        return value;
-    }
-
+public interface Activation <N extends Number> {
+    Function<NumericMatriz<N>,NumericMatriz<N>> getActivation();
+    BiFunction<NumericMatriz<N>,NumericMatriz<N>,NumericMatriz<N>> getError();
 }

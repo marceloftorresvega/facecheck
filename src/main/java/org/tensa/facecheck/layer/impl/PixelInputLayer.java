@@ -26,9 +26,12 @@ package org.tensa.facecheck.layer.impl;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerProducer;
-import org.tensa.tensada.matrix.Indice;
+import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
@@ -39,43 +42,34 @@ import org.tensa.tensada.matrix.NumericMatriz;
 public abstract class PixelInputLayer<N extends Number> implements LayerProducer<N> {
     protected BufferedImage src;
     protected NumericMatriz<N> outputLayer;
-    protected boolean normalizar;
-    protected boolean reflectancia;
-    protected boolean preventCeroUno;
-    protected boolean escalar;
     protected final List<LayerConsumer<N>> consumers;
+    protected final Function<Dominio,NumericMatriz<N>> supplier;
+    protected final UnaryOperator<NumericMatriz<N>> responceEscale;
 
-    public PixelInputLayer(BufferedImage src, boolean normalizar) {
+    public PixelInputLayer(BufferedImage src, Function<Dominio, NumericMatriz<N>> supplier, UnaryOperator<NumericMatriz<N>> responceEscale) {
         this.src = src;
-        this.normalizar = normalizar;
         this.consumers = new ArrayList<>();
+        this.supplier = supplier;
+        this.responceEscale = responceEscale;
     }
-
-    
 
     protected NumericMatriz<N> scanInput() {
         if (src == null) {
             throw new NullPointerException("src image is null");
         }
-        NumericMatriz<N> dm = rawScan();
-        if (preventCeroUno) {
-            N escala = supplier(254.0 / 255.0);
-            NumericMatriz<N> margen = dm.matrizUno().productoEscalar(supplier(0.5));
-            dm = dm.productoEscalar(escala).adicion(margen);
+        
+        int width = src.getWidth();
+        int height = src.getHeight();
+        
+        double[] pixels = src.getRaster().getPixels(0, 0, width, height, (double[])null);
+        NumericMatriz<N> dm = supplier.apply(new Dominio(pixels.length, 1));
+                
+        for(int k=0;k<pixels.length;k++){
+            dm.indexa(k + 1, 1, dm.mapper(pixels[k]));
         }
-        if (escalar) {
-            N escala = supplier(1 / 255.0);
-            dm = dm.productoEscalar(escala);
-        }
-        if (normalizar) {
-            NumericMatriz<N> d = dm.distanciaE2();
-            N normalizador = dm.inversoMultiplicativo(supplier(Math.sqrt(d.get(Indice.D1).doubleValue())));
-            dm = dm.productoEscalar(normalizador);
-        }
-        if (reflectancia) {
-            NumericMatriz<N> r = dm.productoPunto(dm.matrizUno());
-            N reflector = dm.inversoMultiplicativo(r.get(Indice.D1));
-            dm = dm.productoEscalar(reflector);
+                
+        if (Objects.nonNull(responceEscale)) {
+            dm = responceEscale.apply(dm);
         }
         return dm;
     }
@@ -102,43 +96,5 @@ public abstract class PixelInputLayer<N extends Number> implements LayerProducer
     public void setSrc(BufferedImage src) {
         this.src = src;
     }
-
-    public boolean isNormalizar() {
-        return normalizar;
-    }
-
-    public void setNormalizar(boolean normalizar) {
-        this.normalizar = normalizar;
-        this.reflectancia = !normalizar;
-    }
-
-    public boolean isReflectancia() {
-        return reflectancia;
-    }
-
-    public void setReflectancia(boolean reflectancia) {
-        this.reflectancia = reflectancia;
-        this.normalizar = !reflectancia;
-    }
-
-    public boolean isPreventCeroUno() {
-        return preventCeroUno;
-    }
-
-    public void setPreventCeroUno(boolean preventCeroUno) {
-        this.preventCeroUno = preventCeroUno;
-    }
-
-    public boolean isEscalar() {
-        return escalar;
-    }
-
-    public void setEscalar(boolean escalar) {
-        this.escalar = escalar;
-    }
-
-    protected abstract N supplier(double n);
-
-    protected abstract NumericMatriz<N> rawScan();
     
 }

@@ -21,42 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.tensa.facecheck.layer.impl;
+package org.tensa.facecheck.activation.impl;
 
-import org.tensa.tensada.matrix.Dominio;
-import org.tensa.tensada.matrix.FloatMatriz;
+import java.io.IOException;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import org.tensa.tensada.matrix.NumericMatriz;
 import org.tensa.tensada.matrix.ParOrdenado;
 
-/**
- *
- * @author Marcelo
- */
-public class FloatSigmoidLearningLayerImpl extends LearningLayer<Float> {
+public class HiddenSigmoidActivationImpl<N extends Number> extends SigmoidActivationImpl<N> {
 
-    public FloatSigmoidLearningLayerImpl(NumericMatriz<Float> weights, Float learningFactor) {
-        super(weights, learningFactor);
-    }
-
-    @Override
-    public Float mediaError(double v) {
-        return (float)v;
-    }
-
-    @Override
-    public void calculateErrorOperation() {
-        error = learningData.substraccion(outputLayer);
-        error.replaceAll((i,v) -> v * outputLayer.get(i) * learningData.get(i));
-    }
-
-    @Override
-    public Float activateFunction(ParOrdenado i, Float value) {        
-        return (float)(1/(1 + Math.exp( - value.doubleValue() )));
-    }
-
-    @Override
-    protected NumericMatriz<Float> supplier() {
-        return new FloatMatriz(new Dominio(1, 1));
+    public HiddenSigmoidActivationImpl() {
     }
     
+
+    @Override
+    public BiFunction<NumericMatriz<N>, NumericMatriz<N>, NumericMatriz<N>> getError() {
+        return (learning, output) -> {
+
+            NumericMatriz<N> error;
+            try (final NumericMatriz<N> m1 = output.matrizUno()) {
+                error = m1.substraccion(output);
+            } catch (IOException ex) {
+                log.error("learningFunctionOperation", ex);
+                throw new RuntimeException(ex);
+            }
+            error.replaceAll((ParOrdenado i, N v)
+                    -> error.productoDirecto(v, error.productoDirecto(output.get(i), learning.get(i))));
+            return error;
+
+        };
+    }
+
 }

@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2020 lorenzo.
+ * Copyright 2020 Marcelo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,42 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.tensa.facecheck.layer.impl;
+package org.tensa.facecheck.activation.impl;
 
-import org.tensa.tensada.matrix.Dominio;
-import org.tensa.tensada.matrix.DoubleMatriz;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import org.tensa.tensada.matrix.NumericMatriz;
-import org.tensa.tensada.matrix.ParOrdenado;
 
 /**
  *
- * @author lorenzo
+ * @author Marcelo
  */
-public class DoubleSigmoidLearningLayerImpl extends LearningLayer<Double> {
+public class LinealActivationImpl<N extends Number> implements org.tensa.facecheck.activation.Activation<N> {
 
-    public DoubleSigmoidLearningLayerImpl(NumericMatriz<Double> weights, Double learningFactor) {
-        super(weights, learningFactor);
+    public LinealActivationImpl() {
+    }
+    
+
+    @Override
+    public Function<NumericMatriz<N>, NumericMatriz<N>> getActivation() {
+        return Function.identity();
     }
 
     @Override
-    public Double mediaError(double v) {
-        return v;
+    public BiFunction<NumericMatriz<N>, NumericMatriz<N>, NumericMatriz<N>> getError() {
+        return (learning,output) -> learning.substraccion(output);
     }
 
-    @Override
-    public void calculateErrorOperation() {
-            error = learningData.substraccion(outputLayer);
-            error.replaceAll((i,v) -> v * outputLayer.get(i) * learningData.get(i));
-    }
-
-    @Override
-    public Double activateFunction(ParOrdenado i, Double value) {
-        return 1/(1 + Math.exp( - value ));
-    }
-
-    @Override
-    protected NumericMatriz<Double> supplier() {
-        return new DoubleMatriz(new Dominio(1, 1));
-    }
 
 }

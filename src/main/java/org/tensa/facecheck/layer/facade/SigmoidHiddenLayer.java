@@ -23,7 +23,8 @@
  */
 package org.tensa.facecheck.layer.facade;
 
-import org.tensa.facecheck.layer.impl.DoubleSigmoidHiddenLayerImpl;
+import org.tensa.facecheck.activation.impl.HiddenSigmoidActivationImpl;
+import org.tensa.facecheck.layer.impl.HiddenLayer;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
@@ -31,10 +32,10 @@ import org.tensa.tensada.matrix.NumericMatriz;
  * @author Marcelo
  * @param <N>
  */
-final public class SigmoidHiddenLayer extends DoubleSigmoidHiddenLayerImpl {
+final public class SigmoidHiddenLayer extends HiddenLayer<Double> {
 
     public SigmoidHiddenLayer(NumericMatriz<Double> weights, Double learningFactor) {
-        super(weights, learningFactor);
+        super(weights, learningFactor, new HiddenSigmoidActivationImpl<>());
     }
 
 }

@@ -21,38 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.tensa.facecheck.layer.impl;
+package org.tensa.facecheck.activation.impl;
 
-import java.io.IOException;
-import java.math.BigDecimal;
+import org.tensa.facecheck.activation.impl.SigmoidActivationImpl;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import org.tensa.tensada.matrix.NumericMatriz;
 import org.tensa.tensada.matrix.ParOrdenado;
 
-/**
- *
- * @author Marcelo
- */
-public class BigDecimalSigmoidHiddenLayerImpl extends HiddenLayer<BigDecimal> {
 
-    public BigDecimalSigmoidHiddenLayerImpl(NumericMatriz<BigDecimal> weights, BigDecimal learningFactor) {
-        super(weights, learningFactor);
+public class LearningSigmoidActivationImpl<N extends Number> extends SigmoidActivationImpl<N> {
+
+    public LearningSigmoidActivationImpl() {
     }
+    
 
     @Override
-    public void calculateErrorOperation() {
-            
-            try (final NumericMatriz<BigDecimal> m1 = outputLayer.matrizUno()) {
-                error = (NumericMatriz<BigDecimal>) m1.substraccion(outputLayer);
-                error.replaceAll((ParOrdenado i, BigDecimal v) -> 
-                        v.multiply(outputLayer.get(i)).multiply(learningData.get(i)));
-            } catch (IOException ex) {
-                log.error("learningFunctionOperation", ex);
-            }
-    }
+    public BiFunction<NumericMatriz<N>, NumericMatriz<N>, NumericMatriz<N>> getError() {
+        return (learning, output) -> {
 
-    @Override
-    public BigDecimal activateFunction(ParOrdenado i, BigDecimal value) {
-        return BigDecimal.ONE.divide((BigDecimal.ONE.add(BigDecimal.valueOf(Math.exp(-value.doubleValue())))));
+            NumericMatriz<N> error = learning.substraccion(output);
+            error.replaceAll((ParOrdenado i, N v)
+                    -> error.productoDirecto(v, error.productoDirecto(output.get(i), learning.get(i))));
+            return error;
+
+        };
     }
     
 }
