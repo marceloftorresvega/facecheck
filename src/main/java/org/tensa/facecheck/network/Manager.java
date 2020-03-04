@@ -283,10 +283,10 @@ public class Manager<N extends Number> {
                             int i = idx.getFila();
                             int j = idx.getColumna();
 
-                            PixelInputLayer<N> simplePixelsInputLayer = new PixelInputLayer<>(null, supplier, inputScale);
-                            HiddenLayer<N> hiddenLayer = new HiddenLayer<>(weightsH,  hiddenLearningRate,new HiddenSigmoidActivationImpl<>());
+                            PixelInputLayer<N> simplePixelsInputLayer = new PixelInputLayer<>(supplier, inputScale);
+                            HiddenLayer<N> hiddenLayer = new HiddenLayer<>(weightsH, hiddenLearningRate, new HiddenSigmoidActivationImpl<>());
                             HiddenLayer<N> pixelLeanringLayer = new HiddenLayer<>(weightsO, outputLearningRate, new LinealActivationImpl<>());
-                            PixelInputLayer<N> simplePixelsCompareLayer = new PixelInputLayer<>(null, supplier, OutputScale::scale);
+                            PixelInputLayer<N> simplePixelsCompareLayer = new PixelInputLayer<>(supplier, OutputScale::scale);
                             PixelOutputLayer<N> pixelsOutputLayer = new PixelOutputLayer<>();
 
                             relate(simplePixelsInputLayer, hiddenLayer);
@@ -294,20 +294,24 @@ public class Manager<N extends Number> {
                             relate(pixelLeanringLayer, pixelsOutputLayer);
 
         //                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
-                            pixelsOutputLayer.setDest(outputImage.getSubimage(i + (inStep-outStep)/2, j + (inStep-outStep)/2, outStep, outStep));
+                            BufferedImage dest = outputImage.getSubimage(i + (inStep-outStep)/2, j + (inStep-outStep)/2, outStep, outStep);
+                            pixelsOutputLayer.setDest(dest);
+                            
                             BufferedImage src = inputImage.getSubimage(i, j, inStep, inStep);
                             simplePixelsInputLayer.setSrc(src);
+                            
                             simplePixelsInputLayer.startProduction();
 
                             if(trainingMode){
         //                        log.info("cargando bloque comparacion <{}><{}>", i, j);
                                 BufferedImage comp = compareImage.getSubimage(i + (inStep-outStep)/2, j + (inStep-outStep)/2, outStep, outStep);
-                                
                                 simplePixelsCompareLayer.setSrc(comp);
+                                
                                 simplePixelsCompareLayer.startProduction();
                                 pixelLeanringLayer.setLearningData(simplePixelsCompareLayer.getOutputLayer());
 
                                 pixelLeanringLayer.startLearning();
+                                
                                 N errorVal = pixelLeanringLayer.getError().get(Indice.D1);
                                     
                                 synchronized(errorGraph) {

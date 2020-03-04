@@ -53,6 +53,13 @@ public class PixelInputLayer<N extends Number> implements LayerProducer<N> {
         this.responceEscale = responceEscale;
     }
 
+    public PixelInputLayer(Function<Dominio, NumericMatriz<N>> supplier, UnaryOperator<NumericMatriz<N>> responceEscale) {
+        this.src = null;
+        this.consumers = new ArrayList<>();
+        this.supplier = supplier;
+        this.responceEscale = responceEscale;
+    }
+
     protected NumericMatriz<N> scanInput() {
         if (src == null) {
             throw new NullPointerException("src image is null");
