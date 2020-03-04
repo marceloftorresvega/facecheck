@@ -34,7 +34,6 @@ import org.tensa.facecheck.activation.Activation;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerLearning;
 import org.tensa.facecheck.layer.LayerProducer;
-import org.tensa.facecheck.layer.facade.SigmoidHiddenLayer;
 import org.tensa.tensada.matrix.NumericMatriz;
 import org.tensa.tensada.matrix.ParOrdenado;
 
@@ -44,7 +43,7 @@ import org.tensa.tensada.matrix.ParOrdenado;
  * @param <N>
  */
 public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLearning<N>, LayerProducer<N> {
-    protected final Logger log = LoggerFactory.getLogger(SigmoidHiddenLayer.class);
+    protected final Logger log = LoggerFactory.getLogger(HiddenLayer.class);
     protected final NumericMatriz<N> weights;
     protected int status;
     protected NumericMatriz<N> outputLayer;
