@@ -961,7 +961,7 @@ public class VisLoad extends javax.swing.JFrame {
                 salvaPesos(jFileChooserPesosSave.getSelectedFile().getPath());
             } else if (jFileChooserPesosSave.getSelectedFile().getPath().endsWith("da2") ) {
                 
-                networkManager.salvaPesosX2(jFileChooserPesosSave.getSelectedFile().getPath());
+                networkManager.salvaPesos(jFileChooserPesosSave.getSelectedFile().getPath());
             }
             
         }
@@ -976,7 +976,7 @@ public class VisLoad extends javax.swing.JFrame {
                 cargaPesos(jFileChooserPesosLoad.getSelectedFile().getPath());
             } else if (jFileChooserPesosLoad.getSelectedFile().getPath().endsWith("da2")) {
                 
-                networkManager.cargaPesosX2(jFileChooserPesosLoad.getSelectedFile().getPath());
+                networkManager.cargaPesos(jFileChooserPesosLoad.getSelectedFile().getPath());
             }
         }
     }//GEN-LAST:event_cargarActionPerformed

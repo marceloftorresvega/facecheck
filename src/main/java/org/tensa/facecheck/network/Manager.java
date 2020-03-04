@@ -134,8 +134,8 @@ public class Manager<N extends Number> {
     }
     
     
-    public void cargaPesosX2(String archivo) {
-        log.info("cargaPesosX2 <{}>",archivo);
+    public void cargaPesos(String archivo) {
+        log.info("cargaPesos <{}>",archivo);
         try (
                 InputStream fis = Files.newInputStream(Paths.get(archivo));
                 BufferedInputStream bis = new BufferedInputStream(fis);
@@ -162,8 +162,8 @@ public class Manager<N extends Number> {
         }
     }
     
-    public void salvaPesosX2(String archivo) {
-        log.info("salvaPesosX2 <{}>", archivo);
+    public void salvaPesos(String archivo) {
+        log.info("salvaPesos <{}>", archivo);
 
          try( 
                  OutputStream fos = Files.newOutputStream(Paths.get(archivo));
