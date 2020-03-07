@@ -45,6 +45,7 @@ import org.tensa.facecheck.network.Manager;
 import org.tensa.facecheck.layer.impl.WeightCreationStyle;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
+import org.tensa.tensada.matrix.FloatMatriz;
 import org.tensa.tensada.matrix.NumericMatriz;
 import org.tensa.tensada.matrix.ParOrdenado;
 
@@ -58,7 +59,7 @@ public class VisLoad extends javax.swing.JFrame {
 
     private final String baseUrl = "\\img\\originales\\";
         
-    private final Double[] learningFactor = {.000001, 0.000003, .000004, .000005, .000008,.00001, 0.00003, .00004, .00005, .00008,.0001, 0.0003, .0004, .0005, .0008,.001, 0.003, .004, .005, .008, .01, .03, .04, .05, .08, .1, .3, .4, .5, .8};
+    private final Float[] learningFactor = {.000001f, 0.000003f, .000004f, .000005f, .000008f,.00001f, 0.00003f, .00004f, .00005f, .00008f,.0001f, 0.0003f, .0004f, .0005f, .0008f,.001f, 0.003f, .004f, .005f, .008f, .01f, .03f, .04f, .05f, .08f, .1f, .3f, .4f, .5f, .8f};
 
     private final String sufxType = ".jpg";
     private BufferedImage buffImage ;
@@ -74,7 +75,7 @@ public class VisLoad extends javax.swing.JFrame {
     private final Rectangle leftTopPoint;
     private final Rectangle widthHwightpoint;
     
-    private Manager<Double> networkManager;
+    private Manager<Float> networkManager;
 
     public SpinnerModel getSpinnerModel(){
 //        if(Objects.isNull(spinnerModel))
@@ -118,7 +119,7 @@ public class VisLoad extends javax.swing.JFrame {
         leftTopPoint = new Rectangle();
         widthHwightpoint = new Rectangle();
         networkManager = new Manager<>();
-        networkManager.setSupplier((Dominio dominio) -> new DoubleMatriz(dominio));
+        networkManager.setSupplier((Dominio dominio) -> new FloatMatriz(dominio));
         networkManager.getAreaQeue().add(learnArea);
     }
 
@@ -735,8 +736,8 @@ public class VisLoad extends javax.swing.JFrame {
         networkManager.setOutputImage(bufferImageFiltered);
         networkManager.setCompareImage(destBuffImage);
         networkManager.setTrainingMode(entrenar.isSelected());
-        networkManager.setHiddenLearningRate((Double)hiddenLearningRate.getValue());
-        networkManager.setOutputLearningRate((Double)outputLearningRate.getValue());
+        networkManager.setHiddenLearningRate((Float)hiddenLearningRate.getValue());
+        networkManager.setOutputLearningRate((Float)outputLearningRate.getValue());
         networkManager.setIterateTo((int)iteraciones.getValue());
         networkManager.setUseSelection(seleccion.isSelected());
         
@@ -777,8 +778,8 @@ public class VisLoad extends javax.swing.JFrame {
                     
                     networkManager.setTrainingMode(entrenar.isSelected());
                     networkManager.setEmergencyBreak(freno.isSelected());
-                    networkManager.setHiddenLearningRate((Double)hiddenLearningRate.getValue());
-                    networkManager.setOutputLearningRate((Double)outputLearningRate.getValue());
+                    networkManager.setHiddenLearningRate((Float)hiddenLearningRate.getValue());
+                    networkManager.setOutputLearningRate((Float)outputLearningRate.getValue());
                     networkManager.setIterateTo((int)iteraciones.getValue());
                     networkManager.setUseSelection(seleccion.isSelected());
                     
@@ -812,8 +813,8 @@ public class VisLoad extends javax.swing.JFrame {
         int hidStep = (int)hiddNeurs.getValue();
         int outStep = (int)outNeurs.getValue();
         
-        UnaryOperator<NumericMatriz<Double>> hiddenCreationStyle = WeightCreationStyle::simpleCreationStyle;
-        UnaryOperator<NumericMatriz<Double>> outputCreationStyle = WeightCreationStyle::simpleCreationStyle;
+        UnaryOperator<NumericMatriz<Float>> hiddenCreationStyle = WeightCreationStyle::simpleCreationStyle;
+        UnaryOperator<NumericMatriz<Float>> outputCreationStyle = WeightCreationStyle::simpleCreationStyle;
         
         networkManager.setInStep(inStep);
         networkManager.setHidStep(hidStep);
@@ -1154,8 +1155,8 @@ public class VisLoad extends javax.swing.JFrame {
             networkManager.setInStep(inStep);
             networkManager.setHidStep(hidStep);
             networkManager.setOutStep(outStep);
-            networkManager.setWeightsH(weightsH);
-            networkManager.setWeightsO(weightsO);
+//            networkManager.setWeightsH(weightsH);
+//            networkManager.setWeightsO(weightsO);
             
         } catch ( FileNotFoundException ex) {
             log.error("error al cargar pesos", ex);
@@ -1361,10 +1362,10 @@ public class VisLoad extends javax.swing.JFrame {
             @Override
             protected void paintComponent(Graphics grphcs) {
                 super.paintComponent(grphcs); 
-                NumericMatriz<Double> errorGraph = networkManager.getErrorGraph();
+                NumericMatriz<Float> errorGraph = networkManager.getErrorGraph();
                 
                 if (Objects.nonNull(errorGraph)) {
-                    OptionalDouble maxError = errorGraph.values().stream().mapToDouble((i) -> (Double)i).max();
+                    OptionalDouble maxError = errorGraph.values().stream().mapToDouble((i) -> i.doubleValue()).max();
                     List<ParOrdenado> proccesDomain = networkManager.getProccesDomain();
                     double size = (double) proccesDomain.size();
                     
@@ -1379,7 +1380,7 @@ public class VisLoad extends javax.swing.JFrame {
                     int adv = 0;
                     
                     for (ParOrdenado idx : proccesDomain) {
-                        Double errorPoint = (Double)errorGraph.get(idx);
+                        Double errorPoint = (Double)errorGraph.get(idx).doubleValue();
                         Shape shape = new Rectangle2D.Double( adv++, 0, 1, errorPoint);
                         gr2.draw(shape);
                         
