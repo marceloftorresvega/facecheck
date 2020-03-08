@@ -91,6 +91,8 @@ public class Manager<N extends Number> {
     private int outStep;
     private int hidStep;
     
+    private LearningControl<N> hiddenLearningControl;
+    private LearningControl<N> outputLearningControl;
     private N hiddenLearningRate;
     private N outputLearningRate;
     
@@ -270,6 +272,9 @@ public class Manager<N extends Number> {
                 log.info("iteracion <{}>", iterateCurrent);
                 Dominio dominio = new Dominio(width-inStep, height-inStep);
                 
+                hiddenLearningRate = hiddenLearningControl.updateFactor(iterateCurrent, hiddenLearningRate);
+                outputLearningRate = outputLearningControl.updateFactor(iterateCurrent, outputLearningRate);
+                
                 proccesDomain = dominio.stream()
                         .filter( idx -> (( (idx.getFila()-(inStep-outStep)/2) % outStep ==0) && ((idx.getColumna()-(inStep-outStep)/2)% outStep == 0)))
                         .filter(idx -> (!useSelection) || ( areaQeue.stream().anyMatch(a -> a.contains(idx.getFila(), idx.getColumna()))) )
@@ -414,5 +419,13 @@ public class Manager<N extends Number> {
 
     public int getIterateCurrent() {
         return iterateCurrent;
+    }
+
+    public void setHiddenLearningControl(LearningControl<N> hiddenLearningControl) {
+        this.hiddenLearningControl = hiddenLearningControl;
+    }
+
+    public void setOutputLearningControl(LearningControl<N> outputLearningControl) {
+        this.outputLearningControl = outputLearningControl;
     }
 }
