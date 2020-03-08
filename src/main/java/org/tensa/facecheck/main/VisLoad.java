@@ -1377,6 +1377,7 @@ public class VisLoad extends javax.swing.JFrame {
                 NumericMatriz<Float> errorGraph = networkManager.getErrorGraph();
                 
                 if (Objects.nonNull(errorGraph)) {
+                synchronized(errorGraph) {
                     OptionalDouble maxError = errorGraph.values().stream().mapToDouble((i) -> i.doubleValue()).max();
                     List<ParOrdenado> proccesDomain = networkManager.getProccesDomain();
                     double size = (double) proccesDomain.size();
@@ -1397,6 +1398,7 @@ public class VisLoad extends javax.swing.JFrame {
                         gr2.draw(shape);
                         
                     }
+                }
                 }
             }
             
