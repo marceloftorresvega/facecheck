@@ -150,7 +150,13 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
 
     @Override
     public NumericMatriz<N> getError() {
-        return error.distanciaE2().productoEscalar(error.mapper(0.5));
+        NumericMatriz<N> error2 = null;
+        try (NumericMatriz<N> distanciaE2 = error.distanciaE2()) {
+            error2 = distanciaE2.productoEscalar(error.mapper(0.5));
+        } catch (IOException ex) {
+            log.error("getError", ex);
+        }
+        return error2;
     }
 
     @Override
