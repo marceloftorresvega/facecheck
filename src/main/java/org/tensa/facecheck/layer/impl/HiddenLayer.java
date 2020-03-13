@@ -23,10 +23,11 @@
  */
 package org.tensa.facecheck.layer.impl;
 
-import org.tensa.facecheck.layer.facade.SigmoidHiddenLayer;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.activation.Activation;
@@ -34,14 +35,15 @@ import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerLearning;
 import org.tensa.facecheck.layer.LayerProducer;
 import org.tensa.tensada.matrix.NumericMatriz;
+import org.tensa.tensada.matrix.ParOrdenado;
 
 /**
  *
  * @author Marcelo
  * @param <N>
  */
-public abstract class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLearning<N>, LayerProducer<N> {
-    protected final Logger log = LoggerFactory.getLogger(SigmoidHiddenLayer.class);
+public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLearning<N>, LayerProducer<N> {
+    protected final Logger log = LoggerFactory.getLogger(HiddenLayer.class);
     protected final NumericMatriz<N> weights;
     protected int status;
     protected NumericMatriz<N> outputLayer;
@@ -54,7 +56,6 @@ public abstract class HiddenLayer<N extends Number> implements LayerConsumer<N>,
     protected final List<LayerLearning<N>> producers;
     protected final Activation<N> activation;
 
-
     public HiddenLayer(NumericMatriz<N> weights, N learningFactor, Activation<N> activation) {
         this.weights = weights;
         this.learningFactor = learningFactor;
@@ -65,8 +66,9 @@ public abstract class HiddenLayer<N extends Number> implements LayerConsumer<N>,
 
     @Override
     public NumericMatriz<N> seInputLayer(NumericMatriz<N> inputLayer) {
+        NumericMatriz<N> last = this.inputLayer;
         this.inputLayer = inputLayer;
-        return null;
+        return last;
     }
 
     @Override
@@ -75,30 +77,38 @@ public abstract class HiddenLayer<N extends Number> implements LayerConsumer<N>,
     }
 
     @Override
+    public NumericMatriz<N> getWeights() {
+        return weights;
+    }
+
+    @Override
     public void layerComplete(int status) {
         this.status = status;
-        this.startProduction();
+        if (status == LayerConsumer.SUCCESS_STATUS) {
+            this.startProduction();
+        }
     }
 
     @Override
     public void startProduction() {
         if (status == LayerConsumer.SUCCESS_STATUS) {
+            
             //            log.info("pesos <{}><{}>", weights.getDominio().getFila(), weights.getDominio().getColumna());
             //            log.info("layer <{}><{}>", inputLayer.getDominio().getFila(), inputLayer.getDominio().getColumna());
             //            NumericMatriz<N> producto = weights.producto(inputLayer);
             //            NumericMatriz<N> distanciaE2 = (NumericMatriz<N>)producto.distanciaE2();
             //            outputLayer = (NumericMatriz<N>)producto
             //                    .productoEscalar( 1 / Math.sqrt(distanciaE2.get(Indice.D1)));
-            outputLayer = weights.producto(inputLayer);
-            activation.getActivation().apply(outputLayer);
             //outputLayer.replaceAll((ParOrdenado i, N v) -> 1 / (1 + Math.exp(-v.doubleValue())));
+//            outputLayer = weights.producto(inputLayer);
+//            activation.getActivation().apply(outputLayer);
+            outputLayer = activation.getActivation()
+                    .compose(weights::producto)
+                    .apply(inputLayer);
             
             for (LayerConsumer<N> lc : consumers) {
                 lc.seInputLayer(outputLayer);
                 lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
-                if (lc instanceof LayerLearning) {
-                    ((LayerLearning<N>) lc).getProducers().add(this);
-                }
             }
         }
     }
@@ -116,23 +126,17 @@ public abstract class HiddenLayer<N extends Number> implements LayerConsumer<N>,
     @Override
     public void startLearning() {
         try {
-//            
-//            try (final NumericMatriz<N> m1 = outputLayer.matrizUno()) {
-//                error = (NumericMatriz<N>) m1.substraccion(outputLayer);
-//                error.replaceAll((ParOrdenado i, N v) -> outputLayer.productoDirecto(outputLayer.productoDirecto(v, outputLayer.get(i)), learningData.get(i)));
-//            }
             error = activation.getError().apply(learningData, outputLayer);
-            
-            //        propagationError = (NumericMatriz<N>) weights.productoPunto(error);
+            //propagationError = (NumericMatriz<N>) weights.productoPunto(error);
             try (final NumericMatriz<N> punto = error.productoPunto(weights)) {
-                propagationError = (NumericMatriz<N>) punto.transpuesta();
+                propagationError =  punto.transpuesta();
             }
-            try (
-                    final NumericMatriz<N> tensor = error.productoTensorial(inputLayer);
+            try (final NumericMatriz<N> tensor = error.productoTensorial(inputLayer);
                     final NumericMatriz<N> delta = tensor.productoEscalar(learningFactor);
                     final NumericMatriz<N> adicion = weights.adicion(delta)) {
-                synchronized (weights) {
-                    weights.putAll(adicion);
+                Map<ParOrdenado, N> sumable = Collections.synchronizedMap(weights);
+                synchronized (sumable) {
+                    sumable.putAll(adicion);
                 }
             }
         } catch (IOException ex) {
@@ -142,17 +146,11 @@ public abstract class HiddenLayer<N extends Number> implements LayerConsumer<N>,
             back.setLearningData(propagationError);
             back.startLearning();
         }
-        getProducers().clear();
-    }
-
-    @Override
-    public NumericMatriz<N> getWeights() {
-        return weights;
     }
 
     @Override
     public NumericMatriz<N> getError() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return error.distanciaE2().productoEscalar(error.mapper(0.5));
     }
 
     @Override

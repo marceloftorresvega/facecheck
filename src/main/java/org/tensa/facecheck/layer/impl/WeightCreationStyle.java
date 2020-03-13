@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2019 Marcelo.
+ * Copyright 2020 Marcelo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,19 +21,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.tensa.facecheck.layer.facade;
+package org.tensa.facecheck.layer.impl;
 
-import org.tensa.facecheck.activation.impl.LearningSigmoidActivationImpl;
-import org.tensa.facecheck.layer.impl.LearningLayer;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
  *
  * @author Marcelo
  */
-final public class SigmoidLeanringLayer extends LearningLayer<Double> {    
+public class WeightCreationStyle {
 
-    public SigmoidLeanringLayer(NumericMatriz<Double> weights, Double learningFactor) {
-        super(weights, learningFactor, new LearningSigmoidActivationImpl<>());
+    private WeightCreationStyle() {
     }
+
+    /**
+     *
+     * @param tmpm the value of tmpm
+     */
+    public static <N extends Number> NumericMatriz<N> normalCreationStyle(NumericMatriz<N> tmpm) {
+        double punto = tmpm.values().stream().mapToDouble(Number::doubleValue).map((double v) -> v * v).sum();
+        punto = 1 / Math.sqrt(punto);
+        return tmpm.productoEscalar(tmpm.mapper(punto));
+    }
+
+    /**
+     *
+     * @param tmpm the value of tmpm
+     */
+    public static <N extends Number> NumericMatriz<N> reflectCreationStyle(NumericMatriz<N> tmpm) {
+        double punto = tmpm.values().stream().mapToDouble((N v) -> Math.abs(v.doubleValue())).sum();
+        punto = 1 / punto;
+        return tmpm.productoEscalar(tmpm.mapper(punto));
+    }
+
+    /**
+     *
+     * @param tmpm the value of tmpm
+     */
+    public static <N extends Number> NumericMatriz<N> simpleCreationStyle(NumericMatriz<N> tmpm) {
+        return tmpm;
+    }
+    
 }

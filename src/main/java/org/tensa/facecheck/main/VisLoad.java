@@ -22,16 +22,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import java.util.OptionalDouble;
-import java.util.stream.Collectors;
+import java.util.function.UnaryOperator;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.SpinnerListModel;
@@ -42,15 +40,12 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.filter.MaskOp;
-import org.tensa.facecheck.layer.facade.SigmoidHiddenLayer;
-import org.tensa.facecheck.layer.facade.LinealLeanringLayer;
-import org.tensa.facecheck.layer.facade.InputLayer;
-import org.tensa.facecheck.layer.facade.OutputLayer;
 import org.tensa.facecheck.layer.impl.OutputScale;
-import org.tensa.tensada.matrix.BlockMatriz;
+import org.tensa.facecheck.network.Manager;
+import org.tensa.facecheck.layer.impl.WeightCreationStyle;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
-import org.tensa.tensada.matrix.Indice;
+import org.tensa.tensada.matrix.FloatMatriz;
 import org.tensa.tensada.matrix.NumericMatriz;
 import org.tensa.tensada.matrix.ParOrdenado;
 
@@ -64,7 +59,7 @@ public class VisLoad extends javax.swing.JFrame {
 
     private final String baseUrl = "\\img\\originales\\";
         
-    private final Double[] learningFactor = {.000001, 0.000003, .000004, .000005, .000008,.00001, 0.00003, .00004, .00005, .00008,.0001, 0.0003, .0004, .0005, .0008,.001, 0.003, .004, .005, .008, .01, .03, .04, .05, .08, .1, .3, .4, .5, .8};
+    private final Float[] learningFactor = {.000001f, 0.000003f, .000004f, .000005f, .000008f,.00001f, 0.00003f, .00004f, .00005f, .00008f,.0001f, 0.0003f, .0004f, .0005f, .0008f,.001f, 0.003f, .004f, .005f, .008f, .01f, .03f, .04f, .05f, .08f, .1f, .3f, .4f, .5f, .8f};
 
     private final String sufxType = ".jpg";
     private BufferedImage buffImage ;
@@ -72,21 +67,15 @@ public class VisLoad extends javax.swing.JFrame {
     private final int kwidth = 27;
     private float[] data;
     private BufferedImage bufferImageFiltered;
-    private NumericMatriz weightsH;
-    private NumericMatriz weightsO;
-    private NumericMatriz errorGraph;
-    private int inStep;
-    private int outStep;
-    private int hidStep;
     private Rectangle learnArea;
-    private final LinkedList<Rectangle> areaQeue;
     private SeletionStatus areaStatus = SeletionStatus.MODIFY;
     private final FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("pesos double", "dat");
     private final FileNameExtensionFilter fileNameExtensionFilterX2 = new FileNameExtensionFilter("pesos multi tipo", "da2");
     private final FileNameExtensionFilter fileNameExtensionFilterImage = new FileNameExtensionFilter("JPEG", "jpg");
-    private ParOrdenado[] proccesDomain;
     private final Rectangle leftTopPoint;
     private final Rectangle widthHwightpoint;
+    
+    private Manager<Float> networkManager;
 
     public SpinnerModel getSpinnerModel(){
 //        if(Objects.isNull(spinnerModel))
@@ -129,8 +118,9 @@ public class VisLoad extends javax.swing.JFrame {
         learnArea.setLocation(10, 10);
         leftTopPoint = new Rectangle();
         widthHwightpoint = new Rectangle();
-        areaQeue = new LinkedList<>();
-        areaQeue.add(learnArea);
+        networkManager = new Manager<>();
+        networkManager.setSupplier((Dominio dominio) -> new FloatMatriz(dominio));
+        networkManager.getAreaQeue().add(learnArea);
     }
 
     /**
@@ -195,7 +185,6 @@ public class VisLoad extends javax.swing.JFrame {
         seleccion = new javax.swing.JCheckBox();
         addSelectionButton = new javax.swing.JButton();
         deleteSelectionButton = new javax.swing.JButton();
-        alterSelectionButton = new javax.swing.JButton();
         jProgressBar1 = new javax.swing.JProgressBar();
         jErrorGraf = getNuevaErrorGram();
 
@@ -616,13 +605,6 @@ public class VisLoad extends javax.swing.JFrame {
             }
         });
 
-        alterSelectionButton.setText("Modifica selección");
-        alterSelectionButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                alterSelectionButtonActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -634,9 +616,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(addSelectionButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(deleteSelectionButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(alterSelectionButton)
-                .addContainerGap(334, Short.MAX_VALUE))
+                .addContainerGap(476, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -644,8 +624,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(seleccion)
                     .addComponent(addSelectionButton)
-                    .addComponent(deleteSelectionButton)
-                    .addComponent(alterSelectionButton))
+                    .addComponent(deleteSelectionButton))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -748,110 +727,68 @@ public class VisLoad extends javax.swing.JFrame {
 
     private void procesarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_procesarActionPerformed
 
-        log.info("iniciando proceso...");
-        bufferImageFiltered = createCompatibleDestImage(buffImage, null);
-        
-        int width = buffImage.getWidth();
-        int height = buffImage.getHeight();
-        
         procesar.setEnabled(false);
         cleanCopy.setEnabled(false);
         clean.setEnabled(false);
+        bufferImageFiltered = createCompatibleDestImage(buffImage, null);
+        
+        networkManager.setInputImage(buffImage);
+        networkManager.setOutputImage(bufferImageFiltered);
+        networkManager.setCompareImage(destBuffImage);
+        networkManager.setTrainingMode(entrenar.isSelected());
+        networkManager.setHiddenLearningRate((Float)hiddenLearningRate.getValue());
+        networkManager.setOutputLearningRate((Float)outputLearningRate.getValue());
+        networkManager.setIterateTo((int)iteraciones.getValue());
+        networkManager.setUseSelection(seleccion.isSelected());
+        
+        if (scaleJRadioButton.isSelected()) {
+            networkManager.setInputScale(OutputScale::scale);
+        } else if (normalizeJRadioButton.isSelected()) {
+            networkManager.setInputScale(OutputScale::normalized);
+        } else if (reflectJRadioButton.isSelected()) {
+            networkManager.setInputScale(OutputScale::reflectance);
+        } else if (preventJRadioButton.isSelected()) {
+            networkManager.setInputScale(OutputScale::prevent01);
+        } else {
+            networkManager.setInputScale(OutputScale::sameEscale);
+        }
+            
         
         new Thread(() -> {
-            log.info("procesando...");
-
-            for(int idIteracion=0; (!freno.isSelected()) && ((!entrenar.isSelected()) && idIteracion<1 || entrenar.isSelected() && idIteracion<((Integer) iteraciones.getValue())); idIteracion++) {
-
-                log.info("iteracion <{}>", idIteracion);
-                jProgressBar1.setValue(idIteracion);
-                Dominio dominio = new Dominio(width-inStep, height-inStep);
-                
-                proccesDomain = dominio.stream()
-                        .filter( idx -> (( (idx.getFila()-(inStep-outStep)/2) % outStep ==0) && ((idx.getColumna()-(inStep-outStep)/2)% outStep == 0)))
-                        .filter(idx -> (!seleccion.isSelected()) || ( areaQeue.stream().anyMatch(a -> a.contains(idx.getFila(), idx.getColumna()))) )
-                        .collect(Collectors.toList())
-                        .toArray(new ParOrdenado[1]);
-                errorGraph = new DoubleMatriz(dominio);
-                Arrays.stream(proccesDomain)
-                        .sorted((idx1,idx2) -> (int)(2.0*Math.random()-1.0))
-                        .parallel()
-                        .filter(idx -> !freno.isSelected())
-                        .forEach((ParOrdenado idx) -> {
-                            int i = idx.getFila();
-                            int j = idx.getColumna();
-
-                            InputLayer simplePixelsInputLayer;
-                            
-                            if (scaleJRadioButton.isSelected()) {
-                                simplePixelsInputLayer = new InputLayer(OutputScale::scale);
-                                
-                            } else if (normalizeJRadioButton.isSelected()) {
-                                simplePixelsInputLayer = new InputLayer(OutputScale::normalized);
-                                
-                            } else if (reflectJRadioButton.isSelected()) {
-                                simplePixelsInputLayer = new InputLayer(OutputScale::reflectance);
-                                
-                            } else if (preventJRadioButton.isSelected()) {
-                                simplePixelsInputLayer = new InputLayer(OutputScale::prevent01);
-                                
-                            } else {
-                                simplePixelsInputLayer = new InputLayer();
-                            }
-                            
-                            InputLayer simplePixelsCompareLayer = new InputLayer(OutputScale::scale);
-                            SigmoidHiddenLayer hiddenLayer = new SigmoidHiddenLayer((NumericMatriz<Double>)weightsH,  (Double)hiddenLearningRate.getValue());
-                            LinealLeanringLayer pixelLeanringLayer = new LinealLeanringLayer((NumericMatriz<Double>)weightsO, (Double)outputLearningRate.getValue());
-                            OutputLayer pixelsOutputLayer = new OutputLayer();
-
-                            simplePixelsInputLayer.getConsumers().add(hiddenLayer);
-                            hiddenLayer.getConsumers().add(pixelLeanringLayer);
-                            pixelLeanringLayer.getConsumers().add(pixelsOutputLayer);
-
-        //                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
-                            pixelsOutputLayer.setDest(bufferImageFiltered.getSubimage(i + (inStep-outStep)/2, j + (inStep-outStep)/2, outStep, outStep));
-                            BufferedImage src = buffImage.getSubimage(i, j, inStep, inStep);
-                            simplePixelsInputLayer.setSrc(src);
-                            simplePixelsInputLayer.startProduction();
-
-                            if(entrenar.isSelected()){
-        //                        log.info("cargando bloque comparacion <{}><{}>", i, j);
-                                BufferedImage comp = destBuffImage.getSubimage(i + (inStep-outStep)/2, j + (inStep-outStep)/2, outStep, outStep);
-                                
-                                simplePixelsCompareLayer.setSrc(comp);
-                                simplePixelsCompareLayer.startProduction();
-                                pixelLeanringLayer.setLearningData(simplePixelsCompareLayer.getOutputLayer());
-
-                                pixelLeanringLayer.startLearning();
-                                Double errorVal = pixelLeanringLayer.getError().get(Indice.D1);
-                                    
-                                synchronized(errorGraph) {
-                                    errorGraph.put(idx, errorVal);
-                                }
-                                log.info("diferencia <{}>", errorVal);                                
-                            }
-                        });
-
-            }
+//            do stuff
+            networkManager.process();
             
-            java.awt.EventQueue.invokeLater(() -> {
-                jProgressBar1.setValue(jProgressBar1.getMaximum());
-                respuesta.repaint();
-            });
+            bufferImageFiltered = networkManager.getOutputImage();
             
             procesar.setEnabled(true);
             cleanCopy.setEnabled(true);
             clean.setEnabled(true);
             freno.setSelected(false);
+            
+            java.awt.EventQueue.invokeLater(() -> {
+                jProgressBar1.setValue(jProgressBar1.getMaximum());
+                respuesta.repaint();
+            });
         }).start();
         
         new Thread( () -> {
             while (!procesar.isEnabled()) {
                 try {
                     Thread.sleep(15000);
+                    
+                    networkManager.setTrainingMode(entrenar.isSelected());
+                    networkManager.setEmergencyBreak(freno.isSelected());
+                    networkManager.setHiddenLearningRate((Float)hiddenLearningRate.getValue());
+                    networkManager.setOutputLearningRate((Float)outputLearningRate.getValue());
+                    networkManager.setIterateTo((int)iteraciones.getValue());
+                    networkManager.setUseSelection(seleccion.isSelected());
+                    
+                    jProgressBar1.setValue(networkManager.getIterateCurrent());
                     if (actualizacion.isSelected()) {
 //                        synchronized(this){
 //                        java.awt.EventQueue.invokeLater(() -> {
+
+                            bufferImageFiltered = networkManager.getOutputImage();
                             respuesta.repaint();
                             jErrorGraf.repaint();
                             log.info("realiza actualizacion");
@@ -872,60 +809,44 @@ public class VisLoad extends javax.swing.JFrame {
 
     private void cleanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanActionPerformed
         log.info("iniciando 0...");
-        inStep = (Integer)inNeurs.getValue();
-        hidStep = (Integer)hiddNeurs.getValue();
-        outStep = (Integer)outNeurs.getValue();
+        int inStep = (int)inNeurs.getValue();
+        int hidStep = (int)hiddNeurs.getValue();
+        int outStep = (int)outNeurs.getValue();
         
-        int inSize = inStep*inStep*3;
-        int outSize = outStep*outStep*3;
+        UnaryOperator<NumericMatriz<Float>> hiddenCreationStyle = WeightCreationStyle::simpleCreationStyle;
+        UnaryOperator<NumericMatriz<Float>> outputCreationStyle = WeightCreationStyle::simpleCreationStyle;
         
-        log.info("iniciando 1.0..<{},{}>",hidStep, inSize);
-        BlockMatriz<Double> hiddenBlockMatriz = new BlockMatriz<>(new Dominio(hidStep, 1));
-        hiddenBlockMatriz.getDominio().forEach( (ParOrdenado idx) -> {
-            final NumericMatriz<Double> tmpm = new DoubleMatriz(new Dominio(1, inSize));
-            tmpm.getDominio().forEach((i) -> {
-                tmpm.put(i, 1-2*Math.random());
-            });
-            switch (hdCreationStyle.getSelectedIndex()) {
-                case 0:
-                    hiddenBlockMatriz.put(idx, simpleCreationStyle(tmpm));
-                    break;
-                case 1:
-                    hiddenBlockMatriz.put(idx, reflectCreationStyle(tmpm));
-                    break;
-                case 2:
-                    hiddenBlockMatriz.put(idx, normalCreationStyle(tmpm));
-                    break;
-            }
-            tmpm.clear();
-        });
-        log.info("iniciando 1.1..<{},{}>",hidStep, inSize);
-        weightsH = new DoubleMatriz(hiddenBlockMatriz.merge());
-        hiddenBlockMatriz.clear();
+        networkManager.setInStep(inStep);
+        networkManager.setHidStep(hidStep);
+        networkManager.setOutStep(outStep);
         
-        log.info("iniciando 2.0..<{},{}>",outSize, hidStep);
-        BlockMatriz<Double> outBlockMatriz = new BlockMatriz<>(new Dominio(outSize, 1));
-        outBlockMatriz.getDominio().forEach( (ParOrdenado idx) -> {
-            final NumericMatriz<Double> tmpm = new DoubleMatriz(new Dominio(1, hidStep));
-            tmpm.getDominio().forEach((i) -> {
-                tmpm.put(i, 1-2*Math.random());
-                    });
-            switch (outCreationStyle.getSelectedIndex()) {
-                case 0:
-                    outBlockMatriz.put(idx, simpleCreationStyle(tmpm));
-                    break;
-                case 1:
-                    outBlockMatriz.put(idx, reflectCreationStyle(tmpm));
-                    break;
-                case 2:
-                    outBlockMatriz.put(idx, normalCreationStyle(tmpm));
-                    break;
-            }
-            tmpm.clear();
-        });
-        log.info("iniciando 2.1..<{},{}>",outSize, hidStep);
-        weightsO = new DoubleMatriz(outBlockMatriz.merge());
-        outBlockMatriz.clear();
+        log.info("hd style <{}> out style <{}>", hdCreationStyle.getSelectedIndex(),outCreationStyle.getSelectedIndex());
+        
+        switch (hdCreationStyle.getSelectedIndex()) {
+            case 0:
+                hiddenCreationStyle = WeightCreationStyle::simpleCreationStyle;
+                break;
+            case 1:
+                hiddenCreationStyle = WeightCreationStyle::reflectCreationStyle;
+                break;
+            case 2:
+                hiddenCreationStyle = WeightCreationStyle::normalCreationStyle;
+                break;
+        }
+        
+        switch (outCreationStyle.getSelectedIndex()) {
+            case 0:
+                outputCreationStyle = WeightCreationStyle::simpleCreationStyle;
+                break;
+            case 1:
+                outputCreationStyle = WeightCreationStyle::reflectCreationStyle;
+                break;
+            case 2:
+                outputCreationStyle = WeightCreationStyle::normalCreationStyle;
+                break;
+        }
+        
+        networkManager.initMatrix(hiddenCreationStyle, outputCreationStyle);
         
     }//GEN-LAST:event_cleanActionPerformed
 
@@ -962,6 +883,8 @@ public class VisLoad extends javax.swing.JFrame {
         int x = evt.getX();
         int y = evt.getY();
         
+        LinkedList<Rectangle> areaQeue = networkManager.getAreaQeue();
+        
         float escala = (float)buffImage.getWidth() / (float)vista.getBounds().width;
         switch (areaStatus) {
             case DELETE:
@@ -969,23 +892,17 @@ public class VisLoad extends javax.swing.JFrame {
                         .filter( a -> a.contains((int) (x * escala), (int) (y * escala)))
                         .findFirst()
                         .ifPresent( a -> areaQeue.removeFirstOccurrence(a));
-                areaStatus = SeletionStatus.CHOOSE;
-                learnArea = areaQeue.getLast();
-                break;
-            case CHOOSE:
-                areaQeue.stream()
-                        .filter( a -> a.contains((int) (x * escala), (int) (y * escala)))
-                        .findFirst()
-                        .ifPresent( a -> learnArea = a);
                 areaStatus = SeletionStatus.MODIFY;
+                learnArea = areaQeue.getLast();
                 break;
             case MODIFY:
                 if (leftTopPoint.contains(x,y)) {
                     areaStatus = SeletionStatus.MODIFY_POSITION;
+                    break;
                 } else if (widthHwightpoint.contains(x, y)) {
                     areaStatus = SeletionStatus.MODIFY_SIZE;                    
+                    break;
                 }
-                break;
             case ADD:
                 areaStatus = SeletionStatus.MODIFY_POSITION;
                 break;
@@ -1007,6 +924,7 @@ public class VisLoad extends javax.swing.JFrame {
 
     private void addSelectionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addSelectionButtonActionPerformed
         learnArea = new Rectangle();
+        LinkedList<Rectangle> areaQeue = networkManager.getAreaQeue();
         learnArea.setSize(100, 100);
         learnArea.setLocation(10, 10);
         areaStatus = SeletionStatus.ADD;
@@ -1027,13 +945,6 @@ public class VisLoad extends javax.swing.JFrame {
         cleanActionPerformed(evt);
     }//GEN-LAST:event_cleanCopyActionPerformed
 
-    private void alterSelectionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alterSelectionButtonActionPerformed
-        areaStatus = SeletionStatus.CHOOSE;
-        java.awt.EventQueue.invokeLater(() -> {
-            vista.repaint();
-        });
-    }//GEN-LAST:event_alterSelectionButtonActionPerformed
-
     private void cargaOriginalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargaOriginalActionPerformed
         destBuffImage = buffImage;
         bufferImageFiltered = destBuffImage;
@@ -1051,7 +962,7 @@ public class VisLoad extends javax.swing.JFrame {
                 salvaPesos(jFileChooserPesosSave.getSelectedFile().getPath());
             } else if (jFileChooserPesosSave.getSelectedFile().getPath().endsWith("da2") ) {
                 
-                salvaPesosX2(jFileChooserPesosSave.getSelectedFile().getPath());
+                networkManager.salvaPesos(jFileChooserPesosSave.getSelectedFile().getPath());
             }
             
         }
@@ -1066,7 +977,7 @@ public class VisLoad extends javax.swing.JFrame {
                 cargaPesos(jFileChooserPesosLoad.getSelectedFile().getPath());
             } else if (jFileChooserPesosLoad.getSelectedFile().getPath().endsWith("da2")) {
                 
-                cargaPesosX2(jFileChooserPesosLoad.getSelectedFile().getPath());
+                networkManager.cargaPesos(jFileChooserPesosLoad.getSelectedFile().getPath());
             }
         }
     }//GEN-LAST:event_cargarActionPerformed
@@ -1127,8 +1038,15 @@ public class VisLoad extends javax.swing.JFrame {
     }//GEN-LAST:event_iteracionesStateChanged
 
     private void vistaMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_vistaMouseMoved
+        
+        if (buffImage == null ) {
+            return;
+        }
         int x = evt.getX();
         int y = evt.getY();
+        
+        LinkedList<Rectangle> areaQeue = networkManager.getAreaQeue();
+        float escala = (float)buffImage.getWidth() / (float)vista.getBounds().width;
                                  
         switch (areaStatus) {
             case MODIFY_POSITION:
@@ -1138,16 +1056,22 @@ public class VisLoad extends javax.swing.JFrame {
                 vista.setCursor(new java.awt.Cursor(java.awt.Cursor.SE_RESIZE_CURSOR));
                 break;
             case MODIFY:
-                vista.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                 if (leftTopPoint.contains(x,y)) {
                     vista.setCursor(new java.awt.Cursor(java.awt.Cursor.MOVE_CURSOR));
                 } else if (widthHwightpoint.contains(x, y)) {
                     vista.setCursor(new java.awt.Cursor(java.awt.Cursor.SE_RESIZE_CURSOR));
+                } else if (areaQeue.stream()
+                        .anyMatch( a -> a.contains((int) (x * escala), (int) (y * escala)))) {
+                    
+                    vista.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
+                } else {
+                    vista.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                    
                 }
+                    
                 break;
             case ADD:
-            case CHOOSE:
-                vista.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
+                    vista.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
                 break;
             case DELETE:
                 vista.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -1174,16 +1098,138 @@ public class VisLoad extends javax.swing.JFrame {
                     areaStatus = SeletionStatus.MODIFY_SIZE;                    
                 }
                 break;
-            case ADD:
-            case CHOOSE:
-                vista.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
-                break;
-            case DELETE:
-                vista.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-                break;
         }
     }//GEN-LAST:event_vistaMouseDragged
 
+    
+    private float calculaMatriz(int i, int j){
+        float retorno;
+        float half = (float)kwidth / 2;
+        float di = (float) i - half;
+        float dj = (float) j - half;
+        
+        retorno = 0.5f - (float) 1/ ( 1 + di * di + dj * dj);
+//        double dist = Math.toRadians(   Math.sqrt((di*di+dj*dj) / (half*half*2)) * 90 ) ;
+//        double dist = Math.toRadians(   Math.sqrt((dj*dj) / (half*half*2)) * 90 ) ;
+//        if(dist == 0 )
+//            retorno = -1; 
+//        else
+////            retorno = (float) (Math.c(dist)); 
+////            retorno = (float) (Math.sin(dist)); 
+//            retorno = -(float) (Math.sin(dist) / dist ) ; 
+        
+//        return  (1- retorno);
+        return retorno;
+    }
+    
+    private void cargaPesos(String archivo) {
+        log.info(archivo);
+        try (
+                InputStream fis = Files.newInputStream(Paths.get(archivo));
+                BufferedInputStream bis = new BufferedInputStream(fis);
+                GzipCompressorInputStream gzIn = new GzipCompressorInputStream(bis);
+                DataInputStream dis = new DataInputStream(gzIn)
+                ) {
+            Integer fila;
+            Integer columna;
+
+            DoubleMatriz weightsH = cargaMatriz(dis);
+
+            fila = weightsH.getDominio().getFila();
+            columna = weightsH.getDominio().getColumna();
+            
+            inNeurs.setValue((int)Math.sqrt(columna/3));
+            hiddNeurs.setValue(fila);
+            
+            DoubleMatriz weightsO = cargaMatriz(dis);
+            
+            fila = weightsO.getDominio().getFila();
+            columna = weightsO.getDominio().getColumna();
+            
+            outNeurs.setValue((int)Math.sqrt(fila/3));
+            
+            int inStep = (int)inNeurs.getValue();
+            int hidStep = (int)hiddNeurs.getValue();
+            int outStep = (int)outNeurs.getValue();
+            
+            networkManager.setInStep(inStep);
+            networkManager.setHidStep(hidStep);
+            networkManager.setOutStep(outStep);
+//            networkManager.setWeightsH(weightsH);
+//            networkManager.setWeightsO(weightsO);
+            
+        } catch ( FileNotFoundException ex) {
+            log.error("error al cargar pesos", ex);
+        } catch (IOException ex) {
+            log.error("error al cargar pesos", ex);
+        }
+    }
+    
+    
+    private DoubleMatriz cargaMatriz( DataInputStream dis) throws IOException {
+        
+        Integer fila;
+        Integer columna;
+
+        fila = dis.readInt();
+        columna = dis.readInt();
+        
+        log.info("leer <{}>, <{}>", fila, columna);
+        Dominio dominio = new Dominio(fila, columna);
+            
+        DoubleMatriz weights = new DoubleMatriz(dominio);
+        
+        for ( ParOrdenado indice : dominio) {
+            weights.indexa(dis.readInt(), dis.readInt(), dis.readDouble());
+
+        }
+        
+        return weights;
+        
+    }
+    
+    private void salvaPesos(String archivo) {
+        log.info(archivo);
+
+         try( 
+                 OutputStream fos = Files.newOutputStream(Paths.get(archivo));
+                 BufferedOutputStream out = new BufferedOutputStream(fos);
+                 GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(out);
+                 DataOutputStream dos = new DataOutputStream(gzOut)
+                 )   {
+            NumericMatriz weightsH;
+            NumericMatriz weightsO;
+            weightsH = networkManager.getWeightsH();
+            weightsO = networkManager.getWeightsO();
+            
+            salvaMatriz(weightsH, dos);
+            salvaMatriz(weightsO, dos);
+            
+         } catch (FileNotFoundException ex) {
+             log.error("error al guardar  pesos", ex);
+         } catch (IOException ex) {
+             log.error("error al guardar  pesos", ex);             
+         }
+    }
+    
+    
+    private void salvaMatriz(NumericMatriz weights, DataOutputStream dos) throws IOException {
+        
+        Dominio dominio = weights.getDominio();
+        Integer fila = dominio.getFila();
+        Integer columna = dominio.getColumna();
+
+        dos.writeInt(fila);
+        dos.writeInt(columna);
+        
+        for ( ParOrdenado indice : dominio) {
+            dos.writeInt(indice.getFila());
+            dos.writeInt(indice.getColumna());
+            dos.writeDouble(weights.get(indice).doubleValue());
+
+        }
+    }
+    
     public BufferedImage createCompatibleDestImage(BufferedImage src, ColorModel destCM) {
         BufferedImage image;
 
@@ -1221,173 +1267,6 @@ public class VisLoad extends javax.swing.JFrame {
         return image;
     }
     
-    private float calculaMatriz(int i, int j){
-        float retorno;
-        float half = (float)kwidth / 2;
-        float di = (float) i - half;
-        float dj = (float) j - half;
-        
-        retorno = 0.5f - (float) 1/ ( 1 + di * di + dj * dj);
-//        double dist = Math.toRadians(   Math.sqrt((di*di+dj*dj) / (half*half*2)) * 90 ) ;
-//        double dist = Math.toRadians(   Math.sqrt((dj*dj) / (half*half*2)) * 90 ) ;
-//        if(dist == 0 )
-//            retorno = -1; 
-//        else
-////            retorno = (float) (Math.c(dist)); 
-////            retorno = (float) (Math.sin(dist)); 
-//            retorno = -(float) (Math.sin(dist) / dist ) ; 
-        
-//        return  (1- retorno);
-        return retorno;
-    }
-    
-    private void cargaPesos(String archivo) {
-        log.info(archivo);
-        try (
-                InputStream fis = Files.newInputStream(Paths.get(archivo));
-                BufferedInputStream bis = new BufferedInputStream(fis);
-                GzipCompressorInputStream gzIn = new GzipCompressorInputStream(bis);
-                DataInputStream dis = new DataInputStream(gzIn)
-                ) {
-            Integer fila;
-            Integer columna;
-
-            weightsH = cargaMatriz(dis);
-
-            fila = weightsH.getDominio().getFila();
-            columna = weightsH.getDominio().getColumna();
-            
-            inNeurs.setValue((int)Math.sqrt(columna/3));
-            hiddNeurs.setValue(fila);
-            
-            weightsO = cargaMatriz(dis);
-            
-            fila = weightsO.getDominio().getFila();
-            columna = weightsO.getDominio().getColumna();
-            
-            outNeurs.setValue((int)Math.sqrt(fila/3));
-            
-            inStep = (Integer)inNeurs.getValue();
-            hidStep = (Integer)hiddNeurs.getValue();
-            outStep = (Integer)outNeurs.getValue();
-            
-        } catch ( FileNotFoundException ex) {
-            log.error("error al cargar pesos", ex);
-        } catch (IOException ex) {
-            log.error("error al cargar pesos", ex);
-        }
-    }
-    
-    private void cargaPesosX2(String archivo) {
-        log.info("cargaPesosX2 <{}>",archivo);
-        try (
-                InputStream fis = Files.newInputStream(Paths.get(archivo));
-                BufferedInputStream bis = new BufferedInputStream(fis);
-                GzipCompressorInputStream gzIn = new GzipCompressorInputStream(bis);
-                ObjectInputStream ois = new ObjectInputStream(gzIn)
-                ) {
-            weightsH = (NumericMatriz)ois.readObject();
-            Integer fila = weightsH.getDominio().getFila();
-            Integer columna = weightsH.getDominio().getColumna();
-            
-            inNeurs.setValue((int)Math.sqrt(columna/3));
-            hiddNeurs.setValue(fila);
-            weightsO = (NumericMatriz)ois.readObject();
-            fila = weightsO.getDominio().getFila();
-//            columna = weightsO.getDominio().getColumna();
-            
-            outNeurs.setValue((int)Math.sqrt(fila/3));
-            
-            inStep = (Integer)inNeurs.getValue();
-            hidStep = (Integer)hiddNeurs.getValue();
-            outStep = (Integer)outNeurs.getValue();
-            
-        } catch ( FileNotFoundException ex) {
-            log.error("error al cargar pesos", ex);
-        } catch (IOException ex) {
-            log.error("error al cargar pesos", ex);
-        } catch (ClassNotFoundException ex) {
-            log.error("error al cargar pesos", ex);
-        }
-    }
-    
-    private DoubleMatriz cargaMatriz( DataInputStream dis) throws IOException {
-        
-        Integer fila;
-        Integer columna;
-
-        fila = dis.readInt();
-        columna = dis.readInt();
-        
-        log.info("leer <{}>, <{}>", fila, columna);
-        Dominio dominio = new Dominio(fila, columna);
-            
-        DoubleMatriz weights = new DoubleMatriz(dominio);
-        
-        for ( ParOrdenado indice : dominio) {
-            weights.indexa(dis.readInt(), dis.readInt(), dis.readDouble());
-
-        }
-        
-        return weights;
-        
-    }
-    
-    private void salvaPesos(String archivo) {
-        log.info(archivo);
-
-         try( 
-                 OutputStream fos = Files.newOutputStream(Paths.get(archivo));
-                 BufferedOutputStream out = new BufferedOutputStream(fos);
-                 GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(out);
-                 DataOutputStream dos = new DataOutputStream(gzOut)
-                 )   {
-            
-            salvaMatriz(weightsH, dos);
-            salvaMatriz(weightsO, dos);
-            
-         } catch (FileNotFoundException ex) {
-             log.error("error al guardar  pesos", ex);
-         } catch (IOException ex) {
-             log.error("error al guardar  pesos", ex);             
-         }
-    }
-    
-    private void salvaPesosX2(String archivo) {
-        log.info("salvaPesosX2 <{}>", archivo);
-
-         try( 
-                 OutputStream fos = Files.newOutputStream(Paths.get(archivo));
-                 BufferedOutputStream out = new BufferedOutputStream(fos);
-                 GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(out);
-                 ObjectOutputStream oos = new ObjectOutputStream(gzOut); ) {
-            oos.writeObject(weightsH);
-            oos.writeObject(weightsO);
-             
-         }catch (FileNotFoundException ex) {
-             log.error("error al guardar  pesos", ex);
-         } catch (IOException ex) {
-             log.error("error al guardar  pesos", ex);             
-         }
-    }
-    
-    private void salvaMatriz(NumericMatriz weights, DataOutputStream dos) throws IOException {
-        
-        Dominio dominio = weights.getDominio();
-        Integer fila = dominio.getFila();
-        Integer columna = dominio.getColumna();
-
-        dos.writeInt(fila);
-        dos.writeInt(columna);
-        
-        for ( ParOrdenado indice : dominio) {
-            dos.writeInt(indice.getFila());
-            dos.writeInt(indice.getColumna());
-            dos.writeDouble(weights.get(indice).doubleValue());
-
-        }
-    }
-    
     private javax.swing.JPanel getNuevaVista(){
         return new JPanel(true){
 
@@ -1401,6 +1280,7 @@ public class VisLoad extends javax.swing.JFrame {
                     AffineTransform xforM = AffineTransform.getScaleInstance(escala, escala);
                     AffineTransformOp rop = new AffineTransformOp(xforM, AffineTransformOp.TYPE_BILINEAR);
                     localg.drawImage(buffImage, rop, 0     , 0);
+                    LinkedList<Rectangle> areaQeue = networkManager.getAreaQeue();
 
                     areaQeue.forEach( a -> {
                         Rectangle evalArea = new Rectangle(a);
@@ -1422,13 +1302,6 @@ public class VisLoad extends javax.swing.JFrame {
                                 localg.setColor(Color.RED);
                             } else {
                                 localg.setColor(Color.BLACK);
-                            }
-                            break;
-                        case CHOOSE:
-                            if (a.equals(learnArea)) {
-                                localg.setColor(Color.RED);
-                            } else {
-                                localg.setColor(Color.BLUE);
                             }
                             break;
                         case MODIFY_POSITION:
@@ -1489,10 +1362,12 @@ public class VisLoad extends javax.swing.JFrame {
             @Override
             protected void paintComponent(Graphics grphcs) {
                 super.paintComponent(grphcs); 
+                NumericMatriz<Float> errorGraph = networkManager.getErrorGraph();
+                
                 if (Objects.nonNull(errorGraph)) {
-                    OptionalDouble maxError = errorGraph.values().stream().mapToDouble((i) -> (Double)i).max();
-                    
-                    double size = (double) proccesDomain.length;
+                    OptionalDouble maxError = errorGraph.values().stream().mapToDouble((i) -> i.doubleValue()).max();
+                    List<ParOrdenado> proccesDomain = networkManager.getProccesDomain();
+                    double size = (double) proccesDomain.size();
                     
                     Graphics2D gr2 = (Graphics2D) grphcs;
                     gr2.setColor(Color.RED);
@@ -1505,7 +1380,7 @@ public class VisLoad extends javax.swing.JFrame {
                     int adv = 0;
                     
                     for (ParOrdenado idx : proccesDomain) {
-                        Double errorPoint = (Double)errorGraph.get(idx);
+                        Double errorPoint = (Double)errorGraph.get(idx).doubleValue();
                         Shape shape = new Rectangle2D.Double( adv++, 0, 1, errorPoint);
                         gr2.draw(shape);
                         
@@ -1515,34 +1390,9 @@ public class VisLoad extends javax.swing.JFrame {
             
         };
     }
-    
-    private int compareTo(ParOrdenado i1, ParOrdenado i2){
-        int compared = i1.getColumna().compareTo(i2.getColumna());
-        return compared==0?i1.getFila().compareTo(i2.getFila()):compared;
-    }
-    
-    private NumericMatriz<Double> simpleCreationStyle(NumericMatriz<Double> tmpm) {
-        return tmpm;
-    }
-    
-    private NumericMatriz<Double> reflectCreationStyle(NumericMatriz<Double> tmpm) {
-        double punto = tmpm.values().stream()
-                .mapToDouble(v -> Math.abs(v))
-                .sum();
-        punto = 1 / punto;
-        return tmpm.productoEscalar( punto );
-    }
-    
-    private NumericMatriz<Double> normalCreationStyle(NumericMatriz<Double> tmpm) {
-            double punto = tmpm.values().stream()
-                    .mapToDouble(v -> v * v)
-                    .sum();
-            punto = 1 / Math.sqrt(punto);
-        return tmpm.productoEscalar( punto );
-    }
-    
+        
     private enum SeletionStatus {
-        MODIFY,MODIFY_POSITION,MODIFY_SIZE,ADD,CHOOSE,DELETE
+        MODIFY,MODIFY_POSITION,MODIFY_SIZE,ADD,DELETE
     }
     
     /**
@@ -1585,7 +1435,6 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JCheckBox actualizacion;
     private javax.swing.ButtonGroup adaptInputButtonGroup;
     private javax.swing.JButton addSelectionButton;
-    private javax.swing.JButton alterSelectionButton;
     private javax.swing.JButton cargaImagen;
     private javax.swing.JButton cargaOriginal;
     private javax.swing.JButton cargaPreparada;

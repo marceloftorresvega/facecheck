@@ -39,7 +39,7 @@ import org.tensa.tensada.matrix.NumericMatriz;
  * @author Marcelo
  * @param <N>
  */
-public abstract class PixelInputLayer<N extends Number> implements LayerProducer<N> {
+public class PixelInputLayer<N extends Number> implements LayerProducer<N> {
     protected BufferedImage src;
     protected NumericMatriz<N> outputLayer;
     protected final List<LayerConsumer<N>> consumers;
@@ -48,6 +48,13 @@ public abstract class PixelInputLayer<N extends Number> implements LayerProducer
 
     public PixelInputLayer(BufferedImage src, Function<Dominio, NumericMatriz<N>> supplier, UnaryOperator<NumericMatriz<N>> responceEscale) {
         this.src = src;
+        this.consumers = new ArrayList<>();
+        this.supplier = supplier;
+        this.responceEscale = responceEscale;
+    }
+
+    public PixelInputLayer(Function<Dominio, NumericMatriz<N>> supplier, UnaryOperator<NumericMatriz<N>> responceEscale) {
+        this.src = null;
         this.consumers = new ArrayList<>();
         this.supplier = supplier;
         this.responceEscale = responceEscale;
