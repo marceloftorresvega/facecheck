@@ -127,10 +127,8 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
     public void startLearning() {
         try {
             error = activation.getError().apply(learningData, outputLayer);
-            //propagationError = (NumericMatriz<N>) weights.productoPunto(error);
-            try (final NumericMatriz<N> punto = error.productoPunto(weights)) {
-                propagationError =  punto.transpuesta();
-            }
+            propagationError =  weights.productoPunto(error);
+            
             try (final NumericMatriz<N> tensor = error.productoTensorial(inputLayer);
                     final NumericMatriz<N> delta = tensor.productoEscalar(learningFactor);
                     final NumericMatriz<N> adicion = weights.adicion(delta)) {
