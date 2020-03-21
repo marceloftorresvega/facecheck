@@ -914,7 +914,13 @@ public class VisLoad extends javax.swing.JFrame {
                 } else if (widthHwightpoint.contains(x, y)) {
                     areaStatus = SeletionStatus.MODIFY_SIZE;                    
                     break;
+                } else {
+                    areaQeue.stream()
+                            .filter( a -> a.contains((int) (x * escala), (int) (y * escala)))
+                            .findFirst()
+                            .ifPresent( a -> learnArea = a);
                 }
+
             case ADD:
                 areaStatus = SeletionStatus.MODIFY_POSITION;
                 break;
