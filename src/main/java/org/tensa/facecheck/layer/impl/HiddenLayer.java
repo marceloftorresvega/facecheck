@@ -25,9 +25,7 @@ package org.tensa.facecheck.layer.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.activation.Activation;
@@ -35,7 +33,6 @@ import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerLearning;
 import org.tensa.facecheck.layer.LayerProducer;
 import org.tensa.tensada.matrix.NumericMatriz;
-import org.tensa.tensada.matrix.ParOrdenado;
 
 /**
  *
@@ -132,9 +129,8 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
             try (final NumericMatriz<N> tensor = error.productoTensorial(inputLayer);
                     final NumericMatriz<N> delta = tensor.productoEscalar(learningFactor);
                     final NumericMatriz<N> adicion = weights.adicion(delta)) {
-                Map<ParOrdenado, N> sumable = Collections.synchronizedMap(weights);
-                synchronized (sumable) {
-                    sumable.putAll(adicion);
+                synchronized (weights) {
+                    weights.putAll(adicion);
                 }
             }
         } catch (IOException ex) {
