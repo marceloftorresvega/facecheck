@@ -149,11 +149,11 @@ public class Manager<N extends Number> {
             Integer columna = weightsH.getDominio().getColumna();
             
             weightsO = (NumericMatriz<N>)ois.readObject();
-            fila = weightsO.getDominio().getFila();
+            Integer filao = weightsO.getDominio().getFila();
             
             inStep = (int) Math.sqrt(columna/3);
             hidStep = fila;
-            outStep = (int) Math.sqrt(fila/3);
+            outStep = (int) Math.sqrt(filao/3);
             
         } catch ( FileNotFoundException ex) {
             log.error("error al cargar pesos", ex);

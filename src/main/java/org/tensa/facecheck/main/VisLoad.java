@@ -996,6 +996,10 @@ public class VisLoad extends javax.swing.JFrame {
             } else if (jFileChooserPesosLoad.getSelectedFile().getPath().endsWith("da2")) {
                 
                 networkManager.cargaPesos(jFileChooserPesosLoad.getSelectedFile().getPath());
+                inNeurs.setValue(networkManager.getInStep());
+                hiddNeurs.setValue(networkManager.getHidStep());
+                outNeurs.setValue(networkManager.getOutStep());
+
             }
         }
     }//GEN-LAST:event_cargarActionPerformed
