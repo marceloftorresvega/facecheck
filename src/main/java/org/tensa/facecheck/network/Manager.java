@@ -27,6 +27,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,6 +47,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.activation.impl.HiddenSigmoidActivationImpl;
 import org.tensa.facecheck.activation.impl.LinealActivationImpl;
+import org.tensa.facecheck.layer.LayerConsumer;
+import org.tensa.facecheck.layer.LayerLearning;
+import org.tensa.facecheck.layer.LayerProducer;
 import org.tensa.facecheck.layer.impl.HiddenLayer;
 import org.tensa.facecheck.layer.impl.OutputScale;
 import org.tensa.facecheck.layer.impl.PixelInputLayer;
@@ -290,13 +294,13 @@ public class Manager<N extends Number> {
 
                             PixelInputLayer<N> simplePixelsInputLayer = new PixelInputLayer<>(supplier, inputScale);
                             HiddenLayer<N> hiddenLayer = new HiddenLayer<>(weightsH, hiddenLearningRate, new HiddenSigmoidActivationImpl<>());
-                            HiddenLayer<N> pixelLeanringLayer = new HiddenLayer<>(weightsO, outputLearningRate, new LinealActivationImpl<>());
+                            HiddenLayer<N> learnLayer = new HiddenLayer<>(weightsO, outputLearningRate, new LinealActivationImpl<>());
                             PixelInputLayer<N> simplePixelsCompareLayer = new PixelInputLayer<>(supplier, OutputScale::scale);
                             PixelOutputLayer<N> pixelsOutputLayer = new PixelOutputLayer<>();
 
                             relate(simplePixelsInputLayer, hiddenLayer);
-                            relate(hiddenLayer, pixelLeanringLayer);
-                            relate(pixelLeanringLayer, pixelsOutputLayer);
+                            relate(hiddenLayer, learnLayer);
+                            relate(learnLayer, pixelsOutputLayer);
 
         //                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
                             BufferedImage dest = outputImage.getSubimage(i + (inStep-outStep)/2, j + (inStep-outStep)/2, outStep, outStep);
@@ -305,32 +309,30 @@ public class Manager<N extends Number> {
                             BufferedImage src = inputImage.getSubimage(i, j, inStep, inStep);
                             simplePixelsInputLayer.setSrc(src);
                             
-                            simplePixelsInputLayer.startProduction();
+    //                        log.info("cargando bloque comparacion <{}><{}>", i, j);
+                            BufferedImage comp = compareImage.getSubimage(i + (inStep-outStep)/2, j + (inStep-outStep)/2, outStep, outStep);
+                            simplePixelsCompareLayer.setSrc(comp);
 
                             if(trainingMode){
-        //                        log.info("cargando bloque comparacion <{}><{}>", i, j);
-                                BufferedImage comp = compareImage.getSubimage(i + (inStep-outStep)/2, j + (inStep-outStep)/2, outStep, outStep);
-                                simplePixelsCompareLayer.setSrc(comp);
                                 
-                                simplePixelsCompareLayer.startProduction();
-                                pixelLeanringLayer.setLearningData(simplePixelsCompareLayer.getOutputLayer());
-
-                                pixelLeanringLayer.startLearning();
+                                relate(learnLayer, simplePixelsCompareLayer, idx);                       
                                 
-                                N errorVal = pixelLeanringLayer.getError().get(Indice.D1);
-                                    
-                                synchronized(errorGraph) {
-                                    errorGraph.put(idx, errorGraph.mapper(errorVal.doubleValue()));
-                                }
-                                log.info("diferencia <{}>", errorVal);                                
-                                
-                                simplePixelsCompareLayer.getOutputLayer().clear();
-                                hiddenLayer.getPropagationError().clear();
-                                pixelLeanringLayer.getPropagationError().clear();
                             }
-                            simplePixelsInputLayer.getOutputLayer().clear();
-                            hiddenLayer.getOutputLayer().clear();
-                            pixelLeanringLayer.getOutputLayer().clear();
+                            
+                            simplePixelsInputLayer.startProduction();
+                            
+                            try(
+                                Closeable inpmat = simplePixelsInputLayer.getOutputLayer();
+                                Closeable outmat = simplePixelsCompareLayer.getOutputLayer();
+                                Closeable hiddProp = hiddenLayer.getPropagationError();
+                                Closeable hiddOut = hiddenLayer.getOutputLayer();
+                                Closeable learnProp = learnLayer.getPropagationError();
+                                Closeable learnOut = learnLayer.getOutputLayer();
+                                    ){
+                                
+                            } catch(IOException ex) {
+                                //clear
+                            }
                         });
 
             }
@@ -343,13 +345,59 @@ public class Manager<N extends Number> {
         
     }
     
-    private void relate(PixelInputLayer<N> origen, HiddenLayer<N> destino) {
+    private void relate(LayerProducer<N> origen, LayerConsumer<N> destino) {
         origen.getConsumers().add(destino);
         
     }
     
-    private void relate(HiddenLayer<N> origen, PixelOutputLayer<N> destino) {
-        origen.getConsumers().add(destino);
+    /**
+     *
+     * @param regreso the value of regreso
+     * @param origen the value of origen
+     * @param idx the value of idx
+     */
+    private void relate(HiddenLayer<N> regreso, LayerProducer<N> origen, ParOrdenado idx) {
+        origen.getConsumers().add(new LayerConsumer<N>() {
+            @Override
+            public NumericMatriz<N> seInputLayer(NumericMatriz<N> inputLayer) {
+                regreso.setLearningData(inputLayer);
+                return inputLayer;
+            }
+
+            @Override
+            public NumericMatriz<N> getWeights() {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void layerComplete(int status) {
+                regreso.startLearning();
+                                
+                N errorVal = regreso.getError().get(Indice.D1);
+
+                synchronized(errorGraph) {
+                    errorGraph.put(idx, errorGraph.mapper(errorVal.doubleValue()));
+                }
+                log.info("diferencia <{}>", errorVal);         
+            }
+        });
+        
+        regreso.getConsumers().add(new LayerConsumer<N>() {
+            @Override
+            public NumericMatriz<N> seInputLayer(NumericMatriz<N> inputLayer) {
+                return null;
+            }
+
+            @Override
+            public NumericMatriz<N> getWeights() {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void layerComplete(int status) {
+                origen.startProduction();
+            }
+        });
         
     }
 
