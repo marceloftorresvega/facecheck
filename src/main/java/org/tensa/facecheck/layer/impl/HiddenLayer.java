@@ -62,7 +62,7 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
     }
 
     @Override
-    public NumericMatriz<N> seInputLayer(NumericMatriz<N> inputLayer) {
+    public NumericMatriz<N> setInputLayer(NumericMatriz<N> inputLayer) {
         NumericMatriz<N> last = this.inputLayer;
         this.inputLayer = inputLayer;
         return last;
@@ -104,7 +104,7 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
                     .apply(inputLayer);
             
             for (LayerConsumer<N> lc : consumers) {
-                lc.seInputLayer(outputLayer);
+                lc.setInputLayer(outputLayer);
                 lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
             }
         }

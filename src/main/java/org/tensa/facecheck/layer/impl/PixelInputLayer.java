@@ -90,7 +90,7 @@ public class PixelInputLayer<N extends Number> implements LayerProducer<N> {
     public void startProduction() {
         outputLayer = scanInput();
         for (LayerConsumer<N> lc : consumers) {
-            lc.seInputLayer(outputLayer);
+            lc.setInputLayer(outputLayer);
             lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
         }
     }
