@@ -920,6 +920,7 @@ public class VisLoad extends javax.swing.JFrame {
                             .findFirst()
                             .ifPresent( a -> learnArea = a);
                 }
+                break;
 
             case ADD:
                 areaStatus = SeletionStatus.MODIFY_POSITION;
