@@ -359,7 +359,7 @@ public class Manager<N extends Number> {
     private void relate(HiddenLayer<N> regreso, LayerProducer<N> origen, ParOrdenado idx) {
         origen.getConsumers().add(new LayerConsumer<N>() {
             @Override
-            public NumericMatriz<N> seInputLayer(NumericMatriz<N> inputLayer) {
+            public NumericMatriz<N> setInputLayer(NumericMatriz<N> inputLayer) {
                 regreso.setLearningData(inputLayer);
                 return inputLayer;
             }
@@ -384,7 +384,7 @@ public class Manager<N extends Number> {
         
         regreso.getConsumers().add(new LayerConsumer<N>() {
             @Override
-            public NumericMatriz<N> seInputLayer(NumericMatriz<N> inputLayer) {
+            public NumericMatriz<N> setInputLayer(NumericMatriz<N> inputLayer) {
                 return null;
             }
 
