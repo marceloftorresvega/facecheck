@@ -43,6 +43,8 @@ import org.tensa.facecheck.filter.MaskOp;
 import org.tensa.facecheck.layer.impl.OutputScale;
 import org.tensa.facecheck.network.Manager;
 import org.tensa.facecheck.layer.impl.WeightCreationStyle;
+import org.tensa.facecheck.network.LearningControl;
+import org.tensa.facecheck.network.impl.BasicLearningControlImpl;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
 import org.tensa.tensada.matrix.FloatMatriz;
@@ -59,7 +61,7 @@ public class VisLoad extends javax.swing.JFrame {
 
     private final String baseUrl = "\\img\\originales\\";
         
-    private final Float[] learningFactor = {.000001f, 0.000003f, .000004f, .000005f, .000008f,.00001f, 0.00003f, .00004f, .00005f, .00008f,.0001f, 0.0003f, .0004f, .0005f, .0008f,.001f, 0.003f, .004f, .005f, .008f, .01f, .03f, .04f, .05f, .08f, .1f, .3f, .4f, .5f, .8f};
+    private final Float[] learningFactor = LearningControl.floatBasicLearningSeries;
 
     private final String sufxType = ".jpg";
     private BufferedImage buffImage ;
@@ -120,6 +122,8 @@ public class VisLoad extends javax.swing.JFrame {
         widthHwightpoint = new Rectangle();
         networkManager = new Manager<>();
         networkManager.setSupplier((Dominio dominio) -> new FloatMatriz(dominio));
+        networkManager.setHiddenLearningControl(new BasicLearningControlImpl<>((i) -> i % 3 ==0? 1: 0, learningFactor));
+        networkManager.setOutputLearningControl(new BasicLearningControlImpl<>((i) -> i % 3 ==0? -1: 1, learningFactor));
         networkManager.getAreaQeue().add(learnArea);
     }
 
@@ -774,12 +778,20 @@ public class VisLoad extends javax.swing.JFrame {
         new Thread( () -> {
             while (!procesar.isEnabled()) {
                 try {
-                    Thread.sleep(15000);
+                    Thread.sleep(5000);
                     
                     networkManager.setTrainingMode(entrenar.isSelected());
                     networkManager.setEmergencyBreak(freno.isSelected());
-                    networkManager.setHiddenLearningRate((Float)hiddenLearningRate.getValue());
-                    networkManager.setOutputLearningRate((Float)outputLearningRate.getValue());
+                    
+                    if (jProgressBar1.getValue() == networkManager.getIterateCurrent()) {
+                        networkManager.setHiddenLearningRate((Float)hiddenLearningRate.getValue());
+                        networkManager.setOutputLearningRate((Float)outputLearningRate.getValue());
+                        
+                    }
+                    
+                    hiddenLearningRate.setValue(networkManager.getHiddenLearningRate());
+                    outputLearningRate.setValue(networkManager.getOutputLearningRate());
+                    
                     networkManager.setIterateTo((int)iteraciones.getValue());
                     networkManager.setUseSelection(seleccion.isSelected());
                     
@@ -902,7 +914,14 @@ public class VisLoad extends javax.swing.JFrame {
                 } else if (widthHwightpoint.contains(x, y)) {
                     areaStatus = SeletionStatus.MODIFY_SIZE;                    
                     break;
+                } else {
+                    areaQeue.stream()
+                            .filter( a -> a.contains((int) (x * escala), (int) (y * escala)))
+                            .findFirst()
+                            .ifPresent( a -> learnArea = a);
                 }
+                break;
+
             case ADD:
                 areaStatus = SeletionStatus.MODIFY_POSITION;
                 break;
@@ -978,6 +997,10 @@ public class VisLoad extends javax.swing.JFrame {
             } else if (jFileChooserPesosLoad.getSelectedFile().getPath().endsWith("da2")) {
                 
                 networkManager.cargaPesos(jFileChooserPesosLoad.getSelectedFile().getPath());
+                inNeurs.setValue(networkManager.getInStep());
+                hiddNeurs.setValue(networkManager.getHidStep());
+                outNeurs.setValue(networkManager.getOutStep());
+
             }
         }
     }//GEN-LAST:event_cargarActionPerformed
@@ -1365,6 +1388,7 @@ public class VisLoad extends javax.swing.JFrame {
                 NumericMatriz<Float> errorGraph = networkManager.getErrorGraph();
                 
                 if (Objects.nonNull(errorGraph)) {
+                synchronized(errorGraph) {
                     OptionalDouble maxError = errorGraph.values().stream().mapToDouble((i) -> i.doubleValue()).max();
                     List<ParOrdenado> proccesDomain = networkManager.getProccesDomain();
                     double size = (double) proccesDomain.size();
@@ -1385,6 +1409,7 @@ public class VisLoad extends javax.swing.JFrame {
                         gr2.draw(shape);
                         
                     }
+                }
                 }
             }
             

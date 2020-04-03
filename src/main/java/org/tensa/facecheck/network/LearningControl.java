@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2019 Marcelo.
+ * Copyright 2020 Marcelo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,44 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.tensa.facecheck.layer;
-
-import org.tensa.tensada.matrix.NumericMatriz;
+package org.tensa.facecheck.network;
 
 /**
- * consumidor de resultados de otra capa
+ *
  * @author Marcelo
- * @param <N>
  */
-public interface LayerConsumer<N extends Number> {
-    
-    /**
-     * estado de proceso correcto
-     */
-    public static final int SUCCESS_STATUS = 0;
+public interface LearningControl<N extends Number> {
+
+    Float[] floatBasicLearningSeries = {.000001f, 0.000003f, .000004f, .000005f, .000008f, .00001f, 0.00003f, .00004f, .00005f, .00008f, .0001f, 0.0003f, .0004f, .0005f, .0008f, .001f, 0.003f, .004f, .005f, .008f, .01f, .03f, .04f, .05f, .08f, .1f, .3f, .4f, .5f, .8f};
+    Double[] doubleBasicLearningSeries = {.000001, 0.000003, .000004, .000005, .000008, .00001, 0.00003, .00004, .00005, .00008, .0001, 0.0003, .0004, .0005, .0008, .001, 0.003, .004, .005, .008, .01, .03, .04, .05, .08, .1, .3, .4, .5, .8};
 
     /**
-     * estado de proceso erroneo
+     * obtiene nuevo factor de aprendisaje
+     * @param index the value of index - iteracion o tiempo
+     * @param factor the value of factor - factor actualmente utilizado
+     * @return the N
      */
-    public static final int ERROR_STATUS = 1;
-    
-    /**
-     * carga datos de entrada producido por otra capa
-     * @param inputLayer
-     * @return the org.tensa.tensada.matrix.NumericMatriz<N>
-     */
-    NumericMatriz<N> setInputLayer(org.tensa.tensada.matrix.NumericMatriz<N> inputLayer);
-    
-    /**
-     * se obtienen pesos utilizados por la capa
-     * @return retorna matriz de pesos
-     */
-    NumericMatriz<N> getWeights();
-    
-    /**
-     * consume datos de entrada y realiza proceso por los pesos
-     * @param status @see LayerConsumer.SUCCESS_STATUS suministrado al procedimiento
-     */
-    void layerComplete(int status);
+    N updateFactor(int index, N factor);
     
 }

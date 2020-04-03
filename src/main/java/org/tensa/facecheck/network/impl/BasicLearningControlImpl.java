@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2019 Marcelo.
+ * Copyright 2020 Marcelo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,44 +21,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.tensa.facecheck.layer;
+package org.tensa.facecheck.network.impl;
 
-import org.tensa.tensada.matrix.NumericMatriz;
+import java.util.Arrays;
+import java.util.function.UnaryOperator;
+import org.tensa.facecheck.network.LearningControl;
 
 /**
- * consumidor de resultados de otra capa
+ *
  * @author Marcelo
- * @param <N>
  */
-public interface LayerConsumer<N extends Number> {
+public class BasicLearningControlImpl<N extends Number> implements LearningControl<N> {
     
-    /**
-     * estado de proceso correcto
-     */
-    public static final int SUCCESS_STATUS = 0;
+    private final UnaryOperator<Integer> calculateIndex;
+    private final N[] learningSeries;
 
-    /**
-     * estado de proceso erroneo
-     */
-    public static final int ERROR_STATUS = 1;
+    public BasicLearningControlImpl(UnaryOperator<Integer> calculateIndex, N[] learningSeries) {
+        this.calculateIndex = calculateIndex;
+        this.learningSeries = learningSeries;
+    }
     
     /**
-     * carga datos de entrada producido por otra capa
-     * @param inputLayer
-     * @return the org.tensa.tensada.matrix.NumericMatriz<N>
+     *
+     * @param index the value of index
+     * @param factor the value of factor
+     * @return the N
      */
-    NumericMatriz<N> setInputLayer(org.tensa.tensada.matrix.NumericMatriz<N> inputLayer);
-    
-    /**
-     * se obtienen pesos utilizados por la capa
-     * @return retorna matriz de pesos
-     */
-    NumericMatriz<N> getWeights();
-    
-    /**
-     * consume datos de entrada y realiza proceso por los pesos
-     * @param status @see LayerConsumer.SUCCESS_STATUS suministrado al procedimiento
-     */
-    void layerComplete(int status);
-    
+    @Override
+    public N updateFactor(int index, N factor) {
+        int realIndex = Arrays.binarySearch(learningSeries, factor);
+        
+        Integer newDeltaIndex = calculateIndex.apply(index);
+        int ultimateIndex = realIndex-newDeltaIndex;
+        return learningSeries[(ultimateIndex>0?ultimateIndex:0)];
+    }
 }

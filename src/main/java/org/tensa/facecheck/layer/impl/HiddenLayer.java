@@ -25,9 +25,7 @@ package org.tensa.facecheck.layer.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.activation.Activation;
@@ -35,7 +33,6 @@ import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerLearning;
 import org.tensa.facecheck.layer.LayerProducer;
 import org.tensa.tensada.matrix.NumericMatriz;
-import org.tensa.tensada.matrix.ParOrdenado;
 
 /**
  *
@@ -65,7 +62,7 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
     }
 
     @Override
-    public NumericMatriz<N> seInputLayer(NumericMatriz<N> inputLayer) {
+    public NumericMatriz<N> setInputLayer(NumericMatriz<N> inputLayer) {
         NumericMatriz<N> last = this.inputLayer;
         this.inputLayer = inputLayer;
         return last;
@@ -107,7 +104,7 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
                     .apply(inputLayer);
             
             for (LayerConsumer<N> lc : consumers) {
-                lc.seInputLayer(outputLayer);
+                lc.setInputLayer(outputLayer);
                 lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
             }
         }
@@ -127,16 +124,13 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
     public void startLearning() {
         try {
             error = activation.getError().apply(learningData, outputLayer);
-            //propagationError = (NumericMatriz<N>) weights.productoPunto(error);
-            try (final NumericMatriz<N> punto = error.productoPunto(weights)) {
-                propagationError =  punto.transpuesta();
-            }
+            propagationError =  weights.productoPunto(error);
+            
             try (final NumericMatriz<N> tensor = error.productoTensorial(inputLayer);
                     final NumericMatriz<N> delta = tensor.productoEscalar(learningFactor);
                     final NumericMatriz<N> adicion = weights.adicion(delta)) {
-                Map<ParOrdenado, N> sumable = Collections.synchronizedMap(weights);
-                synchronized (sumable) {
-                    sumable.putAll(adicion);
+                synchronized (weights) {
+                    weights.putAll(adicion);
                 }
             }
         } catch (IOException ex) {
@@ -150,7 +144,13 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
 
     @Override
     public NumericMatriz<N> getError() {
-        return error.distanciaE2().productoEscalar(error.mapper(0.5));
+        NumericMatriz<N> error2 = null;
+        try (NumericMatriz<N> distanciaE2 = error.distanciaE2()) {
+            error2 = distanciaE2.productoEscalar(error.mapper(0.5));
+        } catch (IOException ex) {
+            log.error("getError", ex);
+        }
+        return error2;
     }
 
     @Override
