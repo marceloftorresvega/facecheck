@@ -54,6 +54,7 @@ import org.tensa.facecheck.layer.impl.HiddenLayer;
 import org.tensa.facecheck.layer.impl.OutputScale;
 import org.tensa.facecheck.layer.impl.PixelInputLayer;
 import org.tensa.facecheck.layer.impl.PixelOutputLayer;
+import org.tensa.facecheck.layer.impl.WeightCreationStyle;
 import org.tensa.tensada.matrix.BlockMatriz;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.Indice;
@@ -210,39 +211,45 @@ public class Manager<N extends Number> {
         this.hidStep = hidStep;
     }
     
-    public NumericMatriz<N> createMatrix(int innerSize, int outerSize, UnaryOperator<NumericMatriz<N>> creation) {
-        
-        log.info("iniciando 1..<{},{}>",outerSize, innerSize);
-        try (BlockMatriz<N> hiddenBlockMatriz = new BlockMatriz<>(new Dominio(outerSize, 1))) {
+
+    /**
+     *
+     * @param innerSize the value of innerSize
+     * @param outerSize the value of outerSize
+     * @param creating the value of creating
+     * @param modeling the value of modeling
+     */
+    public NumericMatriz<N> createMatrix(int innerSize, int outerSize, UnaryOperator<NumericMatriz<N>> creating, UnaryOperator<NumericMatriz<N>> modeling) {
+        log.info("iniciando 1..<{},{}>", outerSize, innerSize);
+        try (final BlockMatriz<N> hiddenBlockMatriz = new BlockMatriz<>(new Dominio(outerSize, 1))) {
             hiddenBlockMatriz.getDominio().forEach((ParOrdenado idx) -> {
-                final NumericMatriz<N> tmpm = supplier.apply(new Dominio(1, innerSize));
-                tmpm.getDominio().forEach((i) -> {
-                    tmpm.put(i, tmpm.mapper(1-2*Math.random()));
-                });
-                hiddenBlockMatriz.put(idx, creation.apply(tmpm));
-                tmpm.clear();
+                hiddenBlockMatriz.put(idx, creating
+                        .compose(supplier).andThen(modeling)
+                        .apply(new Dominio(1, innerSize)));
             });
-
-            log.info("iniciando 2..<{},{}>",outerSize, innerSize);
+            log.info("iniciando 2..<{},{}>", outerSize, innerSize);
             Matriz<N> merged = hiddenBlockMatriz.merge();
-
             return supplier.apply(new Dominio(Indice.D1))
                     .instancia(merged.getDominio(), merged);
-            
-        } catch (IOException ex) {
+        }catch (IOException ex) {
             
             log.error("createMatrix", ex);
             throw new RuntimeException(ex);
         }
     }
     
-    public void initMatrix( UnaryOperator<NumericMatriz<N>> creationH, UnaryOperator<NumericMatriz<N>> creationO){
+    /**
+     *
+     * @param modelingH the value of modelingH
+     * @param modelingO the value of modelingO
+     */
+    public void initMatrix( UnaryOperator<NumericMatriz<N>> modelingH, UnaryOperator<NumericMatriz<N>> modelingO){
         
         int inSize = inStep*inStep*3;
         int outSize = outStep*outStep*3;
         
-        weightsH = createMatrix(inSize, hidStep, creationH);
-        weightsO = createMatrix(hidStep, outSize, creationO);
+        weightsH = createMatrix(inSize, hidStep, WeightCreationStyle::randomCreationStyle, modelingH);
+        weightsO = createMatrix(hidStep, outSize, WeightCreationStyle::randomCreationStyle, modelingO);
         
     }
 

@@ -23,34 +23,46 @@
  */
 package org.tensa.facecheck.layer.impl;
 
-import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
  *
  * @author Marcelo
  */
-public class WeightCreationStyle {
+public class WeightModelingStyle {
 
-    private WeightCreationStyle() {
+    /**
+     *
+     * @param tmpm the value of tmpm
+     */
+    public static <N extends Number> NumericMatriz<N> normalizedModelingStyle(NumericMatriz<N> tmpm) {
+        double punto = tmpm.values().stream().mapToDouble(Number::doubleValue).map((double v) -> v * v).sum();
+        punto = 1 / Math.sqrt(punto);
+        return tmpm.productoEscalar(tmpm.mapper(punto));
     }
 
-    public static <N extends Number> NumericMatriz<N> randomCreationStyle(NumericMatriz<N> tmpm) {
-        tmpm.getDominio().forEach((i) -> {
-            tmpm.put(i, tmpm.mapper(1-2*Math.random()));
-        });
+    /**
+     *
+     * @param tmpm the value of tmpm
+     */
+    public static <N extends Number> NumericMatriz<N> reflectanceModelingStyle(NumericMatriz<N> tmpm) {
+        double punto = tmpm.values().stream().mapToDouble((N v) -> Math.abs(v.doubleValue())).sum();
+        punto = 1 / punto;
+        return tmpm.productoEscalar(tmpm.mapper(punto));
+    }
+
+    /**
+     *
+     * @param tmpm the value of tmpm
+     */
+    public static <N extends Number> NumericMatriz<N> simpleModelingStyle(NumericMatriz<N> tmpm) {
         return tmpm;
     }
-    
-    public static <N extends Number> NumericMatriz<N> diagonalCreationStyle(NumericMatriz<N> tmpm) {
-        Dominio dominio = tmpm.getDominio();
-        int pend = dominio.getColumna()/dominio.getFila();
-        dominio.stream()
-                .filter((p) -> p.getColumna()/p.getFila()== pend)
-                .forEach((i) -> {
-            tmpm.put(i, tmpm.mapper(1.0));
-        });
-        return tmpm;
+
+    /**
+     * Constructor privado
+     */
+    private WeightModelingStyle() {
     }
     
 }
