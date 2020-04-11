@@ -60,25 +60,15 @@ public class OutputScale {
     }
     
      public static <N extends Number> NumericMatriz<N> normalized(NumericMatriz<N> matriz) {
-         try (NumericMatriz<N> d = matriz.distanciaE2();) {
-            N normalizador = matriz.inversoMultiplicativo(matriz.mapper(Math.sqrt(d.get(Indice.D1).doubleValue())));
-            return matriz.productoEscalar(normalizador);
-         
-        } catch( IOException ex) {
-            throw new RejectedExecutionException("normalized", ex);
-        }
-            
+        double punto = matriz.values().stream().mapToDouble(Number::doubleValue).map((double v) -> v * v).sum();
+        punto = 1 / Math.sqrt(punto);
+        return matriz.productoEscalar(matriz.mapper(punto));
      }
     
      public static <N extends Number> NumericMatriz<N> reflectance(NumericMatriz<N> matriz) {
-         try (NumericMatriz<N> r = matriz.productoPunto(matriz.matrizUno());) {
-            
-            N reflector = matriz.inversoMultiplicativo(r.get(Indice.D1));
-            return matriz.productoEscalar(reflector);
-             
-        } catch( IOException ex) {
-            throw new RejectedExecutionException("reflectance", ex);
-        }
+        double punto = matriz.values().stream().mapToDouble((N v) -> Math.abs(v.doubleValue())).sum();
+        punto = 1 / punto;
+        return matriz.productoEscalar(matriz.mapper(punto));
      }
      
 }
