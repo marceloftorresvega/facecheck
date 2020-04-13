@@ -25,14 +25,13 @@ package org.tensa.facecheck.layer.impl;
 
 import java.io.IOException;
 import java.util.concurrent.RejectedExecutionException;
-import org.tensa.tensada.matrix.Indice;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
  *
  * @author Marcelo
  */
-public class OutputScale {
+public final class OutputScale {
     private OutputScale() {
     }
     

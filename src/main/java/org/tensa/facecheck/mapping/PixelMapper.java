@@ -21,48 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.tensa.facecheck.layer.impl;
+package org.tensa.facecheck.mapping;
 
-import org.tensa.tensada.matrix.NumericMatriz;
+import org.tensa.tensada.matrix.Dominio;
+import org.tensa.tensada.matrix.Indice;
 
 /**
  *
  * @author Marcelo
  */
-public final class WeightModelingStyle {
-
-    /**
-     *
-     * @param tmpm the value of tmpm
-     */
-    public static <N extends Number> NumericMatriz<N> normalizedModelingStyle(NumericMatriz<N> tmpm) {
-        double punto = tmpm.values().stream().mapToDouble(Number::doubleValue).map((double v) -> v * v).sum();
-        punto = 1 / Math.sqrt(punto);
-        return tmpm.productoEscalar(tmpm.mapper(punto));
-    }
-
-    /**
-     *
-     * @param tmpm the value of tmpm
-     */
-    public static <N extends Number> NumericMatriz<N> reflectanceModelingStyle(NumericMatriz<N> tmpm) {
-        double punto = tmpm.values().stream().mapToDouble((N v) -> Math.abs(v.doubleValue())).sum();
-        punto = 1 / punto;
-        return tmpm.productoEscalar(tmpm.mapper(punto));
-    }
-
-    /**
-     *
-     * @param tmpm the value of tmpm
-     */
-    public static <N extends Number> NumericMatriz<N> simpleModelingStyle(NumericMatriz<N> tmpm) {
-        return tmpm;
-    }
-
-    /**
-     * Constructor privado
-     */
-    private WeightModelingStyle() {
-    }
+public interface PixelMapper {
+    
+    Dominio getDominio(int largo);
+    
+    Indice getIndice(int i);
+    
+    Integer getLargo(Dominio dominio);
     
 }

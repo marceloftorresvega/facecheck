@@ -30,7 +30,7 @@ import org.tensa.tensada.matrix.NumericMatriz;
  *
  * @author Marcelo
  */
-public class WeightCreationStyle {
+public final class WeightCreationStyle {
 
     private WeightCreationStyle() {
     }
@@ -49,6 +49,17 @@ public class WeightCreationStyle {
                 .filter((p) -> p.getColumna()/p.getFila()== pend)
                 .forEach((i) -> {
             tmpm.put(i, tmpm.mapper(1.0));
+        });
+        return tmpm;
+    }
+    
+    public static <N extends Number> NumericMatriz<N> randomSegmetedCreationStyle(NumericMatriz<N> tmpm) {
+        int filas = tmpm.getDominio().getFila() / 3;
+        int columnas = tmpm.getDominio().getColumna() / 3;
+        tmpm.getDominio().stream()
+                .filter((i) -> i.getFila() / filas == i.getColumna() / columnas )
+                .forEach((i) -> {
+            tmpm.put(i, tmpm.mapper(1-2*Math.random()));
         });
         return tmpm;
     }
