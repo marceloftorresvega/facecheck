@@ -53,6 +53,6 @@ public class BasicLearningControlImpl<N extends Number> implements LearningContr
         
         Integer newDeltaIndex = calculateIndex.apply(index);
         int ultimateIndex = realIndex-newDeltaIndex;
-        return learningSeries[(ultimateIndex>0?ultimateIndex:0)];
+        return learningSeries[(ultimateIndex>0?ultimateIndex<learningSeries.length?ultimateIndex:learningSeries.length-1:0)];
     }
 }
