@@ -83,6 +83,8 @@ public class VisLoad extends javax.swing.JFrame {
     public SpinnerModel getSpinnerModel(){
 //        if(Objects.isNull(spinnerModel))
         SpinnerListModel spinnerModel = new SpinnerListModel(learningFactor);
+        int valorMedio = learningFactor.length/2;
+        spinnerModel.setValue(learningFactor[valorMedio]);
         return spinnerModel;
     }
 
@@ -439,7 +441,7 @@ public class VisLoad extends javax.swing.JFrame {
 
         jLabel2.setText("Oculta");
 
-        hiddNeurs.setModel(new javax.swing.SpinnerNumberModel(15, 3, 100, 1));
+        hiddNeurs.setModel(new javax.swing.SpinnerNumberModel(15, 3, 500, 1));
         hiddNeurs.setToolTipText("Neuronas ocultas");
 
         jLabel3.setText("Salida");
