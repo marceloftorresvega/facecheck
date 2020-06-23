@@ -1,2 +1,2 @@
 # facecheck
-encuentra rostros
+reconstruye rostros
