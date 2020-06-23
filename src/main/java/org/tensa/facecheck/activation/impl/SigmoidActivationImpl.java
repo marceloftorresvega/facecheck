@@ -23,32 +23,63 @@
  */
 package org.tensa.facecheck.activation.impl;
 
+import java.io.IOException;
+import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.activation.Activation;
 import org.tensa.tensada.matrix.NumericMatriz;
 
+public class SigmoidActivationImpl<N extends Number> implements Activation<N> {
 
-public abstract class SigmoidActivationImpl<N extends Number> implements Activation<N> {
     protected final Logger log = LoggerFactory.getLogger(SigmoidActivationImpl.class);
 
     public SigmoidActivationImpl() {
     }
-     
+
     @Override
     public Function<NumericMatriz<N>, NumericMatriz<N>> getActivation() {
-        return (m)-> {
-            m.replaceAll((indice,v) -> {
-                return m.inversoMultiplicativo(m.sumaDirecta(
-                        m.getUnoValue(),
-                        m.mapper(Math.exp(-v.doubleValue()))
-                        ));
-            });
-            return m;
-        };
+        return (m) -> m.entrySet().stream()
+                    .collect(ActivationUtils.entityToMatriz(
+                            m,
+                            (e) -> m.inversoMultiplicativo(m.sumaDirecta(
+                                    m.getUnoValue(),
+                                    m.mapper(Math.exp(-e.getValue().doubleValue()))
+                            ))
+                    ));
     }
 
+    @Override
+    public BiFunction<NumericMatriz<N>, NumericMatriz<N>, NumericMatriz<N>> getError() {
+        return (NumericMatriz<N> learning, NumericMatriz<N> output) -> {
+            
+            try (final NumericMatriz<N> m1 = output.matrizUno();
+                 final NumericMatriz<N> semiResta = m1.substraccion(output);
+                    ) {
+                    return learning.entrySet().stream()
+                    .collect(ActivationUtils.entityToMatriz(
+                            m1,
+                            (e) -> m1.productoDirecto(
+                                    e.getValue(),
+                                    m1.productoDirecto(
+                                            output.get(e.getKey()), 
+                                            semiResta.get(e.getKey()))
+                            )));
+            } catch (IOException ex) {
+                log.error("learningFunctionOperation", ex);
+                throw new RuntimeException(ex);
+            }
+
+        };
+    }
     
+    @Override
+    public boolean isOptimized() {
+        return true;
+    }
+
+
     
 }

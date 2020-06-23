@@ -23,30 +23,36 @@
  */
 package org.tensa.facecheck.activation.impl;
 
-import java.io.IOException;
-import java.util.function.BiFunction;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import org.tensa.tensada.matrix.NumericMatriz;
 import org.tensa.tensada.matrix.ParOrdenado;
 
+/**
+ *
+ * @author Marcelo
+ */
+public class ActivationUtils {
 
-public class HiddenTanHyperActivationImpl<N extends Number> extends TanHyperActivationImpl<N> {
-
-    @Override
-    public BiFunction<NumericMatriz<N>, NumericMatriz<N>, NumericMatriz<N>> getError() {
-        return (learning, output) -> {
-
-            NumericMatriz<N> error;
-            try (final NumericMatriz<N> m1 = output.matrizUno()) {
-                error = m1.substraccion(output);
-            } catch (IOException ex) {
-                log.error("learningFunctionOperation", ex);
-                throw new RuntimeException(ex);
-            }
-            error.replaceAll((ParOrdenado i, N v)
-                    -> error.productoDirecto(v, error.productoDirecto(output.get(i), learning.get(i))));
-            return error;
-
-        };
+    private ActivationUtils() {
     }
     
+    
+    public static <N extends Number> Collector<ParOrdenado, ?, NumericMatriz<N>> domainToMatriz(NumericMatriz<N> m, Function<ParOrdenado,N> convert){
+        return Collectors.toMap(
+                Function.identity(),
+                convert,
+                (a,b) -> a,
+                () -> m.instancia(m.getDominio()));
+    }
+    
+    public static <N extends Number> Collector<? super Map.Entry<ParOrdenado, N>, ?, NumericMatriz<N>> entityToMatriz(NumericMatriz<N> m, Function<Map.Entry<ParOrdenado, N>,N> convert){
+        return Collectors.toMap(
+                NumericMatriz.Entry::getKey,
+                convert,
+                (a,b) -> a,
+                () -> m.instancia(m.getDominio()));
+    }
 }

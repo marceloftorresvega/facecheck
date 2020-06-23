@@ -34,4 +34,5 @@ import org.tensa.tensada.matrix.NumericMatriz;
 public interface Activation <N extends Number> {
     Function<NumericMatriz<N>,NumericMatriz<N>> getActivation();
     BiFunction<NumericMatriz<N>,NumericMatriz<N>,NumericMatriz<N>> getError();
+    boolean isOptimized();
 }

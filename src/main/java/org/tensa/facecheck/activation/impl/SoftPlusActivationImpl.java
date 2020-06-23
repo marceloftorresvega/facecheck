@@ -23,34 +23,44 @@
  */
 package org.tensa.facecheck.activation.impl;
 
-import java.io.IOException;
 import java.util.function.BiFunction;
+import java.util.function.Function;
+import org.tensa.facecheck.activation.Activation;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 
-public class LearningTanHyperActivationImpl<N extends Number> extends TanHyperActivationImpl<N> {
+public class SoftPlusActivationImpl<N extends Number> implements Activation<N> {
+
+    @Override
+    public Function<NumericMatriz<N>, NumericMatriz<N>> getActivation() {
+        return (m) -> m.entrySet().stream()
+                .collect(ActivationUtils.entityToMatriz(m, (e) -> 
+                        m.mapper(Math.log(
+                                m.sumaDirecta(
+                                    m.getUnoValue(), 
+                                    m.mapper(Math.exp(e.getValue().doubleValue()))
+                            ).doubleValue()
+                        ))
+                ));
+    }
 
     @Override
     public BiFunction<NumericMatriz<N>, NumericMatriz<N>, NumericMatriz<N>> getError() {
-        return  (learning, output) -> {
-            NumericMatriz<N> m1 = output.matrizUno();
-            try (
-                NumericMatriz<N> diferencia = learning.substraccion(output);
-                NumericMatriz<N> semiSuma = m1.adicion(output);
-                NumericMatriz<N> semiResta = m1.substraccion(output);
-                    ) {
-                
-                m1.replaceAll((indice,v) -> 
-                        m1.productoDirecto(diferencia.get(indice),
-                            m1.productoDirecto(semiSuma.get(indice), semiResta.get(indice))));
-                
-                
-            } catch( IOException ex ) {
-                //
-            }
-            return m1;
-            
-        };
+        return (learning, output) -> learning.entrySet().stream()
+                .collect(ActivationUtils.entityToMatriz(learning,(e) -> 
+                        learning.productoDirecto(
+                                e.getValue(), 
+                                learning.inversoMultiplicativo(
+                                        learning.sumaDirecta(
+                                                learning.getUnoValue(), 
+                                                learning.mapper(Math.exp(-output.get(e.getKey()).doubleValue())))
+                                        ))
+                ));
+    }
+
+    @Override
+    public boolean isOptimized() {
+        return false;
     }
     
 }

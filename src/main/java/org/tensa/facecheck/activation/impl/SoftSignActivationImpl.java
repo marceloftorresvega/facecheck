@@ -23,57 +23,54 @@
  */
 package org.tensa.facecheck.activation.impl;
 
-import java.io.IOException;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.activation.Activation;
 import org.tensa.tensada.matrix.NumericMatriz;
 
+public class SoftSignActivationImpl<N extends Number> implements Activation<N> {
 
-public class TanHyperActivationImpl<N extends Number> implements Activation<N> {
+    protected final Logger log = LoggerFactory.getLogger(SoftSignActivationImpl.class);
 
-    protected final Logger log = LoggerFactory.getLogger(TanHyperActivationImpl.class);
-    
     @Override
     public Function<NumericMatriz<N>, NumericMatriz<N>> getActivation() {
+        
         return (m) -> m.entrySet().stream()
-                    .collect(ActivationUtils.entityToMatriz(
-                            m,
-                            (e) -> m.mapper(Math.tanh(e.getValue().doubleValue()))));
+                    .collect(ActivationUtils.entityToMatriz(m, 
+                            (e) -> m.productoDirecto(
+                                    e.getValue(),
+                                    m.inversoMultiplicativo(
+                                            m.sumaDirecta(
+                                                    m.getUnoValue(),
+                                                    m.mapper(Math.abs(e.getValue().doubleValue()))
+                                            ))
+                            )));
     }
 
     @Override
     public BiFunction<NumericMatriz<N>, NumericMatriz<N>, NumericMatriz<N>> getError() {
-        return (NumericMatriz<N> learning, NumericMatriz<N> output) -> {
-            
-            try (final NumericMatriz<N> m1 = output.matrizUno();
-                final NumericMatriz<N> semiResta = m1.substraccion(output);
-                final NumericMatriz<N> semiSuma = m1.adicion(output);
-                    ) {
-                
-                return learning.entrySet().stream()
-                        .collect(ActivationUtils.entityToMatriz(
-                                learning, 
-                                (e) -> m1.productoDirecto(
+        return (learning, output) -> learning.entrySet().stream()
+                    .collect(ActivationUtils.entityToMatriz(output, 
+                            (e) -> {
+                                N semiSuma;
+                                return learning.productoDirecto(
                                         e.getValue(),
-                                        m1.productoDirecto(
-                                                semiSuma.get(e.getKey()), 
-                                                semiResta.get(e.getKey())))));
-                
-            } catch (IOException ex) {
-                log.error("learningFunctionOperation", ex);
-                throw new RuntimeException(ex);
-            }
-
-        };
+                                        learning.inversoMultiplicativo(
+                                                learning.productoDirecto(
+                                                        semiSuma = learning.sumaDirecta(
+                                                                learning.getUnoValue(),
+                                                                learning.mapper(Math.abs(output.get(e.getKey()).doubleValue()))
+                                                        ),
+                                                        semiSuma))
+                                );
+                            }
+                    ));
     }
     
     @Override
     public boolean isOptimized() {
-        return true;
+        return false;
     }
-    
 }

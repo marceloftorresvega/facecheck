@@ -26,6 +26,7 @@ package org.tensa.facecheck.layer.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.UnaryOperator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.activation.Activation;
@@ -48,6 +49,7 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
     protected NumericMatriz<N> propagationError;
     protected NumericMatriz<N> learningData;
     protected NumericMatriz<N> error;
+    protected NumericMatriz<N> net;
     protected final N learningFactor;
     protected final List<LayerConsumer<N>> consumers;
     protected final List<LayerLearning<N>> producers;
@@ -99,8 +101,12 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
             //outputLayer.replaceAll((ParOrdenado i, N v) -> 1 / (1 + Math.exp(-v.doubleValue())));
 //            outputLayer = weights.producto(inputLayer);
 //            activation.getActivation().apply(outputLayer);
-            outputLayer = activation.getActivation()
-                    .compose(weights::producto)
+//            outputLayer = activation.getActivation()
+//                    .compose(weights::producto)
+//                    .apply(inputLayer);
+            UnaryOperator<NumericMatriz<N>> assign = (n) -> net = n;
+            outputLayer = assign.compose(weights::producto)
+                    .andThen(activation.getActivation())
                     .apply(inputLayer);
             
             for (LayerConsumer<N> lc : consumers) {
@@ -122,9 +128,12 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
 
     @Override
     public void startLearning() {
+        UnaryOperator<NumericMatriz<N>> assign = (n) -> error = n;
         try {
-            error = activation.getError().apply(learningData, outputLayer);
-            propagationError =  weights.productoPunto(error);
+            propagationError = activation.getError()
+                    .andThen(assign)
+                    .andThen(weights::productoPunto)
+                    .apply(learningData, activation.isOptimized()?outputLayer:net);
             
             try (final NumericMatriz<N> tensor = error.productoTensorial(inputLayer);
                     final NumericMatriz<N> delta = tensor.productoEscalar(learningFactor);
