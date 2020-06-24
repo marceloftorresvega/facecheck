@@ -40,7 +40,7 @@ public class TanHyperActivationImpl<N extends Number> implements Activation<N> {
     @Override
     public Function<NumericMatriz<N>, NumericMatriz<N>> getActivation() {
         return (m) -> m.entrySet().stream()
-                    .collect(ActivationUtils.entityToMatriz(
+                    .collect(ActivationUtils.entryToMatriz(
                             m,
                             (e) -> m.mapper(Math.tanh(e.getValue().doubleValue()))));
     }
@@ -55,7 +55,7 @@ public class TanHyperActivationImpl<N extends Number> implements Activation<N> {
                     ) {
                 
                 return learning.entrySet().stream()
-                        .collect(ActivationUtils.entityToMatriz(
+                        .collect(ActivationUtils.entryToMatriz(
                                 learning, 
                                 (e) -> m1.productoDirecto(
                                         e.getValue(),

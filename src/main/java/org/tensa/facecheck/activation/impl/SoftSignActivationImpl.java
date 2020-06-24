@@ -38,7 +38,7 @@ public class SoftSignActivationImpl<N extends Number> implements Activation<N> {
     public Function<NumericMatriz<N>, NumericMatriz<N>> getActivation() {
         
         return (m) -> m.entrySet().stream()
-                    .collect(ActivationUtils.entityToMatriz(m, 
+                    .collect(ActivationUtils.entryToMatriz(m, 
                             (e) -> m.productoDirecto(
                                     e.getValue(),
                                     m.inversoMultiplicativo(
@@ -52,7 +52,7 @@ public class SoftSignActivationImpl<N extends Number> implements Activation<N> {
     @Override
     public BiFunction<NumericMatriz<N>, NumericMatriz<N>, NumericMatriz<N>> getError() {
         return (learning, output) -> learning.entrySet().stream()
-                    .collect(ActivationUtils.entityToMatriz(output, 
+                    .collect(ActivationUtils.entryToMatriz(output, 
                             (e) -> {
                                 N semiSuma;
                                 return learning.productoDirecto(

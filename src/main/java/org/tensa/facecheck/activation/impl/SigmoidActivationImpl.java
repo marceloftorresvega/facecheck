@@ -42,7 +42,7 @@ public class SigmoidActivationImpl<N extends Number> implements Activation<N> {
     @Override
     public Function<NumericMatriz<N>, NumericMatriz<N>> getActivation() {
         return (m) -> m.entrySet().stream()
-                    .collect(ActivationUtils.entityToMatriz(
+                    .collect(ActivationUtils.entryToMatriz(
                             m,
                             (e) -> m.inversoMultiplicativo(m.sumaDirecta(
                                     m.getUnoValue(),
@@ -59,7 +59,7 @@ public class SigmoidActivationImpl<N extends Number> implements Activation<N> {
                  final NumericMatriz<N> semiResta = m1.substraccion(output);
                     ) {
                     return learning.entrySet().stream()
-                    .collect(ActivationUtils.entityToMatriz(
+                    .collect(ActivationUtils.entryToMatriz(
                             m1,
                             (e) -> m1.productoDirecto(
                                     e.getValue(),

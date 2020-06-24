@@ -24,6 +24,7 @@
 package org.tensa.facecheck.activation.impl;
 
 import java.util.Map;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -39,8 +40,7 @@ public class ActivationUtils {
     private ActivationUtils() {
     }
     
-    
-    public static <N extends Number> Collector<ParOrdenado, ?, NumericMatriz<N>> domainToMatriz(NumericMatriz<N> m, Function<ParOrdenado,N> convert){
+    public static <N extends Number> Collector<ParOrdenado, ?, NumericMatriz<N>> domainToMatriz(NumericMatriz<N> m, Function<ParOrdenado,N> convert) {
         return Collectors.toMap(
                 Function.identity(),
                 convert,
@@ -48,11 +48,24 @@ public class ActivationUtils {
                 () -> m.instancia(m.getDominio()));
     }
     
-    public static <N extends Number> Collector<? super Map.Entry<ParOrdenado, N>, ?, NumericMatriz<N>> entityToMatriz(NumericMatriz<N> m, Function<Map.Entry<ParOrdenado, N>,N> convert){
+    public static <N extends Number> Collector<? super Map.Entry<ParOrdenado, N>, ?, NumericMatriz<N>> entryToMatriz(NumericMatriz<N> m, Function<Map.Entry<ParOrdenado, N>,N> convert) {
         return Collectors.toMap(
                 NumericMatriz.Entry::getKey,
                 convert,
                 (a,b) -> a,
                 () -> m.instancia(m.getDominio()));
+    }
+    
+    public static <N extends Number> Collector<? super Map.Entry<ParOrdenado, N>, ?, NumericMatriz<N>> resumeToMatriz(NumericMatriz<N> m, BinaryOperator<N> resume) {
+        return Collectors.toMap(
+                NumericMatriz.Entry::getKey,
+                NumericMatriz.Entry::getValue,
+                resume,
+                () -> m.instancia(m.getDominio()));
+    }
+    
+    public static <N extends Number> NumericMatriz<N> applyToMatriz(NumericMatriz<N> m, Function<Map.Entry<ParOrdenado, N>,N> convert) {
+        return m.entrySet().stream()
+                .collect(entryToMatriz(m, convert));
     }
 }

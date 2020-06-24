@@ -37,7 +37,7 @@ public class ReluActivationImpl<N extends Number> implements Activation<N> {
         return (m) -> {
             return m.entrySet().stream()
                     .filter((e) -> e.getValue().doubleValue() > 0.0)
-                    .collect(ActivationUtils.entityToMatriz(m,
+                    .collect(ActivationUtils.entryToMatriz(m,
                             NumericMatriz.Entry::getValue));
         };
     }
@@ -55,7 +55,7 @@ public class ReluActivationImpl<N extends Number> implements Activation<N> {
             
             return output.entrySet().stream()
                     .filter((e) -> e.getValue().doubleValue() > 0.0)
-                    .collect(ActivationUtils.entityToMatriz(output,
+                    .collect(ActivationUtils.entryToMatriz(output,
                             (e) -> output.restaDirecta(
                                     learning.get(e.getKey()),
                                     e.getValue())));

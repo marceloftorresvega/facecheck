@@ -23,6 +23,7 @@
  */
 package org.tensa.facecheck.activation.impl;
 
+import java.math.BigDecimal;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.tensa.facecheck.activation.Activation;
@@ -34,7 +35,7 @@ public class SoftPlusActivationImpl<N extends Number> implements Activation<N> {
     @Override
     public Function<NumericMatriz<N>, NumericMatriz<N>> getActivation() {
         return (m) -> m.entrySet().stream()
-                .collect(ActivationUtils.entityToMatriz(m, (e) -> 
+                .collect(ActivationUtils.entryToMatriz(m, (e) -> 
                         m.mapper(Math.log(
                                 m.sumaDirecta(
                                     m.getUnoValue(), 
@@ -47,13 +48,13 @@ public class SoftPlusActivationImpl<N extends Number> implements Activation<N> {
     @Override
     public BiFunction<NumericMatriz<N>, NumericMatriz<N>, NumericMatriz<N>> getError() {
         return (learning, output) -> learning.entrySet().stream()
-                .collect(ActivationUtils.entityToMatriz(learning,(e) -> 
+                .collect(ActivationUtils.entryToMatriz(learning,(e) -> 
                         learning.productoDirecto(
                                 e.getValue(), 
                                 learning.inversoMultiplicativo(
                                         learning.sumaDirecta(
                                                 learning.getUnoValue(), 
-                                                learning.mapper(Math.exp(-output.get(e.getKey()).doubleValue())))
+                                                learning.mapper(Math.exp(learning.inversoAditivo(output.get(e.getKey())).doubleValue())))
                                         ))
                 ));
     }
