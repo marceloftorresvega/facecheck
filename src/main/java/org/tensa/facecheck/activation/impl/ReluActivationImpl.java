@@ -23,6 +23,7 @@
  */
 package org.tensa.facecheck.activation.impl;
 
+import org.tensa.facecheck.activation.utils.ActivationUtils;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;

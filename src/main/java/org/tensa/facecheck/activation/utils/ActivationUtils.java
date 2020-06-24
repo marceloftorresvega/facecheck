@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.tensa.facecheck.activation.impl;
+package org.tensa.facecheck.activation.utils;
 
 import java.util.Map;
 import java.util.function.BinaryOperator;
