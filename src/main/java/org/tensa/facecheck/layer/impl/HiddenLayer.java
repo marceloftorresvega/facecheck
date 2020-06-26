@@ -135,8 +135,9 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
                     .andThen(weights::productoPunto)
                     .apply(learningData, activation.isOptimized()?outputLayer:net);
             
-            try (final NumericMatriz<N> tensor = error.productoTensorial(inputLayer);
-                    final NumericMatriz<N> delta = tensor.productoEscalar(learningFactor);
+            try (
+                    final NumericMatriz<N> derror = error.productoEscalar(learningFactor);
+                    final NumericMatriz<N> delta = derror.productoTensorial(inputLayer);
                     final NumericMatriz<N> adicion = weights.adicion(delta)) {
                 synchronized (weights) {
                     weights.putAll(adicion);
