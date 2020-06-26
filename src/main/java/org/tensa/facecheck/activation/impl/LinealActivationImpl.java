@@ -44,7 +44,7 @@ public class LinealActivationImpl<N extends Number> implements org.tensa.faceche
 
     @Override
     public BiFunction<NumericMatriz<N>, NumericMatriz<N>, NumericMatriz<N>> getError() {
-        return (learning,output) -> learning.substraccion(output);
+        return (learning,output) -> learning;
     }
 
     @Override

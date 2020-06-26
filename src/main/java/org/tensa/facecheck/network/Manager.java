@@ -370,7 +370,7 @@ public class Manager<N extends Number> {
         origen.getConsumers().add(new LayerConsumer<N>() {
             @Override
             public NumericMatriz<N> setInputLayer(NumericMatriz<N> inputLayer) {
-                regreso.setLearningData(inputLayer);
+                regreso.setLearningData(inputLayer.substraccion(regreso.getOutputLayer()));
                 return inputLayer;
             }
 
