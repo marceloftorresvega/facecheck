@@ -27,12 +27,10 @@ import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.Indice;
 
 /**
- * mapeo de componentes desde el arreglo de pixels
- * 1.- directo al arreglo de componentes de pixels 
- * 2.- separacion en columnas 1a rojo 2a verde 3a azul 
- * 3.- separacion en columnas y alineacion 1a rojo 2a 
- *     verde 3a azul y superior rojo,
- *     centro verde e inferior azul
+ * mapeo de componentes desde el arreglo de pixels 1.- directo al arreglo de
+ * componentes de pixels 2.- separacion en columnas 1a rojo 2a verde 3a azul 3.-
+ * separacion en columnas y alineacion 1a rojo 2a verde 3a azul y superior rojo,
+ * centro verde e inferior azul
  *
  * @author Marcelo
  */
@@ -43,6 +41,8 @@ public final class PixelMappings {
 
     /**
      * mapeo directo de los pixels separados en componentes
+     *
+     * distintos pesos por neuronas analizan distintos componentes de color
      *
      * @return PixelMapper
      */
@@ -69,6 +69,9 @@ public final class PixelMappings {
      * mapeo y clasificacion de componentes de pixels en 3 columnas, reduciendo
      * cantidad de filas con respecto a la cantidad total de componentes
      *
+     * los mismos pesos por neurona analizaran los distintos componentes de
+     * color
+     *
      * @return PixelMapper
      */
     public static PixelMapper byComponentMapping() {
@@ -94,6 +97,9 @@ public final class PixelMappings {
      * mapeo de componentes del pixel en columnas y recolocacion de las
      * componentes dentro de la fila clasificandolas por color, conserva largo
      * de la cantidad de componentes
+     *
+     * neuronas especificas analizan componentes especificos de color con opcion
+     * a icluir otros
      *
      * @return PixelMapper
      */
@@ -123,6 +129,8 @@ public final class PixelMappings {
      * mapeo inverso a byComponentMapping donde se distribullen en 3 filas y el
      * largo de la columna sea reducido con respecto a la cantidad de
      * componentes
+     *
+     * neuronas especificas analizan componentes especificos de color
      *
      * @return PixelMapper
      */
