@@ -27,6 +27,7 @@ import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
+ * Modela creacion de pesos para las matrices al ser iniciadas
  *
  * @author Marcelo
  */
@@ -35,33 +36,56 @@ public final class WeightCreationStyle {
     private WeightCreationStyle() {
     }
 
+    /**
+     * random: asigna a los pesos valores al azar entre -1 y 1
+     *
+     * @param <N> tipo numerico Float,Double o BigDecimal
+     * @param tmpm NumericMatriz Matriz a rellenar
+     * @return NumericMatriz la matriz ingresada
+     */
     public static <N extends Number> NumericMatriz<N> randomCreationStyle(NumericMatriz<N> tmpm) {
         tmpm.getDominio().forEach((i) -> {
-            tmpm.put(i, tmpm.mapper(1-2*Math.random()));
+            tmpm.put(i, tmpm.mapper(1 - 2 * Math.random()));
         });
         return tmpm;
     }
-    
+
+    /**
+     * diagonal: asigna a los pesos valores 1 si se situan sobre la diagonal, no
+     * requiere matriz cuadarada
+     *
+     * @param <N> tipo numerico Float,Double o BigDecimal
+     * @param tmpm NumericMatriz Matriz a rellenar
+     * @return NumericMatriz la matriz ingresada
+     */
     public static <N extends Number> NumericMatriz<N> diagonalCreationStyle(NumericMatriz<N> tmpm) {
         Dominio dominio = tmpm.getDominio();
-        int pend = dominio.getColumna()/dominio.getFila();
+        int pend = dominio.getColumna() / dominio.getFila();
         dominio.stream()
-                .filter((p) -> p.getColumna()/p.getFila()== pend)
+                .filter((p) -> p.getColumna() / p.getFila() == pend)
                 .forEach((i) -> {
-            tmpm.put(i, tmpm.mapper(1.0));
-        });
+                    tmpm.put(i, tmpm.mapper(1.0));
+                });
         return tmpm;
     }
-    
+
+    /**
+     * segmented: inicia matriz para modelo pixelMapping que divide componentes
+     * de pixel en grupos
+     *
+     * @param <N> tipo numerico Float,Double o BigDecimal
+     * @param tmpm NumericMatriz Matriz a rellenar
+     * @return NumericMatriz la matriz ingresada
+     */
     public static <N extends Number> NumericMatriz<N> randomSegmetedCreationStyle(NumericMatriz<N> tmpm) {
         int filas = tmpm.getDominio().getFila() / 3;
         int columnas = tmpm.getDominio().getColumna() / 3;
         tmpm.getDominio().stream()
-                .filter((i) -> i.getFila() / filas == i.getColumna() / columnas )
+                .filter((i) -> i.getFila() / filas == i.getColumna() / columnas)
                 .forEach((i) -> {
-            tmpm.put(i, tmpm.mapper(1-2*Math.random()));
-        });
+                    tmpm.put(i, tmpm.mapper(1 - 2 * Math.random()));
+                });
         return tmpm;
     }
-    
+
 }

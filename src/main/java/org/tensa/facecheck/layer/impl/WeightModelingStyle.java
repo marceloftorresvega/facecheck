@@ -26,14 +26,19 @@ package org.tensa.facecheck.layer.impl;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
+ * Modela estilo de distribucion de pesos generados, considerando para este caso
+ * las filas como vectores independientes a tratar se espera en todo caso que
+ * cada fila entre con forma de matriz independiente usando una matriz de
+ * bloques
  *
  * @author Marcelo
  */
 public final class WeightModelingStyle {
 
     /**
+     * normalized: normaliza los vectores
      *
-     * @param tmpm the value of tmpm
+     * @param tmpm NumericMatriz vector a modificar
      */
     public static <N extends Number> NumericMatriz<N> normalizedModelingStyle(NumericMatriz<N> tmpm) {
         double punto = tmpm.values().stream().mapToDouble(Number::doubleValue).map((double v) -> v * v).sum();
@@ -42,8 +47,9 @@ public final class WeightModelingStyle {
     }
 
     /**
+     * reflectance: calcula el vector de reflectancia
      *
-     * @param tmpm the value of tmpm
+     * @param tmpm NumericMatriz vector a modificar
      */
     public static <N extends Number> NumericMatriz<N> reflectanceModelingStyle(NumericMatriz<N> tmpm) {
         double punto = tmpm.values().stream().mapToDouble((N v) -> Math.abs(v.doubleValue())).sum();
@@ -52,8 +58,9 @@ public final class WeightModelingStyle {
     }
 
     /**
+     * simple: no afecta al vector
      *
-     * @param tmpm the value of tmpm
+     * @param tmpm NumericMatriz vector a modificar
      */
     public static <N extends Number> NumericMatriz<N> simpleModelingStyle(NumericMatriz<N> tmpm) {
         return tmpm;
@@ -64,5 +71,5 @@ public final class WeightModelingStyle {
      */
     private WeightModelingStyle() {
     }
-    
+
 }
