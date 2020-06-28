@@ -26,11 +26,16 @@ package org.tensa.facecheck.activation.impl;
 import org.tensa.facecheck.activation.utils.ActivationUtils;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-import static java.util.stream.Collectors.*;
 import org.tensa.facecheck.activation.Activation;
 import org.tensa.tensada.matrix.NumericMatriz;
 
+/**
+ * Implementacion funcion de activacion para regresion lineal y uso de derivada
+ * para calculo de error, optimizada para el uso de la salida de la capa
+ *
+ * @author Marcelo
+ * @param <N>
+ */
 public class ReluActivationImpl<N extends Number> implements Activation<N> {
 
     @Override
@@ -53,7 +58,7 @@ public class ReluActivationImpl<N extends Number> implements Activation<N> {
 //                            (e) -> output.getUnoValue(),
 //                            (a,b) -> a,
 //                            () -> output.instancia(output.getDominio())));
-            
+
             return output.entrySet().stream()
                     .filter((e) -> e.getValue().doubleValue() > 0.0)
                     .collect(ActivationUtils.entryToMatriz(output,

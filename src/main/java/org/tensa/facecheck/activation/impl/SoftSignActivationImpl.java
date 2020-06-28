@@ -31,45 +31,52 @@ import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.activation.Activation;
 import org.tensa.tensada.matrix.NumericMatriz;
 
+/**
+ * Implementacion de funcion de activacion soft sign y su derivada para calculo
+ * de error
+ *
+ * @author Marcelo
+ * @param <N>
+ */
 public class SoftSignActivationImpl<N extends Number> implements Activation<N> {
 
     protected final Logger log = LoggerFactory.getLogger(SoftSignActivationImpl.class);
 
     @Override
     public Function<NumericMatriz<N>, NumericMatriz<N>> getActivation() {
-        
+
         return (m) -> m.entrySet().stream()
-                    .collect(ActivationUtils.entryToMatriz(m, 
-                            (e) -> m.productoDirecto(
-                                    e.getValue(),
-                                    m.inversoMultiplicativo(
-                                            m.sumaDirecta(
-                                                    m.getUnoValue(),
-                                                    m.mapper(Math.abs(e.getValue().doubleValue()))
-                                            ))
-                            )));
+                .collect(ActivationUtils.entryToMatriz(m,
+                        (e) -> m.productoDirecto(
+                                e.getValue(),
+                                m.inversoMultiplicativo(
+                                        m.sumaDirecta(
+                                                m.getUnoValue(),
+                                                m.mapper(Math.abs(e.getValue().doubleValue()))
+                                        ))
+                        )));
     }
 
     @Override
     public BiFunction<NumericMatriz<N>, NumericMatriz<N>, NumericMatriz<N>> getError() {
-        return (learning, output) -> learning.entrySet().stream()
-                    .collect(ActivationUtils.entryToMatriz(output, 
-                            (e) -> {
-                                N semiSuma;
-                                return learning.productoDirecto(
-                                        e.getValue(),
-                                        learning.inversoMultiplicativo(
-                                                learning.productoDirecto(
-                                                        semiSuma = learning.sumaDirecta(
-                                                                learning.getUnoValue(),
-                                                                learning.mapper(Math.abs(output.get(e.getKey()).doubleValue()))
-                                                        ),
-                                                        semiSuma))
-                                );
-                            }
-                    ));
+        return (learning, neta) -> learning.entrySet().stream()
+                .collect(ActivationUtils.entryToMatriz(neta,
+                        (e) -> {
+                            N semiSuma;
+                            return learning.productoDirecto(
+                                    e.getValue(),
+                                    learning.inversoMultiplicativo(
+                                            learning.productoDirecto(
+                                                    semiSuma = learning.sumaDirecta(
+                                                            learning.getUnoValue(),
+                                                            learning.mapper(Math.abs(neta.get(e.getKey()).doubleValue()))
+                                                    ),
+                                                    semiSuma))
+                            );
+                        }
+                ));
     }
-    
+
     @Override
     public boolean isOptimized() {
         return false;

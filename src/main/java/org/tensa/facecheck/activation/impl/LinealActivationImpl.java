@@ -28,8 +28,9 @@ import java.util.function.Function;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
- *
+ * Implementacion de funcion de activacion lineal
  * @author Marcelo
+ * @param <N>
  */
 public class LinealActivationImpl<N extends Number> implements org.tensa.facecheck.activation.Activation<N> {
 

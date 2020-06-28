@@ -27,43 +27,47 @@ import org.tensa.facecheck.activation.utils.ActivationUtils;
 import java.io.IOException;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.activation.Activation;
 import org.tensa.tensada.matrix.NumericMatriz;
 
-
+/**
+ * Implementacion de funcion de activacion tangente hiperbolica y su derivada
+ * para calculo de error, optimizada para el uso de la salida de la capa
+ *
+ * @author Marcelo
+ * @param <N>
+ */
 public class TanHyperActivationImpl<N extends Number> implements Activation<N> {
 
     protected final Logger log = LoggerFactory.getLogger(TanHyperActivationImpl.class);
-    
+
     @Override
     public Function<NumericMatriz<N>, NumericMatriz<N>> getActivation() {
         return (m) -> m.entrySet().stream()
-                    .collect(ActivationUtils.entryToMatriz(
-                            m,
-                            (e) -> m.mapper(Math.tanh(e.getValue().doubleValue()))));
+                .collect(ActivationUtils.entryToMatriz(
+                        m,
+                        (e) -> m.mapper(Math.tanh(e.getValue().doubleValue()))));
     }
 
     @Override
     public BiFunction<NumericMatriz<N>, NumericMatriz<N>, NumericMatriz<N>> getError() {
         return (NumericMatriz<N> learning, NumericMatriz<N> output) -> {
-            
+
             try (final NumericMatriz<N> m1 = output.matrizUno();
-                final NumericMatriz<N> semiResta = m1.substraccion(output);
-                final NumericMatriz<N> semiSuma = m1.adicion(output);
-                    ) {
-                
+                    final NumericMatriz<N> semiResta = m1.substraccion(output);
+                    final NumericMatriz<N> semiSuma = m1.adicion(output);) {
+
                 return learning.entrySet().stream()
                         .collect(ActivationUtils.entryToMatriz(
-                                learning, 
+                                learning,
                                 (e) -> m1.productoDirecto(
                                         e.getValue(),
                                         m1.productoDirecto(
-                                                semiSuma.get(e.getKey()), 
+                                                semiSuma.get(e.getKey()),
                                                 semiResta.get(e.getKey())))));
-                
+
             } catch (IOException ex) {
                 log.error("learningFunctionOperation", ex);
                 throw new RuntimeException(ex);
@@ -71,10 +75,10 @@ public class TanHyperActivationImpl<N extends Number> implements Activation<N> {
 
         };
     }
-    
+
     @Override
     public boolean isOptimized() {
         return true;
     }
-    
+
 }
