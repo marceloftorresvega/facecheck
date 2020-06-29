@@ -91,19 +91,6 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
     @Override
     public void startProduction() {
         if (status == LayerConsumer.SUCCESS_STATUS) {
-            
-            //            log.info("pesos <{}><{}>", weights.getDominio().getFila(), weights.getDominio().getColumna());
-            //            log.info("layer <{}><{}>", inputLayer.getDominio().getFila(), inputLayer.getDominio().getColumna());
-            //            NumericMatriz<N> producto = weights.producto(inputLayer);
-            //            NumericMatriz<N> distanciaE2 = (NumericMatriz<N>)producto.distanciaE2();
-            //            outputLayer = (NumericMatriz<N>)producto
-            //                    .productoEscalar( 1 / Math.sqrt(distanciaE2.get(Indice.D1)));
-            //outputLayer.replaceAll((ParOrdenado i, N v) -> 1 / (1 + Math.exp(-v.doubleValue())));
-//            outputLayer = weights.producto(inputLayer);
-//            activation.getActivation().apply(outputLayer);
-//            outputLayer = activation.getActivation()
-//                    .compose(weights::producto)
-//                    .apply(inputLayer);
             UnaryOperator<NumericMatriz<N>> assign = (n) -> net = n;
             outputLayer = assign.compose(weights::producto)
                     .andThen(activation.getActivation())
