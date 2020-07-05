@@ -53,4 +53,22 @@ public class WeightCreationStyle {
         return tmpm;
     }
     
+    public static <N extends Number> NumericMatriz<N> fromOutStarCreationStyle(NumericMatriz<N> tmpm) {
+        Dominio dominio = tmpm.getDominio();
+        int pend = dominio.getColumna()/dominio.getFila() / 2;
+        int limit = dominio.getFila() / 2;
+        dominio.stream()
+                .filter((p) -> p.getColumna()/p.getFila()== pend || p.getColumna()/(p.getFila() - limit )== pend )
+                .forEach((i) -> {
+                    if (i.getFila()< limit) {
+                        tmpm.put(i, tmpm.mapper(1.0));
+                        
+                    } else {
+                        tmpm.put(i, tmpm.mapper(-1.0));
+                        
+                    }
+        });
+        return tmpm;
+    }
+    
 }

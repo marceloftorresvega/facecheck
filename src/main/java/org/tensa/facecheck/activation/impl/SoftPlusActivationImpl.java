@@ -23,35 +23,51 @@
  */
 package org.tensa.facecheck.activation.impl;
 
+import org.tensa.facecheck.activation.utils.ActivationUtils;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import org.tensa.facecheck.activation.Activation;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
- * Implementacion de funcion de activacion lineal
+ * Implementacion de funcion de activacion soft plus y su derivada para calculo
+ * de error
+ *
  * @author Marcelo
  * @param <N>
  */
-public class LinealActivationImpl<N extends Number> implements org.tensa.facecheck.activation.Activation<N> {
-
-    public LinealActivationImpl() {
-    }
-    
+public class SoftPlusActivationImpl<N extends Number> implements Activation<N> {
 
     @Override
     public Function<NumericMatriz<N>, NumericMatriz<N>> getActivation() {
-        return Function.identity();
+        return (neta) -> neta.entrySet().stream()
+                .collect(ActivationUtils.entryToMatriz(neta, (e)
+                        -> neta.mapper(Math.log(
+                        neta.sumaDirecta(
+                                neta.getUnoValue(),
+                                neta.mapper(Math.exp(e.getValue().doubleValue()))
+                        ).doubleValue()
+                ))
+                ));
     }
 
     @Override
     public BiFunction<NumericMatriz<N>, NumericMatriz<N>, NumericMatriz<N>> getError() {
-        return (learning,output) -> learning;
+        return (learning, neta) -> learning.entrySet().stream()
+                .collect(ActivationUtils.entryToMatriz(learning, (e)
+                        -> learning.productoDirecto(
+                        e.getValue(),
+                        learning.inversoMultiplicativo(
+                                learning.sumaDirecta(
+                                        learning.getUnoValue(),
+                                        learning.mapper(Math.exp(learning.inversoAditivo(neta.get(e.getKey())).doubleValue())))
+                        ))
+                ));
     }
 
     @Override
     public boolean isOptimized() {
         return false;
     }
-
 
 }
