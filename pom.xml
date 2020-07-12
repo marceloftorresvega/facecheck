@@ -13,7 +13,7 @@
         <compilerArgument>-Xlint:unchecked</compilerArgument>
     </properties>
     <name>face-check</name>
-    <description>identifica rostros en una foro</description>
+    <description>reconstruye rostros</description>
     <build>
         <plugins>
             <plugin>
