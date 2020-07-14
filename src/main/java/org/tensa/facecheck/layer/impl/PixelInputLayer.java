@@ -31,7 +31,9 @@ import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerProducer;
+import org.tensa.facecheck.mapping.PixelMapper;
 import org.tensa.tensada.matrix.Dominio;
+import org.tensa.tensada.matrix.Indice;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
@@ -45,19 +47,22 @@ public class PixelInputLayer<N extends Number> implements LayerProducer<N> {
     protected final List<LayerConsumer<N>> consumers;
     protected final Function<Dominio,NumericMatriz<N>> supplier;
     protected final UnaryOperator<NumericMatriz<N>> responceEscale;
+    protected final PixelMapper pixelMapper;
 
-    public PixelInputLayer(BufferedImage src, Function<Dominio, NumericMatriz<N>> supplier, UnaryOperator<NumericMatriz<N>> responceEscale) {
+    public PixelInputLayer(BufferedImage src, Function<Dominio, NumericMatriz<N>> supplier, UnaryOperator<NumericMatriz<N>> responceEscale, PixelMapper pixelMapper) {
         this.src = src;
         this.consumers = new ArrayList<>();
         this.supplier = supplier;
         this.responceEscale = responceEscale;
+        this.pixelMapper = pixelMapper;
     }
 
-    public PixelInputLayer(Function<Dominio, NumericMatriz<N>> supplier, UnaryOperator<NumericMatriz<N>> responceEscale) {
+    public PixelInputLayer(Function<Dominio, NumericMatriz<N>> supplier, PixelMapper pixelMapper, UnaryOperator<NumericMatriz<N>> responceEscale) {
         this.src = null;
         this.consumers = new ArrayList<>();
         this.supplier = supplier;
         this.responceEscale = responceEscale;
+        this.pixelMapper = pixelMapper;
     }
 
     protected NumericMatriz<N> scanInput() {
@@ -69,10 +74,11 @@ public class PixelInputLayer<N extends Number> implements LayerProducer<N> {
         int height = src.getHeight();
         
         double[] pixels = src.getRaster().getPixels(0, 0, width, height, (double[])null);
-        NumericMatriz<N> dm = supplier.apply(new Dominio(pixels.length, 1));
+        NumericMatriz<N> dm = supplier.compose(pixelMapper::getDominio).apply(pixels.length);
                 
         for(int k=0;k<pixels.length;k++){
-            dm.indexa(k + 1, 1, dm.mapper(pixels[k]));
+            Indice key = pixelMapper.getIndice(k);
+            dm.put(key, dm.mapper(pixels[k]));
         }
                 
         if (Objects.nonNull(responceEscale)) {

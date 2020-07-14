@@ -25,21 +25,32 @@ package org.tensa.facecheck.layer.impl;
 
 import java.io.IOException;
 import java.util.concurrent.RejectedExecutionException;
-import org.tensa.tensada.matrix.Indice;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
- *
+ * conjunto de utilidades para escalar una matriz de entrada de pixels
  * @author Marcelo
  */
-public class OutputScale {
+public final class OutputScale {
     private OutputScale() {
     }
     
+    /**
+     * no modifica la matriz de componentes de pixels 
+     * @param <N> tipo numerico Float,Double o BigDecimal
+     * @param matriz NumericMatriz Matriz a modificar
+     * @return NumericMatriz modificada
+     */
     public static <N extends Number> NumericMatriz<N> sameEscale(NumericMatriz<N> matriz) {
         return matriz;
     }
     
+    /**
+     * escala la matriz de componentes de pixels para prevenir los valores maximos (255) y minimo 0
+     * @param <N> tipo numerico Float,Double o BigDecimal
+     * @param matriz NumericMatriz Matriz a modificar
+     * @return NumericMatriz modificada
+     */
     public static <N extends Number> NumericMatriz<N> prevent01(NumericMatriz<N> matriz) {
         N escala = matriz.mapper(254.0 / 255.0);
         try (
@@ -54,31 +65,39 @@ public class OutputScale {
     
     }
     
+    /**
+     * escala la matriz de componentes de pixels entre valores 0 y 1 (preferido)
+     * @param <N> tipo numerico Float,Double o BigDecimal
+     * @param matriz NumericMatriz Matriz a modificar
+     * @return NumericMatriz modificada
+     */
     public static <N extends Number> NumericMatriz<N> scale(NumericMatriz<N> matriz) {
         N escala = matriz.mapper(1 / 255.0);
         return matriz.productoEscalar(escala);
     }
     
-     public static <N extends Number> NumericMatriz<N> normalized(NumericMatriz<N> matriz) {
-         try (NumericMatriz<N> d = matriz.distanciaE2();) {
-            N normalizador = matriz.inversoMultiplicativo(matriz.mapper(Math.sqrt(d.get(Indice.D1).doubleValue())));
-            return matriz.productoEscalar(normalizador);
-         
-        } catch( IOException ex) {
-            throw new RejectedExecutionException("normalized", ex);
-        }
-            
+    /**
+     * normaliza la matriz de componentes de pixels
+     * @param <N> tipo numerico Float,Double o BigDecimal
+     * @param matriz NumericMatriz Matriz a modificar
+     * @return NumericMatriz modificada
+     */
+    public static <N extends Number> NumericMatriz<N> normalized(NumericMatriz<N> matriz) {
+        double punto = matriz.values().stream().mapToDouble(Number::doubleValue).map((double v) -> v * v).sum();
+        punto = 1 / Math.sqrt(punto);
+        return matriz.productoEscalar(matriz.mapper(punto));
      }
     
-     public static <N extends Number> NumericMatriz<N> reflectance(NumericMatriz<N> matriz) {
-         try (NumericMatriz<N> r = matriz.productoPunto(matriz.matrizUno());) {
-            
-            N reflector = matriz.inversoMultiplicativo(r.get(Indice.D1));
-            return matriz.productoEscalar(reflector);
-             
-        } catch( IOException ex) {
-            throw new RejectedExecutionException("reflectance", ex);
-        }
+    /**
+     * aplica operacion de reflectancia a la matriz de componentes de pixels
+     * @param <N> tipo numerico Float,Double o BigDecimal
+     * @param matriz NumericMatriz Matriz a modificar
+     * @return NumericMatriz modificada
+     */
+    public static <N extends Number> NumericMatriz<N> reflectance(NumericMatriz<N> matriz) {
+        double punto = matriz.values().stream().mapToDouble((N v) -> Math.abs(v.doubleValue())).sum();
+        punto = 1 / punto;
+        return matriz.productoEscalar(matriz.mapper(punto));
      }
      
 }

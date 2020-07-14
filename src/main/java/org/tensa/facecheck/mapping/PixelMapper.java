@@ -21,38 +21,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.tensa.facecheck.network.impl;
+package org.tensa.facecheck.mapping;
 
-import java.util.Arrays;
-import java.util.function.UnaryOperator;
-import org.tensa.facecheck.network.LearningControl;
+import org.tensa.tensada.matrix.Dominio;
+import org.tensa.tensada.matrix.Indice;
 
 /**
- *
+ * Mapeador de pixeles 
+ * genera dominio para matrices y obtiene largo de datasets de pixels
+ * mapea posicion de dataset a posicion dentro de la matriz
  * @author Marcelo
  */
-public class BasicLearningControlImpl<N extends Number> implements LearningControl<N> {
-    
-    private final UnaryOperator<Integer> calculateIndex;
-    private final N[] learningSeries;
-
-    public BasicLearningControlImpl(UnaryOperator<Integer> calculateIndex, N[] learningSeries) {
-        this.calculateIndex = calculateIndex;
-        this.learningSeries = learningSeries;
-    }
+public interface PixelMapper {
     
     /**
-     *
-     * @param index the value of index
-     * @param factor the value of factor
-     * @return the N
+     * genera dominio en base a largo d dataset
+     * @param largo
+     * @return dominio para matriz
      */
-    @Override
-    public N updateFactor(int index, N factor) {
-        int realIndex = Arrays.binarySearch(learningSeries, factor);
-        
-        Integer newDeltaIndex = calculateIndex.apply(index);
-        int ultimateIndex = realIndex-newDeltaIndex;
-        return learningSeries[(ultimateIndex>0?ultimateIndex<learningSeries.length?ultimateIndex:learningSeries.length-1:0)];
-    }
+    Dominio getDominio(int largo);
+    
+    /**
+     * mapea un pixel o componente en base a su posicion en el dataset
+     * @param i posicion en el dataset
+     * @return indice para la matriz
+     */
+    Indice getIndice(int i);
+    
+    /**
+     * retorna el largo de un data set en base al dominio de la matriz
+     * @param dominio
+     * @return largo de dataset
+     */
+    Integer getLargo(Dominio dominio);
+    
 }

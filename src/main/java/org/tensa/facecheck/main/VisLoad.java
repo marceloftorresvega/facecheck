@@ -42,7 +42,8 @@ import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.filter.MaskOp;
 import org.tensa.facecheck.layer.impl.OutputScale;
 import org.tensa.facecheck.network.Manager;
-import org.tensa.facecheck.layer.impl.WeightCreationStyle;
+import org.tensa.facecheck.layer.impl.WeightModelingStyle;
+import org.tensa.facecheck.mapping.PixelMappings;
 import org.tensa.facecheck.network.LearningControl;
 import org.tensa.facecheck.network.impl.BasicLearningControlImpl;
 import org.tensa.tensada.matrix.Dominio;
@@ -82,6 +83,8 @@ public class VisLoad extends javax.swing.JFrame {
     public SpinnerModel getSpinnerModel(){
 //        if(Objects.isNull(spinnerModel))
         SpinnerListModel spinnerModel = new SpinnerListModel(learningFactor);
+        int valorMedio = learningFactor.length/2;
+        spinnerModel.setValue(learningFactor[valorMedio]);
         return spinnerModel;
     }
 
@@ -122,6 +125,7 @@ public class VisLoad extends javax.swing.JFrame {
         widthHwightpoint = new Rectangle();
         networkManager = new Manager<>();
         networkManager.setSupplier((Dominio dominio) -> new FloatMatriz(dominio));
+        networkManager.setPixelMapper(PixelMappings.defaultMapping());
         networkManager.setHiddenLearningControl(new BasicLearningControlImpl<>((i) -> i % 3 ==0? 1: 0, learningFactor));
         networkManager.setOutputLearningControl(new BasicLearningControlImpl<>((i) -> i % 3 ==0? -1: 1, learningFactor));
         networkManager.getAreaQeue().add(learnArea);
@@ -437,7 +441,7 @@ public class VisLoad extends javax.swing.JFrame {
 
         jLabel2.setText("Oculta");
 
-        hiddNeurs.setModel(new javax.swing.SpinnerNumberModel(15, 3, 100, 1));
+        hiddNeurs.setModel(new javax.swing.SpinnerNumberModel(15, 3, 500, 1));
         hiddNeurs.setToolTipText("Neuronas ocultas");
 
         jLabel3.setText("Salida");
@@ -825,8 +829,8 @@ public class VisLoad extends javax.swing.JFrame {
         int hidStep = (int)hiddNeurs.getValue();
         int outStep = (int)outNeurs.getValue();
         
-        UnaryOperator<NumericMatriz<Float>> hiddenCreationStyle = WeightCreationStyle::simpleCreationStyle;
-        UnaryOperator<NumericMatriz<Float>> outputCreationStyle = WeightCreationStyle::simpleCreationStyle;
+        UnaryOperator<NumericMatriz<Float>> hiddenCreationStyle = WeightModelingStyle::simpleModelingStyle;
+        UnaryOperator<NumericMatriz<Float>> outputCreationStyle = WeightModelingStyle::simpleModelingStyle;
         
         networkManager.setInStep(inStep);
         networkManager.setHidStep(hidStep);
@@ -836,25 +840,25 @@ public class VisLoad extends javax.swing.JFrame {
         
         switch (hdCreationStyle.getSelectedIndex()) {
             case 0:
-                hiddenCreationStyle = WeightCreationStyle::simpleCreationStyle;
+                hiddenCreationStyle = WeightModelingStyle::simpleModelingStyle;
                 break;
             case 1:
-                hiddenCreationStyle = WeightCreationStyle::reflectCreationStyle;
+                hiddenCreationStyle = WeightModelingStyle::reflectanceModelingStyle;
                 break;
             case 2:
-                hiddenCreationStyle = WeightCreationStyle::normalCreationStyle;
+                hiddenCreationStyle = WeightModelingStyle::normalizedModelingStyle;
                 break;
         }
         
         switch (outCreationStyle.getSelectedIndex()) {
             case 0:
-                outputCreationStyle = WeightCreationStyle::simpleCreationStyle;
+                outputCreationStyle = WeightModelingStyle::simpleModelingStyle;
                 break;
             case 1:
-                outputCreationStyle = WeightCreationStyle::reflectCreationStyle;
+                outputCreationStyle = WeightModelingStyle::reflectanceModelingStyle;
                 break;
             case 2:
-                outputCreationStyle = WeightCreationStyle::normalCreationStyle;
+                outputCreationStyle = WeightModelingStyle::normalizedModelingStyle;
                 break;
         }
         
