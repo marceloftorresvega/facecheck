@@ -23,35 +23,54 @@
  */
 package org.tensa.facecheck.activation.impl;
 
+import org.tensa.facecheck.activation.utils.ActivationUtils;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import org.tensa.facecheck.activation.Activation;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
- * Implementacion de funcion de activacion lineal
+ * Implementacion funcion de activacion para regresion lineal y uso de derivada
+ * para calculo de error, optimizada para el uso de la salida de la capa
+ *
  * @author Marcelo
  * @param <N>
  */
-public class LinealActivationImpl<N extends Number> implements org.tensa.facecheck.activation.Activation<N> {
-
-    public LinealActivationImpl() {
-    }
-    
+public class ReluActivationImpl<N extends Number> implements Activation<N> {
 
     @Override
     public Function<NumericMatriz<N>, NumericMatriz<N>> getActivation() {
-        return Function.identity();
+        return (m) -> {
+            return m.entrySet().stream()
+                    .filter((e) -> e.getValue().doubleValue() > 0.0)
+                    .collect(ActivationUtils.entryToMatriz(m,
+                            NumericMatriz.Entry::getValue));
+        };
     }
 
     @Override
     public BiFunction<NumericMatriz<N>, NumericMatriz<N>, NumericMatriz<N>> getError() {
-        return (learning,output) -> learning;
+        return (NumericMatriz<N> learning, NumericMatriz<N> output) -> {
+//            NumericMatriz<N> derivate = output.entrySet().stream()
+//                    .filter((e) -> e.getValue().doubleValue() > 0.0)
+//                    .collect(toMap(
+//                            NumericMatriz.Entry::getKey,
+//                            (e) -> output.getUnoValue(),
+//                            (a,b) -> a,
+//                            () -> output.instancia(output.getDominio())));
+
+            return output.entrySet().stream()
+                    .filter((e) -> e.getValue().doubleValue() > 0.0)
+                    .collect(ActivationUtils.entryToMatriz(output,
+                            (e) -> output.restaDirecta(
+                                    learning.get(e.getKey()),
+                                    e.getValue())));
+        };
     }
 
     @Override
     public boolean isOptimized() {
-        return false;
+        return true;
     }
-
 
 }

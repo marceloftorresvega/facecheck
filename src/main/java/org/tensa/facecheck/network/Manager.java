@@ -45,8 +45,12 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tensa.facecheck.activation.impl.HiddenSigmoidActivationImpl;
 import org.tensa.facecheck.activation.impl.LinealActivationImpl;
+import org.tensa.facecheck.activation.impl.ReluActivationImpl;
+import org.tensa.facecheck.activation.impl.SigmoidActivationImpl;
+import org.tensa.facecheck.activation.impl.SoftPlusActivationImpl;
+import org.tensa.facecheck.activation.impl.SoftSignActivationImpl;
+import org.tensa.facecheck.activation.impl.TanHyperActivationImpl;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerProducer;
 import org.tensa.facecheck.layer.impl.HiddenLayer;
@@ -301,7 +305,7 @@ public class Manager<N extends Number> {
                             int j = idx.getColumna();
 
                             PixelInputLayer<N> simplePixelsInputLayer = new PixelInputLayer<>(supplier, pixelMapper, inputScale);
-                            HiddenLayer<N> hiddenLayer = new HiddenLayer<>(weightsH, hiddenLearningRate, new HiddenSigmoidActivationImpl<>());
+                            HiddenLayer<N> hiddenLayer = new HiddenLayer<>(weightsH, hiddenLearningRate, new SigmoidActivationImpl<>());
                             HiddenLayer<N> learnLayer = new HiddenLayer<>(weightsO, outputLearningRate, new LinealActivationImpl<>());
                             PixelInputLayer<N> simplePixelsCompareLayer = new PixelInputLayer<>(supplier, pixelMapper, OutputScale::scale);
                             PixelOutputLayer<N> pixelsOutputLayer = new PixelOutputLayer<>(pixelMapper);
@@ -368,7 +372,7 @@ public class Manager<N extends Number> {
         origen.getConsumers().add(new LayerConsumer<N>() {
             @Override
             public NumericMatriz<N> setInputLayer(NumericMatriz<N> inputLayer) {
-                regreso.setLearningData(inputLayer);
+                regreso.setLearningData(inputLayer.substraccion(regreso.getOutputLayer()));
                 return inputLayer;
             }
 

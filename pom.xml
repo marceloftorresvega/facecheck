@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.tensa</groupId>
     <artifactId>facecheck</artifactId>
-    <version>1.4.0</version>
+    <version>1.5.0</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -13,7 +13,7 @@
         <compilerArgument>-Xlint:unchecked</compilerArgument>
     </properties>
     <name>face-check</name>
-    <description>identifica rostros en una foro</description>
+    <description>reconstruye rostros</description>
     <build>
         <plugins>
             <plugin>

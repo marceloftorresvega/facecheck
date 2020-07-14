@@ -24,7 +24,6 @@
 package org.tensa.facecheck.activation.impl;
 
 import org.tensa.facecheck.activation.utils.ActivationUtils;
-import java.io.IOException;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.slf4j.Logger;
@@ -33,57 +32,53 @@ import org.tensa.facecheck.activation.Activation;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
- * Implementacion de funcion de activacion simoide y su derivada para calculo de
- * error, optimizada para el uso de la salida de la capa
+ * Implementacion de funcion de activacion soft sign y su derivada para calculo
+ * de error
  *
  * @author Marcelo
  * @param <N>
  */
-public class SigmoidActivationImpl<N extends Number> implements Activation<N> {
+public class SoftSignActivationImpl<N extends Number> implements Activation<N> {
 
-    protected final Logger log = LoggerFactory.getLogger(SigmoidActivationImpl.class);
-
-    public SigmoidActivationImpl() {
-    }
+    protected final Logger log = LoggerFactory.getLogger(SoftSignActivationImpl.class);
 
     @Override
     public Function<NumericMatriz<N>, NumericMatriz<N>> getActivation() {
+
         return (m) -> m.entrySet().stream()
-                .collect(ActivationUtils.entryToMatriz(
-                        m,
-                        (e) -> m.inversoMultiplicativo(m.sumaDirecta(
-                                m.getUnoValue(),
-                                m.mapper(Math.exp(-e.getValue().doubleValue()))
-                        ))
-                ));
+                .collect(ActivationUtils.entryToMatriz(m,
+                        (e) -> m.productoDirecto(
+                                e.getValue(),
+                                m.inversoMultiplicativo(
+                                        m.sumaDirecta(
+                                                m.getUnoValue(),
+                                                m.mapper(Math.abs(e.getValue().doubleValue()))
+                                        ))
+                        )));
     }
 
     @Override
     public BiFunction<NumericMatriz<N>, NumericMatriz<N>, NumericMatriz<N>> getError() {
-        return (NumericMatriz<N> learning, NumericMatriz<N> output) -> {
-
-            try (final NumericMatriz<N> m1 = output.matrizUno();
-                    final NumericMatriz<N> semiResta = m1.substraccion(output);) {
-                return learning.entrySet().stream()
-                        .collect(ActivationUtils.entryToMatriz(
-                                m1,
-                                (e) -> m1.productoDirecto(
-                                        e.getValue(),
-                                        m1.productoDirecto(
-                                                output.get(e.getKey()),
-                                                semiResta.get(e.getKey()))
-                                )));
-            } catch (IOException ex) {
-                log.error("learningFunctionOperation", ex);
-                throw new RuntimeException(ex);
-            }
-
-        };
+        return (learning, neta) -> learning.entrySet().stream()
+                .collect(ActivationUtils.entryToMatriz(neta,
+                        (e) -> {
+                            N semiSuma;
+                            return learning.productoDirecto(
+                                    e.getValue(),
+                                    learning.inversoMultiplicativo(
+                                            learning.productoDirecto(
+                                                    semiSuma = learning.sumaDirecta(
+                                                            learning.getUnoValue(),
+                                                            learning.mapper(Math.abs(neta.get(e.getKey()).doubleValue()))
+                                                    ),
+                                                    semiSuma))
+                            );
+                        }
+                ));
     }
 
     @Override
     public boolean isOptimized() {
-        return true;
+        return false;
     }
-
 }

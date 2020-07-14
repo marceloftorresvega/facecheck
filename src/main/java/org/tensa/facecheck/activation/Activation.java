@@ -28,10 +28,37 @@ import java.util.function.Function;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
+ * Interface que provee funcion de activacion para las neuronas de una capa,
+ * ademas provee funcion de error interno e indica si esta ultima es optimizada
  *
  * @author Marcelo
  */
-public interface Activation <N extends Number> {
-    Function<NumericMatriz<N>,NumericMatriz<N>> getActivation();
-    BiFunction<NumericMatriz<N>,NumericMatriz<N>,NumericMatriz<N>> getError();
+public interface Activation<N extends Number> {
+
+    /**
+     * provee funcion de activacion para la capa, donde la matriz de entrada es
+     * la salida neta de las neuronas de la capa
+     *
+     * @return Function matriz neta a matriz salida
+     */
+    Function<NumericMatriz<N>, NumericMatriz<N>> getActivation();
+
+    /**
+     * provee funcion que aplica error externo a derivada de la funcion de
+     * activacion la porpiedad optimized inica si usa el valor output o si no el
+     * valor neto antes de la activacion
+     *
+     * @return Function matriz error externo y output capa a matriz de error
+     * interno
+     */
+    BiFunction<NumericMatriz<N>, NumericMatriz<N>, NumericMatriz<N>> getError();
+
+    /**
+     * indica si la funcion de calculo de error interno recibe el valor
+     * pre-calculado desde el output de la capa o si debe procesar la salida
+     * neta de las neuronas de la capa
+     *
+     * @return booleano output(true)/neta(false)
+     */
+    boolean isOptimized();
 }

@@ -33,29 +33,22 @@ import org.tensa.facecheck.activation.Activation;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
- * Implementacion de funcion de activacion simoide y su derivada para calculo de
- * error, optimizada para el uso de la salida de la capa
+ * Implementacion de funcion de activacion tangente hiperbolica y su derivada
+ * para calculo de error, optimizada para el uso de la salida de la capa
  *
  * @author Marcelo
  * @param <N>
  */
-public class SigmoidActivationImpl<N extends Number> implements Activation<N> {
+public class TanHyperActivationImpl<N extends Number> implements Activation<N> {
 
-    protected final Logger log = LoggerFactory.getLogger(SigmoidActivationImpl.class);
-
-    public SigmoidActivationImpl() {
-    }
+    protected final Logger log = LoggerFactory.getLogger(TanHyperActivationImpl.class);
 
     @Override
     public Function<NumericMatriz<N>, NumericMatriz<N>> getActivation() {
         return (m) -> m.entrySet().stream()
                 .collect(ActivationUtils.entryToMatriz(
                         m,
-                        (e) -> m.inversoMultiplicativo(m.sumaDirecta(
-                                m.getUnoValue(),
-                                m.mapper(Math.exp(-e.getValue().doubleValue()))
-                        ))
-                ));
+                        (e) -> m.mapper(Math.tanh(e.getValue().doubleValue()))));
     }
 
     @Override
@@ -63,16 +56,18 @@ public class SigmoidActivationImpl<N extends Number> implements Activation<N> {
         return (NumericMatriz<N> learning, NumericMatriz<N> output) -> {
 
             try (final NumericMatriz<N> m1 = output.matrizUno();
-                    final NumericMatriz<N> semiResta = m1.substraccion(output);) {
+                    final NumericMatriz<N> semiResta = m1.substraccion(output);
+                    final NumericMatriz<N> semiSuma = m1.adicion(output);) {
+
                 return learning.entrySet().stream()
                         .collect(ActivationUtils.entryToMatriz(
-                                m1,
+                                learning,
                                 (e) -> m1.productoDirecto(
                                         e.getValue(),
                                         m1.productoDirecto(
-                                                output.get(e.getKey()),
-                                                semiResta.get(e.getKey()))
-                                )));
+                                                semiSuma.get(e.getKey()),
+                                                semiResta.get(e.getKey())))));
+
             } catch (IOException ex) {
                 log.error("learningFunctionOperation", ex);
                 throw new RuntimeException(ex);
