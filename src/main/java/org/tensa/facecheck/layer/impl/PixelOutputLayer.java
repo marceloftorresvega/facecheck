@@ -25,7 +25,8 @@ package org.tensa.facecheck.layer.impl;
 
 import java.awt.image.BufferedImage;
 import org.tensa.facecheck.layer.LayerConsumer;
-import org.tensa.tensada.matrix.Indice;
+import org.tensa.facecheck.mapping.PixelMapper;
+import org.tensa.facecheck.mapping.PixelMappings;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
@@ -37,11 +38,15 @@ public class PixelOutputLayer<N extends Number> implements LayerConsumer<N> {
     protected int status;
     protected NumericMatriz<N> inputLayer;
     protected BufferedImage dest;
+    protected final PixelMapper pixelMapper;
 
     public PixelOutputLayer() {
+        pixelMapper = PixelMappings.defaultMapping();
     }
 
-    
+    public PixelOutputLayer(PixelMapper pixelMapper) {
+        this.pixelMapper = pixelMapper;
+    }
 
     @Override
     public NumericMatriz<N> setInputLayer(NumericMatriz<N> inputLayer) {
@@ -61,9 +66,9 @@ public class PixelOutputLayer<N extends Number> implements LayerConsumer<N> {
         this.status = status;
         if (status == LayerConsumer.SUCCESS_STATUS) {
             
-            double[] pixels = new double[inputLayer.getDominio().getFila()];
+            double[] pixels = new double[pixelMapper.getLargo(inputLayer.getDominio())];
             for( int i =0; i< pixels.length; i++) {
-                pixels[i] = 255 * inputLayer.get(new Indice(i + 1, 1)).doubleValue();
+                pixels[i] = 255 * inputLayer.get(pixelMapper.getIndice(i)).doubleValue();
             }
             int width = dest.getWidth();
             int height = dest.getHeight();

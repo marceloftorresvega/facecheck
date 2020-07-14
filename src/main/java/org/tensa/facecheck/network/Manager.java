@@ -58,6 +58,7 @@ import org.tensa.facecheck.layer.impl.OutputScale;
 import org.tensa.facecheck.layer.impl.PixelInputLayer;
 import org.tensa.facecheck.layer.impl.PixelOutputLayer;
 import org.tensa.facecheck.layer.impl.WeightCreationStyle;
+import org.tensa.facecheck.mapping.PixelMapper;
 import org.tensa.tensada.matrix.BlockMatriz;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.Indice;
@@ -94,6 +95,7 @@ public class Manager<N extends Number> {
     private NumericMatriz<N> errorGraph;
     private Function<Dominio,NumericMatriz<N>> supplier;
     private UnaryOperator<NumericMatriz<N>> inputScale;
+    private PixelMapper pixelMapper;
     
     private int inStep;
     private int outStep;
@@ -248,8 +250,8 @@ public class Manager<N extends Number> {
      */
     public void initMatrix( UnaryOperator<NumericMatriz<N>> modelingH, UnaryOperator<NumericMatriz<N>> modelingO){
         
-        int inSize = inStep*inStep*3;
-        int outSize = outStep*outStep*3;
+        int inSize = pixelMapper.getDominio(inStep * inStep * 3).getFila();
+        int outSize = pixelMapper.getDominio(outStep * outStep * 3).getFila();
         
         weightsH = createMatrix(inSize, hidStep, WeightCreationStyle::randomCreationStyle, modelingH);
         weightsO = createMatrix(hidStep, outSize, WeightCreationStyle::randomCreationStyle, modelingO);
@@ -302,11 +304,11 @@ public class Manager<N extends Number> {
                             int i = idx.getFila();
                             int j = idx.getColumna();
 
-                            PixelInputLayer<N> simplePixelsInputLayer = new PixelInputLayer<>(supplier, inputScale);
+                            PixelInputLayer<N> simplePixelsInputLayer = new PixelInputLayer<>(supplier, pixelMapper, inputScale);
                             HiddenLayer<N> hiddenLayer = new HiddenLayer<>(weightsH, hiddenLearningRate, new SigmoidActivationImpl<>());
                             HiddenLayer<N> learnLayer = new HiddenLayer<>(weightsO, outputLearningRate, new LinealActivationImpl<>());
-                            PixelInputLayer<N> simplePixelsCompareLayer = new PixelInputLayer<>(supplier, OutputScale::scale);
-                            PixelOutputLayer<N> pixelsOutputLayer = new PixelOutputLayer<>();
+                            PixelInputLayer<N> simplePixelsCompareLayer = new PixelInputLayer<>(supplier, pixelMapper, OutputScale::scale);
+                            PixelOutputLayer<N> pixelsOutputLayer = new PixelOutputLayer<>(pixelMapper);
 
                             relate(simplePixelsInputLayer, hiddenLayer);
                             relate(hiddenLayer, learnLayer);
@@ -485,5 +487,9 @@ public class Manager<N extends Number> {
 
     public void setOutputLearningControl(LearningControl<N> outputLearningControl) {
         this.outputLearningControl = outputLearningControl;
+    }
+
+    public void setPixelMapper(PixelMapper pixelMapper) {
+        this.pixelMapper = pixelMapper;
     }
 }

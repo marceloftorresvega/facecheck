@@ -42,8 +42,8 @@ import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.filter.MaskOp;
 import org.tensa.facecheck.layer.impl.OutputScale;
 import org.tensa.facecheck.network.Manager;
-import org.tensa.facecheck.layer.impl.WeightCreationStyle;
 import org.tensa.facecheck.layer.impl.WeightModelingStyle;
+import org.tensa.facecheck.mapping.PixelMappings;
 import org.tensa.facecheck.network.LearningControl;
 import org.tensa.facecheck.network.impl.BasicLearningControlImpl;
 import org.tensa.tensada.matrix.Dominio;
@@ -125,6 +125,7 @@ public class VisLoad extends javax.swing.JFrame {
         widthHwightpoint = new Rectangle();
         networkManager = new Manager<>();
         networkManager.setSupplier((Dominio dominio) -> new FloatMatriz(dominio));
+        networkManager.setPixelMapper(PixelMappings.defaultMapping());
         networkManager.setHiddenLearningControl(new BasicLearningControlImpl<>((i) -> i % 3 ==0? 1: 0, learningFactor));
         networkManager.setOutputLearningControl(new BasicLearningControlImpl<>((i) -> i % 3 ==0? -1: 1, learningFactor));
         networkManager.getAreaQeue().add(learnArea);
