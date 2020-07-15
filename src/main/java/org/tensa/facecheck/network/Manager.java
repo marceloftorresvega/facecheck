@@ -52,7 +52,9 @@ import org.tensa.facecheck.activation.impl.SoftPlusActivationImpl;
 import org.tensa.facecheck.activation.impl.SoftSignActivationImpl;
 import org.tensa.facecheck.activation.impl.TanHyperActivationImpl;
 import org.tensa.facecheck.layer.LayerConsumer;
+import org.tensa.facecheck.layer.LayerLearning;
 import org.tensa.facecheck.layer.LayerProducer;
+import org.tensa.facecheck.layer.impl.DiffLayer;
 import org.tensa.facecheck.layer.impl.HiddenLayer;
 import org.tensa.facecheck.layer.impl.OutputScale;
 import org.tensa.facecheck.layer.impl.PixelInputLayer;
@@ -309,6 +311,9 @@ public class Manager<N extends Number> {
                             HiddenLayer<N> learnLayer = new HiddenLayer<>(weightsO, outputLearningRate, new LinealActivationImpl<>());
                             PixelInputLayer<N> simplePixelsCompareLayer = new PixelInputLayer<>(supplier, pixelMapper, OutputScale::scale);
                             PixelOutputLayer<N> pixelsOutputLayer = new PixelOutputLayer<>(pixelMapper);
+                            DiffLayer<N> diffLAyer = new DiffLayer<>(simplePixelsCompareLayer,(lL) -> {
+                                errorBiConsumer(lL, idx);
+                            });
 
                             relate(simplePixelsInputLayer, hiddenLayer);
                             relate(hiddenLayer, learnLayer);
@@ -326,8 +331,7 @@ public class Manager<N extends Number> {
                             simplePixelsCompareLayer.setSrc(comp);
 
                             if(trainingMode){
-                                
-                                relate(learnLayer, simplePixelsCompareLayer, idx);                       
+                                relate(learnLayer, diffLAyer);                       
                                 
                             }
                             
@@ -365,51 +369,21 @@ public class Manager<N extends Number> {
     /**
      *
      * @param regreso the value of regreso
-     * @param origen the value of origen
-     * @param idx the value of idx
+     * @param terminal the value of origen
      */
-    private void relate(HiddenLayer<N> regreso, LayerProducer<N> origen, ParOrdenado idx) {
-        origen.getConsumers().add(new LayerConsumer<N>() {
-            @Override
-            public NumericMatriz<N> setInputLayer(NumericMatriz<N> inputLayer) {
-                regreso.setLearningData(inputLayer.substraccion(regreso.getOutputLayer()));
-                return inputLayer;
-            }
-
-            @Override
-            public NumericMatriz<N> getWeights() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void layerComplete(int status) {
-                regreso.startLearning();
-                                
-                N errorVal = regreso.getError().get(Indice.D1);
-
-                synchronized(errorGraph) {
-                    errorGraph.put(idx, errorGraph.mapper(errorVal.doubleValue()));
-                }
-                log.info("diferencia <{}>", errorVal);         
-            }
-        });
+    private void relate(HiddenLayer<N> regreso, DiffLayer<N> terminal) {
+        regreso.getConsumers().add(terminal.getInternalBridgeConsumer());
+        terminal.getProducers().add(regreso);
         
-        regreso.getConsumers().add(new LayerConsumer<N>() {
-            @Override
-            public NumericMatriz<N> setInputLayer(NumericMatriz<N> inputLayer) {
-                return null;
-            }
+    }
+    
+    private void errorBiConsumer(LayerLearning<N> learning, ParOrdenado idx) {
+        N errorVal = learning.getError().get(Indice.D1);
 
-            @Override
-            public NumericMatriz<N> getWeights() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void layerComplete(int status) {
-                origen.startProduction();
-            }
-        });
+        synchronized(errorGraph) {
+            errorGraph.put(idx, errorGraph.mapper(errorVal.doubleValue()));
+        }
+        log.info("diferencia <{}>", errorVal); 
         
     }
 
