@@ -368,12 +368,12 @@ public class Manager<N extends Number> {
     
     /**
      *
-     * @param regreso the value of regreso
+     * @param origen the value of regreso
      * @param terminal the value of origen
      */
-    private void relate(HiddenLayer<N> regreso, DiffLayer<N> terminal) {
-        regreso.getConsumers().add(terminal.getInternalBridgeConsumer());
-        terminal.getProducers().add(regreso);
+    private void relate(HiddenLayer<N> origen, DiffLayer<N> terminal) {
+        origen.getConsumers().add(terminal.getInternalBridgeConsumer());
+        terminal.getProducers().add(origen);
         
     }
     
