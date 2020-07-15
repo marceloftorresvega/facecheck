@@ -36,27 +36,40 @@ import org.tensa.facecheck.layer.LayerProducer;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
+ * diff layer compara unretorno de una capa producer con otra y retorna la
+ * diferencia como errror para back
  *
  * @author Marcelo
  * @param <N>
  */
-public class DiffLayer<N extends Number> implements LayerLearning<N>{
+public class DiffLayer<N extends Number> implements LayerLearning<N> {
+
+    /**
+     * en caso de error se usa para dejar registro
+     */
     protected final Logger log = LoggerFactory.getLogger(HiddenLayer.class);
 
+    /**
+     * instancia capa diff con capa de comparacion (valor deseado) y adjunta un
+     * error consumer para informar del avance
+     *
+     * @param compareLayer valor deseado
+     * @param errorConsumer consumer que informa del error
+     */
     public DiffLayer(LayerProducer<N> compareLayer, Consumer<LayerLearning<N>> errorConsumer) {
         this.internalBridgeConsumer = new LayerConsumer<N>() {
-            
+
             @Override
             public NumericMatriz<N> setInputLayer(NumericMatriz<N> inputLayer) {
                 salidaReal = inputLayer;
                 return inputLayer;
             }
-            
+
             @Override
             public NumericMatriz<N> getWeights() {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
-            
+
             @Override
             public void layerComplete(int status) {
                 compareLayer.startProduction();
@@ -68,12 +81,12 @@ public class DiffLayer<N extends Number> implements LayerLearning<N>{
                 setLearningData(inputLayer);
                 return inputLayer;
             }
-            
+
             @Override
             public NumericMatriz<N> getWeights() {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
-            
+
             @Override
             public void layerComplete(int status) {
                 startLearning();
@@ -134,8 +147,14 @@ public class DiffLayer<N extends Number> implements LayerLearning<N>{
         return producers;
     }
 
+    /**
+     * puente interno layer consumer punto de enlace con el resto de la red y
+     * por donde ingrresa el valor calculado a comparar
+     *
+     * @return LayerConsumer
+     */
     public LayerConsumer<N> getInternalBridgeConsumer() {
         return internalBridgeConsumer;
     }
-    
+
 }
