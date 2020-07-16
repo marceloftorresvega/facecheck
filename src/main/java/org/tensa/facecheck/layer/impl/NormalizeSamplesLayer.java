@@ -69,16 +69,17 @@ public class NormalizeSamplesLayer<N extends Number> implements LayerConsumer<N>
 
     @Override
     public void startProduction() {
-        Integer nsamples = inputLayer.getDominio().getColumna();
-        Integer nouts = inputLayer.getDominio().getFila();
+        Dominio dominio = inputLayer.getDominio();
+        Integer columnas = dominio.getColumna();
+        Integer filas = dominio.getFila();
 
-        BlockMatriz<N> samples = new BlockMatriz<>(new Dominio(1, nsamples));
+        BlockMatriz<N> samples = new BlockMatriz<>(new Dominio(1, columnas));
         samples.getDominio().forEach((ParOrdenado idx) -> {
-            samples.put(idx, inputLayer.instancia(new Dominio(nouts, 1)));
+            samples.put(idx, inputLayer.instancia(new Dominio(filas, 1)));
         });
         samples.splitIn(inputLayer);
         samples.replaceAll((idx, matriz) -> OutputScale.normalized((NumericMatriz<N>) matriz));
-        outputLayer = (NumericMatriz<N>) samples.build();
+        outputLayer = inputLayer.instancia(dominio, samples.build());
         samples.clear();
     }
 
