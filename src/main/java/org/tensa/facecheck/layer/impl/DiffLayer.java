@@ -72,7 +72,13 @@ public class DiffLayer<N extends Number> implements LayerLearning<N> {
 
             @Override
             public void layerComplete(int status) {
-                compareLayer.startProduction();
+                if( compareLayer instanceof LayerConsumer) {
+                    ((LayerConsumer)compareLayer).setInputLayer(salidaReal);
+                    ((LayerConsumer)compareLayer).layerComplete(status);
+                } else {
+                    compareLayer.startProduction();
+                }
+                    
             }
         };
         this.internalBackConsumer = new LayerConsumer<N>() {
