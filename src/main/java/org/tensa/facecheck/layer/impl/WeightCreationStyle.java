@@ -95,7 +95,8 @@ public final class WeightCreationStyle {
         hiddenMatrix.splitIn(tmpm);
         hiddenMatrix.replaceAll((idx,matriz) -> diagonalCreationStyle((NumericMatriz<N>)matriz));
         hiddenMatrix.compute(new Indice(2, 1), (idx,matriz) -> ((NumericMatriz<N>)matriz).productoEscalar(negador));
-        return (NumericMatriz<N>)hiddenMatrix.build();
+        tmpm.putAll(hiddenMatrix.build());
+        return tmpm;
     }
 
     /**
