@@ -66,8 +66,7 @@ public class NormalizeLayer<N extends Number> implements LayerConsumer<N>, Layer
 
     @Override
     public void startProduction() {
-        NumericMatriz<N> norma = this.inputLayer.norma();
-        outputLayer = inputLayer.productoEscalar(inputLayer.inversoMultiplicativo(norma.get(Indice.D1)));
+        this.outputLayer = OutputScale.normalized(this.inputLayer);
     }
 
     @Override
