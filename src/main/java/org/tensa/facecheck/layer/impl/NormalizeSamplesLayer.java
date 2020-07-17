@@ -81,6 +81,11 @@ public class NormalizeSamplesLayer<N extends Number> implements LayerConsumer<N>
         samples.replaceAll((idx, matriz) -> OutputScale.normalized((NumericMatriz<N>) matriz));
         outputLayer = inputLayer.instancia(dominio, samples.build());
         samples.clear();
+            
+        for (LayerConsumer<N> lc : layerConsumers) {
+            lc.setInputLayer(outputLayer);
+            lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
+        }
     }
 
     @Override

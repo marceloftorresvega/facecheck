@@ -78,6 +78,11 @@ public class DoorLayer<N extends Number> implements LayerConsumer<N>, LayerProdu
     @Override
     public void startProduction() {
         outputLayer = inputLayer;
+            
+        for (LayerConsumer<N> lc : consumers) {
+            lc.setInputLayer(outputLayer);
+            lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
+        }
     }
 
     @Override

@@ -67,6 +67,11 @@ public class NormalizeLayer<N extends Number> implements LayerConsumer<N>, Layer
     @Override
     public void startProduction() {
         this.outputLayer = OutputScale.normalized(this.inputLayer);
+            
+        for (LayerConsumer<N> lc : layerConsumers) {
+            lc.setInputLayer(outputLayer);
+            lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
+        }
     }
 
     @Override
