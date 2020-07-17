@@ -58,7 +58,7 @@ import org.tensa.facecheck.layer.impl.HiddenLayer;
 import org.tensa.facecheck.layer.impl.OutputScale;
 import org.tensa.facecheck.layer.impl.PixelInputLayer;
 import org.tensa.facecheck.layer.impl.PixelOutputLayer;
-import org.tensa.facecheck.layer.impl.WeightCreationStyle;
+import org.tensa.facecheck.weight.WeightCreationStyle;
 import org.tensa.facecheck.mapping.PixelMapper;
 import org.tensa.tensada.matrix.BlockMatriz;
 import org.tensa.tensada.matrix.Dominio;
