@@ -38,6 +38,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
@@ -59,7 +60,7 @@ import org.tensa.facecheck.layer.impl.HiddenLayer;
 import org.tensa.facecheck.layer.impl.OutputScale;
 import org.tensa.facecheck.layer.impl.PixelInputLayer;
 import org.tensa.facecheck.layer.impl.PixelOutputLayer;
-import org.tensa.facecheck.layer.impl.WeightCreationStyle;
+import org.tensa.facecheck.weight.WeightCreationStyle;
 import org.tensa.facecheck.mapping.PixelMapper;
 import org.tensa.tensada.matrix.BlockMatriz;
 import org.tensa.tensada.matrix.Dominio;
@@ -230,14 +231,25 @@ public class Manager<N extends Number> {
         log.info("iniciando 1..<{},{}>", outerSize, innerSize);
         try (final BlockMatriz<N> hiddenBlockMatriz = new BlockMatriz<>(new Dominio(outerSize, 1))) {
             hiddenBlockMatriz.getDominio().forEach((ParOrdenado idx) -> {
-                hiddenBlockMatriz.put(idx, creating
-                        .compose(supplier).andThen(modeling)
+                hiddenBlockMatriz.put(idx, supplier
                         .apply(new Dominio(1, innerSize)));
             });
+            
             log.info("iniciando 2..<{},{}>", outerSize, innerSize);
-            Matriz<N> merged = hiddenBlockMatriz.merge();
-            return supplier.apply(new Dominio(Indice.D1))
-                    .instancia(merged.getDominio(), merged);
+            return creating.compose(supplier)
+                    .andThen((m) -> {
+                        hiddenBlockMatriz.splitIn(m);
+                        hiddenBlockMatriz.replaceAll((idx,sm) -> modeling.apply((NumericMatriz<N>)sm));
+                        return hiddenBlockMatriz.build();
+                    }).andThen((m) -> {
+                        return supplier.andThen((fm) -> {
+                            fm.putAll(m);
+                            return fm;
+                        })
+                        .apply(m.getDominio());
+                    })
+                    .apply(new Dominio(outerSize, innerSize));
+            
         }catch (IOException ex) {
             
             log.error("createMatrix", ex);
