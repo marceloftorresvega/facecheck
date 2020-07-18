@@ -40,16 +40,39 @@ public class DoorLayer<N extends Number> implements LayerConsumer<N>, LayerProdu
 
     private NumericMatriz<N> inputLayer;
     private NumericMatriz<N> outputLayer;
+    private NumericMatriz<N> elseOutputLayer;
     private List<LayerConsumer<N>> consumers = new ArrayList<>();
-    private final BooleanSupplier contition;
+    private List<LayerConsumer<N>> elseConsumers = new ArrayList<>();
+    private final BooleanSupplier condition;
+    private final LayerProducer<N> elseProducer = new LayerProducer<N>() {
+        @Override
+        public NumericMatriz<N> getOutputLayer() {
+            return elseOutputLayer;
+        }
+
+        @Override
+        public void startProduction() {
+            elseOutputLayer = inputLayer;
+
+            for (LayerConsumer<N> lc : elseConsumers) {
+                lc.setInputLayer(elseOutputLayer);
+                lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
+            }
+        }
+
+        @Override
+        public List<LayerConsumer<N>> getConsumers() {
+            return elseConsumers;
+        }
+    };
 
     /**
      * constructor que incluye la condicion a comprobar
      *
-     * @param contition
+     * @param condition
      */
-    public DoorLayer(BooleanSupplier contition) {
-        this.contition = contition;
+    public DoorLayer(BooleanSupplier condition) {
+        this.condition = condition;
     }
 
     @Override
@@ -65,8 +88,10 @@ public class DoorLayer<N extends Number> implements LayerConsumer<N>, LayerProdu
 
     @Override
     public void layerComplete(int status) {
-        if (this.contition.getAsBoolean()) {
+        if (this.condition.getAsBoolean()) {
             startProduction();
+        } else {
+            this.elseProducer.startProduction();
         }
     }
 
@@ -88,6 +113,10 @@ public class DoorLayer<N extends Number> implements LayerConsumer<N>, LayerProdu
     @Override
     public List<LayerConsumer<N>> getConsumers() {
         return this.consumers;
+    }
+
+    public LayerProducer<N> getElseProducer() {
+        return elseProducer;
     }
 
 }
