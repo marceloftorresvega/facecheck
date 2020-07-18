@@ -31,7 +31,8 @@ import org.tensa.facecheck.layer.LayerProducer;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
- * capa que permite el paso de un resultado si y solo si se cumple una condicion
+ * capa que permite el paso de un resultado si y solo si se cumple una
+ * condicion, la negacion esta incluida
  *
  * @author Marcelo
  * @param <N>
@@ -103,7 +104,7 @@ public class DoorLayer<N extends Number> implements LayerConsumer<N>, LayerProdu
     @Override
     public void startProduction() {
         outputLayer = inputLayer;
-            
+
         for (LayerConsumer<N> lc : consumers) {
             lc.setInputLayer(outputLayer);
             lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
@@ -115,6 +116,11 @@ public class DoorLayer<N extends Number> implements LayerConsumer<N>, LayerProdu
         return this.consumers;
     }
 
+    /**
+     * producer que conduce datos en caso de no cumplir la condicion
+     *
+     * @return LayerProducer
+     */
     public LayerProducer<N> getElseProducer() {
         return elseProducer;
     }
