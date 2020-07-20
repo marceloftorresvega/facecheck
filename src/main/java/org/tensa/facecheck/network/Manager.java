@@ -55,8 +55,11 @@ import org.tensa.facecheck.activation.impl.TanHyperActivationImpl;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerLearning;
 import org.tensa.facecheck.layer.LayerProducer;
+import org.tensa.facecheck.layer.impl.BackDoorLayer;
 import org.tensa.facecheck.layer.impl.DiffLayer;
+import org.tensa.facecheck.layer.impl.DoorLayer;
 import org.tensa.facecheck.layer.impl.HiddenLayer;
+import org.tensa.facecheck.layer.impl.NormalizeLayer;
 import org.tensa.facecheck.layer.impl.OutputScale;
 import org.tensa.facecheck.layer.impl.PixelInputLayer;
 import org.tensa.facecheck.layer.impl.PixelOutputLayer;
@@ -320,15 +323,49 @@ public class Manager<N extends Number> {
 
                             PixelInputLayer<N> simplePixelsInputLayer = new PixelInputLayer<>(supplier, pixelMapper, inputScale);
                             HiddenLayer<N> hiddenLayer = new HiddenLayer<>(weightsH, hiddenLearningRate, new SigmoidActivationImpl<>());
+                            NormalizeLayer<N> normaLayer = new NormalizeLayer<>();
                             HiddenLayer<N> learnLayer = new HiddenLayer<>(weightsO, outputLearningRate, new LinealActivationImpl<>());
                             PixelInputLayer<N> simplePixelsCompareLayer = new PixelInputLayer<>(supplier, pixelMapper, OutputScale::scale);
                             PixelOutputLayer<N> pixelsOutputLayer = new PixelOutputLayer<>(pixelMapper);
                             DiffLayer<N> diffLAyer = new DiffLayer<>(simplePixelsCompareLayer,(lL) -> {
+                                log.info("end   "); 
                                 errorBiConsumer(lL, idx);
+                            });
+                            DiffLayer<N> middleTest = new DiffLayer<>(normaLayer,(lL) -> {
+                                log.info("middle "); 
+                                errorBiConsumer(lL, idx);
+                            });
+                            
+                            BackDoorLayer<N> backIfLayer = new BackDoorLayer<>(() -> {
+                                return middleTest.getPropagationError()==null || (middleTest.getError().get(Indice.D1).doubleValue() > .005);
+                            });
+                            
+                            DoorLayer<N> ifLayer = new DoorLayer<>(() -> {
+                                return middleTest.getPropagationError()==null || (middleTest.getError().get(Indice.D1).doubleValue() > .005);
                             });
 
                             relate(simplePixelsInputLayer, hiddenLayer);
+                            
+                            relate(hiddenLayer,middleTest);
+//                            hiddenLayer.getConsumers().remove(middleTest);
+                            middleTest.getProducers().remove(hiddenLayer);
+                            
+                            if(trainingMode){
+                                backIfLayer.getProducers().add(hiddenLayer);
+                                middleTest.getProducers().add(backIfLayer);
+                            }
+
+                            relate(hiddenLayer,ifLayer);
+//                            relate(ifLayer,middleTest.getInternalBridgeConsumer());
+                            relate(ifLayer.getElseProducer(),learnLayer);
+                            
                             relate(hiddenLayer, learnLayer);
+                            hiddenLayer.getConsumers().remove(learnLayer);
+                            
+//                            relate(hiddenLayer, learnLayer);
+//                            hiddenLayer.getConsumers().remove(learnLayer);
+//                            relate(hiddenLayer, normaLayer);
+//                            relate(normaLayer, learnLayer);
                             relate(learnLayer, pixelsOutputLayer);
 
         //                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
