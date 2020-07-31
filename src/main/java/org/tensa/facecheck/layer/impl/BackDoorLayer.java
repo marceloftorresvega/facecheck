@@ -70,6 +70,11 @@ public class BackDoorLayer<N extends Number> implements LayerLearning<N> {
         }
 
         @Override
+        public void setLearningFactor(N learningFactor) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
         public void setLearningData(NumericMatriz<N> learningData) {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
@@ -101,6 +106,11 @@ public class BackDoorLayer<N extends Number> implements LayerLearning<N> {
 
     @Override
     public N getLeanringFactor() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setLearningFactor(N learningFactor) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

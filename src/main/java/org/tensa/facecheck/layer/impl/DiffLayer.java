@@ -134,6 +134,11 @@ public class DiffLayer<N extends Number> implements LayerLearning<N> {
     }
 
     @Override
+    public void setLearningFactor(N learningFactor) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
     public void setLearningData(NumericMatriz<N> learningData) {
         salidaDeseada = learningData;
     }

@@ -50,7 +50,7 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
     protected NumericMatriz<N> learningData;
     protected NumericMatriz<N> error;
     protected NumericMatriz<N> net;
-    protected final N learningFactor;
+    protected N learningFactor;
     protected final List<LayerConsumer<N>> consumers;
     protected final List<LayerLearning<N>> producers;
     protected final Activation<N> activation;
@@ -58,6 +58,13 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
     public HiddenLayer(NumericMatriz<N> weights, N learningFactor, Activation<N> activation) {
         this.weights = weights;
         this.learningFactor = learningFactor;
+        this.consumers = new ArrayList<>();
+        this.producers = new ArrayList<>();
+        this.activation = activation;
+    }
+
+    public HiddenLayer(NumericMatriz<N> weights, Activation<N> activation) {
+        this.weights = weights;
         this.consumers = new ArrayList<>();
         this.producers = new ArrayList<>();
         this.activation = activation;
@@ -153,6 +160,11 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
     @Override
     public N getLeanringFactor() {
         return learningFactor;
+    }
+
+    @Override
+    public void setLearningFactor(N learningFactor) {
+        this.learningFactor = learningFactor;
     }
 
     @Override
