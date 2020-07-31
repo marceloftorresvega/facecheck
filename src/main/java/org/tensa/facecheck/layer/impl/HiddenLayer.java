@@ -105,6 +105,9 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
             
             for (LayerConsumer<N> lc : consumers) {
                 lc.setInputLayer(outputLayer);
+            }
+            
+            for (LayerConsumer<N> lc : consumers) {
                 lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
             }
         }
@@ -122,12 +125,13 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
 
     @Override
     public void startLearning() {
-        UnaryOperator<NumericMatriz<N>> assign = (n) -> error = n;
-        try {
-            propagationError = activation.getError()
-                    .andThen(assign)
-                    .andThen(weights::productoPunto)
+        try { 
+            error = activation.getError()
                     .apply(learningData, activation.isOptimized()?outputLayer:net);
+             
+            if ( getProducers().size() > 0 ) {
+                propagationError = weights.productoPunto(error);
+            }
             
             try (
                     final NumericMatriz<N> derror = error.productoEscalar(learningFactor);
@@ -142,6 +146,8 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
         }
         for (LayerLearning<N> back : getProducers()) {
             back.setLearningData(propagationError);
+        }
+        for (LayerLearning<N> back : getProducers()) {
             back.startLearning();
         }
     }
