@@ -77,6 +77,17 @@ public final class OutputScale {
     }
     
     /**
+     * escala la matriz de componentes de pixels entre valores -1 y 1
+     * @param <N> tipo numerico Float,Double o BigDecimal
+     * @param matriz NumericMatriz Matriz a modificar
+     * @return NumericMatriz modificada
+     */
+    public static <N extends Number> NumericMatriz<N> extendedScale(NumericMatriz<N> matriz) {
+        N escala = matriz.mapper(1 / 128.0);
+        return matriz.productoEscalar(escala).substraccion(matriz.matrizUno());
+    }
+    
+    /**
      * normaliza la matriz de componentes de pixels
      * @param <N> tipo numerico Float,Double o BigDecimal
      * @param matriz NumericMatriz Matriz a modificar
@@ -89,6 +100,20 @@ public final class OutputScale {
      }
     
     /**
+     * normaliza la matriz de componentes de pixels centrandola en intervalo -1 y 1
+     * @param <N> tipo numerico Float,Double o BigDecimal
+     * @param matriz NumericMatriz Matriz a modificar
+     * @return NumericMatriz modificada
+     */
+    public static <N extends Number> NumericMatriz<N> extendedNormalized(NumericMatriz<N> matriz) {
+        N escala = matriz.mapper(128.0);
+        NumericMatriz<N> halfmatriz = matriz.substraccion(matriz.matrizUno().productoEscalar(escala));
+        double punto = halfmatriz.values().stream().mapToDouble(Number::doubleValue).map((double v) -> v * v).sum();
+        punto = 1 / Math.sqrt(punto);
+        return halfmatriz.productoEscalar(matriz.mapper(punto));
+     }
+    
+    /**
      * aplica operacion de reflectancia a la matriz de componentes de pixels
      * @param <N> tipo numerico Float,Double o BigDecimal
      * @param matriz NumericMatriz Matriz a modificar
@@ -98,6 +123,20 @@ public final class OutputScale {
         double punto = matriz.values().stream().mapToDouble((N v) -> Math.abs(v.doubleValue())).sum();
         punto = 1 / punto;
         return matriz.productoEscalar(matriz.mapper(punto));
+     }
+    
+    /**
+     * aplica operacion de reflectancia a la matriz de componentes de pixels a -1 y 1
+     * @param <N> tipo numerico Float,Double o BigDecimal
+     * @param matriz NumericMatriz Matriz a modificar
+     * @return NumericMatriz modificada
+     */
+    public static <N extends Number> NumericMatriz<N> extendedReflectance(NumericMatriz<N> matriz) {
+        N escala = matriz.mapper(128.0);
+        NumericMatriz<N> halfmatriz = matriz.substraccion(matriz.matrizUno().productoEscalar(escala));
+        double punto = halfmatriz.values().stream().mapToDouble((N v) -> Math.abs(v.doubleValue())).sum();
+        punto = 1 / punto;
+        return halfmatriz.productoEscalar(matriz.mapper(punto));
      }
      
 }
