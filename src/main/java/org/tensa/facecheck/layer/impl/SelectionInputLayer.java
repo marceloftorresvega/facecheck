@@ -74,6 +74,8 @@ public class SelectionInputLayer<N extends Number> implements LayerProducer<N> {
         }
         for (LayerConsumer<N> lc : consumers) {
             lc.setInputLayer(outputLayer);
+        }
+        for (LayerConsumer<N> lc : consumers) {
             lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
         }
     }
