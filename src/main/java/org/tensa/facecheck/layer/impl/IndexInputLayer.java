@@ -65,6 +65,10 @@ public class IndexInputLayer<N extends Number> implements LayerProducer<N> {
     @Override
     public void startProduction() {
         this.outputLayer = idMapper.apply(idx, matrizSuplier.apply(idMapper.getDominio()));
+        for (LayerConsumer<N> lc : consumers) {
+            lc.setInputLayer(outputLayer);
+            lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
+        }
 
     }
 

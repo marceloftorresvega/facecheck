@@ -72,6 +72,10 @@ public class SelectionInputLayer<N extends Number> implements LayerProducer<N> {
                 outputLayer.indexa(i, 1, outputLayer.getUnoValue());
             }
         }
+        for (LayerConsumer<N> lc : consumers) {
+            lc.setInputLayer(outputLayer);
+            lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
+        }
     }
 
     @Override
