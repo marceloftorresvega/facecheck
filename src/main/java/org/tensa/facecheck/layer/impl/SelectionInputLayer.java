@@ -35,13 +35,15 @@ import org.tensa.tensada.matrix.NumericMatriz;
 import org.tensa.tensada.matrix.ParOrdenado;
 
 /**
+ * input layer que ingresa la representacion la o las areas de seleccion que
+ * estan activas en ese momento, seleccion definida por el indice de ingreso
  *
  * @author Marcelo
  * @param <N>
  */
 public class SelectionInputLayer<N extends Number> implements LayerProducer<N> {
 
-    protected final Function<Dominio,NumericMatriz<N>> supplier;
+    protected final Function<Dominio, NumericMatriz<N>> supplier;
     private final LinkedList<Rectangle> areaQeue;
     private ParOrdenado idx;
     private final List<LayerConsumer<N>> consumers = new ArrayList<>();
@@ -67,7 +69,7 @@ public class SelectionInputLayer<N extends Number> implements LayerProducer<N> {
     public void startProduction() {
         outputLayer = supplier.apply(new Dominio(areaQeue.size(), 1));
         for (int i = 1; i <= areaQeue.size(); i++) {
-            Rectangle sel = areaQeue.get(i-1);
+            Rectangle sel = areaQeue.get(i - 1);
             if (sel.contains(idx.getFila(), idx.getColumna())) {
                 outputLayer.indexa(i, 1, outputLayer.getUnoValue());
             }
@@ -85,12 +87,22 @@ public class SelectionInputLayer<N extends Number> implements LayerProducer<N> {
         return this.consumers;
     }
 
+    /**
+     * indice actual
+     *
+     * @return ParOrdenado
+     */
     public ParOrdenado getIdx() {
         return idx;
     }
 
+    /**
+     * carga indice
+     *
+     * @param idx
+     */
     public void setIdx(ParOrdenado idx) {
         this.idx = idx;
     }
-    
+
 }
