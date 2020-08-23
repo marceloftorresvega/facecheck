@@ -159,6 +159,7 @@ public class VisLoad extends javax.swing.JFrame {
         reflectJRadioButton = new javax.swing.JRadioButton();
         preventJRadioButton = new javax.swing.JRadioButton();
         libreJRadioButton = new javax.swing.JRadioButton();
+        jCheckBoxScale1neg1 = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
         suavizaResultado = new javax.swing.JButton();
         enmascaraResultado = new javax.swing.JButton();
@@ -295,6 +296,13 @@ public class VisLoad extends javax.swing.JFrame {
         adaptInputButtonGroup.add(libreJRadioButton);
         libreJRadioButton.setText("Libre");
 
+        jCheckBoxScale1neg1.setText("-1 +1");
+        jCheckBoxScale1neg1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBoxScale1neg1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -312,6 +320,8 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(preventJRadioButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(libreJRadioButton)
+                .addGap(38, 38, 38)
+                .addComponent(jCheckBoxScale1neg1)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -323,7 +333,8 @@ public class VisLoad extends javax.swing.JFrame {
                     .addComponent(normalizeJRadioButton)
                     .addComponent(reflectJRadioButton)
                     .addComponent(preventJRadioButton)
-                    .addComponent(libreJRadioButton))
+                    .addComponent(libreJRadioButton)
+                    .addComponent(jCheckBoxScale1neg1))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -748,17 +759,30 @@ public class VisLoad extends javax.swing.JFrame {
         networkManager.setOutputLearningRate((Float)outputLearningRate.getValue());
         networkManager.setIterateTo((int)iteraciones.getValue());
         networkManager.setUseSelection(seleccion.isSelected());
-        
-        if (scaleJRadioButton.isSelected()) {
-            networkManager.setInputScale(OutputScale::scale);
-        } else if (normalizeJRadioButton.isSelected()) {
-            networkManager.setInputScale(OutputScale::normalized);
-        } else if (reflectJRadioButton.isSelected()) {
-            networkManager.setInputScale(OutputScale::reflectance);
-        } else if (preventJRadioButton.isSelected()) {
-            networkManager.setInputScale(OutputScale::prevent01);
+            
+        if (!jCheckBoxScale1neg1.isSelected()) {
+            
+            if (scaleJRadioButton.isSelected()) {
+                networkManager.setInputScale(OutputScale::scale);
+            } else if (normalizeJRadioButton.isSelected()) {
+                networkManager.setInputScale(OutputScale::normalized);
+            } else if (reflectJRadioButton.isSelected()) {
+                networkManager.setInputScale(OutputScale::reflectance);
+            } else if (preventJRadioButton.isSelected()) {
+                networkManager.setInputScale(OutputScale::prevent01);
+            } else {
+                networkManager.setInputScale(OutputScale::sameEscale);
+            }
+            
         } else {
-            networkManager.setInputScale(OutputScale::sameEscale);
+            
+            if (scaleJRadioButton.isSelected()) {
+                networkManager.setInputScale(OutputScale::extendedScale);
+            } else if (normalizeJRadioButton.isSelected()) {
+                networkManager.setInputScale(OutputScale::extendedNormalized);
+            } else if (reflectJRadioButton.isSelected()) {
+                networkManager.setInputScale(OutputScale::extendedReflectance);
+            }
         }
             
         
@@ -828,6 +852,10 @@ public class VisLoad extends javax.swing.JFrame {
         int inStep = (int)inNeurs.getValue();
         int hidStep = (int)hiddNeurs.getValue();
         int outStep = (int)outNeurs.getValue();
+        
+        networkManager.setInputImage(buffImage);
+        networkManager.setOutputImage(bufferImageFiltered);
+        networkManager.setCompareImage(destBuffImage);
         
         UnaryOperator<NumericMatriz<Float>> hiddenCreationStyle = WeightModelingStyle::simpleModelingStyle;
         UnaryOperator<NumericMatriz<Float>> outputCreationStyle = WeightModelingStyle::simpleModelingStyle;
@@ -1127,6 +1155,14 @@ public class VisLoad extends javax.swing.JFrame {
                 break;
         }
     }//GEN-LAST:event_vistaMouseDragged
+
+    private void jCheckBoxScale1neg1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxScale1neg1ActionPerformed
+        libreJRadioButton.setEnabled(!jCheckBoxScale1neg1.isSelected());
+        preventJRadioButton.setEnabled(!jCheckBoxScale1neg1.isSelected());
+        if (libreJRadioButton.isSelected() || preventJRadioButton.isSelected()) {
+            scaleJRadioButton.setSelected(true);
+        }
+    }//GEN-LAST:event_jCheckBoxScale1neg1ActionPerformed
 
     
     private float calculaMatriz(int i, int j){
@@ -1480,6 +1516,7 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JSpinner inNeurs;
     private javax.swing.JSpinner iteraciones;
     private javax.swing.JButton jButtonSalvaImagen;
+    private javax.swing.JCheckBox jCheckBoxScale1neg1;
     private javax.swing.JPanel jErrorGraf;
     private javax.swing.JFileChooser jFileChooserImagenSalva;
     private javax.swing.JFileChooser jFileChooserLoadImagen;

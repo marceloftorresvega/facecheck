@@ -53,6 +53,12 @@ public interface LayerLearning<N extends Number> {
     N getLeanringFactor();
     
     /**
+     * valor de ajuste para los pesos
+     * @param learningFactor 
+     */
+    void setLearningFactor(N learningFactor);
+    
+    /**
      * se adquiere valores deseados para aprendisaje supervizado
      * @param learningData matriz de valores para comparar
      */

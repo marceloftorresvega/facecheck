@@ -38,7 +38,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
@@ -47,11 +46,7 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.activation.impl.LinealActivationImpl;
-import org.tensa.facecheck.activation.impl.ReluActivationImpl;
 import org.tensa.facecheck.activation.impl.SigmoidActivationImpl;
-import org.tensa.facecheck.activation.impl.SoftPlusActivationImpl;
-import org.tensa.facecheck.activation.impl.SoftSignActivationImpl;
-import org.tensa.facecheck.activation.impl.TanHyperActivationImpl;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerLearning;
 import org.tensa.facecheck.layer.LayerProducer;
@@ -68,7 +63,6 @@ import org.tensa.facecheck.mapping.PixelMapper;
 import org.tensa.tensada.matrix.BlockMatriz;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.Indice;
-import org.tensa.tensada.matrix.Matriz;
 import org.tensa.tensada.matrix.NumericMatriz;
 import org.tensa.tensada.matrix.ParOrdenado;
 
@@ -269,7 +263,7 @@ public class Manager<N extends Number> {
         
         int inSize = pixelMapper.getDominio(inStep * inStep * 3).getFila();
         int outSize = pixelMapper.getDominio(outStep * outStep * 3).getFila();
-        
+
         weightsH = createMatrix(inSize, hidStep, WeightCreationStyle::randomCreationStyle, modelingH);
         weightsO = createMatrix(hidStep, outSize, WeightCreationStyle::randomCreationStyle, modelingO);
         
@@ -298,7 +292,7 @@ public class Manager<N extends Number> {
             int width = inputImage.getWidth();
             int height = inputImage.getHeight();
             
-            log.info("procesando...");
+            log.info("procesando... {} {}",width-inStep,height-inStep);
 
             for(iterateCurrent=0; (!emergencyBreak) && ((!trainingMode) && iterateCurrent<1 || trainingMode && iterateCurrent<((Integer) iterateTo)); iterateCurrent++) {
 
