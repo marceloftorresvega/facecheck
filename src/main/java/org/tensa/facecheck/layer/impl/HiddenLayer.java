@@ -138,7 +138,6 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
                     final NumericMatriz<N> delta = derror.productoTensorial(inputLayer);
                     final NumericMatriz<N> adicion = weights.adicion(delta)) {
                 synchronized (weights) {
-                    weights.clear();
                     weights.putAll(adicion);
                 }
             }
