@@ -23,34 +23,14 @@
  */
 package org.tensa.facecheck.network;
 
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.Closeable;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
-import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.activation.impl.LinealActivationImpl;
 import org.tensa.facecheck.activation.impl.SigmoidActivationImpl;
-import org.tensa.facecheck.layer.LayerConsumer;
-import org.tensa.facecheck.layer.LayerLearning;
-import org.tensa.facecheck.layer.LayerProducer;
 import org.tensa.facecheck.layer.impl.BackDoorLayer;
 import org.tensa.facecheck.layer.impl.DiffLayer;
 import org.tensa.facecheck.layer.impl.DoorLayer;
@@ -59,9 +39,6 @@ import org.tensa.facecheck.layer.impl.NormalizeLayer;
 import org.tensa.facecheck.layer.impl.OutputScale;
 import org.tensa.facecheck.layer.impl.PixelInputLayer;
 import org.tensa.facecheck.layer.impl.PixelOutputLayer;
-import org.tensa.facecheck.weight.WeightCreationStyle;
-import org.tensa.facecheck.mapping.PixelMapper;
-import org.tensa.tensada.matrix.BlockMatriz;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.Indice;
 import org.tensa.tensada.matrix.NumericMatriz;
@@ -72,9 +49,7 @@ import org.tensa.tensada.matrix.ParOrdenado;
  *
  * @author Marcelo
  */
-public class Manager<N extends Number> {
-
-    private final Logger log = LoggerFactory.getLogger(Manager.class);
+public class Manager<N extends Number> extends AbstractManager<N> {
 
     public Manager(Function<Dominio, NumericMatriz<N>> supplier, int inStep, int outStep, int hidStep, BufferedImage outputImage, BufferedImage inputImage, BufferedImage compareImage, int iterateTo) {
         this.supplier = supplier;
@@ -94,197 +69,7 @@ public class Manager<N extends Number> {
     public Manager() {
     }
 
-    protected NumericMatriz<N> weightsH;
-    protected NumericMatriz<N> weightsO;
-    protected NumericMatriz<N> errorGraph;
-    protected Function<Dominio, NumericMatriz<N>> supplier;
-    protected UnaryOperator<NumericMatriz<N>> inputScale;
-    protected PixelMapper pixelMapper;
-
-    protected int inStep;
-    protected int outStep;
-    protected int hidStep;
-
-    protected LearningControl<N> hiddenLearningControl;
-    protected LearningControl<N> outputLearningControl;
-    protected N hiddenLearningRate;
-    protected N outputLearningRate;
-
-    protected BufferedImage outputImage;
-    protected BufferedImage inputImage;
-    protected BufferedImage compareImage;
-
-    protected final LinkedList<Rectangle> areaQeue = new LinkedList<>();
-    protected List<ParOrdenado> proccesDomain;
-
-    protected boolean trainingMode;
-    protected int iterateTo;
-    protected boolean emergencyBreak;
-    protected int iterateCurrent;
-
-    protected boolean useSelection;
-
-    public NumericMatriz<N> getWeightsH() {
-        return weightsH;
-    }
-
-    public void setWeightsH(NumericMatriz<N> weightsH) {
-        this.weightsH = weightsH;
-    }
-
-    public NumericMatriz<N> getWeightsO() {
-        return weightsO;
-    }
-
-    public void setWeightsO(NumericMatriz<N> weightsO) {
-        this.weightsO = weightsO;
-    }
-
-    public NumericMatriz<N> getErrorGraph() {
-        return errorGraph;
-    }
-
-    public void setErrorGraph(NumericMatriz<N> errorGraph) {
-        this.errorGraph = errorGraph;
-    }
-
-    public void cargaPesos(String archivo) {
-        log.info("cargaPesos <{}>", archivo);
-        try (
-                InputStream fis = Files.newInputStream(Paths.get(archivo));
-                BufferedInputStream bis = new BufferedInputStream(fis);
-                GzipCompressorInputStream gzIn = new GzipCompressorInputStream(bis);
-                ObjectInputStream ois = new ObjectInputStream(gzIn)) {
-            weightsH = (NumericMatriz<N>) ois.readObject();
-            Integer fila = weightsH.getDominio().getFila();
-            Integer columna = weightsH.getDominio().getColumna();
-
-            weightsO = (NumericMatriz<N>) ois.readObject();
-            Integer filao = weightsO.getDominio().getFila();
-
-            inStep = (int) Math.sqrt(columna / 3);
-            hidStep = fila;
-            outStep = (int) Math.sqrt(filao / 3);
-
-        } catch (FileNotFoundException ex) {
-            log.error("error al cargar pesos", ex);
-        } catch (IOException ex) {
-            log.error("error al cargar pesos", ex);
-        } catch (ClassNotFoundException ex) {
-            log.error("error al cargar pesos", ex);
-        }
-    }
-
-    public void salvaPesos(String archivo) {
-        log.info("salvaPesos <{}>", archivo);
-
-        try (
-                OutputStream fos = Files.newOutputStream(Paths.get(archivo));
-                BufferedOutputStream out = new BufferedOutputStream(fos);
-                GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(out);
-                ObjectOutputStream oos = new ObjectOutputStream(gzOut);) {
-            oos.writeObject(weightsH);
-            oos.writeObject(weightsO);
-
-        } catch (FileNotFoundException ex) {
-            log.error("error al guardar  pesos", ex);
-        } catch (IOException ex) {
-            log.error("error al guardar  pesos", ex);
-        }
-    }
-
-    public int getInStep() {
-        return inStep;
-    }
-
-    public void setInStep(int inStep) {
-        this.inStep = inStep;
-    }
-
-    public int getOutStep() {
-        return outStep;
-    }
-
-    public void setOutStep(int outStep) {
-        this.outStep = outStep;
-    }
-
-    public int getHidStep() {
-        return hidStep;
-    }
-
-    public void setHidStep(int hidStep) {
-        this.hidStep = hidStep;
-    }
-
-    /**
-     *
-     * @param innerSize the value of innerSize
-     * @param outerSize the value of outerSize
-     * @param creating the value of creating
-     * @param modeling the value of modeling
-     */
-    public NumericMatriz<N> createMatrix(int innerSize, int outerSize, UnaryOperator<NumericMatriz<N>> creating, UnaryOperator<NumericMatriz<N>> modeling) {
-        log.info("iniciando 1..<{},{}>", outerSize, innerSize);
-        try (final BlockMatriz<N> hiddenBlockMatriz = new BlockMatriz<>(new Dominio(outerSize, 1))) {
-            hiddenBlockMatriz.getDominio().forEach((ParOrdenado idx) -> {
-                hiddenBlockMatriz.put(idx, supplier
-                        .apply(new Dominio(1, innerSize)));
-            });
-
-            log.info("iniciando 2..<{},{}>", outerSize, innerSize);
-            return creating.compose(supplier)
-                    .andThen((m) -> {
-                        hiddenBlockMatriz.splitIn(m);
-                        hiddenBlockMatriz.replaceAll((idx, sm) -> modeling.apply((NumericMatriz<N>) sm));
-                        return hiddenBlockMatriz.build();
-                    }).andThen((m) -> {
-                return supplier.andThen((fm) -> {
-                    fm.putAll(m);
-                    return fm;
-                })
-                        .apply(m.getDominio());
-            })
-                    .apply(new Dominio(outerSize, innerSize));
-
-        } catch (IOException ex) {
-
-            log.error("createMatrix", ex);
-            throw new RuntimeException(ex);
-        }
-    }
-
-    /**
-     *
-     * @param modelingH the value of modelingH
-     * @param modelingO the value of modelingO
-     */
-    public void initMatrix(UnaryOperator<NumericMatriz<N>> modelingH, UnaryOperator<NumericMatriz<N>> modelingO) {
-
-        int inSize = pixelMapper.getDominio(inStep * inStep * 3).getFila();
-        int outSize = pixelMapper.getDominio(outStep * outStep * 3).getFila();
-
-        weightsH = createMatrix(inSize, hidStep, WeightCreationStyle::randomCreationStyle, modelingH);
-        weightsO = createMatrix(hidStep, outSize, WeightCreationStyle::randomCreationStyle, modelingO);
-
-    }
-
-    public N getHiddenLearningRate() {
-        return hiddenLearningRate;
-    }
-
-    public void setHiddenLearningRate(N hiddenLearningRate) {
-        this.hiddenLearningRate = hiddenLearningRate;
-    }
-
-    public N getOutputLearningRate() {
-        return outputLearningRate;
-    }
-
-    public void setOutputLearningRate(N outputLearningRate) {
-        this.outputLearningRate = outputLearningRate;
-    }
-
+    @Override
     public void process() {
 
         log.info("iniciando proceso...");
@@ -359,16 +144,21 @@ public class Manager<N extends Number> {
 //                            relate(normaLayer, learnLayer);
                         relate(learnLayer, pixelsOutputLayer);
 
-                        //                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
-                        BufferedImage dest = outputImage.getSubimage(i + (inStep - outStep) / 2, j + (inStep - outStep) / 2, outStep, outStep);
-                        pixelsOutputLayer.setDest(dest);
+                        try {
+                            //                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
+                            BufferedImage dest = outputImage.getSubimage(i + (inStep - outStep) / 2, j + (inStep - outStep) / 2, outStep, outStep);
+                            pixelsOutputLayer.setDest(dest);
 
-                        BufferedImage src = inputImage.getSubimage(i, j, inStep, inStep);
-                        simplePixelsInputLayer.setSrc(src);
+                            BufferedImage src = inputImage.getSubimage(i, j, inStep, inStep);
+                            simplePixelsInputLayer.setSrc(src);
 
-                        //                        log.info("cargando bloque comparacion <{}><{}>", i, j);
-                        BufferedImage comp = compareImage.getSubimage(i + (inStep - outStep) / 2, j + (inStep - outStep) / 2, outStep, outStep);
-                        simplePixelsCompareLayer.setSrc(comp);
+                            //                        log.info("cargando bloque comparacion <{}><{}>", i, j);
+                            BufferedImage comp = compareImage.getSubimage(i + (inStep - outStep) / 2, j + (inStep - outStep) / 2, outStep, outStep);
+                            simplePixelsCompareLayer.setSrc(comp);
+                        } catch(java.awt.image.RasterFormatException ex ) {
+                            emergencyBreak = true;
+                            ex.printStackTrace();
+                        }
 
                         if (trainingMode) {
                             relate(learnLayer, diffLAyer);
@@ -394,115 +184,4 @@ public class Manager<N extends Number> {
 
     }
 
-    protected void relate(HiddenLayer<N> origen, HiddenLayer<N> destino) {
-        origen.getConsumers().add(destino);
-        destino.getProducers().add(origen);
-
-    }
-
-    protected void relate(LayerProducer<N> origen, LayerConsumer<N> destino) {
-        origen.getConsumers().add(destino);
-
-    }
-
-    /**
-     *
-     * @param origen the value of regreso
-     * @param terminal the value of origen
-     */
-    protected void relate(HiddenLayer<N> origen, DiffLayer<N> terminal) {
-        origen.getConsumers().add(terminal.getInternalBridgeConsumer());
-        terminal.getProducers().add(origen);
-
-    }
-
-    protected void errorBiConsumer(LayerLearning<N> learning, ParOrdenado idx) {
-        N errorVal = learning.getError().get(Indice.D1);
-
-        synchronized (errorGraph) {
-            errorGraph.put(idx, errorGraph.mapper(errorVal.doubleValue()));
-        }
-//        log.info("diferencia <{}>", errorVal); 
-
-    }
-
-    public void setSupplier(Function<Dominio, NumericMatriz<N>> supplier) {
-        this.supplier = supplier;
-    }
-
-    public void setInputScale(UnaryOperator<NumericMatriz<N>> inputScale) {
-        this.inputScale = inputScale;
-    }
-
-    public void setInputImage(BufferedImage inputImage) {
-        this.inputImage = inputImage;
-    }
-
-    public void setCompareImage(BufferedImage compareImage) {
-        this.compareImage = compareImage;
-    }
-
-    public BufferedImage getOutputImage() {
-        return outputImage;
-    }
-
-    public void setOutputImage(BufferedImage outputImage) {
-        this.outputImage = outputImage;
-    }
-
-    public boolean isTrainingMode() {
-        return trainingMode;
-    }
-
-    public void setTrainingMode(boolean trainingMode) {
-        this.trainingMode = trainingMode;
-    }
-
-    public int getIterateTo() {
-        return iterateTo;
-    }
-
-    public void setIterateTo(int iterateTo) {
-        this.iterateTo = iterateTo;
-    }
-
-    public boolean isEmergencyBreak() {
-        return emergencyBreak;
-    }
-
-    public void setEmergencyBreak(boolean emergencyBreak) {
-        this.emergencyBreak = emergencyBreak;
-    }
-
-    public boolean isUseSelection() {
-        return useSelection;
-    }
-
-    public void setUseSelection(boolean useSelection) {
-        this.useSelection = useSelection;
-    }
-
-    public LinkedList<Rectangle> getAreaQeue() {
-        return areaQeue;
-    }
-
-    public List<ParOrdenado> getProccesDomain() {
-        return proccesDomain;
-    }
-
-    public int getIterateCurrent() {
-        return iterateCurrent;
-    }
-
-    public void setHiddenLearningControl(LearningControl<N> hiddenLearningControl) {
-        this.hiddenLearningControl = hiddenLearningControl;
-    }
-
-    public void setOutputLearningControl(LearningControl<N> outputLearningControl) {
-        this.outputLearningControl = outputLearningControl;
-    }
-
-    public void setPixelMapper(PixelMapper pixelMapper) {
-        this.pixelMapper = pixelMapper;
-    }
 }
