@@ -44,7 +44,9 @@ import org.tensa.facecheck.layer.impl.OutputScale;
 import org.tensa.facecheck.network.Manager;
 import org.tensa.facecheck.weight.WeightModelingStyle;
 import org.tensa.facecheck.mapping.PixelMappings;
+import org.tensa.facecheck.network.AbstractManager;
 import org.tensa.facecheck.network.LearningControl;
+import org.tensa.facecheck.network.ManagerBackProp;
 import org.tensa.facecheck.network.impl.BasicLearningControlImpl;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.DoubleMatriz;
@@ -78,7 +80,7 @@ public class VisLoad extends javax.swing.JFrame {
     private final Rectangle leftTopPoint;
     private final Rectangle widthHwightpoint;
     
-    private Manager<Float> networkManager;
+    private AbstractManager<Float> networkManager;
 
     public SpinnerModel getSpinnerModel(){
 //        if(Objects.isNull(spinnerModel))
@@ -123,7 +125,7 @@ public class VisLoad extends javax.swing.JFrame {
         learnArea.setLocation(10, 10);
         leftTopPoint = new Rectangle();
         widthHwightpoint = new Rectangle();
-        networkManager = new Manager<>();
+        networkManager = new ManagerBackProp<>();
         networkManager.setSupplier((Dominio dominio) -> new FloatMatriz(dominio));
         networkManager.setPixelMapper(PixelMappings.defaultMapping());
         networkManager.setHiddenLearningControl(new BasicLearningControlImpl<>((i) -> i % 3 ==0? 1: 0, learningFactor));
