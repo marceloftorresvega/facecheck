@@ -41,7 +41,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.filter.MaskOp;
 import org.tensa.facecheck.layer.impl.OutputScale;
-import org.tensa.facecheck.network.Manager;
 import org.tensa.facecheck.weight.WeightModelingStyle;
 import org.tensa.facecheck.mapping.PixelMappings;
 import org.tensa.facecheck.network.AbstractManager;
