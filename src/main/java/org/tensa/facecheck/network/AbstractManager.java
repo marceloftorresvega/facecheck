@@ -64,7 +64,7 @@ import org.tensa.tensada.matrix.ParOrdenado;
  */
 public abstract class AbstractManager<N extends Number> {
 
-    protected final Logger log = LoggerFactory.getLogger(Manager.class);
+    protected final Logger log = LoggerFactory.getLogger(AbstractManager.class);
     protected NumericMatriz<N> weightsH;
     protected NumericMatriz<N> weightsO;
     protected NumericMatriz<N> errorGraph;
