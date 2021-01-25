@@ -35,6 +35,12 @@ import org.tensa.tensada.matrix.NumericMatriz;
 public interface LayerLearning<N extends Number> {
     
     /**
+     * se obtienen pesos utilizados por la capa
+     * @return retorna matriz de pesos
+     */
+    NumericMatriz<N> getWeights();
+    
+    /**
      * resultados para la propagacion del error
      * @return the org.tensa.tensada.matrix.DoubleMatriz
      */

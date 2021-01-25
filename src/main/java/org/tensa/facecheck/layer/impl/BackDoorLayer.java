@@ -38,6 +38,11 @@ import org.tensa.tensada.matrix.NumericMatriz;
  */
 public class BackDoorLayer<N extends Number> implements LayerLearning<N> {
 
+    @Override
+    public NumericMatriz<N> getWeights() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     /**
      * inicia capa de retorno con su funcion de evaluacion
      *
@@ -91,6 +96,11 @@ public class BackDoorLayer<N extends Number> implements LayerLearning<N> {
         @Override
         public List<LayerLearning<N>> getProducers() {
             return elseProducers;
+        }
+
+        @Override
+        public NumericMatriz<N> getWeights() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
     };
 

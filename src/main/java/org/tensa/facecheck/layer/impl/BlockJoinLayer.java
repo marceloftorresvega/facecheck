@@ -107,11 +107,6 @@ public class BlockJoinLayer<N extends Number> implements LayerProducer<N> {
         }
 
         @Override
-        public NumericMatriz<N> getWeights() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
         public void layerComplete(int status) {
             checkOut.remove(idx);
             if (checkOut.size()==0) {

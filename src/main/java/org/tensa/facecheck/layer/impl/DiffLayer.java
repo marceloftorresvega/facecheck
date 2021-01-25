@@ -44,6 +44,11 @@ import org.tensa.tensada.matrix.NumericMatriz;
  */
 public class DiffLayer<N extends Number> implements LayerLearning<N> {
 
+    @Override
+    public NumericMatriz<N> getWeights() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     /**
      * en caso de error se usa para dejar registro
      */
@@ -66,11 +71,6 @@ public class DiffLayer<N extends Number> implements LayerLearning<N> {
             }
 
             @Override
-            public NumericMatriz<N> getWeights() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
             public void layerComplete(int status) {
                 if( compareLayer instanceof LayerConsumer) {
                     ((LayerConsumer)compareLayer).setInputLayer(salidaReal);
@@ -86,11 +86,6 @@ public class DiffLayer<N extends Number> implements LayerLearning<N> {
             public NumericMatriz<N> setInputLayer(NumericMatriz<N> inputLayer) {
                 setLearningData(inputLayer);
                 return inputLayer;
-            }
-
-            @Override
-            public NumericMatriz<N> getWeights() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
 
             @Override

@@ -83,11 +83,6 @@ public class DoorLayer<N extends Number> implements LayerConsumer<N>, LayerProdu
     }
 
     @Override
-    public NumericMatriz<N> getWeights() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public void layerComplete(int status) {
         if (this.condition.getAsBoolean()) {
             startProduction();

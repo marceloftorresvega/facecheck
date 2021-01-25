@@ -56,12 +56,6 @@ public class PixelOutputLayer<N extends Number> implements LayerConsumer<N> {
     }
 
     @Override
-    public NumericMatriz<N> getWeights() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-
-    @Override
     public void layerComplete(int status) {
         this.status = status;
         if (status == LayerConsumer.SUCCESS_STATUS) {

@@ -50,12 +50,6 @@ public interface LayerConsumer<N extends Number> {
     NumericMatriz<N> setInputLayer(org.tensa.tensada.matrix.NumericMatriz<N> inputLayer);
     
     /**
-     * se obtienen pesos utilizados por la capa
-     * @return retorna matriz de pesos
-     */
-    NumericMatriz<N> getWeights();
-    
-    /**
      * consume datos de entrada y realiza proceso por los pesos
      * @param status @see LayerConsumer.SUCCESS_STATUS suministrado al procedimiento
      */
