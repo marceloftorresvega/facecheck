@@ -26,21 +26,16 @@ package org.tensa.facecheck.network;
 import java.awt.image.BufferedImage;
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.tensa.facecheck.activation.impl.LinealActivationImpl;
 import org.tensa.facecheck.activation.impl.SigmoidActivationImpl;
-import org.tensa.facecheck.layer.impl.BackDoorLayer;
 import org.tensa.facecheck.layer.impl.DiffLayer;
-import org.tensa.facecheck.layer.impl.DoorLayer;
 import org.tensa.facecheck.layer.impl.HiddenLayer;
-import org.tensa.facecheck.layer.impl.NormalizeLayer;
 import org.tensa.facecheck.layer.impl.OutputScale;
 import org.tensa.facecheck.layer.impl.PixelInputLayer;
 import org.tensa.facecheck.layer.impl.PixelOutputLayer;
 import org.tensa.tensada.matrix.Dominio;
-import org.tensa.tensada.matrix.Indice;
 import org.tensa.tensada.matrix.NumericMatriz;
 import org.tensa.tensada.matrix.ParOrdenado;
 
@@ -103,6 +98,7 @@ public class ManagerBackProp<N extends Number> extends AbstractManager<N> {
                         PixelInputLayer<N> simplePixelsInputLayer = new PixelInputLayer<>(supplier, pixelMapper, inputScale);
                         HiddenLayer<N> hiddenLayer = new HiddenLayer<>(weightsH, hiddenLearningRate, new SigmoidActivationImpl<>());
                         HiddenLayer<N> learnLayer = new HiddenLayer<>(weightsO, outputLearningRate, new LinealActivationImpl<>());
+
                         PixelInputLayer<N> simplePixelsCompareLayer = new PixelInputLayer<>(supplier, pixelMapper, OutputScale::scale);
                         PixelOutputLayer<N> pixelsOutputLayer = new PixelOutputLayer<>(pixelMapper);
                         DiffLayer<N> diffLAyer = new DiffLayer<>(simplePixelsCompareLayer, (lL) -> {
@@ -110,7 +106,6 @@ public class ManagerBackProp<N extends Number> extends AbstractManager<N> {
                         });
 
                         relate(simplePixelsInputLayer, hiddenLayer);
-
                         relate(hiddenLayer, learnLayer);
                         relate(learnLayer, pixelsOutputLayer);
 
