@@ -1,6 +1,11 @@
 package org.tensa.facecheck.main;
 
+import org.tensa.facecheck.weight.WeigthModelingEnum;
+import org.tensa.facecheck.weight.WeigthCreationEnum;
+import org.tensa.facecheck.activation.ActivationFunctionEnum;
+import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -23,6 +28,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedList;
@@ -30,11 +36,23 @@ import java.util.List;
 import java.util.Objects;
 import java.util.OptionalDouble;
 import java.util.function.UnaryOperator;
+import java.util.stream.IntStream;
 import javax.imageio.ImageIO;
+import javax.swing.AbstractCellEditor;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.JTable;
 import javax.swing.SpinnerListModel;
 import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.slf4j.Logger;
@@ -82,11 +100,7 @@ public class VisLoad extends javax.swing.JFrame {
     private AbstractManager<Float> networkManager;
 
     public SpinnerModel getSpinnerModel(){
-//        if(Objects.isNull(spinnerModel))
-        SpinnerListModel spinnerModel = new SpinnerListModel(learningFactor);
-        int valorMedio = learningFactor.length/2;
-        spinnerModel.setValue(learningFactor[valorMedio]);
-        return spinnerModel;
+        return LearningFactorTableCellEditorImpl.getSpinnerModel();
     }
 
     /**
@@ -148,10 +162,7 @@ public class VisLoad extends javax.swing.JFrame {
         jFileChooserImagenSalva = new javax.swing.JFileChooser();
         jFileChooserLoadImagenResult = new javax.swing.JFileChooser();
         jFileChooserLoadImagen = new javax.swing.JFileChooser();
-        jSplitPane1 = new javax.swing.JSplitPane();
-        vista = getNuevaVista();
-        respuesta = getNuevaRespuesta();
-        jPanel6 = new javax.swing.JPanel();
+        jPanelTop = new javax.swing.JPanel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         cargaImagen = new javax.swing.JButton();
@@ -181,6 +192,8 @@ public class VisLoad extends javax.swing.JFrame {
         outNeurs = new javax.swing.JSpinner();
         hdCreationStyle = new javax.swing.JComboBox<>();
         outCreationStyle = new javax.swing.JComboBox<>();
+        jButtonAddRow = new javax.swing.JButton();
+        jButtonRemoveRow = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         procesar = new javax.swing.JButton();
         entrenar = new javax.swing.JCheckBox();
@@ -197,6 +210,12 @@ public class VisLoad extends javax.swing.JFrame {
         deleteSelectionButton = new javax.swing.JButton();
         jProgressBar1 = new javax.swing.JProgressBar();
         jErrorGraf = getNuevaErrorGram();
+        jPanelCard = new javax.swing.JPanel();
+        jSplitPane1 = new javax.swing.JSplitPane();
+        vista = getNuevaVista();
+        respuesta = getNuevaRespuesta();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTableWeight = new javax.swing.JTable();
 
         jFileChooserPesosSave.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
         jFileChooserPesosSave.setCurrentDirectory(new File(System.getProperty("user.dir")));
@@ -224,55 +243,6 @@ public class VisLoad extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Vista de carga");
-
-        jSplitPane1.setDividerLocation(128);
-
-        vista.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        vista.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        vista.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseDragged(java.awt.event.MouseEvent evt) {
-                vistaMouseDragged(evt);
-            }
-            public void mouseMoved(java.awt.event.MouseEvent evt) {
-                vistaMouseMoved(evt);
-            }
-        });
-        vista.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                vistaMouseClicked(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                vistaMouseReleased(evt);
-            }
-        });
-
-        javax.swing.GroupLayout vistaLayout = new javax.swing.GroupLayout(vista);
-        vista.setLayout(vistaLayout);
-        vistaLayout.setHorizontalGroup(
-            vistaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        vistaLayout.setVerticalGroup(
-            vistaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 376, Short.MAX_VALUE)
-        );
-
-        jSplitPane1.setLeftComponent(vista);
-
-        respuesta.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-
-        javax.swing.GroupLayout respuestaLayout = new javax.swing.GroupLayout(respuesta);
-        respuesta.setLayout(respuestaLayout);
-        respuestaLayout.setHorizontalGroup(
-            respuestaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        respuestaLayout.setVerticalGroup(
-            respuestaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 376, Short.MAX_VALUE)
-        );
-
-        jSplitPane1.setRightComponent(respuesta);
 
         cargaImagen.setText("Cargar...");
         cargaImagen.addActionListener(new java.awt.event.ActionListener() {
@@ -425,6 +395,15 @@ public class VisLoad extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Imagen salida", null, jPanel2, "Pre proceso de imagen de salida");
 
+        jPanel3.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentHidden(java.awt.event.ComponentEvent evt) {
+                jPanel3ComponentHidden(evt);
+            }
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                jPanel3ComponentShown(evt);
+            }
+        });
+
         cargar.setText("Carga...");
         cargar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -461,11 +440,27 @@ public class VisLoad extends javax.swing.JFrame {
         outNeurs.setModel(new javax.swing.SpinnerNumberModel(101, 3, 1000, 1));
         outNeurs.setToolTipText("Neuronas de salida (pixels)");
 
-        hdCreationStyle.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "simple", "reflectante", "normalizada" }));
-        hdCreationStyle.setToolTipText("metodo de iniciación");
+        hdCreationStyle.setModel(getActivationComboBoxModel());
+        hdCreationStyle.setSelectedItem(WeigthModelingEnum.SIMPLE);
+        hdCreationStyle.setToolTipText("función de activacion");
 
-        outCreationStyle.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "simple", "reflactante", "normalizada" }));
+        outCreationStyle.setModel(getActivationComboBoxModel());
+        outCreationStyle.setSelectedItem(WeigthModelingEnum.SIMPLE);
         outCreationStyle.setToolTipText("metodo de iniciación");
+
+        jButtonAddRow.setText("+");
+        jButtonAddRow.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAddRowActionPerformed(evt);
+            }
+        });
+
+        jButtonRemoveRow.setLabel("-");
+        jButtonRemoveRow.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonRemoveRowActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -494,7 +489,11 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(outNeurs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(outCreationStyle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButtonAddRow)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonRemoveRow)
+                .addContainerGap(51, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -510,11 +509,13 @@ public class VisLoad extends javax.swing.JFrame {
                     .addComponent(jLabel3)
                     .addComponent(outNeurs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(hdCreationStyle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(outCreationStyle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(outCreationStyle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonAddRow)
+                    .addComponent(jButtonRemoveRow))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Pesos", null, jPanel3, "administracion de pesos");
+        jTabbedPane1.addTab("Capas/Pesos", null, jPanel3, "administracion de pesos");
 
         procesar.setText("Procesar");
         procesar.addActionListener(new java.awt.event.ActionListener() {
@@ -650,15 +651,15 @@ public class VisLoad extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Seleccion", jPanel5);
 
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout jPanelTopLayout = new javax.swing.GroupLayout(jPanelTop);
+        jPanelTop.setLayout(jPanelTopLayout);
+        jPanelTopLayout.setHorizontalGroup(
+            jPanelTopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jTabbedPane1)
         );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
+        jPanelTopLayout.setVerticalGroup(
+            jPanelTopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelTopLayout.createSequentialGroup()
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 6, Short.MAX_VALUE))
         );
@@ -679,6 +680,97 @@ public class VisLoad extends javax.swing.JFrame {
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
+        jPanelCard.setLayout(new java.awt.CardLayout());
+
+        jSplitPane1.setDividerLocation(128);
+
+        vista.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        vista.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        vista.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                vistaMouseDragged(evt);
+            }
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                vistaMouseMoved(evt);
+            }
+        });
+        vista.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                vistaMouseClicked(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                vistaMouseReleased(evt);
+            }
+        });
+
+        javax.swing.GroupLayout vistaLayout = new javax.swing.GroupLayout(vista);
+        vista.setLayout(vistaLayout);
+        vistaLayout.setHorizontalGroup(
+            vistaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        vistaLayout.setVerticalGroup(
+            vistaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 417, Short.MAX_VALUE)
+        );
+
+        jSplitPane1.setLeftComponent(vista);
+
+        respuesta.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+
+        javax.swing.GroupLayout respuestaLayout = new javax.swing.GroupLayout(respuesta);
+        respuesta.setLayout(respuestaLayout);
+        respuestaLayout.setHorizontalGroup(
+            respuestaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        respuestaLayout.setVerticalGroup(
+            respuestaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 417, Short.MAX_VALUE)
+        );
+
+        jSplitPane1.setRightComponent(respuesta);
+
+        jPanelCard.add(jSplitPane1, "showCard");
+
+        jTableWeight.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                { new Integer(15), null, null, null,  new Float(5.0E-6)},
+                { new Integer(10201), null, null, null,  new Float(5.0E-6)}
+            },
+            new String [] {
+                "Neuronas", "Creacion Pesos", "Estilo Pesos", "Func. Activacion", "Fact. Aprendisaje"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Float.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jTableWeight.setColumnSelectionAllowed(true);
+        jTableWeight.setRowHeight(20);
+        jTableWeight.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(jTableWeight);
+        jTableWeight.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        if (jTableWeight.getColumnModel().getColumnCount() > 0) {
+            jTableWeight.getColumnModel().getColumn(0).setResizable(false);
+            jTableWeight.getColumnModel().getColumn(0).setCellEditor(getNeuronCellEditor());
+            jTableWeight.getColumnModel().getColumn(1).setResizable(false);
+            jTableWeight.getColumnModel().getColumn(1).setCellEditor(getNeuronCreationWeigth());
+            jTableWeight.getColumnModel().getColumn(2).setResizable(false);
+            jTableWeight.getColumnModel().getColumn(2).setCellEditor(getNeuronStyleWeigth());
+            jTableWeight.getColumnModel().getColumn(3).setResizable(false);
+            jTableWeight.getColumnModel().getColumn(3).setCellEditor(getActivationFunctionCellEditor());
+            jTableWeight.getColumnModel().getColumn(4).setResizable(false);
+            jTableWeight.getColumnModel().getColumn(4).setCellEditor(getLearningFactorCellEditor());
+            jTableWeight.getColumnModel().getColumn(4).setCellRenderer(getLearningFactorCellRender());
+        }
+
+        jPanelCard.add(jScrollPane1, "cardPesos");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -686,21 +778,21 @@ public class VisLoad extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSplitPane1)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanelTop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jErrorGraf, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addComponent(jPanelCard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSplitPane1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanelTop, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(jPanelCard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jErrorGraf, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -867,26 +959,26 @@ public class VisLoad extends javax.swing.JFrame {
         
         log.info("hd style <{}> out style <{}>", hdCreationStyle.getSelectedIndex(),outCreationStyle.getSelectedIndex());
         
-        switch (hdCreationStyle.getSelectedIndex()) {
-            case 0:
+        switch ((WeigthModelingEnum)hdCreationStyle.getSelectedItem()) {
+            case SIMPLE:
                 hiddenCreationStyle = WeightModelingStyle::simpleModelingStyle;
                 break;
-            case 1:
+            case REFELCTANCE:
                 hiddenCreationStyle = WeightModelingStyle::reflectanceModelingStyle;
                 break;
-            case 2:
+            case NORMALIZED:
                 hiddenCreationStyle = WeightModelingStyle::normalizedModelingStyle;
                 break;
         }
         
-        switch (outCreationStyle.getSelectedIndex()) {
-            case 0:
+        switch ((WeigthModelingEnum)outCreationStyle.getSelectedItem()) {
+            case SIMPLE:
                 outputCreationStyle = WeightModelingStyle::simpleModelingStyle;
                 break;
-            case 1:
+            case REFELCTANCE:
                 outputCreationStyle = WeightModelingStyle::reflectanceModelingStyle;
                 break;
-            case 2:
+            case NORMALIZED:
                 outputCreationStyle = WeightModelingStyle::normalizedModelingStyle;
                 break;
         }
@@ -894,6 +986,42 @@ public class VisLoad extends javax.swing.JFrame {
         networkManager.initMatrix(hiddenCreationStyle, outputCreationStyle);
         
     }//GEN-LAST:event_cleanActionPerformed
+
+    private final TableCellRenderer learningFactorCellRender = new LearningFactorCellRenderImp();
+
+    public TableCellRenderer getLearningFactorCellRender() {
+        return learningFactorCellRender;
+    }
+
+    private final TableCellEditor activationFunctionCellEditor = new ActivationFunctionTableCellEditorImpl();
+
+    public TableCellEditor getActivationFunctionCellEditor() {
+        return activationFunctionCellEditor;
+    }
+
+    private final TableCellEditor learningFactorCellEditor = new LearningFactorTableCellEditorImpl();
+
+    public TableCellEditor getLearningFactorCellEditor() {
+        return learningFactorCellEditor;
+    }
+
+    private final TableCellEditor neuronCreationWeigth = new CreationWeightTableCellEditorImpl();
+
+    public TableCellEditor getNeuronCreationWeigth() {
+        return neuronCreationWeigth;
+    }
+
+    private final TableCellEditor neuronStyleWeigth = new NeuronStyleTableCellEditorImpl();
+
+    public TableCellEditor getNeuronStyleWeigth() {
+        return neuronStyleWeigth;
+    }
+
+    private final TableCellEditor neuronCellEditor = new NeuronTableCellEditorImpl();
+
+    public TableCellEditor getNeuronCellEditor() {
+        return neuronCellEditor;
+    }
 
     private void vistaMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_vistaMouseReleased
         int x = evt.getX();
@@ -1164,6 +1292,32 @@ public class VisLoad extends javax.swing.JFrame {
             scaleJRadioButton.setSelected(true);
         }
     }//GEN-LAST:event_jCheckBoxScale1neg1ActionPerformed
+
+    private void jPanel3ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jPanel3ComponentShown
+        CardLayout cl = (CardLayout)jPanelCard.getLayout();
+        cl.show(jPanelCard, "cardPesos");
+    }//GEN-LAST:event_jPanel3ComponentShown
+
+    private void jPanel3ComponentHidden(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jPanel3ComponentHidden
+        CardLayout cl = (CardLayout)jPanelCard.getLayout();
+        cl.first(jPanelCard);
+    }//GEN-LAST:event_jPanel3ComponentHidden
+
+    private void jButtonAddRowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddRowActionPerformed
+        DefaultTableModel model = (DefaultTableModel)jTableWeight.getModel();
+        Object[] fila = new Object[]{new Integer(15), WeigthCreationEnum.RANDOM, WeigthModelingEnum.SIMPLE, ActivationFunctionEnum.LINEAL,  new Float(5.0E-5)};
+        int selectedRow = jTableWeight.getSelectedRow();
+        model.insertRow(selectedRow, fila);
+    }//GEN-LAST:event_jButtonAddRowActionPerformed
+
+    private void jButtonRemoveRowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRemoveRowActionPerformed
+        DefaultTableModel model = (DefaultTableModel)jTableWeight.getModel();
+            
+        if (model.getRowCount() > 1) {
+            int selectedRow = jTableWeight.getSelectedRow();
+            model.removeRow(selectedRow);
+        }
+    }//GEN-LAST:event_jButtonRemoveRowActionPerformed
 
     
     private float calculaMatriz(int i, int j){
@@ -1460,7 +1614,9 @@ public class VisLoad extends javax.swing.JFrame {
     private enum SeletionStatus {
         MODIFY,MODIFY_POSITION,MODIFY_SIZE,ADD,DELETE
     }
-    
+    public static ComboBoxModel getActivationComboBoxModel() {
+        return NeuronStyleTableCellEditorImpl.getModelingComboBoxModel();
+    }
     /**
      * @param args the command line arguments
      */
@@ -1516,6 +1672,8 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JSpinner hiddenLearningRate;
     private javax.swing.JSpinner inNeurs;
     private javax.swing.JSpinner iteraciones;
+    private javax.swing.JButton jButtonAddRow;
+    private javax.swing.JButton jButtonRemoveRow;
     private javax.swing.JButton jButtonSalvaImagen;
     private javax.swing.JCheckBox jCheckBoxScale1neg1;
     private javax.swing.JPanel jErrorGraf;
@@ -1532,12 +1690,15 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanelCard;
+    private javax.swing.JPanel jPanelTop;
     private javax.swing.JProgressBar jProgressBar1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTable jTableWeight;
     private javax.swing.JRadioButton libreJRadioButton;
     private javax.swing.JRadioButton normalizeJRadioButton;
     private javax.swing.JComboBox<String> outCreationStyle;
@@ -1571,5 +1732,160 @@ public class VisLoad extends javax.swing.JFrame {
 
     public BufferedImage getBufferImageFiltered() {
         return bufferImageFiltered;
+    }
+
+    private static class LearningFactorTableCellEditorImpl extends AbstractCellEditor implements TableCellEditor {
+
+        private JSpinner factor = new JSpinner(getSpinnerModel());
+                
+        public LearningFactorTableCellEditorImpl() {
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return (Float)factor.getValue();
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable jtable, Object value, boolean isSelected, int rowIndex, int colIndex) {
+            if (Objects.nonNull(value)) {
+                factor.setValue((Float)value);
+            }
+            return factor;
+        }
+
+        public static SpinnerModel getSpinnerModel() {
+            SpinnerListModel spinnerModel = new SpinnerListModel(LearningControl.floatBasicLearningSeries);
+            int valorMedio = LearningControl.floatBasicLearningSeries.length / 2;
+            spinnerModel.setValue(LearningControl.floatBasicLearningSeries[valorMedio]);
+            return spinnerModel;
+        }
+
+    }
+
+    private static class NeuronTableCellEditorImpl extends AbstractCellEditor implements TableCellEditor {
+
+        private JSpinner neuronas = new JSpinner(new SpinnerNumberModel(15, 1, 500, 3));
+        private JSpinner alCuadrado = new JSpinner(new SpinnerListModel(IntStream.range(2, 500).map(i -> i*i).boxed().toArray(Integer[]::new)));
+        private boolean isCuadrado = false;
+                
+        public NeuronTableCellEditorImpl() {
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            if (isCuadrado) {
+                return alCuadrado.getValue();
+            }
+            return neuronas.getValue();
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable jtable, Object value, boolean isSelected, int rowIndex, int colIndex) {
+            isCuadrado = jtable.getRowCount() == rowIndex + 1;
+            if (isCuadrado) {
+                alCuadrado.setValue((Integer)value);
+                return alCuadrado;
+            }
+            neuronas.setValue((Integer)value);
+            return neuronas;
+        }
+
+    }
+
+    private static class NeuronStyleTableCellEditorImpl extends AbstractCellEditor implements TableCellEditor {
+
+        public static ComboBoxModel getModelingComboBoxModel() {
+            return new DefaultComboBoxModel<>(WeigthModelingEnum.values());
+        }
+
+        private final javax.swing.JComboBox<WeigthModelingEnum> style;
+        public NeuronStyleTableCellEditorImpl() {
+            this.style = new javax.swing.JComboBox<>(getModelingComboBoxModel());
+            style.setSelectedIndex(0);
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return style.getSelectedItem();
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable jtable, Object o, boolean bln, int i, int i1) {
+            if(Objects.isNull(o)) {
+                style.setSelectedIndex(0);
+            } else {
+                style.setSelectedItem(o);
+            }
+            return style;
+        }
+    }
+
+    private static class CreationWeightTableCellEditorImpl extends AbstractCellEditor implements TableCellEditor {
+
+        public static ComboBoxModel getCreationComboBoxModel() {
+            return new DefaultComboBoxModel<>(WeigthCreationEnum.values());
+        }
+        public CreationWeightTableCellEditorImpl() {
+            creation = new JComboBox<>(getCreationComboBoxModel());
+            creation.setSelectedIndex(0);
+        }
+
+        private final javax.swing.JComboBox<WeigthCreationEnum> creation;
+
+        @Override
+        public Object getCellEditorValue() {
+            return creation.getSelectedItem();
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable jtable, Object o, boolean bln, int i, int i1) {
+            if(Objects.isNull(o)) {
+                creation.setSelectedIndex(0);
+            } else {
+                creation.setSelectedItem(o);
+            }
+            return creation;
+        }
+    }
+
+    private static class ActivationFunctionTableCellEditorImpl extends AbstractCellEditor implements TableCellEditor {
+
+        public static ComboBoxModel getActivationComboBoxModel() {
+            return new DefaultComboBoxModel<>(ActivationFunctionEnum.values());
+        }
+        public ActivationFunctionTableCellEditorImpl() {
+            activation = new JComboBox<>(getActivationComboBoxModel());
+            activation.setSelectedIndex(0);
+        }
+
+        private final javax.swing.JComboBox<ActivationFunctionEnum> activation;
+
+        @Override
+        public Object getCellEditorValue() {
+            return activation.getSelectedItem();
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable jtable, Object o, boolean bln, int i, int i1) {
+            if(Objects.isNull(o)) {
+                activation.setSelectedIndex(0);
+            } else {
+                activation.setSelectedItem(o);
+            }
+            return activation;
+        }
+    }
+    
+    private static class LearningFactorCellRenderImp implements TableCellRenderer, Serializable {
+
+        private JLabel learning = new JLabel();
+        
+        @Override
+        public Component getTableCellRendererComponent(JTable jtable, Object o, boolean bln, boolean bln1, int i, int i1) {
+            learning.setText(String.format("%1.1E", (Float)o));
+            return learning;
+        }
+        
     }
 }
