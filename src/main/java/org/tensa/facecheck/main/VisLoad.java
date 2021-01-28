@@ -59,7 +59,7 @@ import org.tensa.facecheck.weight.WeightModelingStyle;
 import org.tensa.facecheck.mapping.PixelMappings;
 import org.tensa.facecheck.network.AbstractManager;
 import org.tensa.facecheck.network.LearningControl;
-import org.tensa.facecheck.network.impl.ManagerBackProp;
+import org.tensa.facecheck.network.impl.ManagerBackPropImpl;
 import org.tensa.facecheck.network.impl.BasicLearningControlImpl;
 import org.tensa.facecheck.network.impl.BasicLearningEstrategyEnum;
 import org.tensa.facecheck.weight.WeightCreationStyle;
@@ -154,7 +154,7 @@ public class VisLoad extends javax.swing.JFrame {
         learnArea.setLocation(10, 10);
         leftTopPoint = new Rectangle();
         widthHwightpoint = new Rectangle();
-        networkManager = new ManagerBackProp<>();
+        networkManager = new ManagerBackPropImpl<>();
         networkManager.setSupplier((Dominio dominio) -> new FloatMatriz(dominio));
         networkManager.setPixelMapper(PixelMappings.defaultMapping());
         networkManager.getAreaQeue().add(learnArea);
