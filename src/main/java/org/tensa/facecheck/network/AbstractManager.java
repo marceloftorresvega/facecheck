@@ -184,7 +184,8 @@ public abstract class AbstractManager<N extends Number> {
             weights = (NumericMatriz<N>[]) ois.readObject();
 
             inStep = weights[0].getDominio().getColumna();
-            hiddenStep = Arrays.stream(weights).map(NumericMatriz::getDominio).mapToInt(Dominio::getFila).toArray();
+            log.info("neuronas <{}>", inStep);
+            hiddenStep = Arrays.stream(weights).map(NumericMatriz::getDominio).mapToInt(Dominio::getFila).peek(hid -> log.info("neuronas <{}>", hid)).toArray();
         } catch (FileNotFoundException ex) {
             log.error("error al cargar pesos", ex);
         } catch (IOException ex) {
