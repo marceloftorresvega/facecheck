@@ -59,7 +59,7 @@ import org.tensa.facecheck.weight.WeightModelingStyle;
 import org.tensa.facecheck.mapping.PixelMappings;
 import org.tensa.facecheck.network.AbstractManager;
 import org.tensa.facecheck.network.LearningControl;
-import org.tensa.facecheck.network.ManagerBackProp;
+import org.tensa.facecheck.network.impl.ManagerBackProp;
 import org.tensa.facecheck.network.impl.BasicLearningControlImpl;
 import org.tensa.facecheck.network.impl.BasicLearningEstrategyEnum;
 import org.tensa.facecheck.weight.WeightCreationStyle;
