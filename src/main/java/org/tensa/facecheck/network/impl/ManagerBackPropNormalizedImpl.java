@@ -48,9 +48,9 @@ import org.tensa.tensada.matrix.ParOrdenado;
  *
  * @author Marcelo
  */
-public class ManagerBackPropNormalized<N extends Number> extends AbstractManager<N> {
+public class ManagerBackPropNormalizedImpl<N extends Number> extends AbstractManager<N> {
 
-    public ManagerBackPropNormalized(Function<Dominio, NumericMatriz<N>> supplier, int inStep, BufferedImage outputImage, BufferedImage inputImage, BufferedImage compareImage, int iterateTo) {
+    public ManagerBackPropNormalizedImpl(Function<Dominio, NumericMatriz<N>> supplier, int inStep, BufferedImage outputImage, BufferedImage inputImage, BufferedImage compareImage, int iterateTo) {
         this.supplier = supplier;
         this.inStep = inStep;
         this.outputImage = outputImage;
@@ -59,11 +59,11 @@ public class ManagerBackPropNormalized<N extends Number> extends AbstractManager
         this.iterateTo = iterateTo;
     }
 
-    public ManagerBackPropNormalized(Function<Dominio, NumericMatriz<N>> supplier) {
+    public ManagerBackPropNormalizedImpl(Function<Dominio, NumericMatriz<N>> supplier) {
         this.supplier = supplier;
     }
 
-    public ManagerBackPropNormalized() {
+    public ManagerBackPropNormalizedImpl() {
     }
 
     @Override
