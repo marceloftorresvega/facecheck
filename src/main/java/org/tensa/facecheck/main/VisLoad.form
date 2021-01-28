@@ -113,9 +113,9 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
               <Component id="jPanelTop" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-              <Component id="jPanelCard" max="32767" attributes="0"/>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jPanelCard" min="-2" pref="456" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Component id="jProgressBar1" max="32767" attributes="0"/>
                   <Component id="jErrorGraf" max="32767" attributes="0"/>
@@ -285,7 +285,7 @@
                           <Component id="jSeparator2" min="-2" pref="17" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jButtonSalvaImagen" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="337" max="32767" attributes="0"/>
+                          <EmptySpace pref="347" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -398,23 +398,19 @@
                           <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="inNeurs" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
                           <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="hiddNeurs" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                          <Component id="hdCreationStyle" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="jLabelNumInPixels" min="-2" pref="59" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="outNeurs" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="outCreationStyle" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="jLabelNumOutPixels" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="248" max="32767" attributes="0"/>
                           <Component id="jButtonAddRow" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jButtonRemoveRow" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="51" max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -428,13 +424,11 @@
                               <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="inNeurs" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="hiddNeurs" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="outNeurs" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="hdCreationStyle" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="outCreationStyle" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jButtonAddRow" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jButtonRemoveRow" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabelNumInPixels" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabelNumOutPixels" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
@@ -473,65 +467,20 @@
                 </Component>
                 <Component class="javax.swing.JSpinner" name="inNeurs">
                   <Properties>
-                    <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-                      <SpinnerModel initial="101" maximum="1000" minimum="3" numberType="java.lang.Integer" stepSize="1" type="number"/>
+                    <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="getCuadradoSpinnerModel()" type="code"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" value="Neuronas de entrada (pixels)"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="inNeursStateChanged"/>
+                    <EventHandler event="componentShown" listener="java.awt.event.ComponentListener" parameters="java.awt.event.ComponentEvent" handler="inNeursComponentShown"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel2">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Oculta"/>
+                    <Property name="text" type="java.lang.String" value="Pixcels"/>
                   </Properties>
-                </Component>
-                <Component class="javax.swing.JSpinner" name="hiddNeurs">
-                  <Properties>
-                    <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-                      <SpinnerModel initial="15" maximum="500" minimum="3" numberType="java.lang.Integer" stepSize="1" type="number"/>
-                    </Property>
-                    <Property name="toolTipText" type="java.lang.String" value="Neuronas ocultas"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="jLabel3">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Salida"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JSpinner" name="outNeurs">
-                  <Properties>
-                    <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-                      <SpinnerModel initial="101" maximum="1000" minimum="3" numberType="java.lang.Integer" stepSize="1" type="number"/>
-                    </Property>
-                    <Property name="toolTipText" type="java.lang.String" value="Neuronas de salida (pixels)"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JComboBox" name="hdCreationStyle">
-                  <Properties>
-                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="getActivationComboBoxModel()" type="code"/>
-                    </Property>
-                    <Property name="selectedItem" type="java.lang.Object" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="WeigthModelingEnum.SIMPLE" type="code"/>
-                    </Property>
-                    <Property name="toolTipText" type="java.lang.String" value="funci&#xf3;n de activacion"/>
-                  </Properties>
-                  <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
-                  </AuxValues>
-                </Component>
-                <Component class="javax.swing.JComboBox" name="outCreationStyle">
-                  <Properties>
-                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="getActivationComboBoxModel()" type="code"/>
-                    </Property>
-                    <Property name="selectedItem" type="java.lang.Object" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="WeigthModelingEnum.SIMPLE" type="code"/>
-                    </Property>
-                    <Property name="toolTipText" type="java.lang.String" value="metodo de iniciaci&#xf3;n"/>
-                  </Properties>
-                  <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
-                  </AuxValues>
                 </Component>
                 <Component class="javax.swing.JButton" name="jButtonAddRow">
                   <Properties>
@@ -548,6 +497,18 @@
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonRemoveRowActionPerformed"/>
                   </Events>
+                </Component>
+                <Component class="javax.swing.JLabel" name="jLabelNumInPixels">
+                </Component>
+                <Component class="javax.swing.JLabel" name="jLabel3">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Salida"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="jLabelNumOutPixels">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="0/3"/>
+                  </Properties>
                 </Component>
               </SubComponents>
             </Container>
@@ -570,11 +531,7 @@
                           <Component id="freno" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                           <Component id="entrenar" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="hiddenLearningRate" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="outputLearningRate" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="116" max="-2" attributes="0"/>
                           <Component id="iteraciones" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="seleccionCopy" min="-2" max="-2" attributes="0"/>
@@ -582,7 +539,7 @@
                           <Component id="cleanCopy" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="actualizacion" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="96" max="32767" attributes="0"/>
+                          <EmptySpace pref="106" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -592,8 +549,6 @@
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="entrenar" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="procesar" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="hiddenLearningRate" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="outputLearningRate" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="iteraciones" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="seleccionCopy" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="cleanCopy" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -619,22 +574,6 @@
                     <Property name="selected" type="boolean" value="true"/>
                     <Property name="text" type="java.lang.String" value="entrenar"/>
                     <Property name="toolTipText" type="java.lang.String" value="modo de proceso"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JSpinner" name="hiddenLearningRate">
-                  <Properties>
-                    <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="getSpinnerModel()" type="code"/>
-                    </Property>
-                    <Property name="toolTipText" type="java.lang.String" value="de capa oculta"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JSpinner" name="outputLearningRate">
-                  <Properties>
-                    <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="getSpinnerModel()" type="code"/>
-                    </Property>
-                    <Property name="toolTipText" type="java.lang.String" value="de capa de salida"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JSpinner" name="iteraciones">
@@ -696,7 +635,7 @@
                           <Component id="addSelectionButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="deleteSelectionButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="476" max="32767" attributes="0"/>
+                          <EmptySpace pref="486" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -821,7 +760,7 @@
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="417" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="452" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
               </Layout>
@@ -851,7 +790,7 @@
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="417" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="452" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
               </Layout>
@@ -873,10 +812,10 @@
             <Component class="javax.swing.JTable" name="jTableWeight">
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                  <Table columnCount="5" rowCount="2">
+                  <Table columnCount="6" rowCount="2">
                     <Column editable="true" title="Neuronas" type="java.lang.Integer">
                       <Data value="15"/>
-                      <Data value="10201"/>
+                      <Data value="27"/>
                     </Column>
                     <Column editable="true" title="Creacion Pesos" type="java.lang.Object"/>
                     <Column editable="true" title="Estilo Pesos" type="java.lang.Object"/>
@@ -885,6 +824,7 @@
                       <Data value="5.0E-6"/>
                       <Data value="5.0E-6"/>
                     </Column>
+                    <Column editable="true" title="estratg. Aprendisaje" type="java.lang.Object"/>
                   </Table>
                 </Property>
                 <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -926,6 +866,13 @@
                         <Connection code="getLearningFactorCellRender()" type="code"/>
                       </Renderer>
                     </Column>
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
+                      <Title/>
+                      <Editor editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                        <Connection code="getLearningEstrategyCellEditor()" type="code"/>
+                      </Editor>
+                      <Renderer/>
+                    </Column>
                   </TableColumnModel>
                 </Property>
                 <Property name="columnSelectionAllowed" type="boolean" value="true"/>
@@ -934,6 +881,9 @@
                   <TableHeader reorderingAllowed="false" resizingAllowed="true"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="jTableWeightPropertyChange"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
