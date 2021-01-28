@@ -83,7 +83,7 @@ public abstract class AbstractManager<N extends Number> {
     protected boolean useSelection;
     protected NumericMatriz<N>[] weights;
     protected int[] hiddenStep;
-    protected LearningControl<N>[] learningControl;
+    protected LearningEstrategy<N>[] learningControl;
     protected N[] learningRate;
     protected Activation<N>[] activationFunction;
 
@@ -122,19 +122,19 @@ public abstract class AbstractManager<N extends Number> {
         this.learningRate[index] = learningRate;
     }
 
-    public LearningControl<N>[] getLearningControl() {
+    public LearningEstrategy<N>[] getLearningControl() {
         return learningControl;
     }
 
-    public void setLearningControl(LearningControl<N>[] learningControl) {
+    public void setLearningControl(LearningEstrategy<N>[] learningControl) {
         this.learningControl = learningControl;
     }
 
-    public LearningControl<N> getHiddenLearningGuide(int index) {
+    public LearningEstrategy<N> getHiddenLearningGuide(int index) {
         return this.learningControl[index];
     }
 
-    public void setHiddenLearningGuide(int index, LearningControl<N> hiddenLearningGuide) {
+    public void setHiddenLearningGuide(int index, LearningEstrategy<N> hiddenLearningGuide) {
         this.learningControl[index] = hiddenLearningGuide;
     }
 

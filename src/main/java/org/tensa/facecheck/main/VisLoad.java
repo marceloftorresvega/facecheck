@@ -58,7 +58,6 @@ import org.tensa.facecheck.layer.impl.OutputScale;
 import org.tensa.facecheck.weight.WeightModelingStyle;
 import org.tensa.facecheck.mapping.PixelMappings;
 import org.tensa.facecheck.network.AbstractManager;
-import org.tensa.facecheck.network.LearningControl;
 import org.tensa.facecheck.network.impl.ManagerBackPropImpl;
 import org.tensa.facecheck.network.impl.BasicLearningEstrategyImpl;
 import org.tensa.facecheck.network.impl.BasicLearningEstrategyEnum;
@@ -67,6 +66,7 @@ import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.FloatMatriz;
 import org.tensa.tensada.matrix.NumericMatriz;
 import org.tensa.tensada.matrix.ParOrdenado;
+import org.tensa.facecheck.network.LearningEstrategy;
 
 /**
  *
@@ -78,7 +78,7 @@ public class VisLoad extends javax.swing.JFrame {
 
     private final String baseUrl = "\\img\\originales\\";
 
-    private final Float[] learningFactor = LearningControl.floatBasicLearningSeries;
+    private final Float[] learningFactor = LearningEstrategy.floatBasicLearningSeries;
 
     private final String sufxType = ".jpg";
     private BufferedImage buffImage;
@@ -858,11 +858,11 @@ public class VisLoad extends javax.swing.JFrame {
         networkManager.setLearningRate(IntStream.range(0, jTableWeight.getRowCount())
                 .mapToObj(i -> (Float) jTableWeight.getValueAt(i, 4)).toArray(Float[]::new));
 
-        LearningControl<Float>[] learningControl = IntStream.range(0, jTableWeight.getRowCount())
+        LearningEstrategy<Float>[] learningControl = IntStream.range(0, jTableWeight.getRowCount())
                 .mapToObj(i -> {
                     BasicLearningEstrategyEnum ble = (BasicLearningEstrategyEnum) jTableWeight.getValueAt(i, 5);
                     UnaryOperator<Integer> learninEstrategy2Control = learninEstrategy2Control(ble);
-                    return new BasicLearningEstrategyImpl<Float>(learninEstrategy2Control, LearningControl.floatBasicLearningSeries);
+                    return new BasicLearningEstrategyImpl<Float>(learninEstrategy2Control, LearningEstrategy.floatBasicLearningSeries);
                 })
                 .toArray(BasicLearningEstrategyImpl[]::new);
         networkManager.setLearningControl(learningControl);
@@ -1729,9 +1729,9 @@ public class VisLoad extends javax.swing.JFrame {
         }
 
         public static SpinnerModel getSpinnerModel() {
-            SpinnerListModel spinnerModel = new SpinnerListModel(LearningControl.floatBasicLearningSeries);
-            int valorMedio = LearningControl.floatBasicLearningSeries.length / 2;
-            spinnerModel.setValue(LearningControl.floatBasicLearningSeries[valorMedio]);
+            SpinnerListModel spinnerModel = new SpinnerListModel(LearningEstrategy.floatBasicLearningSeries);
+            int valorMedio = LearningEstrategy.floatBasicLearningSeries.length / 2;
+            spinnerModel.setValue(LearningEstrategy.floatBasicLearningSeries[valorMedio]);
             return spinnerModel;
         }
 

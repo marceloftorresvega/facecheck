@@ -25,13 +25,13 @@ package org.tensa.facecheck.network.impl;
 
 import java.util.Arrays;
 import java.util.function.UnaryOperator;
-import org.tensa.facecheck.network.LearningControl;
+import org.tensa.facecheck.network.LearningEstrategy;
 
 /**
  *
  * @author Marcelo
  */
-public class BasicLearningEstrategyImpl<N extends Number> implements LearningControl<N> {
+public class BasicLearningEstrategyImpl<N extends Number> implements LearningEstrategy<N> {
     
     private final UnaryOperator<Integer> calculateIndex;
     private final N[] learningSeries;
