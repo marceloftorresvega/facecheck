@@ -27,6 +27,6 @@ package org.tensa.facecheck.weight;
  *
  * @author Marcelo
  */
-public enum WeigthModelingEnum {
+public enum WeightModelingEnum {
     SIMPLE, REFELCTANCE, NORMALIZED
 }

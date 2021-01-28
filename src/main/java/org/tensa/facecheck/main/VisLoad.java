@@ -1,6 +1,6 @@
 package org.tensa.facecheck.main;
 
-import org.tensa.facecheck.weight.WeigthModelingEnum;
+import org.tensa.facecheck.weight.WeightModelingEnum;
 import org.tensa.facecheck.weight.WeightCreationEnum;
 import org.tensa.facecheck.activation.ActivationFunctionEnum;
 import java.awt.CardLayout;
@@ -160,8 +160,8 @@ public class VisLoad extends javax.swing.JFrame {
         networkManager.getAreaQeue().add(learnArea);
         jTableWeight.getModel().setValueAt(WeightCreationEnum.RANDOM, 0, 1);
         jTableWeight.getModel().setValueAt(WeightCreationEnum.RANDOM, 1, 1);
-        jTableWeight.getModel().setValueAt(WeigthModelingEnum.NORMALIZED, 0, 2);
-        jTableWeight.getModel().setValueAt(WeigthModelingEnum.NORMALIZED, 1, 2);
+        jTableWeight.getModel().setValueAt(WeightModelingEnum.NORMALIZED, 0, 2);
+        jTableWeight.getModel().setValueAt(WeightModelingEnum.NORMALIZED, 1, 2);
         jTableWeight.getModel().setValueAt(ActivationFunctionEnum.LINEAL, 0, 3);
         jTableWeight.getModel().setValueAt(ActivationFunctionEnum.LINEAL, 1, 3);
         jTableWeight.getModel().setValueAt(BasicLearningEstrategyEnum.TREE_ADV_ONE, 0, 5);
@@ -977,7 +977,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .map(i -> (Integer) jTableWeight.getValueAt(i, 0)).toArray());
 
         UnaryOperator<NumericMatriz<Float>>[] weightModelingStyle = IntStream.range(0, jTableWeight.getRowCount())
-                .mapToObj(i -> (WeigthModelingEnum) jTableWeight.getValueAt(i, 2))
+                .mapToObj(i -> (WeightModelingEnum) jTableWeight.getValueAt(i, 2))
                 .peek(m -> log.info("modelado style <{}>",m) )
                 .map(this::modeling2style)
                 .toArray(UnaryOperator[]::new);
@@ -1024,7 +1024,7 @@ public class VisLoad extends javax.swing.JFrame {
         }
     }
 
-    private UnaryOperator<NumericMatriz<Float>> modeling2style(WeigthModelingEnum wme) {
+    private UnaryOperator<NumericMatriz<Float>> modeling2style(WeightModelingEnum wme) {
         switch (wme) {
             case SIMPLE:
                 return WeightModelingStyle::simpleModelingStyle;
@@ -1228,7 +1228,7 @@ public class VisLoad extends javax.swing.JFrame {
                 IntStream.range(0, jTableWeight.getRowCount()).forEach(i -> {
                     Float o = networkManager.getLearningRate(i);
                     Integer step = networkManager.getHiddenStep(i);
-                    model.addRow(new Object[]{step, WeightCreationEnum.RANDOM, WeigthModelingEnum.SIMPLE, ActivationFunctionEnum.LINEAL, o, BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE});
+                    model.addRow(new Object[]{step, WeightCreationEnum.RANDOM, WeightModelingEnum.SIMPLE, ActivationFunctionEnum.LINEAL, o, BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE});
 
                 });
             }
@@ -1374,7 +1374,7 @@ public class VisLoad extends javax.swing.JFrame {
 
     private void jButtonAddRowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddRowActionPerformed
         DefaultTableModel model = (DefaultTableModel) jTableWeight.getModel();
-        Object[] fila = new Object[]{new Integer(15), WeightCreationEnum.RANDOM, WeigthModelingEnum.SIMPLE, ActivationFunctionEnum.LINEAL, new Float(5.0E-5), BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE};
+        Object[] fila = new Object[]{new Integer(15), WeightCreationEnum.RANDOM, WeightModelingEnum.SIMPLE, ActivationFunctionEnum.LINEAL, new Float(5.0E-5), BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE};
         int selectedRow = jTableWeight.getSelectedRow();
         if (selectedRow == -1) {
             model.addRow(fila);
@@ -1774,10 +1774,10 @@ public class VisLoad extends javax.swing.JFrame {
     private static class NeuronStyleTableCellEditorImpl extends AbstractCellEditor implements TableCellEditor {
 
         public static ComboBoxModel getModelingComboBoxModel() {
-            return new DefaultComboBoxModel<>(WeigthModelingEnum.values());
+            return new DefaultComboBoxModel<>(WeightModelingEnum.values());
         }
 
-        private final javax.swing.JComboBox<WeigthModelingEnum> style;
+        private final javax.swing.JComboBox<WeightModelingEnum> style;
 
         public NeuronStyleTableCellEditorImpl() {
             this.style = new javax.swing.JComboBox<>(getModelingComboBoxModel());
