@@ -60,7 +60,7 @@ import org.tensa.facecheck.mapping.PixelMappings;
 import org.tensa.facecheck.network.AbstractManager;
 import org.tensa.facecheck.network.LearningControl;
 import org.tensa.facecheck.network.impl.ManagerBackPropImpl;
-import org.tensa.facecheck.network.impl.BasicLearningControlImpl;
+import org.tensa.facecheck.network.impl.BasicLearningEstrategyImpl;
 import org.tensa.facecheck.network.impl.BasicLearningEstrategyEnum;
 import org.tensa.facecheck.weight.WeightCreationStyle;
 import org.tensa.tensada.matrix.Dominio;
@@ -862,9 +862,9 @@ public class VisLoad extends javax.swing.JFrame {
                 .mapToObj(i -> {
                     BasicLearningEstrategyEnum ble = (BasicLearningEstrategyEnum) jTableWeight.getValueAt(i, 5);
                     UnaryOperator<Integer> learninEstrategy2Control = learninEstrategy2Control(ble);
-                    return new BasicLearningControlImpl<Float>(learninEstrategy2Control, LearningControl.floatBasicLearningSeries);
+                    return new BasicLearningEstrategyImpl<Float>(learninEstrategy2Control, LearningControl.floatBasicLearningSeries);
                 })
-                .toArray(BasicLearningControlImpl[]::new);
+                .toArray(BasicLearningEstrategyImpl[]::new);
         networkManager.setLearningControl(learningControl);
         Activation<Float>[] activationFunction
                 = IntStream.range(0, jTableWeight.getRowCount())
@@ -1013,14 +1013,14 @@ public class VisLoad extends javax.swing.JFrame {
     private UnaryOperator<Integer> learninEstrategy2Control(BasicLearningEstrategyEnum blee) {
         switch (blee) {
             case ONE_ADV_ONE_TREE_BACK_ONE:
-                return BasicLearningControlImpl::cadaUnoAvanzaUnoCadaTresVuelvaUno;
+                return BasicLearningEstrategyImpl::cadaUnoAvanzaUnoCadaTresVuelvaUno;
             case TREE_ADV_ONE:
-                return BasicLearningControlImpl::cadaTresAvanzaUno;
+                return BasicLearningEstrategyImpl::cadaTresAvanzaUno;
             case TREE_ADV_ONE_NINE_BACK_ONE:
-                return BasicLearningControlImpl::cadaTresAvanzaUnoCadaNueveVuelvaUno;
+                return BasicLearningEstrategyImpl::cadaTresAvanzaUnoCadaNueveVuelvaUno;
             case NINE_ADV_ONE:
             default:
-                return BasicLearningControlImpl::cadaNueveAvanzaUno;
+                return BasicLearningEstrategyImpl::cadaNueveAvanzaUno;
         }
     }
 

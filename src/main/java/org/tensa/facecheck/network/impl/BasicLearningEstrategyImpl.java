@@ -31,12 +31,12 @@ import org.tensa.facecheck.network.LearningControl;
  *
  * @author Marcelo
  */
-public class BasicLearningControlImpl<N extends Number> implements LearningControl<N> {
+public class BasicLearningEstrategyImpl<N extends Number> implements LearningControl<N> {
     
     private final UnaryOperator<Integer> calculateIndex;
     private final N[] learningSeries;
 
-    public BasicLearningControlImpl(UnaryOperator<Integer> calculateIndex, N[] learningSeries) {
+    public BasicLearningEstrategyImpl(UnaryOperator<Integer> calculateIndex, N[] learningSeries) {
         this.calculateIndex = calculateIndex;
         this.learningSeries = learningSeries;
     }
