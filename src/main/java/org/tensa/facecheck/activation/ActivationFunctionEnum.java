@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2020 Marcelo.
+ * Copyright 2021 Marcelo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,38 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.tensa.facecheck.network.impl;
-
-import java.util.Arrays;
-import java.util.function.UnaryOperator;
-import org.tensa.facecheck.network.LearningControl;
+package org.tensa.facecheck.activation;
 
 /**
  *
  * @author Marcelo
  */
-public class BasicLearningControlImpl<N extends Number> implements LearningControl<N> {
-    
-    private final UnaryOperator<Integer> calculateIndex;
-    private final N[] learningSeries;
-
-    public BasicLearningControlImpl(UnaryOperator<Integer> calculateIndex, N[] learningSeries) {
-        this.calculateIndex = calculateIndex;
-        this.learningSeries = learningSeries;
-    }
-    
-    /**
-     *
-     * @param index the value of index
-     * @param factor the value of factor
-     * @return the N
-     */
-    @Override
-    public N updateFactor(int index, N factor) {
-        int realIndex = Arrays.binarySearch(learningSeries, factor);
-        
-        Integer newDeltaIndex = calculateIndex.apply(index);
-        int ultimateIndex = realIndex-newDeltaIndex;
-        return learningSeries[(ultimateIndex>0?ultimateIndex<learningSeries.length?ultimateIndex:learningSeries.length-1:0)];
-    }
+public enum ActivationFunctionEnum {
+    LINEAL, RELU, SIGMOIDE, SOFT_PLUS, SOFT_SIGN, TAN_HYPER
 }

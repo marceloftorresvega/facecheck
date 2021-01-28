@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2019 Marcelo.
+ * Copyright 2021 Marcelo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,38 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.tensa.facecheck.layer;
-
-import org.tensa.tensada.matrix.NumericMatriz;
+package org.tensa.facecheck.weight;
 
 /**
- * consumidor de resultados de otra capa
+ *
  * @author Marcelo
- * @param <N>
  */
-public interface LayerConsumer<N extends Number> {
-    
-    /**
-     * estado de proceso correcto
-     */
-    public static final int SUCCESS_STATUS = 0;
-
-    /**
-     * estado de proceso erroneo
-     */
-    public static final int ERROR_STATUS = 1;
-    
-    /**
-     * carga datos de entrada producido por otra capa
-     * @param inputLayer
-     * @return the org.tensa.tensada.matrix.NumericMatriz<N>
-     */
-    NumericMatriz<N> setInputLayer(org.tensa.tensada.matrix.NumericMatriz<N> inputLayer);
-    
-    /**
-     * consume datos de entrada y realiza proceso por los pesos
-     * @param status @see LayerConsumer.SUCCESS_STATUS suministrado al procedimiento
-     */
-    void layerComplete(int status);
-    
+public enum WeightCreationEnum {
+    RANDOM, DIAGONAL, FROM_OUTSTART, RANDOM_SEGMENTED
 }

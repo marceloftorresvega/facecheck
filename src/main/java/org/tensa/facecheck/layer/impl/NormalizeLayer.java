@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2020 lorenzo.
+ * Copyright 2020 Marcelo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,60 +23,54 @@
  */
 package org.tensa.facecheck.layer.impl;
 
-import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 import org.tensa.facecheck.layer.LayerConsumer;
-import org.tensa.facecheck.mapping.PixelMapper;
-import org.tensa.facecheck.mapping.PixelMappings;
+import org.tensa.facecheck.layer.LayerProducer;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
+ * Capa que retorna una version normalizada de la matriz de ingreso, ha sido
+ * pensada para matrices uni dimensionales (vectores)
  *
- * @author lorenzo
+ * @author Marcelo
  * @param <N>
  */
-public class PixelOutputLayer<N extends Number> implements LayerConsumer<N> {
-    protected int status;
-    protected NumericMatriz<N> inputLayer;
-    protected BufferedImage dest;
-    protected final PixelMapper pixelMapper;
+public class NormalizeLayer<N extends Number> implements LayerConsumer<N>, LayerProducer<N> {
 
-    public PixelOutputLayer() {
-        pixelMapper = PixelMappings.defaultMapping();
-    }
-
-    public PixelOutputLayer(PixelMapper pixelMapper) {
-        this.pixelMapper = pixelMapper;
-    }
+    private NumericMatriz<N> inputLayer;
+    private NumericMatriz<N> outputLayer;
+    private final List<LayerConsumer<N>> layerConsumers = new ArrayList<>();
 
     @Override
     public NumericMatriz<N> setInputLayer(NumericMatriz<N> inputLayer) {
-        NumericMatriz<N> last = this.inputLayer;
         this.inputLayer = inputLayer;
-        return last;
+        return inputLayer;
     }
 
     @Override
     public void layerComplete(int status) {
-        this.status = status;
-        if (status == LayerConsumer.SUCCESS_STATUS) {
+        startProduction();
+    }
+
+    @Override
+    public NumericMatriz<N> getOutputLayer() {
+        return this.outputLayer;
+    }
+
+    @Override
+    public void startProduction() {
+        this.outputLayer = OutputScale.normalized(this.inputLayer);
             
-            double[] pixels = new double[pixelMapper.getLargo(inputLayer.getDominio())];
-            for( int i =0; i< pixels.length; i++) {
-                pixels[i] = 255 * inputLayer.get(pixelMapper.getIndice(i)).doubleValue();
-            }
-            int width = dest.getWidth();
-            int height = dest.getHeight();
-            dest.getRaster().setPixels(0, 0, width, height, pixels);
-            
+        for (LayerConsumer<N> lc : layerConsumers) {
+            lc.setInputLayer(outputLayer);
+            lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
         }
     }
 
-    public BufferedImage getDest() {
-        return dest;
+    @Override
+    public List<LayerConsumer<N>> getConsumers() {
+        return this.layerConsumers;
     }
 
-    public void setDest(BufferedImage dest) {
-        this.dest = dest;
-    }
-    
 }

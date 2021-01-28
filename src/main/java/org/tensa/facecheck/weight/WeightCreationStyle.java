@@ -21,9 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.tensa.facecheck.layer.impl;
+package org.tensa.facecheck.weight;
 
+import org.tensa.tensada.matrix.BlockMatriz;
 import org.tensa.tensada.matrix.Dominio;
+import org.tensa.tensada.matrix.Indice;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
@@ -60,33 +62,42 @@ public final class WeightCreationStyle {
      */
     public static <N extends Number> NumericMatriz<N> diagonalCreationStyle(NumericMatriz<N> tmpm) {
         Dominio dominio = tmpm.getDominio();
-        int pend = dominio.getColumna() / dominio.getFila();
+        double pend = dominio.getColumna().doubleValue() / dominio.getFila().doubleValue();
         dominio.stream()
-                .filter((p) -> p.getColumna() / p.getFila() == pend)
+                .filter((p) -> p.getColumna().doubleValue() / p.getFila().doubleValue() == pend)
                 .forEach((i) -> {
-                    tmpm.put(i, tmpm.mapper(1.0));
+                    tmpm.put(i, tmpm.getUnoValue());
                 });
         return tmpm;
     }
-    
+
+    /**
+     * representacion de pesos desde outstart para neuronas que retornan [-1,+1]
+     * aplicado a neuronas RELU/sigmoide/softSign divide la salida en 2 neuronas
+     * [0,1] para el tramo [0,1] y otro [1,0] para el tramo [-1,0], como
+     * requisito la capa duplica la cantidad de neuronas de entrada
+     *
+     * @param <N> tipo numerico Float,Double o BigDecimal
+     * @param tmpm NumericMatriz Matriz a rellenar
+     * @return NumericMatriz la matriz ingresada
+     */
     public static <N extends Number> NumericMatriz<N> fromOutStarCreationStyle(NumericMatriz<N> tmpm) {
         Dominio dominio = tmpm.getDominio();
-        int pend = dominio.getColumna()/dominio.getFila() / 2;
-        int limit = dominio.getFila() / 2;
-        dominio.stream()
-                .filter((p) -> p.getColumna()/p.getFila()== pend || p.getColumna()/(p.getFila() - limit )== pend )
-                .forEach((i) -> {
-                    if (i.getFila()< limit) {
-                        tmpm.put(i, tmpm.mapper(1.0));
-                        
-                    } else {
-                        tmpm.put(i, tmpm.mapper(-1.0));
-                        
-                    }
+        int fila = dominio.getFila() / 2;
+        int columna = dominio.getColumna();
+        Dominio halfDominio = new Dominio(fila, columna);
+        BlockMatriz<N> hiddenMatrix = new BlockMatriz<>(new Dominio(2, 1));
+        N negador = tmpm.inversoAditivo(tmpm.getUnoValue());
+        
+        hiddenMatrix.getDominio().forEach(idx -> {
+            hiddenMatrix.put(idx, tmpm.instancia(halfDominio));
         });
+        hiddenMatrix.splitIn(tmpm);
+        hiddenMatrix.replaceAll((idx,matriz) -> diagonalCreationStyle((NumericMatriz<N>)matriz));
+        hiddenMatrix.compute(new Indice(2, 1), (idx,matriz) -> ((NumericMatriz<N>)matriz).productoEscalar(negador));
+        tmpm.putAll(hiddenMatrix.build());
         return tmpm;
     }
-    
 
     /**
      * segmented: inicia matriz para modelo pixelMapping que divide componentes
