@@ -55,4 +55,20 @@ public class BasicLearningControlImpl<N extends Number> implements LearningContr
         int ultimateIndex = realIndex-newDeltaIndex;
         return learningSeries[(ultimateIndex>0?ultimateIndex<learningSeries.length?ultimateIndex:learningSeries.length-1:0)];
     }
+    
+    public static int cadaUnoAvanzaUnoCadaTresVuelvaUno(int i) {
+        return i % 3 == 0 ? -1 : 1;
+    }
+    
+    public static int cadaTresAvanzaUno(int i) {
+        return i % 3 == 0 ? 1 : 0;
+    }
+    
+    public static int cadaTresAvanzaUnoCadaNueveVuelvaUno(int i) {
+        return i % 3 == 0 ? i % 9 == 0 ? -1 : 1 : 0;
+    }
+    
+    public static int cadaNueveAvanzaUno(int i) {
+        return i % 9 == 0 ? 1 : 0;
+    }
 }
