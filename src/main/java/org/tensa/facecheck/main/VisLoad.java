@@ -88,8 +88,7 @@ public class VisLoad extends javax.swing.JFrame {
     private BufferedImage bufferImageFiltered;
     private Rectangle learnArea;
     private SeletionStatus areaStatus = SeletionStatus.MODIFY;
-    private final FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("pesos double", "dat");
-    private final FileNameExtensionFilter fileNameExtensionFilterX2 = new FileNameExtensionFilter("pesos multi tipo", "da2");
+    private final FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("Pesos Neuronas", "da3");
     private final FileNameExtensionFilter fileNameExtensionFilterImage = new FileNameExtensionFilter("JPEG", "jpg");
     private final Rectangle leftTopPoint;
     private final Rectangle widthHwightpoint;
@@ -1225,10 +1224,11 @@ public class VisLoad extends javax.swing.JFrame {
                 DefaultTableModel model = (DefaultTableModel) jTableWeight.getModel();
                 model.setRowCount(0);
 
-                IntStream.range(0, jTableWeight.getRowCount()).forEach(i -> {
-                    Float o = networkManager.getLearningRate(i);
-                    Integer step = networkManager.getHiddenStep(i);
-                    model.addRow(new Object[]{step, WeightCreationEnum.RANDOM, WeightModelingEnum.SIMPLE, ActivationFunctionEnum.LINEAL, o, BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE});
+                Float learningRate = 0.00005f;
+                IntStream.range(0, networkManager.getWeights().length).forEach(i -> {
+                    Integer neuronas = networkManager.getHiddenStep(i);
+                    log.info("lr <{}> neuronas<{}>", learningRate, neuronas);
+                    model.addRow(new Object[]{neuronas, WeightCreationEnum.RANDOM, WeightModelingEnum.SIMPLE, ActivationFunctionEnum.LINEAL, learningRate, BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE});
 
                 });
             }
@@ -1374,7 +1374,7 @@ public class VisLoad extends javax.swing.JFrame {
 
     private void jButtonAddRowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddRowActionPerformed
         DefaultTableModel model = (DefaultTableModel) jTableWeight.getModel();
-        Object[] fila = new Object[]{new Integer(15), WeightCreationEnum.RANDOM, WeightModelingEnum.SIMPLE, ActivationFunctionEnum.LINEAL, new Float(5.0E-5), BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE};
+        Object[] fila = new Object[]{new Integer(12), WeightCreationEnum.RANDOM, WeightModelingEnum.SIMPLE, ActivationFunctionEnum.LINEAL, new Float(5.0E-5), BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE};
         int selectedRow = jTableWeight.getSelectedRow();
         if (selectedRow == -1) {
             model.addRow(fila);
@@ -1697,7 +1697,6 @@ public class VisLoad extends javax.swing.JFrame {
 
     public void addFileNameExtensionFilter(javax.swing.JFileChooser jFileChooser) {
         jFileChooser.addChoosableFileFilter(fileNameExtensionFilter);
-        jFileChooser.addChoosableFileFilter(fileNameExtensionFilterX2);
     }
 
     public FileNameExtensionFilter getFileNameExtensionFilterImage() {
