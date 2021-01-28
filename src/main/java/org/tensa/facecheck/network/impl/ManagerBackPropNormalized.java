@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.tensa.facecheck.network;
+package org.tensa.facecheck.network.impl;
 
 import java.awt.image.BufferedImage;
 import java.util.function.BooleanSupplier;
@@ -35,6 +35,7 @@ import org.tensa.facecheck.layer.impl.NormalizeLayer;
 import org.tensa.facecheck.layer.impl.OutputScale;
 import org.tensa.facecheck.layer.impl.PixelInputLayer;
 import org.tensa.facecheck.layer.impl.PixelOutputLayer;
+import org.tensa.facecheck.network.AbstractManager;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.Indice;
 import org.tensa.tensada.matrix.NumericMatriz;
