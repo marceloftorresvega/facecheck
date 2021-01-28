@@ -35,6 +35,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
@@ -43,13 +44,13 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tensa.facecheck.activation.Activation;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerLearning;
 import org.tensa.facecheck.layer.LayerProducer;
 import org.tensa.facecheck.layer.impl.DiffLayer;
 import org.tensa.facecheck.layer.impl.HiddenLayer;
 import org.tensa.facecheck.mapping.PixelMapper;
-import org.tensa.facecheck.weight.WeightCreationStyle;
 import org.tensa.tensada.matrix.BlockMatriz;
 import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.Indice;
@@ -65,19 +66,11 @@ import org.tensa.tensada.matrix.ParOrdenado;
 public abstract class AbstractManager<N extends Number> {
 
     protected final Logger log = LoggerFactory.getLogger(AbstractManager.class);
-    protected NumericMatriz<N> weightsH;
-    protected NumericMatriz<N> weightsO;
     protected NumericMatriz<N> errorGraph;
     protected Function<Dominio, NumericMatriz<N>> supplier;
     protected UnaryOperator<NumericMatriz<N>> inputScale;
     protected PixelMapper pixelMapper;
     protected int inStep;
-    protected int outStep;
-    protected int hidStep;
-    protected LearningControl<N> hiddenLearningControl;
-    protected LearningControl<N> outputLearningControl;
-    protected N hiddenLearningRate;
-    protected N outputLearningRate;
     protected BufferedImage outputImage;
     protected BufferedImage inputImage;
     protected BufferedImage compareImage;
@@ -88,24 +81,93 @@ public abstract class AbstractManager<N extends Number> {
     protected boolean emergencyBreak;
     protected int iterateCurrent;
     protected boolean useSelection;
+    protected NumericMatriz<N>[] weights;
+    protected int[] hiddenStep;
+    protected LearningControl<N>[] learningControl;
+    protected N[] learningRate;
+    protected Activation<N>[] activationFunction;
 
     public AbstractManager() {
     }
 
-    public NumericMatriz<N> getWeightsH() {
-        return weightsH;
+    public Activation<N>[] getActivationFunction() {
+        return activationFunction;
     }
 
-    public void setWeightsH(NumericMatriz<N> weightsH) {
-        this.weightsH = weightsH;
+    public void setActivationFunction(Activation<N>[] activationFunction) {
+        this.activationFunction = activationFunction;
     }
 
-    public NumericMatriz<N> getWeightsO() {
-        return weightsO;
+    public Activation<N> getActivationFunction(int index) {
+        return this.activationFunction[index];
     }
 
-    public void setWeightsO(NumericMatriz<N> weightsO) {
-        this.weightsO = weightsO;
+    public void setActivationFunction(int index, Activation<N> activationFunction) {
+        this.activationFunction[index] = activationFunction;
+    }
+
+    public N[] getLearningRate() {
+        return learningRate;
+    }
+
+    public void setLearningRate(N[] learningRate) {
+        this.learningRate = learningRate;
+    }
+
+    public N getLearningRate(int index) {
+        return this.learningRate[index];
+    }
+
+    public void setLearningRate(int index, N learningRate) {
+        this.learningRate[index] = learningRate;
+    }
+
+    public LearningControl<N>[] getLearningControl() {
+        return learningControl;
+    }
+
+    public void setLearningControl(LearningControl<N>[] learningControl) {
+        this.learningControl = learningControl;
+    }
+
+    public LearningControl<N> getHiddenLearningGuide(int index) {
+        return this.learningControl[index];
+    }
+
+    public void setHiddenLearningGuide(int index, LearningControl<N> hiddenLearningGuide) {
+        this.learningControl[index] = hiddenLearningGuide;
+    }
+
+    public int[] getHiddenStep() {
+        return hiddenStep;
+    }
+
+    public void setHiddenStep(int[] hiddenStep) {
+        this.hiddenStep = hiddenStep;
+    }
+
+    public int getHiddenStep(int index) {
+        return this.hiddenStep[index];
+    }
+
+    public void setHiddenStep(int index, int hiddenStep) {
+        this.hiddenStep[index] = hiddenStep;
+    }
+
+    public NumericMatriz<N>[] getWeights() {
+        return weights;
+    }
+
+    public void setWeights(NumericMatriz<N>[] weights) {
+        this.weights = weights;
+    }
+
+    public NumericMatriz<N> getWeights(int index) {
+        return this.weights[index];
+    }
+
+    public void setWeights(int index, NumericMatriz<N> weights) {
+        this.weights[index] = weights;
     }
 
     public NumericMatriz<N> getErrorGraph() {
@@ -119,14 +181,10 @@ public abstract class AbstractManager<N extends Number> {
     public void cargaPesos(String archivo) {
         log.info("cargaPesos <{}>", archivo);
         try (final InputStream fis = Files.newInputStream(Paths.get(archivo)); final BufferedInputStream bis = new BufferedInputStream(fis); final GzipCompressorInputStream gzIn = new GzipCompressorInputStream(bis); final ObjectInputStream ois = new ObjectInputStream(gzIn)) {
-            weightsH = (NumericMatriz<N>) ois.readObject();
-            Integer fila = weightsH.getDominio().getFila();
-            Integer columna = weightsH.getDominio().getColumna();
-            weightsO = (NumericMatriz<N>) ois.readObject();
-            Integer filao = weightsO.getDominio().getFila();
-            inStep = (int) Math.sqrt(columna / 3);
-            hidStep = fila;
-            outStep = (int) Math.sqrt(filao / 3);
+            weights = (NumericMatriz<N>[]) ois.readObject();
+
+            inStep = weights[0].getDominio().getColumna();
+            hiddenStep = Arrays.stream(weights).map(NumericMatriz::getDominio).mapToInt(Dominio::getFila).toArray();
         } catch (FileNotFoundException ex) {
             log.error("error al cargar pesos", ex);
         } catch (IOException ex) {
@@ -139,8 +197,7 @@ public abstract class AbstractManager<N extends Number> {
     public void salvaPesos(String archivo) {
         log.info("salvaPesos <{}>", archivo);
         try (final OutputStream fos = Files.newOutputStream(Paths.get(archivo)); final BufferedOutputStream out = new BufferedOutputStream(fos); final GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(out); final ObjectOutputStream oos = new ObjectOutputStream(gzOut)) {
-            oos.writeObject(weightsH);
-            oos.writeObject(weightsO);
+            oos.writeObject(weights);
         } catch (FileNotFoundException ex) {
             log.error("error al guardar  pesos", ex);
         } catch (IOException ex) {
@@ -154,22 +211,6 @@ public abstract class AbstractManager<N extends Number> {
 
     public void setInStep(int inStep) {
         this.inStep = inStep;
-    }
-
-    public int getOutStep() {
-        return outStep;
-    }
-
-    public void setOutStep(int outStep) {
-        this.outStep = outStep;
-    }
-
-    public int getHidStep() {
-        return hidStep;
-    }
-
-    public void setHidStep(int hidStep) {
-        this.hidStep = hidStep;
     }
 
     /**
@@ -204,30 +245,16 @@ public abstract class AbstractManager<N extends Number> {
 
     /**
      *
-     * @param modelingH the value of modelingH
+     * @param modeling the value of modelingH
      * @param modelingO the value of modelingO
      */
-    public void initMatrix(UnaryOperator<NumericMatriz<N>> modelingH, UnaryOperator<NumericMatriz<N>> modelingO) {
-        int inSize = pixelMapper.getDominio(inStep * inStep * 3).getFila();
-        int outSize = pixelMapper.getDominio(outStep * outStep * 3).getFila();
-        weightsH = createMatrix(inSize, hidStep, WeightCreationStyle::randomCreationStyle, modelingH);
-        weightsO = createMatrix(hidStep, outSize, WeightCreationStyle::randomCreationStyle, modelingO);
-    }
-
-    public N getHiddenLearningRate() {
-        return hiddenLearningRate;
-    }
-
-    public void setHiddenLearningRate(N hiddenLearningRate) {
-        this.hiddenLearningRate = hiddenLearningRate;
-    }
-
-    public N getOutputLearningRate() {
-        return outputLearningRate;
-    }
-
-    public void setOutputLearningRate(N outputLearningRate) {
-        this.outputLearningRate = outputLearningRate;
+    public void initMatrix(UnaryOperator<NumericMatriz<N>>[] creation, UnaryOperator<NumericMatriz<N>>[] modeling) {
+        int inSize = pixelMapper.getDominio(inStep).getFila();
+        weights = new NumericMatriz[hiddenStep.length];
+        for (int k = 0; k < weights.length; k++) {
+            weights[k] = createMatrix(inSize, hiddenStep[k], creation[k], modeling[k]);
+            inSize = hiddenStep[k];
+        }
     }
 
     protected void relate(HiddenLayer<N> origen, HiddenLayer<N> destino) {
@@ -323,14 +350,6 @@ public abstract class AbstractManager<N extends Number> {
 
     public int getIterateCurrent() {
         return iterateCurrent;
-    }
-
-    public void setHiddenLearningControl(LearningControl<N> hiddenLearningControl) {
-        this.hiddenLearningControl = hiddenLearningControl;
-    }
-
-    public void setOutputLearningControl(LearningControl<N> outputLearningControl) {
-        this.outputLearningControl = outputLearningControl;
     }
 
     public void setPixelMapper(PixelMapper pixelMapper) {

@@ -24,12 +24,11 @@
 package org.tensa.facecheck.network;
 
 import java.awt.image.BufferedImage;
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import org.tensa.facecheck.activation.impl.LinealActivationImpl;
-import org.tensa.facecheck.activation.impl.SigmoidActivationImpl;
 import org.tensa.facecheck.layer.impl.DiffLayer;
 import org.tensa.facecheck.layer.impl.HiddenLayer;
 import org.tensa.facecheck.layer.impl.OutputScale;
@@ -46,11 +45,9 @@ import org.tensa.tensada.matrix.ParOrdenado;
  */
 public class ManagerBackProp<N extends Number> extends AbstractManager<N> {
 
-    public ManagerBackProp(Function<Dominio, NumericMatriz<N>> supplier, int inStep, int outStep, int hidStep, BufferedImage outputImage, BufferedImage inputImage, BufferedImage compareImage, int iterateTo) {
+    public ManagerBackProp(Function<Dominio, NumericMatriz<N>> supplier, int inStep, BufferedImage outputImage, BufferedImage inputImage, BufferedImage compareImage, int iterateTo) {
         this.supplier = supplier;
         this.inStep = inStep;
-        this.outStep = outStep;
-        this.hidStep = hidStep;
         this.outputImage = outputImage;
         this.inputImage = inputImage;
         this.compareImage = compareImage;
@@ -69,21 +66,26 @@ public class ManagerBackProp<N extends Number> extends AbstractManager<N> {
 
         log.info("iniciando proceso...");
 
-        int width = inputImage.getWidth();
-        int height = inputImage.getHeight();
+        final int width = inputImage.getWidth();
+        final int height = inputImage.getHeight();
 
-        log.info("procesando... {} {}", width - inStep, height - inStep);
+        final int rInStep = (int) Math.sqrt(inStep / 3);
+        final int rOutStep = (int) Math.sqrt(hiddenStep[hiddenStep.length - 1] / 3);
+        final int rDeltaStep = rInStep - rOutStep;
+
+        log.info("procesando... {} {}", width - rInStep, height - rInStep);
 
         for (iterateCurrent = 0; (!emergencyBreak) && ((!trainingMode) && iterateCurrent < 1 || trainingMode && iterateCurrent < ((Integer) iterateTo)); iterateCurrent++) {
 
             log.info("iteracion <{}>", iterateCurrent);
-            Dominio dominio = new Dominio(width - inStep, height - inStep);
+            Dominio dominio = new Dominio(width - (int) rInStep, height - (int) rInStep);
 
-            hiddenLearningRate = hiddenLearningControl.updateFactor(iterateCurrent, hiddenLearningRate);
-            outputLearningRate = outputLearningControl.updateFactor(iterateCurrent, outputLearningRate);
+            for (int k = 0; k < weights.length; k++) {
+                learningRate[k] = learningControl[k].updateFactor(iterateCurrent, learningRate[k]);
+            }
 
             proccesDomain = dominio.stream()
-                    .filter(idx -> (((idx.getFila() - (inStep - outStep) / 2) % outStep == 0) && ((idx.getColumna() - (inStep - outStep) / 2) % outStep == 0)))
+                    .filter(idx -> (((idx.getFila() - rDeltaStep / 2) % rOutStep == 0) && ((idx.getColumna() - rDeltaStep / 2) % rOutStep == 0)))
                     .filter(idx -> (!useSelection) || (areaQeue.stream().anyMatch(a -> a.contains(idx.getFila(), idx.getColumna()))))
                     .collect(Collectors.toList());
             errorGraph = supplier.apply(dominio);
@@ -96,8 +98,10 @@ public class ManagerBackProp<N extends Number> extends AbstractManager<N> {
                         int j = idx.getColumna();
 
                         PixelInputLayer<N> simplePixelsInputLayer = new PixelInputLayer<>(supplier, pixelMapper, inputScale);
-                        HiddenLayer<N> hiddenLayer = new HiddenLayer<>(weightsH, hiddenLearningRate, new SigmoidActivationImpl<>());
-                        HiddenLayer<N> learnLayer = new HiddenLayer<>(weightsO, outputLearningRate, new LinealActivationImpl<>());
+                        HiddenLayer<N>[] hiddenLayers = new HiddenLayer[weights.length];
+                        for (int k = 0; k < weights.length; k++) {
+                            hiddenLayers[k] = new HiddenLayer<>(weights[k], learningRate[k], activationFunction[k]);
+                        }
 
                         PixelInputLayer<N> simplePixelsCompareLayer = new PixelInputLayer<>(supplier, pixelMapper, OutputScale::scale);
                         PixelOutputLayer<N> pixelsOutputLayer = new PixelOutputLayer<>(pixelMapper);
@@ -105,44 +109,49 @@ public class ManagerBackProp<N extends Number> extends AbstractManager<N> {
                             errorBiConsumer(lL, idx);
                         });
 
-                        relate(simplePixelsInputLayer, hiddenLayer);
-                        relate(hiddenLayer, learnLayer);
-                        relate(learnLayer, pixelsOutputLayer);
+                        relate(simplePixelsInputLayer, hiddenLayers[0]);
+                        for (int k = 1; k < weights.length; k++) {
+                            relate(hiddenLayers[k - 1], hiddenLayers[k]);
+
+                        }
+                        relate(hiddenLayers[weights.length - 1], pixelsOutputLayer);
 
                         try {
                             //                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
-                            BufferedImage dest = outputImage.getSubimage(i + (inStep - outStep) / 2, j + (inStep - outStep) / 2, outStep, outStep);
+                            BufferedImage dest = outputImage.getSubimage(i + rDeltaStep / 2, j + rDeltaStep / 2, rOutStep, rOutStep);
                             pixelsOutputLayer.setDest(dest);
 
-                            BufferedImage src = inputImage.getSubimage(i, j, inStep, inStep);
+                            BufferedImage src = inputImage.getSubimage(i, j, rInStep, rInStep);
                             simplePixelsInputLayer.setSrc(src);
 
                             //                        log.info("cargando bloque comparacion <{}><{}>", i, j);
-                            BufferedImage comp = compareImage.getSubimage(i + (inStep - outStep) / 2, j + (inStep - outStep) / 2, outStep, outStep);
+                            BufferedImage comp = compareImage.getSubimage(i + rDeltaStep / 2, j + rDeltaStep / 2, rOutStep, rOutStep);
                             simplePixelsCompareLayer.setSrc(comp);
-                        } catch(java.awt.image.RasterFormatException ex ) {
+                        } catch (java.awt.image.RasterFormatException ex) {
                             emergencyBreak = true;
                             ex.printStackTrace();
                         }
 
                         if (trainingMode) {
-                            relate(learnLayer, diffLAyer);
+                            relate(hiddenLayers[weights.length - 1], diffLAyer);
 
                         }
 
                         simplePixelsInputLayer.startProduction();
 
-                        try (
-                                Closeable inpmat = simplePixelsInputLayer.getOutputLayer();
-                                Closeable outmat = simplePixelsCompareLayer.getOutputLayer();
-                                Closeable hiddProp = hiddenLayer.getPropagationError();
-                                Closeable hiddOut = hiddenLayer.getOutputLayer();
-                                Closeable learnProp = learnLayer.getPropagationError();
-                                Closeable learnOut = learnLayer.getOutputLayer();) {
-
-                        } catch (IOException ex) {
-                            //clear
-                        }
+//                        try {
+//                            simplePixelsInputLayer.getOutputLayer().close();
+//                            simplePixelsCompareLayer.getOutputLayer().close();
+//                            for (int k = 1; k < weights.length; k++) {
+//                                hiddenLayers[k].getPropagationError().close();
+//                                hiddenLayers[k].getOutputLayer().close();
+//                            }
+//                        } catch (IOException ex) {
+//                            log.error(ex.getMessage(),ex);
+//                        } catch (NullPointerException ex) {
+//                            log.error(ex.getMessage(),ex);
+//                            
+//                        }
                     });
 
         }

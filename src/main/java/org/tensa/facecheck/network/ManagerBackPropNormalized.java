@@ -53,11 +53,9 @@ import org.tensa.tensada.matrix.ParOrdenado;
  */
 public class ManagerBackPropNormalized<N extends Number> extends AbstractManager<N> {
 
-    public ManagerBackPropNormalized(Function<Dominio, NumericMatriz<N>> supplier, int inStep, int outStep, int hidStep, BufferedImage outputImage, BufferedImage inputImage, BufferedImage compareImage, int iterateTo) {
+    public ManagerBackPropNormalized(Function<Dominio, NumericMatriz<N>> supplier, int inStep, BufferedImage outputImage, BufferedImage inputImage, BufferedImage compareImage, int iterateTo) {
         this.supplier = supplier;
         this.inStep = inStep;
-        this.outStep = outStep;
-        this.hidStep = hidStep;
         this.outputImage = outputImage;
         this.inputImage = inputImage;
         this.compareImage = compareImage;
@@ -76,21 +74,26 @@ public class ManagerBackPropNormalized<N extends Number> extends AbstractManager
 
         log.info("iniciando proceso...");
 
-        int width = inputImage.getWidth();
-        int height = inputImage.getHeight();
+        final int width = inputImage.getWidth();
+        final int height = inputImage.getHeight();
 
-        log.info("procesando... {} {}", width - inStep, height - inStep);
+        final int rInStep = (int) Math.sqrt(inStep / 3);
+        final int rOutStep = (int) Math.sqrt(hiddenStep[hiddenStep.length - 1] / 3);
+        final int rDeltaStep = rInStep - rOutStep;
+
+        log.info("procesando... {} {}", width - rInStep, height - rInStep);
 
         for (iterateCurrent = 0; (!emergencyBreak) && ((!trainingMode) && iterateCurrent < 1 || trainingMode && iterateCurrent < ((Integer) iterateTo)); iterateCurrent++) {
 
             log.info("iteracion <{}>", iterateCurrent);
-            Dominio dominio = new Dominio(width - inStep, height - inStep);
+            Dominio dominio = new Dominio(width - (int) rInStep, height - (int) rInStep);
 
-            hiddenLearningRate = hiddenLearningControl.updateFactor(iterateCurrent, hiddenLearningRate);
-            outputLearningRate = outputLearningControl.updateFactor(iterateCurrent, outputLearningRate);
+            for (int k = 0; k < weights.length; k++) {
+                learningRate[k] = learningControl[k].updateFactor(iterateCurrent, learningRate[k]);
+            }
 
             proccesDomain = dominio.stream()
-                    .filter(idx -> (((idx.getFila() - (inStep - outStep) / 2) % outStep == 0) && ((idx.getColumna() - (inStep - outStep) / 2) % outStep == 0)))
+                    .filter(idx -> (((idx.getFila() - rDeltaStep / 2) % rOutStep == 0) && ((idx.getColumna() - rDeltaStep / 2) % rOutStep == 0)))
                     .filter(idx -> (!useSelection) || (areaQeue.stream().anyMatch(a -> a.contains(idx.getFila(), idx.getColumna()))))
                     .collect(Collectors.toList());
             errorGraph = supplier.apply(dominio);
@@ -103,9 +106,12 @@ public class ManagerBackPropNormalized<N extends Number> extends AbstractManager
                         int j = idx.getColumna();
 
                         PixelInputLayer<N> simplePixelsInputLayer = new PixelInputLayer<>(supplier, pixelMapper, inputScale);
-                        HiddenLayer<N> hiddenLayer = new HiddenLayer<>(weightsH, hiddenLearningRate, new SigmoidActivationImpl<>());
+                        HiddenLayer<N>[] hiddenLayers = new HiddenLayer[weights.length];
+                        for (int k = 0; k < weights.length; k++) {
+                            hiddenLayers[k] = new HiddenLayer<>(weights[k], learningRate[k], activationFunction[k]);
+                        }
                         NormalizeLayer<N> normaLayer = new NormalizeLayer<>();
-                        HiddenLayer<N> learnLayer = new HiddenLayer<>(weightsO, outputLearningRate, new LinealActivationImpl<>());
+
                         PixelInputLayer<N> simplePixelsCompareLayer = new PixelInputLayer<>(supplier, pixelMapper, OutputScale::scale);
                         PixelOutputLayer<N> pixelsOutputLayer = new PixelOutputLayer<>(pixelMapper);
                         DiffLayer<N> diffLAyer = new DiffLayer<>(simplePixelsCompareLayer, (lL) -> {
@@ -122,40 +128,38 @@ public class ManagerBackPropNormalized<N extends Number> extends AbstractManager
 
                         DoorLayer<N> ifLayer = new DoorLayer<>(compareLayerExpresion);
 
-                        relate(simplePixelsInputLayer, hiddenLayer);
+                        relate(simplePixelsInputLayer, hiddenLayers[0]);
 
-                        relate(hiddenLayer, middleTest);
-//                            hiddenLayer.getConsumers().remove(middleTest);
-                        middleTest.getProducers().remove(hiddenLayer);
+                        relate(hiddenLayers[0], middleTest);
+                        middleTest.getProducers().remove(hiddenLayers[0]);
 
                         if (trainingMode) {
-                            backIfLayer.getProducers().add(hiddenLayer);
+                            backIfLayer.getProducers().add(hiddenLayers[0]);
                             middleTest.getProducers().add(backIfLayer);
                         }
 
-                        relate(hiddenLayer, ifLayer);
-//                            relate(ifLayer,middleTest.getInternalBridgeConsumer());
-                        relate(ifLayer.getElseProducer(), learnLayer);
+                        relate(hiddenLayers[0], ifLayer);
+                        relate(ifLayer.getElseProducer(), hiddenLayers[1]);
 
-                        relate(hiddenLayer, learnLayer);
-                        hiddenLayer.getConsumers().remove(learnLayer);
+                        relate(hiddenLayers[0], hiddenLayers[1]);
+                        hiddenLayers[0].getConsumers().remove(hiddenLayers[1]);
 
-//                            relate(hiddenLayer, learnLayer);
-//                            hiddenLayer.getConsumers().remove(learnLayer);
-//                            relate(hiddenLayer, normaLayer);
-//                            relate(normaLayer, learnLayer);
-                        relate(learnLayer, pixelsOutputLayer);
+                        for (int k = 2; k < weights.length; k++) {
+                            relate(hiddenLayers[k - 1], hiddenLayers[k]);
+
+                        }
+                        relate(hiddenLayers[weights.length - 1], pixelsOutputLayer);
 
                         try {
                             //                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
-                            BufferedImage dest = outputImage.getSubimage(i + (inStep - outStep) / 2, j + (inStep - outStep) / 2, outStep, outStep);
+                            BufferedImage dest = outputImage.getSubimage(i + rDeltaStep / 2, j + rDeltaStep / 2, rOutStep, rOutStep);
                             pixelsOutputLayer.setDest(dest);
 
-                            BufferedImage src = inputImage.getSubimage(i, j, inStep, inStep);
+                            BufferedImage src = inputImage.getSubimage(i, j, rInStep, rInStep);
                             simplePixelsInputLayer.setSrc(src);
 
                             //                        log.info("cargando bloque comparacion <{}><{}>", i, j);
-                            BufferedImage comp = compareImage.getSubimage(i + (inStep - outStep) / 2, j + (inStep - outStep) / 2, outStep, outStep);
+                            BufferedImage comp = compareImage.getSubimage(i + rDeltaStep / 2, j + rDeltaStep / 2, rOutStep, rOutStep);
                             simplePixelsCompareLayer.setSrc(comp);
                         } catch (java.awt.image.RasterFormatException ex) {
                             emergencyBreak = true;
@@ -163,22 +167,17 @@ public class ManagerBackPropNormalized<N extends Number> extends AbstractManager
                         }
 
                         if (trainingMode) {
-                            relate(learnLayer, diffLAyer);
+                            relate(hiddenLayers[weights.length - 1], diffLAyer);
 
                         }
 
                         simplePixelsInputLayer.startProduction();
 
-                        try (
-                                Closeable inpmat = simplePixelsInputLayer.getOutputLayer();
-                                Closeable outmat = simplePixelsCompareLayer.getOutputLayer();
-                                Closeable hiddProp = hiddenLayer.getPropagationError();
-                                Closeable hiddOut = hiddenLayer.getOutputLayer();
-                                Closeable learnProp = learnLayer.getPropagationError();
-                                Closeable learnOut = learnLayer.getOutputLayer();) {
-
-                        } catch (IOException ex) {
-                            //clear
+                        simplePixelsInputLayer.getOutputLayer().clear();
+                        simplePixelsCompareLayer.getOutputLayer().clear();
+                        for (int k = 0; k < weights.length; k++) {
+                            hiddenLayers[k].getPropagationError().clear();
+                            hiddenLayers[k].getOutputLayer().clear();
                         }
                     });
 
