@@ -1,7 +1,7 @@
 package org.tensa.facecheck.main;
 
 import org.tensa.facecheck.weight.WeigthModelingEnum;
-import org.tensa.facecheck.weight.WeigthCreationEnum;
+import org.tensa.facecheck.weight.WeightCreationEnum;
 import org.tensa.facecheck.activation.ActivationFunctionEnum;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -158,8 +158,8 @@ public class VisLoad extends javax.swing.JFrame {
         networkManager.setSupplier((Dominio dominio) -> new FloatMatriz(dominio));
         networkManager.setPixelMapper(PixelMappings.defaultMapping());
         networkManager.getAreaQeue().add(learnArea);
-        jTableWeight.getModel().setValueAt(WeigthCreationEnum.RANDOM, 0, 1);
-        jTableWeight.getModel().setValueAt(WeigthCreationEnum.RANDOM, 1, 1);
+        jTableWeight.getModel().setValueAt(WeightCreationEnum.RANDOM, 0, 1);
+        jTableWeight.getModel().setValueAt(WeightCreationEnum.RANDOM, 1, 1);
         jTableWeight.getModel().setValueAt(WeigthModelingEnum.NORMALIZED, 0, 2);
         jTableWeight.getModel().setValueAt(WeigthModelingEnum.NORMALIZED, 1, 2);
         jTableWeight.getModel().setValueAt(ActivationFunctionEnum.LINEAL, 0, 3);
@@ -983,7 +983,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .toArray(UnaryOperator[]::new);
 
         UnaryOperator<NumericMatriz<Float>>[] weightCreationStyle = IntStream.range(0, jTableWeight.getRowCount())
-                .mapToObj(i -> (WeigthCreationEnum) jTableWeight.getValueAt(i, 1))
+                .mapToObj(i -> (WeightCreationEnum) jTableWeight.getValueAt(i, 1))
                 .peek(c -> log.info("creacion style <{}>",c) )
                 .map(this::creation2style)
                 .toArray(UnaryOperator[]::new);
@@ -1036,7 +1036,7 @@ public class VisLoad extends javax.swing.JFrame {
         }
     }
 
-    private UnaryOperator<NumericMatriz<Float>> creation2style(WeigthCreationEnum wce) {
+    private UnaryOperator<NumericMatriz<Float>> creation2style(WeightCreationEnum wce) {
         switch (wce) {
             case RANDOM:
                 return WeightCreationStyle::randomCreationStyle;
@@ -1228,7 +1228,7 @@ public class VisLoad extends javax.swing.JFrame {
                 IntStream.range(0, jTableWeight.getRowCount()).forEach(i -> {
                     Float o = networkManager.getLearningRate(i);
                     Integer step = networkManager.getHiddenStep(i);
-                    model.addRow(new Object[]{step, WeigthCreationEnum.RANDOM, WeigthModelingEnum.SIMPLE, ActivationFunctionEnum.LINEAL, o, BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE});
+                    model.addRow(new Object[]{step, WeightCreationEnum.RANDOM, WeigthModelingEnum.SIMPLE, ActivationFunctionEnum.LINEAL, o, BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE});
 
                 });
             }
@@ -1374,7 +1374,7 @@ public class VisLoad extends javax.swing.JFrame {
 
     private void jButtonAddRowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddRowActionPerformed
         DefaultTableModel model = (DefaultTableModel) jTableWeight.getModel();
-        Object[] fila = new Object[]{new Integer(15), WeigthCreationEnum.RANDOM, WeigthModelingEnum.SIMPLE, ActivationFunctionEnum.LINEAL, new Float(5.0E-5), BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE};
+        Object[] fila = new Object[]{new Integer(15), WeightCreationEnum.RANDOM, WeigthModelingEnum.SIMPLE, ActivationFunctionEnum.LINEAL, new Float(5.0E-5), BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE};
         int selectedRow = jTableWeight.getSelectedRow();
         if (selectedRow == -1) {
             model.addRow(fila);
@@ -1803,7 +1803,7 @@ public class VisLoad extends javax.swing.JFrame {
     private static class CreationWeightTableCellEditorImpl extends AbstractCellEditor implements TableCellEditor {
 
         public static ComboBoxModel getCreationComboBoxModel() {
-            return new DefaultComboBoxModel<>(WeigthCreationEnum.values());
+            return new DefaultComboBoxModel<>(WeightCreationEnum.values());
         }
 
         public CreationWeightTableCellEditorImpl() {
@@ -1811,7 +1811,7 @@ public class VisLoad extends javax.swing.JFrame {
             creation.setSelectedIndex(0);
         }
 
-        private final javax.swing.JComboBox<WeigthCreationEnum> creation;
+        private final javax.swing.JComboBox<WeightCreationEnum> creation;
 
         @Override
         public Object getCellEditorValue() {

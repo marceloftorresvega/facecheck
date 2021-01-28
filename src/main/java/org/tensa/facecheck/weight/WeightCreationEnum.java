@@ -27,6 +27,6 @@ package org.tensa.facecheck.weight;
  *
  * @author Marcelo
  */
-public enum WeigthCreationEnum {
+public enum WeightCreationEnum {
     RANDOM, DIAGONAL, FROM_OUTSTART, RANDOM_SEGMENTED
 }
