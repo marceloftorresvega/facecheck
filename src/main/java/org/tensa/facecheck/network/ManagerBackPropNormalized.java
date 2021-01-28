@@ -24,13 +24,9 @@
 package org.tensa.facecheck.network;
 
 import java.awt.image.BufferedImage;
-import java.io.Closeable;
-import java.io.IOException;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.tensa.facecheck.activation.impl.LinealActivationImpl;
-import org.tensa.facecheck.activation.impl.SigmoidActivationImpl;
 import org.tensa.facecheck.layer.impl.BackDoorLayer;
 import org.tensa.facecheck.layer.impl.DiffLayer;
 import org.tensa.facecheck.layer.impl.DoorLayer;
