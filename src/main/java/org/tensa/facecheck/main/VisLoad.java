@@ -1738,7 +1738,7 @@ public class VisLoad extends javax.swing.JFrame {
 
     private static class NeuronTableCellEditorImpl extends AbstractCellEditor implements TableCellEditor {
 
-        private JSpinner neuronas = new JSpinner(new SpinnerNumberModel(15, 1, 500, 3));
+        private JSpinner neuronas = new JSpinner(new SpinnerNumberModel(15, 1, 1025, 3));
         private JSpinner alCuadrado = new JSpinner(getCuadradoSpinnerModel());
         private boolean isCuadrado = false;
 
@@ -1894,7 +1894,7 @@ public class VisLoad extends javax.swing.JFrame {
         @Override
         public Component getTableCellRendererComponent(JTable jtable, Object o, boolean bln, boolean bln1, int i, int i1) {
             learning.setText(String.format("%1.1E", (Float) o));
-            return learning;
+           return learning;
         }
 
     }
