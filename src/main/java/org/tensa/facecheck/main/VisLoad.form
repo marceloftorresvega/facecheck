@@ -821,8 +821,8 @@
                     <Column editable="true" title="Estilo Pesos" type="java.lang.Object"/>
                     <Column editable="true" title="Func. Activacion" type="java.lang.Object"/>
                     <Column editable="true" title="Fact. Aprendisaje" type="java.lang.Float">
-                      <Data value="5.0E-6"/>
-                      <Data value="5.0E-6"/>
+                      <Data value="5.0E-5"/>
+                      <Data value="5.0E-5"/>
                     </Column>
                     <Column editable="true" title="estratg. Aprendisaje" type="java.lang.Object"/>
                   </Table>
