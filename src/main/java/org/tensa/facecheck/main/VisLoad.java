@@ -33,7 +33,6 @@ import javax.swing.AbstractCellEditor;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
@@ -41,6 +40,7 @@ import javax.swing.SpinnerListModel;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -1887,14 +1887,11 @@ public class VisLoad extends javax.swing.JFrame {
 
     }
 
-    private static class LearningFactorCellRenderImp implements TableCellRenderer, Serializable {
-
-        private JLabel learning = new JLabel();
+    private static class LearningFactorCellRenderImp extends DefaultTableCellRenderer implements TableCellRenderer, Serializable {
 
         @Override
         public Component getTableCellRendererComponent(JTable jtable, Object o, boolean bln, boolean bln1, int i, int i1) {
-            learning.setText(String.format("%1.1E", (Float) o));
-           return learning;
+           return super.getTableCellRendererComponent(jtable, String.format("%1.1E", (Float) o), bln, bln1, i, i1);
         }
 
     }
