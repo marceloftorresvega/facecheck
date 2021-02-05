@@ -33,7 +33,6 @@ import javax.swing.AbstractCellEditor;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
@@ -41,6 +40,7 @@ import javax.swing.SpinnerListModel;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -78,8 +78,6 @@ public class VisLoad extends javax.swing.JFrame {
 
     private final String baseUrl = "\\img\\originales\\";
 
-    private final Float[] learningFactor = LearningEstrategy.floatBasicLearningSeries;
-
     private final String sufxType = ".jpg";
     private BufferedImage buffImage;
     private BufferedImage destBuffImage;
@@ -115,20 +113,20 @@ public class VisLoad extends javax.swing.JFrame {
     public String getBaseUrl() {
         return baseUrl;
     }
-    
+
     public String getRawPixelViewSizeFromInput(Integer value) {
-        int raw = (int)Math.sqrt(value / 3);
-        return String.format(" %d x %d X 3", raw,raw);
+        int raw = (int) Math.sqrt(value / 3);
+        return String.format(" %d x %d X 3", raw, raw);
     }
-    
+
     public String getRawPixelInNeur() {
-        return getRawPixelViewSizeFromInput((Integer)inNeurs.getValue());
+        return getRawPixelViewSizeFromInput((Integer) inNeurs.getValue());
     }
-    
+
     public String getRawPixelOutNeur() {
         int rowCount = jTableWeight.getRowCount();
-        Object value = jTableWeight.getValueAt(rowCount-1,0);
-        return getRawPixelViewSizeFromInput((Integer)value);
+        Object value = jTableWeight.getValueAt(rowCount - 1, 0);
+        return getRawPixelViewSizeFromInput((Integer) value);
     }
 
     /**
@@ -732,8 +730,8 @@ public class VisLoad extends javax.swing.JFrame {
 
         jTableWeight.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                { new Integer(15), null, null, null,  new Float(5.0E-6), null},
-                { new Integer(27), null, null, null,  new Float(5.0E-6), null}
+                { new Integer(15), null, null, null,  new Float(5.0E-5), null},
+                { new Integer(27), null, null, null,  new Float(5.0E-5), null}
             },
             new String [] {
                 "Neuronas", "Creacion Pesos", "Estilo Pesos", "Func. Activacion", "Fact. Aprendisaje", "estratg. Aprendisaje"
@@ -975,16 +973,16 @@ public class VisLoad extends javax.swing.JFrame {
         networkManager.setHiddenStep(IntStream.range(0, jTableWeight.getRowCount())
                 .map(i -> (Integer) jTableWeight.getValueAt(i, 0)).toArray());
 
-        UnaryOperator<NumericMatriz<Float>>[] weightModelingStyle = IntStream.range(0, jTableWeight.getRowCount())
-                .mapToObj(i -> (WeightModelingEnum) jTableWeight.getValueAt(i, 2))
-                .peek(m -> log.info("modelado style <{}>",m) )
-                .map(this::modeling2style)
-                .toArray(UnaryOperator[]::new);
-
         UnaryOperator<NumericMatriz<Float>>[] weightCreationStyle = IntStream.range(0, jTableWeight.getRowCount())
                 .mapToObj(i -> (WeightCreationEnum) jTableWeight.getValueAt(i, 1))
-                .peek(c -> log.info("creacion style <{}>",c) )
+                .peek(c -> log.info("creacion style <{}>", c))
                 .map(this::creation2style)
+                .toArray(UnaryOperator[]::new);
+
+        UnaryOperator<NumericMatriz<Float>>[] weightModelingStyle = IntStream.range(0, jTableWeight.getRowCount())
+                .mapToObj(i -> (WeightModelingEnum) jTableWeight.getValueAt(i, 2))
+                .peek(m -> log.info("modelado style <{}>", m))
+                .map(this::modeling2style)
                 .toArray(UnaryOperator[]::new);
 
         networkManager.initMatrix(weightCreationStyle, weightModelingStyle);
@@ -1374,14 +1372,14 @@ public class VisLoad extends javax.swing.JFrame {
 
     private void jButtonAddRowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddRowActionPerformed
         DefaultTableModel model = (DefaultTableModel) jTableWeight.getModel();
-        Object[] fila = new Object[]{new Integer(12), WeightCreationEnum.RANDOM, WeightModelingEnum.SIMPLE, ActivationFunctionEnum.LINEAL, new Float(5.0E-5), BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE};
+        Object[] fila = new Object[]{new Integer(12), WeightCreationEnum.RANDOM, WeightModelingEnum.NORMALIZED, ActivationFunctionEnum.LINEAL, new Float(5.0E-5), BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE};
         int selectedRow = jTableWeight.getSelectedRow();
         if (selectedRow == -1) {
             model.addRow(fila);
-            
+
         } else {
             model.insertRow(selectedRow, fila);
-            
+
         }
     }//GEN-LAST:event_jButtonAddRowActionPerformed
 
@@ -1738,7 +1736,7 @@ public class VisLoad extends javax.swing.JFrame {
 
     private static class NeuronTableCellEditorImpl extends AbstractCellEditor implements TableCellEditor {
 
-        private JSpinner neuronas = new JSpinner(new SpinnerNumberModel(15, 1, 500, 3));
+        private JSpinner neuronas = new JSpinner(new SpinnerNumberModel(15, 1, 1025, 3));
         private JSpinner alCuadrado = new JSpinner(getCuadradoSpinnerModel());
         private boolean isCuadrado = false;
 
@@ -1887,14 +1885,11 @@ public class VisLoad extends javax.swing.JFrame {
 
     }
 
-    private static class LearningFactorCellRenderImp implements TableCellRenderer, Serializable {
-
-        private JLabel learning = new JLabel();
+    private static class LearningFactorCellRenderImp extends DefaultTableCellRenderer implements TableCellRenderer, Serializable {
 
         @Override
         public Component getTableCellRendererComponent(JTable jtable, Object o, boolean bln, boolean bln1, int i, int i1) {
-            learning.setText(String.format("%1.1E", (Float) o));
-            return learning;
+            return super.getTableCellRendererComponent(jtable, String.format("%1.1E", (Float) o), bln, bln1, i, i1);
         }
 
     }
