@@ -78,8 +78,6 @@ public class VisLoad extends javax.swing.JFrame {
 
     private final String baseUrl = "\\img\\originales\\";
 
-    private final Float[] learningFactor = LearningEstrategy.floatBasicLearningSeries;
-
     private final String sufxType = ".jpg";
     private BufferedImage buffImage;
     private BufferedImage destBuffImage;
@@ -115,20 +113,20 @@ public class VisLoad extends javax.swing.JFrame {
     public String getBaseUrl() {
         return baseUrl;
     }
-    
+
     public String getRawPixelViewSizeFromInput(Integer value) {
-        int raw = (int)Math.sqrt(value / 3);
-        return String.format(" %d x %d X 3", raw,raw);
+        int raw = (int) Math.sqrt(value / 3);
+        return String.format(" %d x %d X 3", raw, raw);
     }
-    
+
     public String getRawPixelInNeur() {
-        return getRawPixelViewSizeFromInput((Integer)inNeurs.getValue());
+        return getRawPixelViewSizeFromInput((Integer) inNeurs.getValue());
     }
-    
+
     public String getRawPixelOutNeur() {
         int rowCount = jTableWeight.getRowCount();
-        Object value = jTableWeight.getValueAt(rowCount-1,0);
-        return getRawPixelViewSizeFromInput((Integer)value);
+        Object value = jTableWeight.getValueAt(rowCount - 1, 0);
+        return getRawPixelViewSizeFromInput((Integer) value);
     }
 
     /**
@@ -975,16 +973,16 @@ public class VisLoad extends javax.swing.JFrame {
         networkManager.setHiddenStep(IntStream.range(0, jTableWeight.getRowCount())
                 .map(i -> (Integer) jTableWeight.getValueAt(i, 0)).toArray());
 
-        UnaryOperator<NumericMatriz<Float>>[] weightModelingStyle = IntStream.range(0, jTableWeight.getRowCount())
-                .mapToObj(i -> (WeightModelingEnum) jTableWeight.getValueAt(i, 2))
-                .peek(m -> log.info("modelado style <{}>",m) )
-                .map(this::modeling2style)
-                .toArray(UnaryOperator[]::new);
-
         UnaryOperator<NumericMatriz<Float>>[] weightCreationStyle = IntStream.range(0, jTableWeight.getRowCount())
                 .mapToObj(i -> (WeightCreationEnum) jTableWeight.getValueAt(i, 1))
-                .peek(c -> log.info("creacion style <{}>",c) )
+                .peek(c -> log.info("creacion style <{}>", c))
                 .map(this::creation2style)
+                .toArray(UnaryOperator[]::new);
+
+        UnaryOperator<NumericMatriz<Float>>[] weightModelingStyle = IntStream.range(0, jTableWeight.getRowCount())
+                .mapToObj(i -> (WeightModelingEnum) jTableWeight.getValueAt(i, 2))
+                .peek(m -> log.info("modelado style <{}>", m))
+                .map(this::modeling2style)
                 .toArray(UnaryOperator[]::new);
 
         networkManager.initMatrix(weightCreationStyle, weightModelingStyle);
@@ -1378,10 +1376,10 @@ public class VisLoad extends javax.swing.JFrame {
         int selectedRow = jTableWeight.getSelectedRow();
         if (selectedRow == -1) {
             model.addRow(fila);
-            
+
         } else {
             model.insertRow(selectedRow, fila);
-            
+
         }
     }//GEN-LAST:event_jButtonAddRowActionPerformed
 
@@ -1891,7 +1889,7 @@ public class VisLoad extends javax.swing.JFrame {
 
         @Override
         public Component getTableCellRendererComponent(JTable jtable, Object o, boolean bln, boolean bln1, int i, int i1) {
-           return super.getTableCellRendererComponent(jtable, String.format("%1.1E", (Float) o), bln, bln1, i, i1);
+            return super.getTableCellRendererComponent(jtable, String.format("%1.1E", (Float) o), bln, bln1, i, i1);
         }
 
     }
