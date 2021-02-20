@@ -31,6 +31,12 @@ import org.tensa.facecheck.activation.Activation;
 import org.tensa.facecheck.activation.utils.ActivationUtils;
 import org.tensa.tensada.matrix.NumericMatriz;
 
+/**
+ * retorna la matriz de reflectancia para cada columna de la matriz de ingreso
+ *
+ * @author Marcelo
+ * @param <N> clase de nummero utilizado
+ */
 public class SoftMaxActivationImpl<N extends Number> implements Activation<N> {
 
     @Override

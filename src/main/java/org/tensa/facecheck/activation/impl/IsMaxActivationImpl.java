@@ -31,6 +31,13 @@ import org.tensa.facecheck.activation.Activation;
 import org.tensa.tensada.matrix.NumericMatriz;
 import org.tensa.tensada.matrix.ParOrdenado;
 
+/**
+ * retorna matriz de resultados basados en la deteccion del valor mas alto
+ * dentro de cada columna
+ *
+ * @author Marcelo
+ * @param <N> clase de nummero utilizado
+ */
 public class IsMaxActivationImpl<N extends Number> implements Activation<N> {
 
     @Override

@@ -41,6 +41,7 @@ import org.tensa.tensada.matrix.NumericMatriz;
 import org.tensa.tensada.matrix.ParOrdenado;
 
 /**
+ * clasificador de caractereisticas competitivo
  *
  * @author Marcelo
  * @param <N>
@@ -121,14 +122,13 @@ public class CpnLayer<N extends Number> implements LayerConsumer<N>, LayerLearni
 
     @Override
     public void startLearning() {
-        try ( 
-                final NumericMatriz<N> seleccion = weights.productoPunto(outputLayer);
-                ){ 
+        try (
+                final NumericMatriz<N> seleccion = weights.productoPunto(outputLayer);) {
             propagationError = inputLayer.substraccion(seleccion);
 //            
 //            error = activation.getError()
 //                    .apply(learningData, activation.isOptimized()?outputLayer:net);
-            
+
             try (
                     final NumericMatriz<N> amplif = outputLayer.productoEscalar(learningFactor);
                     final NumericMatriz<N> delta = amplif.productoTensorial(propagationError);
