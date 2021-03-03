@@ -106,7 +106,13 @@ public class SomLayer<N extends Number> implements LayerConsumer<N>, LayerLearni
 
     @Override
     public NumericMatriz<N> getError() {
-        return error;
+        NumericMatriz<N> error2 = null;
+        try (NumericMatriz<N> distanciaE2 = error.distanciaE2()) {
+            error2 = distanciaE2.productoEscalar(error.mapper(0.5));
+        } catch (IOException ex) {
+            log.error("getError", ex);
+        }
+        return error2;
     }
 
     @Override
@@ -134,9 +140,9 @@ public class SomLayer<N extends Number> implements LayerConsumer<N>, LayerLearni
                         .collect(ActivationUtils.entryToMatriz(outputLayer, e -> learningFactor))) {
 
             propagationError = inputLayer.substraccion(seleccion);
-//            
-//            error = activation.getError()
-//                    .apply(learningData, activation.isOptimized()?outputLayer:net);
+            
+            error = activation.getError()
+                    .apply(learningData, activation.isOptimized()?outputLayer:net);
 
             try (
                     final NumericMatriz<N> delta = recorrido.productoTensorial(propagationError);
