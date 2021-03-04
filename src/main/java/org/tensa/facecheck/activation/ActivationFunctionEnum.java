@@ -28,5 +28,5 @@ package org.tensa.facecheck.activation;
  * @author Marcelo
  */
 public enum ActivationFunctionEnum {
-    LINEAL, RELU, SIGMOIDE, SOFT_PLUS, SOFT_SIGN, TAN_HYPER
+    LINEAL, RELU, SIGMOIDE, SOFT_PLUS, SOFT_SIGN, SOFT_MAX, TAN_HYPER, IS_MIN, IS_MAX
 }
