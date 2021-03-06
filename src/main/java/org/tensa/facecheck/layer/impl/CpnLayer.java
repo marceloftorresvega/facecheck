@@ -56,7 +56,6 @@ public class CpnLayer<N extends Number> implements LayerConsumer<N>, LayerLearni
     protected NumericMatriz<N> propagationError;
     protected NumericMatriz<N> learningData;
     protected NumericMatriz<N> error;
-    protected NumericMatriz<N> net;
     protected N learningFactor;
     protected final List<LayerConsumer<N>> consumers;
     protected final List<LayerLearning<N>> producers;
@@ -102,7 +101,13 @@ public class CpnLayer<N extends Number> implements LayerConsumer<N>, LayerLearni
 
     @Override
     public NumericMatriz<N> getError() {
-        return error;
+        NumericMatriz<N> error2 = null;
+        try (NumericMatriz<N> distanciaE2 = error.distanciaE2()) {
+            error2 = distanciaE2.productoEscalar(error.mapper(0.5));
+        } catch (IOException ex) {
+            log.error("getError", ex);
+        }
+        return error2;
     }
 
     @Override
@@ -125,10 +130,6 @@ public class CpnLayer<N extends Number> implements LayerConsumer<N>, LayerLearni
         try (
                 final NumericMatriz<N> seleccion = weights.productoPunto(outputLayer);) {
             propagationError = inputLayer.substraccion(seleccion);
-//            
-//            error = activation.getError()
-//                    .apply(learningData, activation.isOptimized()?outputLayer:net);
-
             try (
                     final NumericMatriz<N> amplif = outputLayer.productoEscalar(learningFactor);
                     final NumericMatriz<N> delta = amplif.productoTensorial(propagationError);
@@ -182,7 +183,7 @@ public class CpnLayer<N extends Number> implements LayerConsumer<N>, LayerLearni
     private NumericMatriz<N> getDiferencia(Dominio d) {
         Integer barrida
                 = weights.getDominio().getColumna();
-        return net = d.stream()
+        return error = d.stream()
                 .collect(
                         ActivationUtils.domainToMatriz(
                                 () -> inputLayer.instancia(d),
@@ -194,9 +195,7 @@ public class CpnLayer<N extends Number> implements LayerConsumer<N>, LayerLearni
                                         return weights.productoDirecto(resta, resta);
                                     }).collect(
                                             Collectors.collectingAndThen(
-                                                    Collectors.collectingAndThen(
                                                             Collectors.summingDouble(N::doubleValue),
-                                                            Math::sqrt),
                                                     weights::mapper)
                                     );
                                 }));
