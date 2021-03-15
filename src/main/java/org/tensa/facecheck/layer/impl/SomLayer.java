@@ -26,6 +26,7 @@ package org.tensa.facecheck.layer.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -66,6 +67,7 @@ public class SomLayer<N extends Number> implements LayerConsumer<N>, LayerLearni
     protected final NumericMatriz<N> neighborhood;
     protected final UnaryOperator<NumericMatriz<N>> inhibitoryFunction;
     protected final UnaryOperator<NumericMatriz<N>> cutFunction;
+    private NumericMatriz<N> completa;
 
     public SomLayer(NumericMatriz<N> weights, Activation<N> activation, NumericMatriz<N> neighborhood) {
         this.activation = activation;
@@ -141,13 +143,13 @@ public class SomLayer<N extends Number> implements LayerConsumer<N>, LayerLearni
     public void startLearning() {
 
         try (
-                final NumericMatriz<N> recorrido = cutFunction.apply(outputLayer);
+                final NumericMatriz<N> recorrido = cutFunction.apply(completa);
                 final NumericMatriz<N> seleccion = weights.productoPunto(recorrido)) {
 
             propagationError = inputLayer.substraccion(seleccion);
-            
+
             error = activation.getError()
-                    .apply(learningData, activation.isOptimized()?outputLayer:net);
+                    .apply(learningData, activation.isOptimized() ? completa : net);
 
             try (
                     final NumericMatriz<N> ponderado = propagationError.productoEscalar(learningFactor);
@@ -190,14 +192,26 @@ public class SomLayer<N extends Number> implements LayerConsumer<N>, LayerLearni
                     .compose(this::getDiferencia)
                     .apply(dominio);
 
-            net = weights.producto(inputLayer);
+            if (Objects.isNull(completa)) {
+                completa = winnerOnes.instancia(winnerOnes.getDominio(), winnerOnes);
+            }
+
+            try (NumericMatriz<N> preNet = weights.producto(inputLayer)) {
+                net = winnerOnes.keySet().stream()
+                        .collect(ActivationUtils.domainToMatriz(winnerOnes, preNet::get));
+            } catch (IOException ex) {
+                //
+            }
+            
             try (
-                    NumericMatriz<N> laterales = neighborhood.producto(winnerOnes);
-                    NumericMatriz<N> inHibitor = inhibitoryFunction.apply(winnerOnes);
-                    NumericMatriz<N> parcial = net.adicion(laterales);
-                    NumericMatriz<N> completa = parcial.substraccion(inHibitor)) {
-                
+                    NumericMatriz<N> inHibitor = inhibitoryFunction.apply(completa);
+                    NumericMatriz<N> parcial = net.substraccion(inHibitor);
+                    NumericMatriz<N> laterales = neighborhood.producto(completa);
+                    NumericMatriz<N> delta = parcial.adicion(laterales)) {
+                completa = completa.adicion(delta);
+
                 outputLayer = activation.getActivation().apply(completa);
+
             } catch (IOException ex) {
                 //
             }
@@ -240,15 +254,15 @@ public class SomLayer<N extends Number> implements LayerConsumer<N>, LayerLearni
     public NumericMatriz<N> getNeighborhood() {
         return neighborhood;
     }
-    
+
     public static <D extends Number> NumericMatriz<D> defaultInhibitoryFunction(NumericMatriz<D> m) {
-        return m.instancia(m.getDominio());
+        return m.productoEscalar(m.mapper(0.2));
     }
-    
+
     public static <D extends Number> NumericMatriz<D> defaultCutFunction(NumericMatriz<D> m) {
         return m.entrySet().stream()
-                        .filter(e -> e.getValue().intValue() > 0)
-                        .collect(ActivationUtils.entryToMatriz(m, e -> m.getUnoValue()));
+                .filter(e -> e.getValue().intValue() > 0)
+                .collect(ActivationUtils.entryToMatriz(m, e -> m.getUnoValue()));
     }
 
 }
