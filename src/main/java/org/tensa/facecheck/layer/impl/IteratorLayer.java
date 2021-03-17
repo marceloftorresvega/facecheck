@@ -23,6 +23,7 @@
  */
 package org.tensa.facecheck.layer.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
@@ -232,22 +233,6 @@ public class IteratorLayer<N extends Number> implements LayerConsumer<N>, LayerP
         return this.consumers;
     }
 
-    public LayerProducer<N> getBindProducer() {
-        return bindProducer;
-    }
-
-    public LayerConsumer<N> getBindConsumer() {
-        return bindConsumer;
-    }
-
-    public LayerLearning<N> getBindLearningProducer() {
-        return bindLearningProducer;
-    }
-
-    public LayerLearning<N> getBindLearningConsumer() {
-        return bindLearningConsumer;
-    }
-
     @Override
     public NumericMatriz<N> getWeights() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -260,7 +245,13 @@ public class IteratorLayer<N extends Number> implements LayerConsumer<N>, LayerP
 
     @Override
     public NumericMatriz<N> getError() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        NumericMatriz<N> error2 = null;
+        try (NumericMatriz<N> distanciaE2 = bindLearningProducerLearningData.distanciaE2()) {
+            error2 = distanciaE2.productoEscalar(bindLearningProducerLearningData.mapper(0.5));
+        } catch (IOException ex) {
+            //
+        }
+        return error2;
     }
 
     @Override
@@ -290,6 +281,22 @@ public class IteratorLayer<N extends Number> implements LayerConsumer<N>, LayerP
     @Override
     public List<LayerLearning<N>> getProducers() {
         return bindLearningBackProducers;
+    }
+
+    public LayerProducer<N> getBindProducer() {
+        return bindProducer;
+    }
+
+    public LayerConsumer<N> getBindConsumer() {
+        return bindConsumer;
+    }
+
+    public LayerLearning<N> getBindLearningProducer() {
+        return bindLearningProducer;
+    }
+
+    public LayerLearning<N> getBindLearningConsumer() {
+        return bindLearningConsumer;
     }
 
 }
