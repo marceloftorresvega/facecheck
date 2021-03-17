@@ -26,6 +26,7 @@ package org.tensa.facecheck.activation.utils;
 import java.util.Map;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import org.tensa.tensada.matrix.NumericMatriz;
@@ -57,6 +58,23 @@ public class ActivationUtils {
                 (a, b) -> a,
                 () -> m.instancia(m.getDominio()));
     }
+    
+    /**
+     * retorna colector para stream de dominio, aplica funcion y genera nueva
+     * matriz
+     *
+     * @param <N> Double, Fload o BigDecimal
+     * @param s para generar instancia nueva
+     * @param convert funcion de mapeo recibe indice y suministra nuevo valor
+     * @return Collector basado en toMap Collector
+     */
+    public static <N extends Number> Collector<ParOrdenado, ?, NumericMatriz<N>> domainToMatriz(Supplier<NumericMatriz<N>> s, Function<ParOrdenado, N> convert) {
+        return Collectors.toMap(
+                Function.identity(),
+                convert,
+                (a, b) -> a,
+                s);
+    }
 
     /**
      * retorna colector para stream de Entries de una matriz, aplica funcion y
@@ -74,6 +92,23 @@ public class ActivationUtils {
                 (a, b) -> a,
                 () -> m.instancia(m.getDominio()));
     }
+    
+    /**
+     * retorna colector para stream de Entries de una matriz, aplica funcion y
+     * genera nueva matriz
+     *
+     * @param <N> Double, Fload o BigDecimal
+     * @param s para generar instancia nueva
+     * @param convert funcion de mapeo recibe un Entry y suministra nuevo valor
+     * @return Collector basado en toMap Collector
+     */
+    public static <N extends Number> Collector<? super Map.Entry<ParOrdenado, N>, ?, NumericMatriz<N>> entryToMatriz(Supplier<NumericMatriz<N>> s, Function<Map.Entry<ParOrdenado, N>, N> convert) {
+        return Collectors.toMap(
+                NumericMatriz.Entry::getKey,
+                convert,
+                (a, b) -> a,
+                s);
+    }
 
     /**
      * retorna colector para stream de Entries de una o varias matrices, aplica
@@ -81,7 +116,7 @@ public class ActivationUtils {
      *
      * @param <N> Double, Fload o BigDecimal
      * @param m NumericMatriz solo para generar instancia nueva
-     * @param convert funcion de mapeo recibe Entries duplicados y genera uno
+     * @param resume funcion de mapeo recibe Entries duplicados y genera uno
      * nuevo
      * @return Collector basado en toMap Collector
      */
@@ -91,6 +126,24 @@ public class ActivationUtils {
                 NumericMatriz.Entry::getValue,
                 resume,
                 () -> m.instancia(m.getDominio()));
+    }
+
+    /**
+     * retorna colector para stream de Entries de una o varias matrices, aplica
+     * funcion a los elementos comunes y genera nueva matriz
+     *
+     * @param <N> Double, Fload o BigDecimal
+     * @param s para generar instancia nueva
+     * @param resume funcion de mapeo recibe Entries duplicados y genera uno
+     * nuevo
+     * @return Collector basado en toMap Collector
+     */
+    public static <N extends Number> Collector<? super Map.Entry<ParOrdenado, N>, ?, NumericMatriz<N>> resumeToMatriz(Supplier<NumericMatriz<N>> s, BinaryOperator<N> resume) {
+        return Collectors.toMap(
+                NumericMatriz.Entry::getKey,
+                NumericMatriz.Entry::getValue,
+                resume,
+                s);
     }
 
     /**

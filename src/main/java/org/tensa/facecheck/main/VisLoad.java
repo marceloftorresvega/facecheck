@@ -47,9 +47,12 @@ import javax.swing.table.TableCellRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.activation.Activation;
+import org.tensa.facecheck.activation.impl.IsMaxActivationImpl;
+import org.tensa.facecheck.activation.impl.IsMinActivationImpl;
 import org.tensa.facecheck.activation.impl.LinealActivationImpl;
 import org.tensa.facecheck.activation.impl.ReluActivationImpl;
 import org.tensa.facecheck.activation.impl.SigmoidActivationImpl;
+import org.tensa.facecheck.activation.impl.SoftMaxActivationImpl;
 import org.tensa.facecheck.activation.impl.SoftPlusActivationImpl;
 import org.tensa.facecheck.activation.impl.SoftSignActivationImpl;
 import org.tensa.facecheck.activation.impl.TanHyperActivationImpl;
@@ -1001,9 +1004,15 @@ public class VisLoad extends javax.swing.JFrame {
                 return new SoftPlusActivationImpl<>();
             case SOFT_SIGN:
                 return new SoftSignActivationImpl<>();
+            case SOFT_MAX:
+                return new SoftMaxActivationImpl<>();
             case TAN_HYPER:
-            default:
                 return new TanHyperActivationImpl<>();
+            case IS_MIN:
+                return new IsMinActivationImpl<>();
+            case IS_MAX:
+            default:
+                return new IsMaxActivationImpl<>();
         }
     }
 
