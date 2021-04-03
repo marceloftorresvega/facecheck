@@ -43,7 +43,10 @@ public class SigmoidActivationImpl<N extends Number> implements Activation<N> {
 
     protected final Logger log = LoggerFactory.getLogger(SigmoidActivationImpl.class);
 
-    public SigmoidActivationImpl() {
+    protected final N gain;
+
+    public SigmoidActivationImpl(N gain) {
+        this.gain = gain;
     }
 
     @Override
@@ -53,7 +56,7 @@ public class SigmoidActivationImpl<N extends Number> implements Activation<N> {
                         m,
                         (e) -> m.inversoMultiplicativo(m.sumaDirecta(
                                 m.getUnoValue(),
-                                m.mapper(Math.exp(-e.getValue().doubleValue()))
+                                m.mapper(Math.exp(-m.productoDirecto(e.getValue(), gain).doubleValue()))
                         ))
                 ));
     }
@@ -68,11 +71,13 @@ public class SigmoidActivationImpl<N extends Number> implements Activation<N> {
                         .collect(ActivationUtils.entryToMatriz(
                                 m1,
                                 (e) -> m1.productoDirecto(
-                                        e.getValue(),
+                                        gain,
                                         m1.productoDirecto(
-                                                output.get(e.getKey()),
-                                                semiResta.get(e.getKey()))
-                                )));
+                                                e.getValue(),
+                                                m1.productoDirecto(
+                                                        output.get(e.getKey()),
+                                                        semiResta.get(e.getKey()))
+                                        ))));
             } catch (IOException ex) {
                 log.error("learningFunctionOperation", ex);
                 throw new RuntimeException(ex);

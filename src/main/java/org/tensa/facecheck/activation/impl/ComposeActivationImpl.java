@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2020 Marcelo.
+ * Copyright 2021 Marcelo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,33 +25,40 @@ package org.tensa.facecheck.activation.impl;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import org.tensa.facecheck.activation.Activation;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
- * Implementacion de funcion de activacion lineal
+ *
  * @author Marcelo
  * @param <N>
  */
-public class LinealActivationImpl<N extends Number> implements org.tensa.facecheck.activation.Activation<N> {
+public class ComposeActivationImpl<N extends Number> implements Activation<N> {
 
-    public LinealActivationImpl() {
+    private final Activation<N> inicial;
+    private final Activation<N> ultima;
+
+    public ComposeActivationImpl(Activation<N> inicial, Activation<N> ultima) {
+        if(!inicial.isOptimized()) {
+            throw new IllegalArgumentException("parametro inicial debe ser optimizado.");
+        }
+        this.inicial = inicial;
+        this.ultima = ultima;
     }
     
-
     @Override
     public Function<NumericMatriz<N>, NumericMatriz<N>> getActivation() {
-        return Function.identity();
+        return ultima.getActivation().compose(inicial.getActivation());
     }
 
     @Override
     public BiFunction<NumericMatriz<N>, NumericMatriz<N>, NumericMatriz<N>> getError() {
-        return (learning,neta) -> learning;
+        return (learning, output) -> ultima.getError().andThen(m -> inicial.getError().apply(learning.matrizUno(), m)).apply(learning, output);
     }
 
     @Override
     public boolean isOptimized() {
-        return false;
+        return ultima.isOptimized();
     }
-
-
+    
 }

@@ -63,12 +63,12 @@ public class SoftMaxActivationImpl<N extends Number> implements Activation<N> {
 
     @Override
     public BiFunction<NumericMatriz<N>, NumericMatriz<N>, NumericMatriz<N>> getError() {
-        return (leraning, output) -> leraning.instancia(output.getDominio());
+        return (leraning, neta) -> leraning.productoEscalar(neta.inversoAditivo(neta.getUnoValue()));
     }
 
     @Override
     public boolean isOptimized() {
-        return true;
+        return false;
     }
 
 }

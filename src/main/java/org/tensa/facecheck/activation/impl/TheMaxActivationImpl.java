@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2020 Marcelo.
+ * Copyright 2021 Marcelo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,33 +25,38 @@ package org.tensa.facecheck.activation.impl;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import org.tensa.facecheck.activation.Activation;
+import static org.tensa.facecheck.activation.utils.ActivationUtils.applyToMatriz;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
- * Implementacion de funcion de activacion lineal
+ *
  * @author Marcelo
  * @param <N>
  */
-public class LinealActivationImpl<N extends Number> implements org.tensa.facecheck.activation.Activation<N> {
+public class TheMaxActivationImpl<N extends Number> implements Activation<N> {
 
-    public LinealActivationImpl() {
+    private final IsMaxActivationImpl<N> isMaxActivation;
+
+    public TheMaxActivationImpl() {
+        this.isMaxActivation = new IsMaxActivationImpl<>();
     }
-    
 
     @Override
     public Function<NumericMatriz<N>, NumericMatriz<N>> getActivation() {
-        return Function.identity();
+        return m -> isMaxActivation.getActivation()
+                .andThen(o -> applyToMatriz(o, i -> m.get(i)))
+                .apply(m);
     }
 
     @Override
     public BiFunction<NumericMatriz<N>, NumericMatriz<N>, NumericMatriz<N>> getError() {
-        return (learning,neta) -> learning;
+        return (learning, output) -> applyToMatriz(output, o -> learning.get(o.getKey()));
     }
 
     @Override
     public boolean isOptimized() {
-        return false;
+        return true;
     }
-
 
 }

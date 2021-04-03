@@ -47,6 +47,7 @@ import javax.swing.table.TableCellRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.activation.Activation;
+import org.tensa.facecheck.activation.impl.ComposeActivationImpl;
 import org.tensa.facecheck.activation.impl.IsMaxActivationImpl;
 import org.tensa.facecheck.activation.impl.IsMinActivationImpl;
 import org.tensa.facecheck.activation.impl.LinealActivationImpl;
@@ -55,7 +56,10 @@ import org.tensa.facecheck.activation.impl.SigmoidActivationImpl;
 import org.tensa.facecheck.activation.impl.SoftMaxActivationImpl;
 import org.tensa.facecheck.activation.impl.SoftPlusActivationImpl;
 import org.tensa.facecheck.activation.impl.SoftSignActivationImpl;
+import org.tensa.facecheck.activation.impl.StepActivationImpl;
 import org.tensa.facecheck.activation.impl.TanHyperActivationImpl;
+import org.tensa.facecheck.activation.impl.TheMaxActivationImpl;
+import org.tensa.facecheck.activation.impl.TheMinActivationImpl;
 import org.tensa.facecheck.filter.MaskOp;
 import org.tensa.facecheck.layer.impl.OutputScale;
 import org.tensa.facecheck.weight.WeightModelingStyle;
@@ -998,8 +1002,26 @@ public class VisLoad extends javax.swing.JFrame {
                 return new LinealActivationImpl<>();
             case RELU:
                 return new ReluActivationImpl<>();
-            case SIGMOIDE:
-                return new SigmoidActivationImpl<>();
+            case SIGMOIDE_00_1:
+                return new SigmoidActivationImpl<>(.1f);
+            case SIGMOIDE_00_5:
+                return new SigmoidActivationImpl<>(.5f);
+            case SIGMOIDE_00_8:
+                return new SigmoidActivationImpl<>(.8f);
+            case SIGMOIDE_01_0:
+                return new SigmoidActivationImpl<>(1f);
+            case SIGMOIDE_02_00:
+                return new SigmoidActivationImpl<>(2f);
+            case SIGMOIDE_04_00:
+                return new SigmoidActivationImpl<>(4f);
+            case SIGMOIDE_08_00:
+                return new SigmoidActivationImpl<>(8f);
+            case SIGMOIDE_16_00:
+                return new SigmoidActivationImpl<>(16f);
+            case SIGMOIDE_32_00:
+                return new SigmoidActivationImpl<>(32f);
+            case SIGMOIDE_64_00:
+                return new SigmoidActivationImpl<>(64f);
             case SOFT_PLUS:
                 return new SoftPlusActivationImpl<>();
             case SOFT_SIGN:
@@ -1011,8 +1033,18 @@ public class VisLoad extends javax.swing.JFrame {
             case IS_MIN:
                 return new IsMinActivationImpl<>();
             case IS_MAX:
-            default:
                 return new IsMaxActivationImpl<>();
+            case THE_MIN:
+                return new TheMinActivationImpl<>();
+            case THE_MAX:
+                return new TheMaxActivationImpl<>();
+            case THE_MIN_THYP:
+                return new ComposeActivationImpl<>(new TheMinActivationImpl<>(),new TanHyperActivationImpl<>());
+            case THE_MAX_THYP:
+                return new ComposeActivationImpl<>(new TheMaxActivationImpl<>(),new TanHyperActivationImpl<>());
+            case STEP:
+            default:
+                return new StepActivationImpl<>();
         }
     }
 
