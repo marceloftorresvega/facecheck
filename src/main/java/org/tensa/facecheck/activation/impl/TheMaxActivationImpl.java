@@ -23,10 +23,14 @@
  */
 package org.tensa.facecheck.activation.impl;
 
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.tensa.facecheck.activation.Activation;
 import static org.tensa.facecheck.activation.utils.ActivationUtils.applyToMatriz;
+import static org.tensa.facecheck.activation.utils.ActivationUtils.entryToMatriz;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
@@ -36,17 +40,20 @@ import org.tensa.tensada.matrix.NumericMatriz;
  */
 public class TheMaxActivationImpl<N extends Number> implements Activation<N> {
 
-    private final IsMaxActivationImpl<N> isMaxActivation;
-
-    public TheMaxActivationImpl() {
-        this.isMaxActivation = new IsMaxActivationImpl<>();
-    }
-
     @Override
     public Function<NumericMatriz<N>, NumericMatriz<N>> getActivation() {
-        return m -> isMaxActivation.getActivation()
-                .andThen(o -> applyToMatriz(o, i -> m.get(i)))
-                .apply(m);
+        return this::theMax;
+    }
+
+    private NumericMatriz<N> theMax(NumericMatriz<N> m) {
+        return m.entrySet().stream()
+                .collect(Collectors.groupingBy(
+                        e -> e.getKey().getColumna(),
+                        Collectors.maxBy((e1, e2) -> Double.compare(e1.getValue().doubleValue(), e2.getValue().doubleValue()))
+                )).values().stream()
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(entryToMatriz(m, Entry::getValue));
     }
 
     @Override
