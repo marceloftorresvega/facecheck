@@ -223,20 +223,22 @@ public abstract class AbstractManager<N extends Number> {
      */
     public NumericMatriz<N> createMatrix(int innerSize, int outerSize, UnaryOperator<NumericMatriz<N>> creating, UnaryOperator<NumericMatriz<N>> modeling) {
         log.info("iniciando 1..<{},{}>", outerSize, innerSize);
-        try (final BlockMatriz<N> hiddenBlockMatriz = new BlockMatriz<>(new Dominio(outerSize, 1))) {
-            hiddenBlockMatriz.getDominio().forEach((ParOrdenado idx) -> {
-                hiddenBlockMatriz.put(idx, supplier.apply(new Dominio(1, innerSize)));
+        try (final Matriz<Dominio> dominioMatriz = new Matriz<>(new Dominio(outerSize, 1))) {
+            dominioMatriz.getDominio().forEach(idx -> {
+                dominioMatriz.put(idx, new Dominio(1, innerSize));
             });
             log.info("iniciando 2..<{},{}>", outerSize, innerSize);
             return creating.compose(supplier).andThen((NumericMatriz<N> m) -> {
-                hiddenBlockMatriz.splitIn(m);
-                hiddenBlockMatriz.replaceAll((ParOrdenado idx, Matriz<N> sm) -> modeling.apply((NumericMatriz<N>) sm));
-                return hiddenBlockMatriz.build();
-            }).andThen((Matriz<N> m) -> {
-                return supplier.andThen((NumericMatriz<N> fm) -> {
-                    fm.putAll(m);
-                    return fm;
-                }).apply(m.getDominio());
+                BlockMatriz<N> hiddenBlockMatriz = BlockMatriz.wrapper(dominioMatriz, m);
+                hiddenBlockMatriz.forEach((ix, sm) -> {
+                    NumericMatriz<N> nm = supplier.apply(sm.getDominio());
+                    nm.putAll(sm);
+                    NumericMatriz<N> fm = modeling.apply(nm);
+                    sm.putAll(fm);
+                    nm.clear();
+                    fm.clear();
+                });
+                return m;
             }).apply(new Dominio(outerSize, innerSize));
         } catch (IOException ex) {
             log.error("createMatrix", ex);
