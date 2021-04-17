@@ -24,8 +24,10 @@
 package org.tensa.facecheck.network;
 
 /**
+ * Estrategias de aprendisaje
  *
  * @author Marcelo
+ * @param <N>
  */
 public interface LearningEstrategy<N extends Number> {
 
@@ -34,10 +36,11 @@ public interface LearningEstrategy<N extends Number> {
 
     /**
      * obtiene nuevo factor de aprendisaje
+     *
      * @param index the value of index - iteracion o tiempo
      * @param factor the value of factor - factor actualmente utilizado
      * @return the N
      */
     N updateFactor(int index, N factor);
-    
+
 }
