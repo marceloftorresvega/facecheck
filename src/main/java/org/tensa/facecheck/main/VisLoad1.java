@@ -396,7 +396,7 @@ public class VisLoad1 extends javax.swing.JFrame {
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonSalvaImagen)
-                .addContainerGap(347, Short.MAX_VALUE))
+                .addContainerGap(379, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -508,7 +508,7 @@ public class VisLoad1 extends javax.swing.JFrame {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabelNumOutPixels)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 248, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 264, Short.MAX_VALUE)
                 .addComponent(jButtonAddRow)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonRemoveRow)
@@ -591,7 +591,7 @@ public class VisLoad1 extends javax.swing.JFrame {
                 .addComponent(cleanCopy)
                 .addGap(18, 18, 18)
                 .addComponent(actualizacion)
-                .addContainerGap(106, Short.MAX_VALUE))
+                .addContainerGap(151, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -631,7 +631,7 @@ public class VisLoad1 extends javax.swing.JFrame {
             }
         });
 
-        duplicaSelectionButton.setText("Duplicar Selección");
+        duplicaSelectionButton.setText("Duplicar selección");
         duplicaSelectionButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 duplicaSelectionButtonActionPerformed(evt);
@@ -641,9 +641,11 @@ public class VisLoad1 extends javax.swing.JFrame {
         selectionTypeButtonGroup.add(asSampleToggleButton);
         asSampleToggleButton.setSelected(true);
         asSampleToggleButton.setText("Muestra");
+        asSampleToggleButton.setToolTipText("Cada selección es una muestra");
 
         selectionTypeButtonGroup.add(asPartToggleButton);
         asPartToggleButton.setText("Porción");
+        asPartToggleButton.setToolTipText("La imajen completa es una muestra");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -655,14 +657,14 @@ public class VisLoad1 extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(addSelectionButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(deleteSelectionButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(duplicaSelectionButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(deleteSelectionButton)
                 .addGap(18, 18, 18)
                 .addComponent(asSampleToggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(asPartToggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(124, Short.MAX_VALUE))
+                .addContainerGap(141, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -799,6 +801,8 @@ public class VisLoad1 extends javax.swing.JFrame {
         }
 
         jPanelCard.add(jScrollPane1, "cardPesos");
+
+        jProgressBar1.setStringPainted(true);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

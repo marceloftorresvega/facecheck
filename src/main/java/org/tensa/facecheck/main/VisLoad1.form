@@ -287,7 +287,7 @@
                           <Component id="jSeparator2" min="-2" pref="17" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jButtonSalvaImagen" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="347" max="32767" attributes="0"/>
+                          <EmptySpace pref="379" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -408,7 +408,7 @@
                           <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jLabelNumOutPixels" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="248" max="32767" attributes="0"/>
+                          <EmptySpace pref="264" max="32767" attributes="0"/>
                           <Component id="jButtonAddRow" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jButtonRemoveRow" min="-2" max="-2" attributes="0"/>
@@ -541,7 +541,7 @@
                           <Component id="cleanCopy" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="actualizacion" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="106" max="32767" attributes="0"/>
+                          <EmptySpace pref="151" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -636,14 +636,14 @@
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="addSelectionButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="deleteSelectionButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="duplicaSelectionButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="deleteSelectionButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="asSampleToggleButton" min="-2" pref="111" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="asPartToggleButton" min="-2" pref="111" max="-2" attributes="0"/>
-                          <EmptySpace pref="124" max="32767" attributes="0"/>
+                          <EmptySpace pref="141" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -691,7 +691,7 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="duplicaSelectionButton">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Duplicar Selecci&#xf3;n"/>
+                    <Property name="text" type="java.lang.String" value="Duplicar selecci&#xf3;n"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="duplicaSelectionButtonActionPerformed"/>
@@ -704,6 +704,7 @@
                     </Property>
                     <Property name="selected" type="boolean" value="true"/>
                     <Property name="text" type="java.lang.String" value="Muestra"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Cada selecci&#xf3;n es una muestra"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JToggleButton" name="asPartToggleButton">
@@ -712,6 +713,7 @@
                       <ComponentRef name="selectionTypeButtonGroup"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Porci&#xf3;n"/>
+                    <Property name="toolTipText" type="java.lang.String" value="La imajen completa es una muestra"/>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -917,6 +919,9 @@
       </SubComponents>
     </Container>
     <Component class="javax.swing.JProgressBar" name="jProgressBar1">
+      <Properties>
+        <Property name="stringPainted" type="boolean" value="true"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>
