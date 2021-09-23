@@ -23,7 +23,6 @@
  */
 package org.tensa.facecheck.layer.impl;
 
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -85,6 +84,7 @@ public class DataBufferOutputLayer<N extends Number> implements LayerConsumer<N>
         }
     }
 
+    @Deprecated
     public void bigDecimalWrite(ObjectOutputStream os, N n) {
         try {
             os.writeObject(((BigDecimal) n));

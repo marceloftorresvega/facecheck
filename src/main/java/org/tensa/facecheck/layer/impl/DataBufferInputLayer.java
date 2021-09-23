@@ -103,6 +103,7 @@ public class DataBufferInputLayer<N extends Number> implements LayerProducer<N> 
         }
     }
 
+    @Deprecated
     public N bigDecimalRead(ObjectInputStream is) {
         try {
             return (N) (BigDecimal) is.readObject();
