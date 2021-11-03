@@ -29,11 +29,17 @@ import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.util.function.BiConsumer;
+import org.tensa.facecheck.buffer.PlaneBufferedData;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
+ * Capa usada para guardar datos en un outputStream, originalmente diseñado
+ * PlaneBufferedData, puede funcionar independientemente con cualquier
+ * OutputStream
  *
+ * @see PlaneBufferedData
+ * @see OutputStream
  * @author Marcelo
  * @param <N>
  */
@@ -43,6 +49,13 @@ public class DataBufferOutputLayer<N extends Number> implements LayerConsumer<N>
     private final BiConsumer<ObjectOutputStream, N> writed;
     private NumericMatriz<N> inputLayer;
 
+    /**
+     * crea un DataBufferOutputLayer en base al OutputStream del
+     * PlaneBufferedData y un writed
+     *
+     * @param bos del PlaneBufferedData
+     * @param writed floatWrite|doubleWrite
+     */
     public DataBufferOutputLayer(OutputStream bos, BiConsumer<ObjectOutputStream, N> writed) {
         this.bos = bos;
         this.writed = writed;
@@ -57,7 +70,7 @@ public class DataBufferOutputLayer<N extends Number> implements LayerConsumer<N>
 
     @Override
     public void layerComplete(int status) {
-        if(LayerConsumer.ERROR_STATUS == status) {
+        if (LayerConsumer.ERROR_STATUS == status) {
             return;
         }
 

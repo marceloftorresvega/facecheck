@@ -30,7 +30,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
+ * Buffer de datos que provee inputStream y outputStream para transferencia de
+ * datos con economia de espacio con uso de subplanos, pensado para
+ * convoluciones, este buffer funciona independiennte de datos float o double
  *
+ * @see InputStream
+ * @see OutputStream
+ * @see Double
+ * @see Float
  * @author Marcelo
  */
 public class PlaneBufferedData {
@@ -46,18 +53,59 @@ public class PlaneBufferedData {
     private final int samples;
     private final byte[] data;
 
+    /**
+     * crea un nuevo plano limitado por sus parametros, asume la cantidad de
+     * samples y bandas en 1
+     *
+     * @param width ancho del plano
+     * @param height alto del plano
+     * @param typeSize tamaño del dato a guardar
+     */
     public PlaneBufferedData(int width, int height, int typeSize) {
         this(width, height, typeSize, 1);
     }
 
+    /**
+     * crea un nuevo plano limitado por sus parametros, asume la cantidad de
+     * samples 1
+     *
+     * @param width ancho del plano
+     * @param height alto del plano
+     * @param typeSize tamaño del dato a guardar
+     * @param bands nuero de bandas o canales
+     */
     public PlaneBufferedData(int width, int height, int typeSize, int bands) {
         this(width, height, typeSize, bands, 1);
     }
 
+    /**
+     * crea un nuevo plano limitado por sus parametros
+     *
+     * @param width ancho del plano
+     * @param height alto del plano
+     * @param typeSize tamaño del dato a guardar
+     * @param bands nuero de bandas o canales
+     * @param samples numero de muestras totales
+     */
     public PlaneBufferedData(int width, int height, int typeSize, int bands, int samples) {
         this(0, 0, width, height, width, height, typeSize, bands, samples, new byte[width * height * typeSize * bands * samples]);
     }
 
+    /**
+     * crea un nuevo plano limitado por sus parametros
+     *
+     * @param offx limite superior izquierdo de la ventana de datos a acceder
+     * @param offy limite superior izquierdo de la ventana de datos a acceder
+     * @param width ancho del plano
+     * @param height alto del plano
+     * @param windWidth ancho y alto limite de la ventana de datos a acceder
+     * @param windHeight ancho y alto limite de la ventana de datos a acceder
+     * @param typeSize tamaño del dato a guardar
+     * @param bands nuero de bandas o canales
+     * @param samples numero de muestras totales
+     * @param data datos originales que seran accedidos con los nuevos limites
+     * de la ventana definida
+     */
     public PlaneBufferedData(int offx, int offy, int width, int height, int windWidth, int windHeight, int typeSize, int bands, int samples, byte[] data) {
         this.offx = offx;
         this.offy = offy;
@@ -71,42 +119,59 @@ public class PlaneBufferedData {
         this.data = data;
     }
 
+    /**
+     * produce un PlaneBufferedData basado en un subconcunto de datos del
+     * PlaneBufferedData actual, limitado por la ventana indicada en sus
+     * parametros
+     *
+     * @param x limite superior izquierdo de la ventana
+     * @param y limite superior izquierdo de la ventana
+     * @param w ancho de la ventana
+     * @param h alto de la ventana
+     * @return PlaneBufferedData (sub plano)
+     */
     public PlaneBufferedData getSubPlaneBufferedData(int x, int y, int w, int h) {
-        if (x<0) {
+        if (x < 0) {
             throw new IllegalArgumentException("x is negative");
         }
-        
-        if (y<0) {
+
+        if (y < 0) {
             throw new IllegalArgumentException("y is negative");
         }
-        
-        if (w<0) {
+
+        if (w < 0) {
             throw new IllegalArgumentException("width is negative");
         }
-        
-        if (h<0) {
+
+        if (h < 0) {
             throw new IllegalArgumentException("height is negative");
         }
-        
-        if (windWidth<w) {
+
+        if (windWidth < w) {
             throw new IllegalArgumentException("width too big");
         }
-        
-        if (windHeight<h) {
+
+        if (windHeight < h) {
             throw new IllegalArgumentException("height too big");
         }
-        
-        if (windWidth<x) {
+
+        if (windWidth < x) {
             throw new IllegalArgumentException("x too big");
         }
-        
-        if (windHeight<y) {
+
+        if (windHeight < y) {
             throw new IllegalArgumentException("y too big");
         }
-        
+
         return new PlaneBufferedData(x + offx, y + offy, width, height, w, h, typeSize, bands, samples, data);
     }
 
+    /**
+     * provee OutputStream que apunta el repositorio interno del
+     * PlaneBufferedData
+     *
+     * @return OutputStream
+     */
     public OutputStream getOutputStreamBuffer() {
         return new BufferedOutputStream(new OutputStream() {
             private int count = 0;
@@ -135,6 +200,12 @@ public class PlaneBufferedData {
         }, windWidth * windHeight * bands * typeSize);
     }
 
+    /**
+     * provee InputStream que apunta al repositorio interno del
+     * PlaneBufferedData
+     *
+     * @return InputStream
+     */
     public InputStream getInputStreamBuffer() {
         return new BufferedInputStream(new InputStream() {
             private int count = 0;

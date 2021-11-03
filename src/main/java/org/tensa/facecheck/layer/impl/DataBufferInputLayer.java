@@ -32,12 +32,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import org.tensa.facecheck.buffer.PlaneBufferedData;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerProducer;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
+ * capa que obtiene datos de un repositorio inputStream, originalmente diseñado
+ * para PlaneBufferedData, puede funcionar independiente para cualquier
+ * InputStream
  *
+ * @see PlaneBufferedData
+ * @see InputStream
  * @author Marcelo
  * @param <N>
  */
@@ -49,6 +55,14 @@ public class DataBufferInputLayer<N extends Number> implements LayerProducer<N> 
     private final List<LayerConsumer<N>> consumers;
     private final Supplier<NumericMatriz<N>> supplier;
 
+    /**
+     * define una DataBufferInputLayer a partir del inputStream y del readed, el
+     * suplier del output debe coincidir con este ultimo
+     *
+     * @param inputStream del PlaneBufferedData
+     * @param readed floatRead|doubleRead
+     * @param supplier
+     */
     public DataBufferInputLayer(InputStream inputStream, Function<ObjectInputStream, N> readed, Supplier<NumericMatriz<N>> supplier) {
         this.inputStream = inputStream;
         this.readed = readed;
@@ -75,7 +89,7 @@ public class DataBufferInputLayer<N extends Number> implements LayerProducer<N> 
                 lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
             }
         } catch (IOException | UncheckedIOException ex) {
-            
+
 //            for (LayerConsumer<N> lc : consumers) {
 //                lc.layerComplete(LayerConsumer.ERROR_STATUS);
 //            }
