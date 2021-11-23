@@ -24,8 +24,12 @@
 package org.tensa.facecheck.network.impl;
 
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.tensa.facecheck.layer.LayerProducer;
 import org.tensa.facecheck.layer.impl.DiffLayer;
 import org.tensa.facecheck.layer.impl.HiddenLayer;
 import org.tensa.facecheck.layer.impl.OutputScale;
@@ -40,6 +44,7 @@ import org.tensa.tensada.matrix.ParOrdenado;
  * back propagation inicial
  *
  * @author Marcelo
+ * @param <N>
  */
 public class ManagerBackPropImpl<N extends Number> extends AbstractManager<N> {
 
@@ -138,19 +143,15 @@ public class ManagerBackPropImpl<N extends Number> extends AbstractManager<N> {
 
                         simplePixelsInputLayer.startProduction();
 
-//                        try {
-//                            simplePixelsInputLayer.getOutputLayer().close();
-//                            simplePixelsCompareLayer.getOutputLayer().close();
-//                            for (int k = 1; k < weights.length; k++) {
-//                                hiddenLayers[k].getPropagationError().close();
-//                                hiddenLayers[k].getOutputLayer().close();
-//                            }
-//                        } catch (IOException ex) {
-//                            log.error(ex.getMessage(),ex);
-//                        } catch (NullPointerException ex) {
-//                            log.error(ex.getMessage(),ex);
-//                            
-//                        }
+                        Stream.of(simplePixelsInputLayer, simplePixelsCompareLayer)
+                                .map(LayerProducer::getOutputLayer)
+                                .filter(m -> Objects.nonNull(m))
+                                .forEach(NumericMatriz::clear);
+
+                        Arrays.stream(hiddenLayers)
+                                .flatMap(l -> Stream.of(l.getPropagationError(), l.getOutputLayer()))
+                                .filter(m -> Objects.nonNull(m))
+                                .forEach(NumericMatriz::clear);
                     });
 
         }

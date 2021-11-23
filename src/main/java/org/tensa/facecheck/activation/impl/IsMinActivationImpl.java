@@ -23,13 +23,13 @@
  */
 package org.tensa.facecheck.activation.impl;
 
-import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.tensa.facecheck.activation.Activation;
+import static org.tensa.facecheck.activation.utils.ActivationUtils.entryToMatriz;
 import org.tensa.tensada.matrix.NumericMatriz;
-import org.tensa.tensada.matrix.ParOrdenado;
 
 /**
  * retorna matriz de resultados basados en la deteccion del valor mas bajo
@@ -47,22 +47,13 @@ public class IsMinActivationImpl<N extends Number> implements Activation<N> {
 
     private NumericMatriz<N> getIsMin(NumericMatriz<N> m) {
         return m.entrySet().stream()
-                .collect(
-                        Collectors.groupingBy(
-                                (Entry<ParOrdenado, N> e) -> e.getKey().getColumna(),
-                                Collectors.collectingAndThen(
-                                        Collectors.minBy((e1, e2) -> Double.compare(e1.getValue().doubleValue(), e2.getValue().doubleValue())),
-                                        o -> o.get().getKey())
-                        )
-                ).values().stream()
-                .collect(
-                        Collectors.collectingAndThen(
-                                Collectors.toMap(
-                                        e -> e,
-                                        e -> m.getUnoValue()),
-                                pm -> m.instancia(m.getDominio(), pm)
-                        )
-                );
+                .collect(Collectors.groupingBy(
+                        e -> e.getKey().getColumna(),
+                        Collectors.minBy((e1, e2) -> Double.compare(e1.getValue().doubleValue(), e2.getValue().doubleValue()))
+                )).values().stream()
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(entryToMatriz(m, e -> m.getUnoValue()));
     }
 
     @Override

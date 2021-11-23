@@ -23,42 +23,42 @@
  */
 package org.tensa.facecheck.activation.impl;
 
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.tensa.facecheck.activation.Activation;
+import static org.tensa.facecheck.activation.utils.ActivationUtils.applyToMatriz;
 import static org.tensa.facecheck.activation.utils.ActivationUtils.entryToMatriz;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
- * retorna matriz de resultados basados en la deteccion del valor mas alto
- * dentro de cada columna
  *
  * @author Marcelo
- * @param <N> clase de nummero utilizado
+ * @param <N>
  */
-public class IsMaxActivationImpl<N extends Number> implements Activation<N> {
+public class TheMinActivationImpl<N extends Number> implements Activation<N> {
 
     @Override
     public Function<NumericMatriz<N>, NumericMatriz<N>> getActivation() {
-        return this::getIsMax;
+        return this::theMin;
     }
 
-    private NumericMatriz<N> getIsMax(NumericMatriz<N> m) {
+    private NumericMatriz<N> theMin(NumericMatriz<N> m) {
         return m.entrySet().stream()
                 .collect(Collectors.groupingBy(
                         e -> e.getKey().getColumna(),
-                        Collectors.maxBy((e1, e2) -> Double.compare(e1.getValue().doubleValue(), e2.getValue().doubleValue()))
+                        Collectors.minBy((e1, e2) -> Double.compare(e1.getValue().doubleValue(), e2.getValue().doubleValue()))
                 )).values().stream()
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .collect(entryToMatriz(m, e -> m.getUnoValue()));
+                .collect(entryToMatriz(m, Entry::getValue));
     }
 
     @Override
     public BiFunction<NumericMatriz<N>, NumericMatriz<N>, NumericMatriz<N>> getError() {
-        return (leraning, output) -> leraning.instancia(output.getDominio());
+        return (learning, output) -> applyToMatriz(output, o -> learning.get(o.getKey()));
     }
 
     @Override
