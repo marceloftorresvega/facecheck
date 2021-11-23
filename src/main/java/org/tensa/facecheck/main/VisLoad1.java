@@ -33,6 +33,7 @@ import javax.swing.AbstractCellEditor;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
@@ -618,6 +619,7 @@ public class VisLoad1 extends javax.swing.JFrame {
         });
 
         addSelectionButton.setText("Agrega selección");
+        addSelectionButton.setEnabled(seleccion.isSelected());
         addSelectionButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addSelectionButtonActionPerformed(evt);
@@ -625,6 +627,7 @@ public class VisLoad1 extends javax.swing.JFrame {
         });
 
         deleteSelectionButton.setText("Quita selección");
+        deleteSelectionButton.setEnabled(seleccion.isSelected());
         deleteSelectionButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteSelectionButtonActionPerformed(evt);
@@ -632,6 +635,7 @@ public class VisLoad1 extends javax.swing.JFrame {
         });
 
         duplicaSelectionButton.setText("Duplicar selección");
+        duplicaSelectionButton.setEnabled(seleccion.isSelected());
         duplicaSelectionButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 duplicaSelectionButtonActionPerformed(evt);
@@ -642,10 +646,12 @@ public class VisLoad1 extends javax.swing.JFrame {
         asSampleToggleButton.setSelected(true);
         asSampleToggleButton.setText("Muestra");
         asSampleToggleButton.setToolTipText("Cada selección es una muestra");
+        asSampleToggleButton.setEnabled(seleccion.isSelected());
 
         selectionTypeButtonGroup.add(asPartToggleButton);
         asPartToggleButton.setText("Porción");
         asPartToggleButton.setToolTipText("La imajen completa es una muestra");
+        asPartToggleButton.setEnabled(seleccion.isSelected());
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -1155,6 +1161,10 @@ public class VisLoad1 extends javax.swing.JFrame {
     private void vistaMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_vistaMouseReleased
         int x = evt.getX();
         int y = evt.getY();
+        if (Objects.isNull(buffImage)) {
+            JOptionPane.showMessageDialog(null, "Imagen no seleccionada");
+            return;
+        }
         float escala = (float) buffImage.getWidth() / (float) vista.getBounds().width;
 
         switch (areaStatus) {
@@ -1233,10 +1243,28 @@ public class VisLoad1 extends javax.swing.JFrame {
 
     private void seleccionCopyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seleccionCopyActionPerformed
         seleccion.setSelected(seleccionCopy.isSelected());
+        addSelectionButton.setEnabled(seleccion.isSelected());
+        duplicaSelectionButton.setEnabled(seleccion.isSelected());
+        deleteSelectionButton.setEnabled(seleccion.isSelected());
+        asSampleToggleButton.setEnabled(seleccion.isSelected());
+        asPartToggleButton.setEnabled(seleccion.isSelected());
+        
+        java.awt.EventQueue.invokeLater(() -> {
+            vista.repaint();
+        });
     }//GEN-LAST:event_seleccionCopyActionPerformed
 
     private void seleccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seleccionActionPerformed
         seleccionCopy.setSelected(seleccion.isSelected());
+        addSelectionButton.setEnabled(seleccion.isSelected());
+        duplicaSelectionButton.setEnabled(seleccion.isSelected());
+        deleteSelectionButton.setEnabled(seleccion.isSelected());
+        asSampleToggleButton.setEnabled(seleccion.isSelected());
+        asPartToggleButton.setEnabled(seleccion.isSelected());
+        
+        java.awt.EventQueue.invokeLater(() -> {
+            vista.repaint();
+        });
     }//GEN-LAST:event_seleccionActionPerformed
 
     private void addSelectionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addSelectionButtonActionPerformed
@@ -1560,56 +1588,59 @@ public class VisLoad1 extends javax.swing.JFrame {
                     localg.drawImage(buffImage, rop, 0, 0);
                     LinkedList<Rectangle> areaQeue = networkManager.getAreaQeue();
 
-                    areaQeue.forEach(a -> {
-                        Rectangle evalArea = new Rectangle(a);
-                        evalArea.x = (int) (evalArea.x * escala);
-                        evalArea.y = (int) (evalArea.y * escala);
-                        evalArea.width = (int) (evalArea.width * escala);
-                        evalArea.height = (int) (evalArea.height * escala);
-                        switch (areaStatus) {
-                            case MODIFY:
-                                if (a.equals(learnArea)) {
-                                    leftTopPoint.setSize(10, 10);
-                                    leftTopPoint.setLocation(evalArea.x - 5, evalArea.y - 5);
+                    if (seleccion.isSelected()){
+                        areaQeue.forEach(a -> {
+                            Rectangle evalArea = new Rectangle(a);
+                            evalArea.x = (int) (evalArea.x * escala);
+                            evalArea.y = (int) (evalArea.y * escala);
+                            evalArea.width = (int) (evalArea.width * escala);
+                            evalArea.height = (int) (evalArea.height * escala);
+                            switch (areaStatus) {
+                                case MODIFY:
+                                    if (a.equals(learnArea)) {
+                                        leftTopPoint.setSize(10, 10);
+                                        leftTopPoint.setLocation(evalArea.x - 5, evalArea.y - 5);
 
-                                    widthHwightpoint.setSize(10, 10);
-                                    widthHwightpoint.setLocation(
-                                            evalArea.width + evalArea.x - 5,
-                                            evalArea.height + evalArea.y - 5);
+                                        widthHwightpoint.setSize(10, 10);
+                                        widthHwightpoint.setLocation(
+                                                evalArea.width + evalArea.x - 5,
+                                                evalArea.height + evalArea.y - 5);
 
+                                        localg.setColor(Color.RED);
+                                    } else {
+                                        localg.setColor(Color.BLACK);
+                                    }
+                                    break;
+                                case MODIFY_POSITION:
+                                case MODIFY_SIZE:
+                                    if (a.equals(learnArea)) {
+                                        localg.setColor(Color.BLUE);
+                                    } else {
+                                        localg.setColor(Color.BLACK);
+                                    }
+                                    break;
+                                case DELETE:
                                     localg.setColor(Color.RED);
-                                } else {
+                                    break;
+                                case ADD:
                                     localg.setColor(Color.BLACK);
-                                }
-                                break;
-                            case MODIFY_POSITION:
-                            case MODIFY_SIZE:
-                                if (a.equals(learnArea)) {
-                                    localg.setColor(Color.BLUE);
-                                } else {
-                                    localg.setColor(Color.BLACK);
-                                }
-                                break;
-                            case DELETE:
-                                localg.setColor(Color.RED);
-                                break;
-                            case ADD:
-                                localg.setColor(Color.BLACK);
-                                break;
-                            case DUPLICATE:
-                                localg.setColor(Color.YELLOW);
-                                break;
+                                    break;
+                                case DUPLICATE:
+                                    localg.setColor(Color.YELLOW);
+                                    break;
 
-                        }
-                        localg.draw(evalArea);
-                        if (SeletionStatus.MODIFY.equals(areaStatus)) {
-                            localg.setColor(Color.WHITE);
-                            localg.draw(leftTopPoint);
-                            localg.setColor(Color.GREEN);
-                            localg.draw(widthHwightpoint);
-                        }
+                            }
+                            localg.draw(evalArea);
+                            if (SeletionStatus.MODIFY.equals(areaStatus)) {
+                                localg.setColor(Color.WHITE);
+                                localg.draw(leftTopPoint);
+                                localg.setColor(Color.GREEN);
+                                localg.draw(widthHwightpoint);
+                            }
 
-                    });
+                        });
+                        
+                    }
 
                 }
             }
