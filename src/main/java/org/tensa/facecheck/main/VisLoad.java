@@ -847,6 +847,7 @@ public class VisLoad extends javax.swing.JFrame {
         });
     }//GEN-LAST:event_enmascaraResultadoActionPerformed
 
+    @SuppressWarnings("unchecked")
     private void procesarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_procesarActionPerformed
 
         procesar.setEnabled(false);
@@ -968,6 +969,7 @@ public class VisLoad extends javax.swing.JFrame {
         }).start();
     }//GEN-LAST:event_procesarActionPerformed
 
+    @SuppressWarnings("unchecked")
     private void cleanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanActionPerformed
         log.info("iniciando 0...");
         int inStep = (int) inNeurs.getValue();
@@ -1817,6 +1819,7 @@ public class VisLoad extends javax.swing.JFrame {
 
         private final javax.swing.JComboBox<WeightModelingEnum> style;
 
+    @SuppressWarnings("unchecked")
         public NeuronStyleTableCellEditorImpl() {
             this.style = new javax.swing.JComboBox<>(getModelingComboBoxModel());
             style.setSelectedIndex(0);
@@ -1844,6 +1847,7 @@ public class VisLoad extends javax.swing.JFrame {
             return new DefaultComboBoxModel<>(WeightCreationEnum.values());
         }
 
+    @SuppressWarnings("unchecked")
         public CreationWeightTableCellEditorImpl() {
             creation = new JComboBox<>(getCreationComboBoxModel());
             creation.setSelectedIndex(0);
@@ -1873,6 +1877,7 @@ public class VisLoad extends javax.swing.JFrame {
             return new DefaultComboBoxModel<>(ActivationFunctionEnum.values());
         }
 
+        @SuppressWarnings("unchecked")
         public ActivationFunctionTableCellEditorImpl() {
             activation = new JComboBox<>(getActivationComboBoxModel());
             activation.setSelectedIndex(0);
@@ -1904,6 +1909,7 @@ public class VisLoad extends javax.swing.JFrame {
 
         private final javax.swing.JComboBox<ActivationFunctionEnum> strategy;
 
+        @SuppressWarnings("unchecked")
         public LearningEstrategyTableCellEditorImpl() {
             this.strategy = new JComboBox<>(getLearninEstrategyComboBoxModel());
             this.strategy.setSelectedIndex(0);
