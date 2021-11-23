@@ -61,6 +61,7 @@ public class DiffLayer<N extends Number> implements LayerLearning<N> {
      * @param compareLayer valor deseado
      * @param errorConsumer consumer que informa del error
      */
+    @SuppressWarnings("unchecked")
     public DiffLayer(LayerProducer<N> compareLayer, Consumer<LayerLearning<N>> errorConsumer) {
         this.internalBridgeConsumer = new LayerConsumer<N>() {
 

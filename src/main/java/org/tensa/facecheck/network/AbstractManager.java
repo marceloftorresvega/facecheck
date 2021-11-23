@@ -178,6 +178,7 @@ public abstract class AbstractManager<N extends Number> {
         this.errorGraph = errorGraph;
     }
 
+    @SuppressWarnings("unchecked")
     public void cargaPesos(String archivo) {
         log.info("cargaPesos <{}>", archivo);
         try (final InputStream fis = Files.newInputStream(Paths.get(archivo)); final BufferedInputStream bis = new BufferedInputStream(fis); final GzipCompressorInputStream gzIn = new GzipCompressorInputStream(bis); final ObjectInputStream ois = new ObjectInputStream(gzIn)) {
@@ -246,9 +247,10 @@ public abstract class AbstractManager<N extends Number> {
 
     /**
      *
+     * @param creation
      * @param modeling the value of modelingH
-     * @param modelingO the value of modelingO
      */
+    @SuppressWarnings("unchecked")
     public void initMatrix(UnaryOperator<NumericMatriz<N>>[] creation, UnaryOperator<NumericMatriz<N>>[] modeling) {
         int inSize = pixelMapper.getDominio(inStep).getFila();
         weights = new NumericMatriz[hiddenStep.length];
