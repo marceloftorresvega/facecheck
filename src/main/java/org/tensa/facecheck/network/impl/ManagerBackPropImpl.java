@@ -60,6 +60,7 @@ public class ManagerBackPropImpl<N extends Number> extends AbstractManager<N> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void process() {
 
         log.info("iniciando proceso...");
