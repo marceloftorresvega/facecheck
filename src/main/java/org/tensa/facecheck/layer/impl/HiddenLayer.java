@@ -33,6 +33,7 @@ import org.tensa.facecheck.activation.Activation;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.layer.LayerLearning;
 import org.tensa.facecheck.layer.LayerProducer;
+import org.tensa.tensada.matrix.Dominio;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
@@ -54,13 +55,15 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
     protected final List<LayerConsumer<N>> consumers;
     protected final List<LayerLearning<N>> producers;
     protected final Activation<N> activation;
+    protected final boolean useBias;
 
-    public HiddenLayer(NumericMatriz<N> weights, N learningFactor, Activation<N> activation) {
+    public HiddenLayer(NumericMatriz<N> weights, N learningFactor, Activation<N> activation, boolean useBias) {
         this.weights = weights;
         this.learningFactor = learningFactor;
         this.consumers = new ArrayList<>();
         this.producers = new ArrayList<>();
         this.activation = activation;
+        this.useBias = useBias;
     }
 
     public HiddenLayer(NumericMatriz<N> weights, Activation<N> activation) {
@@ -68,12 +71,26 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
         this.consumers = new ArrayList<>();
         this.producers = new ArrayList<>();
         this.activation = activation;
+        this.useBias = false;
     }
 
     @Override
     public NumericMatriz<N> setInputLayer(NumericMatriz<N> inputLayer) {
         NumericMatriz<N> last = this.inputLayer;
-        this.inputLayer = inputLayer;
+        if (this.useBias) {
+            Dominio dominio = inputLayer.getDominio();
+            Integer fila = dominio.getFila();
+            Integer columna = dominio.getColumna();
+            fila = fila + 1;
+            this.inputLayer = inputLayer.instancia(new Dominio(fila, columna), inputLayer);
+            for (int c= 1; c <= columna ; c++) {
+                this.inputLayer.indexa(fila , c, inputLayer.getUnoValue());
+            }
+            
+        } else {
+            this.inputLayer = inputLayer;
+        }
+            
         return last;
     }
 
@@ -131,6 +148,16 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
              
             if ( getProducers().size() > 0 ) {
                 propagationError = weights.productoPunto(error);
+                if (this.useBias) {
+                    Dominio dominio = propagationError.getDominio();
+                    Integer fila = dominio.getFila();
+                    Integer columna = dominio.getColumna();
+                    fila = fila -1;
+                    propagationError = propagationError.instancia(new Dominio(fila, columna), propagationError);
+                    for ( int c = 1; c< columna;c++){
+                        propagationError.remove(new Dominio(fila, c));
+                    }
+                }
             }
             
             try (

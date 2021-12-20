@@ -48,13 +48,14 @@ import org.tensa.tensada.matrix.ParOrdenado;
  */
 public class ManagerBackPropImpl<N extends Number> extends AbstractManager<N> {
 
-    public ManagerBackPropImpl(Function<Dominio, NumericMatriz<N>> supplier, int inStep, BufferedImage outputImage, BufferedImage inputImage, BufferedImage compareImage, int iterateTo) {
+    public ManagerBackPropImpl(Function<Dominio, NumericMatriz<N>> supplier, int inStep, BufferedImage outputImage, BufferedImage inputImage, BufferedImage compareImage, int iterateTo, Boolean[] useBias) {
         this.supplier = supplier;
         this.inStep = inStep;
         this.outputImage = outputImage;
         this.inputImage = inputImage;
         this.compareImage = compareImage;
         this.iterateTo = iterateTo;
+        this.useBias = useBias;
     }
 
     public ManagerBackPropImpl(Function<Dominio, NumericMatriz<N>> supplier) {
@@ -103,7 +104,7 @@ public class ManagerBackPropImpl<N extends Number> extends AbstractManager<N> {
                         PixelInputLayer<N> simplePixelsInputLayer = new PixelInputLayer<>(supplier, pixelMapper, inputScale);
                         HiddenLayer<N>[] hiddenLayers = new HiddenLayer[weights.length];
                         for (int k = 0; k < weights.length; k++) {
-                            hiddenLayers[k] = new HiddenLayer<>(weights[k], learningRate[k], activationFunction[k]);
+                            hiddenLayers[k] = new HiddenLayer<>(weights[k], learningRate[k], activationFunction[k], useBias[k]);
                         }
 
                         PixelInputLayer<N> simplePixelsCompareLayer = new PixelInputLayer<>(supplier, pixelMapper, OutputScale::scale);

@@ -163,14 +163,14 @@ public class VisLoad1 extends javax.swing.JFrame {
         networkManager.setSupplier((Dominio dominio) -> new FloatMatriz(dominio));
         networkManager.setPixelMapper(PixelMappings.defaultMapping());
         networkManager.getAreaQeue().add(learnArea);
-        jTableWeight.getModel().setValueAt(WeightCreationEnum.RANDOM, 0, 1);
-        jTableWeight.getModel().setValueAt(WeightCreationEnum.RANDOM, 1, 1);
-        jTableWeight.getModel().setValueAt(WeightModelingEnum.NORMALIZED, 0, 2);
-        jTableWeight.getModel().setValueAt(WeightModelingEnum.NORMALIZED, 1, 2);
-        jTableWeight.getModel().setValueAt(ActivationFunctionEnum.LINEAL, 0, 3);
-        jTableWeight.getModel().setValueAt(ActivationFunctionEnum.LINEAL, 1, 3);
-        jTableWeight.getModel().setValueAt(BasicLearningEstrategyEnum.TREE_ADV_ONE, 0, 5);
-        jTableWeight.getModel().setValueAt(BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE, 1, 5);
+        jTableWeight.getModel().setValueAt(WeightCreationEnum.RANDOM, 0, 2);
+        jTableWeight.getModel().setValueAt(WeightCreationEnum.RANDOM, 1, 2);
+        jTableWeight.getModel().setValueAt(WeightModelingEnum.NORMALIZED, 0, 3);
+        jTableWeight.getModel().setValueAt(WeightModelingEnum.NORMALIZED, 1, 3);
+        jTableWeight.getModel().setValueAt(ActivationFunctionEnum.LINEAL, 0, 4);
+        jTableWeight.getModel().setValueAt(ActivationFunctionEnum.LINEAL, 1, 4);
+        jTableWeight.getModel().setValueAt(BasicLearningEstrategyEnum.TREE_ADV_ONE, 0, 6);
+        jTableWeight.getModel().setValueAt(BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE, 1, 6);
     }
 
     /**
@@ -766,15 +766,15 @@ public class VisLoad1 extends javax.swing.JFrame {
 
         jTableWeight.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                { new Integer(15), null, null, null,  new Float(5.0E-5), null},
-                { new Integer(27), null, null, null,  new Float(5.0E-5), null}
+                { new Integer(15), null, null, null, null,  new Float(5.0E-5), null},
+                { new Integer(27), null, null, null, null,  new Float(5.0E-5), null}
             },
             new String [] {
-                "Neuronas", "Creacion Pesos", "Estilo Pesos", "Func. Activacion", "Fact. Aprendisaje", "estratg. Aprendisaje"
+                "Neuronas", "Tendencia", "Creacion Pesos", "Estilo Pesos", "Func. Activacion", "Fact. Aprendisaje", "estratg. Aprendisaje"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Float.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.Boolean.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Float.class, java.lang.Object.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -794,16 +794,17 @@ public class VisLoad1 extends javax.swing.JFrame {
             jTableWeight.getColumnModel().getColumn(0).setResizable(false);
             jTableWeight.getColumnModel().getColumn(0).setCellEditor(getNeuronCellEditor());
             jTableWeight.getColumnModel().getColumn(1).setResizable(false);
-            jTableWeight.getColumnModel().getColumn(1).setCellEditor(getNeuronCreationWeigth());
             jTableWeight.getColumnModel().getColumn(2).setResizable(false);
-            jTableWeight.getColumnModel().getColumn(2).setCellEditor(getNeuronStyleWeigth());
+            jTableWeight.getColumnModel().getColumn(2).setCellEditor(getNeuronCreationWeigth());
             jTableWeight.getColumnModel().getColumn(3).setResizable(false);
-            jTableWeight.getColumnModel().getColumn(3).setCellEditor(getActivationFunctionCellEditor());
+            jTableWeight.getColumnModel().getColumn(3).setCellEditor(getNeuronStyleWeigth());
             jTableWeight.getColumnModel().getColumn(4).setResizable(false);
-            jTableWeight.getColumnModel().getColumn(4).setCellEditor(getLearningFactorCellEditor());
-            jTableWeight.getColumnModel().getColumn(4).setCellRenderer(getLearningFactorCellRender());
+            jTableWeight.getColumnModel().getColumn(4).setCellEditor(getActivationFunctionCellEditor());
             jTableWeight.getColumnModel().getColumn(5).setResizable(false);
-            jTableWeight.getColumnModel().getColumn(5).setCellEditor(getLearningEstrategyCellEditor());
+            jTableWeight.getColumnModel().getColumn(5).setCellEditor(getLearningFactorCellEditor());
+            jTableWeight.getColumnModel().getColumn(5).setCellRenderer(getLearningFactorCellRender());
+            jTableWeight.getColumnModel().getColumn(6).setResizable(false);
+            jTableWeight.getColumnModel().getColumn(6).setCellEditor(getLearningEstrategyCellEditor());
         }
 
         jPanelCard.add(jScrollPane1, "cardPesos");
@@ -888,11 +889,11 @@ public class VisLoad1 extends javax.swing.JFrame {
         networkManager.setTrainingMode(entrenar.isSelected());
 
         networkManager.setLearningRate(IntStream.range(0, jTableWeight.getRowCount())
-                .mapToObj(i -> (Float) jTableWeight.getValueAt(i, 4)).toArray(Float[]::new));
+                .mapToObj(i -> (Float) jTableWeight.getValueAt(i, 5)).toArray(Float[]::new));
 
         LearningEstrategy<Float>[] learningControl = IntStream.range(0, jTableWeight.getRowCount())
                 .mapToObj(i -> {
-                    BasicLearningEstrategyEnum ble = (BasicLearningEstrategyEnum) jTableWeight.getValueAt(i, 5);
+                    BasicLearningEstrategyEnum ble = (BasicLearningEstrategyEnum) jTableWeight.getValueAt(i, 6);
                     UnaryOperator<Integer> learninEstrategy2Control = learninEstrategy2Control(ble);
                     return new BasicLearningEstrategyImpl<Float>(learninEstrategy2Control, LearningEstrategy.floatBasicLearningSeries);
                 })
@@ -900,10 +901,17 @@ public class VisLoad1 extends javax.swing.JFrame {
         networkManager.setLearningControl(learningControl);
         Activation<Float>[] activationFunction
                 = IntStream.range(0, jTableWeight.getRowCount())
-                        .mapToObj(i -> (ActivationFunctionEnum) jTableWeight.getValueAt(i, 3))
+                        .mapToObj(i -> (ActivationFunctionEnum) jTableWeight.getValueAt(i, 4))
                         .map(this::activation2Activation)
                         .toArray(Activation[]::new);
         networkManager.setActivationFunction(activationFunction);
+        
+        Boolean[] useBias = IntStream.range(0, jTableWeight.getRowCount())
+                .mapToObj(i -> (Boolean) jTableWeight.getValueAt(i, 1))
+                .map(b -> Objects.isNull(b)?Boolean.FALSE:b)
+                .peek(c -> log.info("use bias <{}>", c))
+                .toArray(Boolean[]::new);
+        networkManager.setUseBias(useBias);
 
         networkManager.setIterateTo((int) iteraciones.getValue());
         networkManager.setUseSelection(seleccion.isSelected());
@@ -960,13 +968,13 @@ public class VisLoad1 extends javax.swing.JFrame {
 
                     if (jProgressBar1.getValue() == networkManager.getIterateCurrent()) {
                         networkManager.setLearningRate(IntStream.range(0, jTableWeight.getRowCount())
-                                .mapToObj(i -> (Float) jTableWeight.getValueAt(i, 4)).toArray(Float[]::new));
+                                .mapToObj(i -> (Float) jTableWeight.getValueAt(i, 5)).toArray(Float[]::new));
 
                     }
 
                     IntStream.range(0, jTableWeight.getRowCount()).forEach(i -> {
                         Float o = networkManager.getLearningRate(i);
-                        jTableWeight.setValueAt(o, i, 4);
+                        jTableWeight.setValueAt(o, i, 5);
                     });
 
                     networkManager.setIterateTo((int) iteraciones.getValue());
@@ -1009,16 +1017,24 @@ public class VisLoad1 extends javax.swing.JFrame {
                 .map(i -> (Integer) jTableWeight.getValueAt(i, 0)).toArray());
 
         UnaryOperator<NumericMatriz<Float>>[] weightCreationStyle = IntStream.range(0, jTableWeight.getRowCount())
-                .mapToObj(i -> (WeightCreationEnum) jTableWeight.getValueAt(i, 1))
+                .mapToObj(i -> (WeightCreationEnum) jTableWeight.getValueAt(i, 2))
                 .peek(c -> log.info("creacion style <{}>", c))
                 .map(this::creation2style)
                 .toArray(UnaryOperator[]::new);
 
         UnaryOperator<NumericMatriz<Float>>[] weightModelingStyle = IntStream.range(0, jTableWeight.getRowCount())
-                .mapToObj(i -> (WeightModelingEnum) jTableWeight.getValueAt(i, 2))
+                .mapToObj(i -> (WeightModelingEnum) jTableWeight.getValueAt(i, 3))
                 .peek(m -> log.info("modelado style <{}>", m))
                 .map(this::modeling2style)
                 .toArray(UnaryOperator[]::new);
+        
+        Boolean[] useBias = IntStream.range(0, jTableWeight.getRowCount())
+                .mapToObj(i -> (Boolean) jTableWeight.getValueAt(i, 1))
+                .map(b -> Objects.isNull(b)?Boolean.FALSE:b)
+                .peek(c -> log.info("use bias <{}>", c))
+                .toArray(Boolean[]::new);
+        
+        networkManager.setUseBias(useBias);
 
         networkManager.initMatrix(weightCreationStyle, weightModelingStyle);
 
@@ -1325,7 +1341,7 @@ public class VisLoad1 extends javax.swing.JFrame {
                 IntStream.range(0, networkManager.getWeights().length).forEach(i -> {
                     Integer neuronas = networkManager.getHiddenStep(i);
                     log.info("lr <{}> neuronas<{}>", learningRate, neuronas);
-                    model.addRow(new Object[]{neuronas, WeightCreationEnum.RANDOM, WeightModelingEnum.SIMPLE, ActivationFunctionEnum.LINEAL, learningRate, BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE});
+                    model.addRow(new Object[]{neuronas, Boolean.FALSE,WeightCreationEnum.RANDOM, WeightModelingEnum.SIMPLE, ActivationFunctionEnum.LINEAL, learningRate, BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE});
 
                 });
             }
@@ -1472,7 +1488,7 @@ public class VisLoad1 extends javax.swing.JFrame {
 
     private void jButtonAddRowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddRowActionPerformed
         DefaultTableModel model = (DefaultTableModel) jTableWeight.getModel();
-        Object[] fila = new Object[]{new Integer(12), WeightCreationEnum.RANDOM, WeightModelingEnum.NORMALIZED, ActivationFunctionEnum.LINEAL, new Float(5.0E-5), BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE};
+        Object[] fila = new Object[]{new Integer(12), Boolean.FALSE, WeightCreationEnum.RANDOM, WeightModelingEnum.NORMALIZED, ActivationFunctionEnum.LINEAL, new Float(5.0E-5), BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE};
         int selectedRow = jTableWeight.getSelectedRow();
         if (selectedRow == -1) {
             model.addRow(fila);
