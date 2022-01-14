@@ -66,6 +66,32 @@ public final class PixelMappings {
     }
 
     /**
+     * mapeo directo de los pixels separados en componentes
+     *
+     * distintos pesos por neuronas analizan distintos componentes de color
+     *
+     * @return PixelMapper
+     */
+    public static PixelMapper plus1Mapping() {
+        return new PixelMapper() {
+            @Override
+            public Dominio getDominio(int largo) {
+                return new Dominio(largo + 1, 1);
+            }
+
+            @Override
+            public Indice getIndice(int i) {
+                return new Indice(i + 1, 1);
+            }
+
+            @Override
+            public Integer getLargo(Dominio dominio) {
+                return dominio.getFila();
+            }
+        };
+    }
+
+    /**
      * mapeo y clasificacion de componentes de pixels en 3 columnas, reduciendo
      * cantidad de filas con respecto a la cantidad total de componentes
      *

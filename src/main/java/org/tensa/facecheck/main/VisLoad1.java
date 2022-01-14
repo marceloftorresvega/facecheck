@@ -199,6 +199,7 @@ public class VisLoad1 extends javax.swing.JFrame {
         preventJRadioButton = new javax.swing.JRadioButton();
         libreJRadioButton = new javax.swing.JRadioButton();
         jCheckBoxScale1neg1 = new javax.swing.JCheckBox();
+        normaExtJRadioButton = new javax.swing.JRadioButton();
         jPanel2 = new javax.swing.JPanel();
         suavizaResultado = new javax.swing.JButton();
         enmascaraResultado = new javax.swing.JButton();
@@ -300,6 +301,9 @@ public class VisLoad1 extends javax.swing.JFrame {
             }
         });
 
+        adaptInputButtonGroup.add(normaExtJRadioButton);
+        normaExtJRadioButton.setText("Norma-ext");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -312,12 +316,14 @@ public class VisLoad1 extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(normalizeJRadioButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(normaExtJRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(reflectJRadioButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(preventJRadioButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(libreJRadioButton)
-                .addGap(38, 38, 38)
+                .addGap(136, 136, 136)
                 .addComponent(jCheckBoxScale1neg1)
                 .addContainerGap())
         );
@@ -331,7 +337,8 @@ public class VisLoad1 extends javax.swing.JFrame {
                     .addComponent(reflectJRadioButton)
                     .addComponent(preventJRadioButton)
                     .addComponent(libreJRadioButton)
-                    .addComponent(jCheckBoxScale1neg1))
+                    .addComponent(jCheckBoxScale1neg1)
+                    .addComponent(normaExtJRadioButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -916,12 +923,16 @@ public class VisLoad1 extends javax.swing.JFrame {
         networkManager.setIterateTo((int) iteraciones.getValue());
         networkManager.setUseSelection(seleccion.isSelected());
 
+        networkManager.setPixelMapper(PixelMappings.defaultMapping());
         if (!jCheckBoxScale1neg1.isSelected()) {
 
             if (scaleJRadioButton.isSelected()) {
                 networkManager.setInputScale(OutputScale::scale);
             } else if (normalizeJRadioButton.isSelected()) {
                 networkManager.setInputScale(OutputScale::normalized);
+            } else if (normaExtJRadioButton.isSelected()) {
+                networkManager.setInputScale(OutputScale::normalizedPus1);
+                networkManager.setPixelMapper(PixelMappings.plus1Mapping());
             } else if (reflectJRadioButton.isSelected()) {
                 networkManager.setInputScale(OutputScale::reflectance);
             } else if (preventJRadioButton.isSelected()) {
@@ -936,6 +947,9 @@ public class VisLoad1 extends javax.swing.JFrame {
                 networkManager.setInputScale(OutputScale::extendedScale);
             } else if (normalizeJRadioButton.isSelected()) {
                 networkManager.setInputScale(OutputScale::extendedNormalized);
+            } else if (normalizeJRadioButton.isSelected()) {
+                networkManager.setInputScale(OutputScale::extendedNormalizedPlus1);
+                networkManager.setPixelMapper(PixelMappings.plus1Mapping());
             } else if (reflectJRadioButton.isSelected()) {
                 networkManager.setInputScale(OutputScale::extendedReflectance);
             }
@@ -1816,6 +1830,7 @@ public class VisLoad1 extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTableWeight;
     private javax.swing.JRadioButton libreJRadioButton;
+    private javax.swing.JRadioButton normaExtJRadioButton;
     private javax.swing.JRadioButton normalizeJRadioButton;
     private javax.swing.JRadioButton preventJRadioButton;
     private javax.swing.JButton procesar;
