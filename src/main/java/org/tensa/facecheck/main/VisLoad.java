@@ -33,6 +33,7 @@ import javax.swing.AbstractCellEditor;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
@@ -162,14 +163,14 @@ public class VisLoad extends javax.swing.JFrame {
         networkManager.setSupplier((Dominio dominio) -> new FloatMatriz(dominio));
         networkManager.setPixelMapper(PixelMappings.defaultMapping());
         networkManager.getAreaQeue().add(learnArea);
-        jTableWeight.getModel().setValueAt(WeightCreationEnum.RANDOM, 0, 1);
-        jTableWeight.getModel().setValueAt(WeightCreationEnum.RANDOM, 1, 1);
-        jTableWeight.getModel().setValueAt(WeightModelingEnum.NORMALIZED, 0, 2);
-        jTableWeight.getModel().setValueAt(WeightModelingEnum.NORMALIZED, 1, 2);
-        jTableWeight.getModel().setValueAt(ActivationFunctionEnum.LINEAL, 0, 3);
-        jTableWeight.getModel().setValueAt(ActivationFunctionEnum.LINEAL, 1, 3);
-        jTableWeight.getModel().setValueAt(BasicLearningEstrategyEnum.TREE_ADV_ONE, 0, 5);
-        jTableWeight.getModel().setValueAt(BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE, 1, 5);
+        jTableWeight.getModel().setValueAt(WeightCreationEnum.RANDOM, 0, 2);
+        jTableWeight.getModel().setValueAt(WeightCreationEnum.RANDOM, 1, 2);
+        jTableWeight.getModel().setValueAt(WeightModelingEnum.NORMALIZED, 0, 3);
+        jTableWeight.getModel().setValueAt(WeightModelingEnum.NORMALIZED, 1, 3);
+        jTableWeight.getModel().setValueAt(ActivationFunctionEnum.LINEAL, 0, 4);
+        jTableWeight.getModel().setValueAt(ActivationFunctionEnum.LINEAL, 1, 4);
+        jTableWeight.getModel().setValueAt(BasicLearningEstrategyEnum.TREE_ADV_ONE, 0, 6);
+        jTableWeight.getModel().setValueAt(BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE, 1, 6);
     }
 
     /**
@@ -180,7 +181,6 @@ public class VisLoad extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
         adaptInputButtonGroup = new javax.swing.ButtonGroup();
         jFileChooserPesosSave = new javax.swing.JFileChooser();
@@ -188,6 +188,7 @@ public class VisLoad extends javax.swing.JFrame {
         jFileChooserImagenSalva = new javax.swing.JFileChooser();
         jFileChooserLoadImagenResult = new javax.swing.JFileChooser();
         jFileChooserLoadImagen = new javax.swing.JFileChooser();
+        selectionTypeButtonGroup = new javax.swing.ButtonGroup();
         jPanelTop = new javax.swing.JPanel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
@@ -198,6 +199,7 @@ public class VisLoad extends javax.swing.JFrame {
         preventJRadioButton = new javax.swing.JRadioButton();
         libreJRadioButton = new javax.swing.JRadioButton();
         jCheckBoxScale1neg1 = new javax.swing.JCheckBox();
+        normaExtJRadioButton = new javax.swing.JRadioButton();
         jPanel2 = new javax.swing.JPanel();
         suavizaResultado = new javax.swing.JButton();
         enmascaraResultado = new javax.swing.JButton();
@@ -230,7 +232,9 @@ public class VisLoad extends javax.swing.JFrame {
         seleccion = new javax.swing.JCheckBox();
         addSelectionButton = new javax.swing.JButton();
         deleteSelectionButton = new javax.swing.JButton();
-        jProgressBar1 = new javax.swing.JProgressBar();
+        duplicaSelectionButton = new javax.swing.JButton();
+        asSampleToggleButton = new javax.swing.JToggleButton();
+        asPartToggleButton = new javax.swing.JToggleButton();
         jErrorGraf = getNuevaErrorGram();
         jPanelCard = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
@@ -238,6 +242,7 @@ public class VisLoad extends javax.swing.JFrame {
         respuesta = getNuevaRespuesta();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTableWeight = new javax.swing.JTable();
+        jProgressBar1 = new javax.swing.JProgressBar();
 
         jFileChooserPesosSave.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
         jFileChooserPesosSave.setCurrentDirectory(new File(System.getProperty("user.dir")));
@@ -296,6 +301,9 @@ public class VisLoad extends javax.swing.JFrame {
             }
         });
 
+        adaptInputButtonGroup.add(normaExtJRadioButton);
+        normaExtJRadioButton.setText("Norma-ext");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -308,12 +316,14 @@ public class VisLoad extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(normalizeJRadioButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(normaExtJRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(reflectJRadioButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(preventJRadioButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(libreJRadioButton)
-                .addGap(38, 38, 38)
+                .addGap(136, 136, 136)
                 .addComponent(jCheckBoxScale1neg1)
                 .addContainerGap())
         );
@@ -327,7 +337,8 @@ public class VisLoad extends javax.swing.JFrame {
                     .addComponent(reflectJRadioButton)
                     .addComponent(preventJRadioButton)
                     .addComponent(libreJRadioButton)
-                    .addComponent(jCheckBoxScale1neg1))
+                    .addComponent(jCheckBoxScale1neg1)
+                    .addComponent(normaExtJRadioButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -393,7 +404,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonSalvaImagen)
-                .addContainerGap(347, Short.MAX_VALUE))
+                .addContainerGap(379, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -505,7 +516,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabelNumOutPixels)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 248, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 264, Short.MAX_VALUE)
                 .addComponent(jButtonAddRow)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonRemoveRow)
@@ -588,7 +599,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(cleanCopy)
                 .addGap(18, 18, 18)
                 .addComponent(actualizacion)
-                .addContainerGap(106, Short.MAX_VALUE))
+                .addContainerGap(151, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -615,6 +626,7 @@ public class VisLoad extends javax.swing.JFrame {
         });
 
         addSelectionButton.setText("Agrega selección");
+        addSelectionButton.setEnabled(seleccion.isSelected());
         addSelectionButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addSelectionButtonActionPerformed(evt);
@@ -622,11 +634,31 @@ public class VisLoad extends javax.swing.JFrame {
         });
 
         deleteSelectionButton.setText("Quita selección");
+        deleteSelectionButton.setEnabled(seleccion.isSelected());
         deleteSelectionButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteSelectionButtonActionPerformed(evt);
             }
         });
+
+        duplicaSelectionButton.setText("Duplicar selección");
+        duplicaSelectionButton.setEnabled(seleccion.isSelected());
+        duplicaSelectionButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                duplicaSelectionButtonActionPerformed(evt);
+            }
+        });
+
+        selectionTypeButtonGroup.add(asSampleToggleButton);
+        asSampleToggleButton.setSelected(true);
+        asSampleToggleButton.setText("Muestra");
+        asSampleToggleButton.setToolTipText("Cada selección es una muestra");
+        asSampleToggleButton.setEnabled(seleccion.isSelected());
+
+        selectionTypeButtonGroup.add(asPartToggleButton);
+        asPartToggleButton.setText("Porción");
+        asPartToggleButton.setToolTipText("La imajen completa es una muestra");
+        asPartToggleButton.setEnabled(seleccion.isSelected());
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -638,8 +670,14 @@ public class VisLoad extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(addSelectionButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(duplicaSelectionButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(deleteSelectionButton)
-                .addContainerGap(486, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(asSampleToggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(asPartToggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(141, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -647,8 +685,11 @@ public class VisLoad extends javax.swing.JFrame {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(seleccion)
                     .addComponent(addSelectionButton)
-                    .addComponent(deleteSelectionButton))
-                .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(deleteSelectionButton)
+                    .addComponent(duplicaSelectionButton)
+                    .addComponent(asSampleToggleButton)
+                    .addComponent(asPartToggleButton))
+                .addGap(0, 2, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Seleccion", jPanel5);
@@ -666,11 +707,6 @@ public class VisLoad extends javax.swing.JFrame {
                 .addGap(0, 6, Short.MAX_VALUE))
         );
 
-        jProgressBar1.setStringPainted(true);
-
-        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, iteraciones, org.jdesktop.beansbinding.ELProperty.create("${value}"), jProgressBar1, org.jdesktop.beansbinding.BeanProperty.create("maximum"));
-        bindingGroup.addBinding(binding);
-
         javax.swing.GroupLayout jErrorGrafLayout = new javax.swing.GroupLayout(jErrorGraf);
         jErrorGraf.setLayout(jErrorGrafLayout);
         jErrorGrafLayout.setHorizontalGroup(
@@ -679,7 +715,7 @@ public class VisLoad extends javax.swing.JFrame {
         );
         jErrorGrafLayout.setVerticalGroup(
             jErrorGrafLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 14, Short.MAX_VALUE)
         );
 
         jPanelCard.setLayout(new java.awt.CardLayout());
@@ -737,15 +773,15 @@ public class VisLoad extends javax.swing.JFrame {
 
         jTableWeight.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                { new Integer(15), null, null, null,  new Float(5.0E-5), null},
-                { new Integer(27), null, null, null,  new Float(5.0E-5), null}
+                { new Integer(15), null, null, null, null,  new Float(5.0E-5), null},
+                { new Integer(27), null, null, null, null,  new Float(5.0E-5), null}
             },
             new String [] {
-                "Neuronas", "Creacion Pesos", "Estilo Pesos", "Func. Activacion", "Fact. Aprendisaje", "estratg. Aprendisaje"
+                "Neuronas", "Tendencia", "Creacion Pesos", "Estilo Pesos", "Func. Activacion", "Fact. Aprendisaje", "estratg. Aprendisaje"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Float.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.Boolean.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Float.class, java.lang.Object.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -753,7 +789,6 @@ public class VisLoad extends javax.swing.JFrame {
             }
         });
         jTableWeight.setColumnSelectionAllowed(true);
-        jTableWeight.setRowHeight(20);
         jTableWeight.getTableHeader().setReorderingAllowed(false);
         jTableWeight.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
@@ -766,19 +801,22 @@ public class VisLoad extends javax.swing.JFrame {
             jTableWeight.getColumnModel().getColumn(0).setResizable(false);
             jTableWeight.getColumnModel().getColumn(0).setCellEditor(getNeuronCellEditor());
             jTableWeight.getColumnModel().getColumn(1).setResizable(false);
-            jTableWeight.getColumnModel().getColumn(1).setCellEditor(getNeuronCreationWeigth());
             jTableWeight.getColumnModel().getColumn(2).setResizable(false);
-            jTableWeight.getColumnModel().getColumn(2).setCellEditor(getNeuronStyleWeigth());
+            jTableWeight.getColumnModel().getColumn(2).setCellEditor(getNeuronCreationWeigth());
             jTableWeight.getColumnModel().getColumn(3).setResizable(false);
-            jTableWeight.getColumnModel().getColumn(3).setCellEditor(getActivationFunctionCellEditor());
+            jTableWeight.getColumnModel().getColumn(3).setCellEditor(getNeuronStyleWeigth());
             jTableWeight.getColumnModel().getColumn(4).setResizable(false);
-            jTableWeight.getColumnModel().getColumn(4).setCellEditor(getLearningFactorCellEditor());
-            jTableWeight.getColumnModel().getColumn(4).setCellRenderer(getLearningFactorCellRender());
+            jTableWeight.getColumnModel().getColumn(4).setCellEditor(getActivationFunctionCellEditor());
             jTableWeight.getColumnModel().getColumn(5).setResizable(false);
-            jTableWeight.getColumnModel().getColumn(5).setCellEditor(getLearningEstrategyCellEditor());
+            jTableWeight.getColumnModel().getColumn(5).setCellEditor(getLearningFactorCellEditor());
+            jTableWeight.getColumnModel().getColumn(5).setCellRenderer(getLearningFactorCellRender());
+            jTableWeight.getColumnModel().getColumn(6).setResizable(false);
+            jTableWeight.getColumnModel().getColumn(6).setCellEditor(getLearningEstrategyCellEditor());
         }
 
         jPanelCard.add(jScrollPane1, "cardPesos");
+
+        jProgressBar1.setStringPainted(true);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -803,14 +841,12 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jPanelCard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jErrorGraf, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jErrorGraf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
         getAccessibleContext().setAccessibleName("Oculta Caras");
-
-        bindingGroup.bind();
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -860,11 +896,11 @@ public class VisLoad extends javax.swing.JFrame {
         networkManager.setTrainingMode(entrenar.isSelected());
 
         networkManager.setLearningRate(IntStream.range(0, jTableWeight.getRowCount())
-                .mapToObj(i -> (Float) jTableWeight.getValueAt(i, 4)).toArray(Float[]::new));
+                .mapToObj(i -> (Float) jTableWeight.getValueAt(i, 5)).toArray(Float[]::new));
 
         LearningEstrategy<Float>[] learningControl = IntStream.range(0, jTableWeight.getRowCount())
                 .mapToObj(i -> {
-                    BasicLearningEstrategyEnum ble = (BasicLearningEstrategyEnum) jTableWeight.getValueAt(i, 5);
+                    BasicLearningEstrategyEnum ble = (BasicLearningEstrategyEnum) jTableWeight.getValueAt(i, 6);
                     UnaryOperator<Integer> learninEstrategy2Control = learninEstrategy2Control(ble);
                     return new BasicLearningEstrategyImpl<Float>(learninEstrategy2Control, LearningEstrategy.floatBasicLearningSeries);
                 })
@@ -872,20 +908,31 @@ public class VisLoad extends javax.swing.JFrame {
         networkManager.setLearningControl(learningControl);
         Activation<Float>[] activationFunction
                 = IntStream.range(0, jTableWeight.getRowCount())
-                        .mapToObj(i -> (ActivationFunctionEnum) jTableWeight.getValueAt(i, 3))
+                        .mapToObj(i -> (ActivationFunctionEnum) jTableWeight.getValueAt(i, 4))
                         .map(this::activation2Activation)
                         .toArray(Activation[]::new);
         networkManager.setActivationFunction(activationFunction);
+        
+        Boolean[] useBias = IntStream.range(0, jTableWeight.getRowCount())
+                .mapToObj(i -> (Boolean) jTableWeight.getValueAt(i, 1))
+                .map(b -> Objects.isNull(b)?Boolean.FALSE:b)
+                .peek(c -> log.info("use bias <{}>", c))
+                .toArray(Boolean[]::new);
+        networkManager.setUseBias(useBias);
 
         networkManager.setIterateTo((int) iteraciones.getValue());
         networkManager.setUseSelection(seleccion.isSelected());
 
+        networkManager.setPixelMapper(PixelMappings.defaultMapping());
         if (!jCheckBoxScale1neg1.isSelected()) {
 
             if (scaleJRadioButton.isSelected()) {
                 networkManager.setInputScale(OutputScale::scale);
             } else if (normalizeJRadioButton.isSelected()) {
                 networkManager.setInputScale(OutputScale::normalized);
+            } else if (normaExtJRadioButton.isSelected()) {
+                networkManager.setInputScale(OutputScale::normalizedPus1);
+                networkManager.setPixelMapper(PixelMappings.plus1Mapping());
             } else if (reflectJRadioButton.isSelected()) {
                 networkManager.setInputScale(OutputScale::reflectance);
             } else if (preventJRadioButton.isSelected()) {
@@ -900,6 +947,9 @@ public class VisLoad extends javax.swing.JFrame {
                 networkManager.setInputScale(OutputScale::extendedScale);
             } else if (normalizeJRadioButton.isSelected()) {
                 networkManager.setInputScale(OutputScale::extendedNormalized);
+            } else if (normalizeJRadioButton.isSelected()) {
+                networkManager.setInputScale(OutputScale::extendedNormalizedPlus1);
+                networkManager.setPixelMapper(PixelMappings.plus1Mapping());
             } else if (reflectJRadioButton.isSelected()) {
                 networkManager.setInputScale(OutputScale::extendedReflectance);
             }
@@ -932,13 +982,13 @@ public class VisLoad extends javax.swing.JFrame {
 
                     if (jProgressBar1.getValue() == networkManager.getIterateCurrent()) {
                         networkManager.setLearningRate(IntStream.range(0, jTableWeight.getRowCount())
-                                .mapToObj(i -> (Float) jTableWeight.getValueAt(i, 4)).toArray(Float[]::new));
+                                .mapToObj(i -> (Float) jTableWeight.getValueAt(i, 5)).toArray(Float[]::new));
 
                     }
 
                     IntStream.range(0, jTableWeight.getRowCount()).forEach(i -> {
                         Float o = networkManager.getLearningRate(i);
-                        jTableWeight.setValueAt(o, i, 4);
+                        jTableWeight.setValueAt(o, i, 5);
                     });
 
                     networkManager.setIterateTo((int) iteraciones.getValue());
@@ -981,16 +1031,24 @@ public class VisLoad extends javax.swing.JFrame {
                 .map(i -> (Integer) jTableWeight.getValueAt(i, 0)).toArray());
 
         UnaryOperator<NumericMatriz<Float>>[] weightCreationStyle = IntStream.range(0, jTableWeight.getRowCount())
-                .mapToObj(i -> (WeightCreationEnum) jTableWeight.getValueAt(i, 1))
+                .mapToObj(i -> (WeightCreationEnum) jTableWeight.getValueAt(i, 2))
                 .peek(c -> log.info("creacion style <{}>", c))
                 .map(this::creation2style)
                 .toArray(UnaryOperator[]::new);
 
         UnaryOperator<NumericMatriz<Float>>[] weightModelingStyle = IntStream.range(0, jTableWeight.getRowCount())
-                .mapToObj(i -> (WeightModelingEnum) jTableWeight.getValueAt(i, 2))
+                .mapToObj(i -> (WeightModelingEnum) jTableWeight.getValueAt(i, 3))
                 .peek(m -> log.info("modelado style <{}>", m))
                 .map(this::modeling2style)
                 .toArray(UnaryOperator[]::new);
+        
+        Boolean[] useBias = IntStream.range(0, jTableWeight.getRowCount())
+                .mapToObj(i -> (Boolean) jTableWeight.getValueAt(i, 1))
+                .map(b -> Objects.isNull(b)?Boolean.FALSE:b)
+                .peek(c -> log.info("use bias <{}>", c))
+                .toArray(Boolean[]::new);
+        
+        networkManager.setUseBias(useBias);
 
         networkManager.initMatrix(weightCreationStyle, weightModelingStyle);
 
@@ -1133,6 +1191,10 @@ public class VisLoad extends javax.swing.JFrame {
     private void vistaMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_vistaMouseReleased
         int x = evt.getX();
         int y = evt.getY();
+        if (Objects.isNull(buffImage)) {
+            JOptionPane.showMessageDialog(null, "Imagen no seleccionada");
+            return;
+        }
         float escala = (float) buffImage.getWidth() / (float) vista.getBounds().width;
 
         switch (areaStatus) {
@@ -1190,6 +1252,14 @@ public class VisLoad extends javax.swing.JFrame {
                 }
                 break;
 
+            case DUPLICATE:
+                areaQeue.stream()
+                        .filter(a -> a.contains((int) (x * escala), (int) (y * escala)))
+                        .findFirst()
+                        .ifPresent(a -> {
+                            learnArea.width = a.width;
+                            learnArea.height = a.height;
+                        });
             case ADD:
                 areaStatus = SeletionStatus.MODIFY_POSITION;
                 break;
@@ -1203,10 +1273,28 @@ public class VisLoad extends javax.swing.JFrame {
 
     private void seleccionCopyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seleccionCopyActionPerformed
         seleccion.setSelected(seleccionCopy.isSelected());
+        addSelectionButton.setEnabled(seleccion.isSelected());
+        duplicaSelectionButton.setEnabled(seleccion.isSelected());
+        deleteSelectionButton.setEnabled(seleccion.isSelected());
+        asSampleToggleButton.setEnabled(seleccion.isSelected());
+        asPartToggleButton.setEnabled(seleccion.isSelected());
+        
+        java.awt.EventQueue.invokeLater(() -> {
+            vista.repaint();
+        });
     }//GEN-LAST:event_seleccionCopyActionPerformed
 
     private void seleccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seleccionActionPerformed
         seleccionCopy.setSelected(seleccion.isSelected());
+        addSelectionButton.setEnabled(seleccion.isSelected());
+        duplicaSelectionButton.setEnabled(seleccion.isSelected());
+        deleteSelectionButton.setEnabled(seleccion.isSelected());
+        asSampleToggleButton.setEnabled(seleccion.isSelected());
+        asPartToggleButton.setEnabled(seleccion.isSelected());
+        
+        java.awt.EventQueue.invokeLater(() -> {
+            vista.repaint();
+        });
     }//GEN-LAST:event_seleccionActionPerformed
 
     private void addSelectionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addSelectionButtonActionPerformed
@@ -1267,7 +1355,7 @@ public class VisLoad extends javax.swing.JFrame {
                 IntStream.range(0, networkManager.getWeights().length).forEach(i -> {
                     Integer neuronas = networkManager.getHiddenStep(i);
                     log.info("lr <{}> neuronas<{}>", learningRate, neuronas);
-                    model.addRow(new Object[]{neuronas, WeightCreationEnum.RANDOM, WeightModelingEnum.SIMPLE, ActivationFunctionEnum.LINEAL, learningRate, BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE});
+                    model.addRow(new Object[]{neuronas, Boolean.FALSE,WeightCreationEnum.RANDOM, WeightModelingEnum.SIMPLE, ActivationFunctionEnum.LINEAL, learningRate, BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE});
 
                 });
             }
@@ -1365,6 +1453,7 @@ public class VisLoad extends javax.swing.JFrame {
             case ADD:
                 vista.setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
                 break;
+            case DUPLICATE:
             case DELETE:
                 vista.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
                 break;
@@ -1413,7 +1502,7 @@ public class VisLoad extends javax.swing.JFrame {
 
     private void jButtonAddRowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddRowActionPerformed
         DefaultTableModel model = (DefaultTableModel) jTableWeight.getModel();
-        Object[] fila = new Object[]{new Integer(12), WeightCreationEnum.RANDOM, WeightModelingEnum.NORMALIZED, ActivationFunctionEnum.LINEAL, new Float(5.0E-5), BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE};
+        Object[] fila = new Object[]{new Integer(12), Boolean.FALSE, WeightCreationEnum.RANDOM, WeightModelingEnum.NORMALIZED, ActivationFunctionEnum.LINEAL, new Float(5.0E-5), BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE};
         int selectedRow = jTableWeight.getSelectedRow();
         if (selectedRow == -1) {
             model.addRow(fila);
@@ -1444,6 +1533,18 @@ public class VisLoad extends javax.swing.JFrame {
     private void jTableWeightPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTableWeightPropertyChange
         jLabelNumOutPixels.setText(getRawPixelOutNeur());
     }//GEN-LAST:event_jTableWeightPropertyChange
+
+    private void duplicaSelectionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_duplicaSelectionButtonActionPerformed
+        learnArea = new Rectangle();
+        LinkedList<Rectangle> areaQeue = networkManager.getAreaQeue();
+        learnArea.setSize(100, 100);
+        learnArea.setLocation(10, 10);
+        areaStatus = SeletionStatus.DUPLICATE;
+        areaQeue.add(learnArea);
+        java.awt.EventQueue.invokeLater(() -> {
+            vista.repaint();
+        });
+    }//GEN-LAST:event_duplicaSelectionButtonActionPerformed
 
     private float calculaMatriz(int i, int j) {
         float retorno;
@@ -1517,53 +1618,59 @@ public class VisLoad extends javax.swing.JFrame {
                     localg.drawImage(buffImage, rop, 0, 0);
                     LinkedList<Rectangle> areaQeue = networkManager.getAreaQeue();
 
-                    areaQeue.forEach(a -> {
-                        Rectangle evalArea = new Rectangle(a);
-                        evalArea.x = (int) (evalArea.x * escala);
-                        evalArea.y = (int) (evalArea.y * escala);
-                        evalArea.width = (int) (evalArea.width * escala);
-                        evalArea.height = (int) (evalArea.height * escala);
-                        switch (areaStatus) {
-                            case MODIFY:
-                                if (a.equals(learnArea)) {
-                                    leftTopPoint.setSize(10, 10);
-                                    leftTopPoint.setLocation(evalArea.x - 5, evalArea.y - 5);
+                    if (seleccion.isSelected()){
+                        areaQeue.forEach(a -> {
+                            Rectangle evalArea = new Rectangle(a);
+                            evalArea.x = (int) (evalArea.x * escala);
+                            evalArea.y = (int) (evalArea.y * escala);
+                            evalArea.width = (int) (evalArea.width * escala);
+                            evalArea.height = (int) (evalArea.height * escala);
+                            switch (areaStatus) {
+                                case MODIFY:
+                                    if (a.equals(learnArea)) {
+                                        leftTopPoint.setSize(10, 10);
+                                        leftTopPoint.setLocation(evalArea.x - 5, evalArea.y - 5);
 
-                                    widthHwightpoint.setSize(10, 10);
-                                    widthHwightpoint.setLocation(
-                                            evalArea.width + evalArea.x - 5,
-                                            evalArea.height + evalArea.y - 5);
+                                        widthHwightpoint.setSize(10, 10);
+                                        widthHwightpoint.setLocation(
+                                                evalArea.width + evalArea.x - 5,
+                                                evalArea.height + evalArea.y - 5);
 
+                                        localg.setColor(Color.RED);
+                                    } else {
+                                        localg.setColor(Color.BLACK);
+                                    }
+                                    break;
+                                case MODIFY_POSITION:
+                                case MODIFY_SIZE:
+                                    if (a.equals(learnArea)) {
+                                        localg.setColor(Color.BLUE);
+                                    } else {
+                                        localg.setColor(Color.BLACK);
+                                    }
+                                    break;
+                                case DELETE:
                                     localg.setColor(Color.RED);
-                                } else {
+                                    break;
+                                case ADD:
                                     localg.setColor(Color.BLACK);
-                                }
-                                break;
-                            case MODIFY_POSITION:
-                            case MODIFY_SIZE:
-                                if (a.equals(learnArea)) {
-                                    localg.setColor(Color.BLUE);
-                                } else {
-                                    localg.setColor(Color.BLACK);
-                                }
-                                break;
-                            case DELETE:
-                                localg.setColor(Color.RED);
-                                break;
-                            case ADD:
-                                localg.setColor(Color.BLACK);
-                                break;
+                                    break;
+                                case DUPLICATE:
+                                    localg.setColor(Color.YELLOW);
+                                    break;
 
-                        }
-                        localg.draw(evalArea);
-                        if (SeletionStatus.MODIFY.equals(areaStatus)) {
-                            localg.setColor(Color.WHITE);
-                            localg.draw(leftTopPoint);
-                            localg.setColor(Color.GREEN);
-                            localg.draw(widthHwightpoint);
-                        }
+                            }
+                            localg.draw(evalArea);
+                            if (SeletionStatus.MODIFY.equals(areaStatus)) {
+                                localg.setColor(Color.WHITE);
+                                localg.draw(leftTopPoint);
+                                localg.setColor(Color.GREEN);
+                                localg.draw(widthHwightpoint);
+                            }
 
-                    });
+                        });
+                        
+                    }
 
                 }
             }
@@ -1627,7 +1734,7 @@ public class VisLoad extends javax.swing.JFrame {
     }
 
     private enum SeletionStatus {
-        MODIFY, MODIFY_POSITION, MODIFY_SIZE, ADD, DELETE
+        MODIFY, MODIFY_POSITION, MODIFY_SIZE, ADD, DELETE, DUPLICATE
     }
 
     public static ComboBoxModel getActivationComboBoxModel() {
@@ -1663,6 +1770,10 @@ public class VisLoad extends javax.swing.JFrame {
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
@@ -1674,6 +1785,8 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JCheckBox actualizacion;
     private javax.swing.ButtonGroup adaptInputButtonGroup;
     private javax.swing.JButton addSelectionButton;
+    private javax.swing.JToggleButton asPartToggleButton;
+    private javax.swing.JToggleButton asSampleToggleButton;
     private javax.swing.JButton cargaImagen;
     private javax.swing.JButton cargaOriginal;
     private javax.swing.JButton cargaPreparada;
@@ -1681,6 +1794,7 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JButton clean;
     private javax.swing.JButton cleanCopy;
     private javax.swing.JButton deleteSelectionButton;
+    private javax.swing.JButton duplicaSelectionButton;
     private javax.swing.JButton enmascaraResultado;
     private javax.swing.JCheckBox entrenar;
     private javax.swing.JToggleButton freno;
@@ -1716,6 +1830,7 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTableWeight;
     private javax.swing.JRadioButton libreJRadioButton;
+    private javax.swing.JRadioButton normaExtJRadioButton;
     private javax.swing.JRadioButton normalizeJRadioButton;
     private javax.swing.JRadioButton preventJRadioButton;
     private javax.swing.JButton procesar;
@@ -1725,9 +1840,9 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JRadioButton scaleJRadioButton;
     private javax.swing.JCheckBox seleccion;
     private javax.swing.JCheckBox seleccionCopy;
+    private javax.swing.ButtonGroup selectionTypeButtonGroup;
     private javax.swing.JButton suavizaResultado;
     private javax.swing.JPanel vista;
-    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 
     public FileNameExtensionFilter getFileNameExtensionFilter() {
@@ -1777,7 +1892,7 @@ public class VisLoad extends javax.swing.JFrame {
 
     private static class NeuronTableCellEditorImpl extends AbstractCellEditor implements TableCellEditor {
 
-        private JSpinner neuronas = new JSpinner(new SpinnerNumberModel(15, 1, 1025, 3));
+        private JSpinner neuronas = new JSpinner(new SpinnerNumberModel(15, 1, 2049, 3));
         private JSpinner alCuadrado = new JSpinner(getCuadradoSpinnerModel());
         private boolean isCuadrado = false;
 
