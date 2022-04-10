@@ -273,6 +273,7 @@ public abstract class AbstractManager<N extends Number> {
      * carga matrices de pesos de las capas desde un archivo
      * @param archivo nombre del archivo
      */
+    @SuppressWarnings("unchecked")
     public void cargaPesos(String archivo) {
         log.info("cargaPesos <{}>", archivo);
         try (final InputStream fis = Files.newInputStream(Paths.get(archivo)); final BufferedInputStream bis = new BufferedInputStream(fis); final GzipCompressorInputStream gzIn = new GzipCompressorInputStream(bis); final ObjectInputStream ois = new ObjectInputStream(gzIn)) {
@@ -353,6 +354,7 @@ public abstract class AbstractManager<N extends Number> {
      * @param creation inicial de neuronas de capas
      * @param modeling funcion de modelado de neurona
      */
+    @SuppressWarnings("unchecked")
     public void initMatrix(UnaryOperator<NumericMatriz<N>>[] creation, UnaryOperator<NumericMatriz<N>>[] modeling) {
         int inSize = pixelMapper.getDominio(inStep).getFila();
         weights = new NumericMatriz[hiddenStep.length];
