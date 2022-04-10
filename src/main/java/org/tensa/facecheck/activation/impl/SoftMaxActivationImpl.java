@@ -63,7 +63,31 @@ public class SoftMaxActivationImpl<N extends Number> implements Activation<N> {
 
     @Override
     public BiFunction<NumericMatriz<N>, NumericMatriz<N>, NumericMatriz<N>> getError() {
-        return (leraning, neta) -> leraning.productoEscalar(neta.inversoAditivo(neta.getUnoValue()));
+        return (leraning, neta) -> {
+            Map<Integer, N> sumas = neta.entrySet().stream()
+                    .collect(Collectors.toMap(
+                            e -> e.getKey().getColumna(),
+                            e -> e.getValue(),
+                            (a, b) -> neta.sumaDirecta(a, b)));
+
+            Map<Integer, N> sumas2 = sumas.entrySet().stream()
+                    .collect(Collectors.toMap(
+                            e -> e.getKey(), 
+                            e -> neta.productoDirecto(
+                                    e.getValue(), e.getValue())));
+
+            return neta.entrySet().stream()
+                    .collect(ActivationUtils.entryToMatriz(
+                            neta,
+                            e -> neta.productoDirecto(
+                                    leraning.get(e.getKey()),
+                                    neta.productoDirecto(
+                                            neta.restaDirecta(sumas.get(e.getKey().getColumna()), e.getValue()),
+                                            neta.inversoMultiplicativo(
+                                                    sumas2.get(e.getKey().getColumna())
+                                            )))
+                    ));
+        };
     }
 
     @Override
