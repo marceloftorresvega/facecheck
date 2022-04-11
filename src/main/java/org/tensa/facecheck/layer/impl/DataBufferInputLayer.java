@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.UncheckedIOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -81,13 +80,13 @@ public class DataBufferInputLayer<N extends Number> implements LayerProducer<N> 
             outputLayer = supplier.get();
             outputLayer.getDominio().forEach(i -> outputLayer.put(i, readed.apply(ois)));
 
-            for (LayerConsumer<N> lc : consumers) {
+            consumers.forEach(lc -> {
                 lc.setInputLayer(outputLayer);
-            }
+            });
 
-            for (LayerConsumer<N> lc : consumers) {
+            consumers.forEach(lc -> {
                 lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
-            }
+            });
         } catch (IOException | UncheckedIOException ex) {
 
 //            for (LayerConsumer<N> lc : consumers) {
@@ -101,30 +100,30 @@ public class DataBufferInputLayer<N extends Number> implements LayerProducer<N> 
         return consumers;
     }
 
+    /**
+     * Lee un float del stream
+     * @param is stream de convolucion
+     * @return dato base de la capa
+     */
     public N floatRead(ObjectInputStream is) {
         try {
-            return (N) Float.valueOf(is.readFloat());
+            
+            return outputLayer.mapper(is.readFloat());
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
     }
 
+    /**
+     * Lee un double del stream
+     * @param is de convolucion
+     * @return dato base de la capa
+     */
     public N doubleRead(ObjectInputStream is) {
-        try {
-            return (N) Double.valueOf(is.readDouble());
+        try { 
+            return outputLayer.mapper( is.readDouble());
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
-        }
-    }
-
-    @Deprecated
-    public N bigDecimalRead(ObjectInputStream is) {
-        try {
-            return (N) (BigDecimal) is.readObject();
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        } catch (ClassNotFoundException ex) {
-            throw new RuntimeException(ex);
         }
     }
 
