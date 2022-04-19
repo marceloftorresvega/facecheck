@@ -87,6 +87,47 @@ public abstract class AbstractManager<N extends Number> {
     protected LearningEstrategy<N>[] learningControl;
     protected N[] learningRate;
     protected Activation<N>[] activationFunction;
+    
+    protected Boolean[] useBias;
+
+    /**
+     * Get the value of useBias
+     *
+     * @return the value of useBias
+     */
+    public Boolean[] isUseBias() {
+        return useBias;
+    }
+
+    /**
+     * Set the value of useBias
+     *
+     * @param useBias new value of useBias
+     */
+    public void setUseBias(Boolean[] useBias) {
+        this.useBias = useBias;
+    }
+
+    /**
+     * Get the value of useBias at specified index
+     *
+     * @param index the index of useBias
+     * @return the value of useBias at specified index
+     */
+    public Boolean isUseBias(int index) {
+        return this.useBias[index];
+    }
+
+    /**
+     * Set the value of useBias at specified index.
+     *
+     * @param index the index of useBias
+     * @param useBias new value of useBias at specified index
+     */
+    public void setUseBias(int index, Boolean useBias) {
+        this.useBias[index] = useBias;
+    }
+
 
     public AbstractManager() {
     }
@@ -318,6 +359,7 @@ public abstract class AbstractManager<N extends Number> {
         int inSize = pixelMapper.getDominio(inStep).getFila();
         weights = new NumericMatriz[hiddenStep.length];
         for (int k = 0; k < weights.length; k++) {
+            inSize = this.useBias[k]? inSize +1: inSize;
             weights[k] = createMatrix(inSize, hiddenStep[k], creation[k], modeling[k]);
             inSize = hiddenStep[k];
         }
