@@ -26,18 +26,21 @@ package org.tensa.facecheck.activation.impl;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import org.tensa.facecheck.activation.Activation;
 import org.tensa.facecheck.activation.utils.ActivationUtils;
 import org.tensa.tensada.matrix.NumericMatriz;
 
 /**
- * retorna la matriz de reflectancia para cada columna de la matriz de ingreso
+ * retorna la matriz normal para cada columna de la matriz de ingreso
+ *
+ * funcion de error de x/ (x2+c): ((x2+c) - 2x2) / (x2 + c)2 -> c-x2 / (x2+c)2
  *
  * @author Marcelo
  * @param <N> clase de nummero utilizado
  */
-public class SoftMaxActivationImpl<N extends Number> implements Activation<N> {
+public class NormalActivationImpl<N extends Number> implements Activation<N> {
 
     @Override
     public Function<NumericMatriz<N>, NumericMatriz<N>> getActivation() {
@@ -45,18 +48,20 @@ public class SoftMaxActivationImpl<N extends Number> implements Activation<N> {
     }
 
     private NumericMatriz<N> getSoftMax(NumericMatriz<N> m) {
-        Map<Integer, N> sumas = m.entrySet().stream()
+
+        Map<Integer, N> sumas2 = m.entrySet().stream()
                 .collect(Collectors.toMap(
                         e -> e.getKey().getColumna(),
-                        e -> e.getValue(),
-                        (a, b) -> m.sumaDirecta(a, b)));
+                        e -> m.productoDirecto(e.getValue(), e.getValue()),
+                        m::sumaDirecta));
+
         return m.entrySet().stream()
                 .collect(ActivationUtils.entryToMatriz(
                         m,
                         e -> m.productoDirecto(
                                 e.getValue(),
                                 m.inversoMultiplicativo(
-                                        sumas.get(e.getKey().getColumna())
+                                        sumas2.get(e.getKey().getColumna())
                                 ))
                 ));
     }
@@ -64,29 +69,32 @@ public class SoftMaxActivationImpl<N extends Number> implements Activation<N> {
     @Override
     public BiFunction<NumericMatriz<N>, NumericMatriz<N>, NumericMatriz<N>> getError() {
         return (leraning, neta) -> {
-            Map<Integer, N> sumas = neta.entrySet().stream()
+
+            UnaryOperator<N> cuad = v -> neta.productoDirecto(v, v);
+
+            NumericMatriz<N> cuadrados = neta.entrySet().stream()
+                    .collect(ActivationUtils.entryToMatriz(
+                            neta,
+                            cuad.compose(Map.Entry::getValue)));
+
+            Map<Integer, N> sumas2 = cuadrados.entrySet().stream()
                     .collect(Collectors.toMap(
                             e -> e.getKey().getColumna(),
-                            e -> e.getValue(),
-                            (a, b) -> neta.sumaDirecta(a, b)));
+                            Map.Entry::getValue,
+                            neta::sumaDirecta));
 
-            Map<Integer, N> sumas2 = sumas.entrySet().stream()
-                    .collect(Collectors.toMap(
-                            e -> e.getKey(), 
-                            e -> neta.productoDirecto(
-                                    e.getValue(), e.getValue())));
-
-            return neta.entrySet().stream()
+            return cuadrados.entrySet().stream()
                     .collect(ActivationUtils.entryToMatriz(
                             neta,
                             e -> neta.productoDirecto(
-                                    leraning.get(e.getKey()),
-                                    neta.productoDirecto(
-                                            neta.restaDirecta(sumas.get(e.getKey().getColumna()), e.getValue()),
-                                            neta.inversoMultiplicativo(
-                                                    sumas2.get(e.getKey().getColumna())
-                                            )))
-                    ));
+                                    neta.restaDirecta(
+                                            sumas2.get(e.getKey().getColumna()),
+                                            neta.productoDirecto(
+                                                    neta.mapper(2.0),
+                                                    cuadrados.get(e.getKey()))),
+                                    cuad.andThen(neta::inversoMultiplicativo)
+                                            .compose(sumas2::get)
+                                            .apply(e.getKey().getColumna()))));
         };
     }
 
