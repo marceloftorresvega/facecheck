@@ -51,7 +51,9 @@ import org.tensa.facecheck.activation.Activation;
 import org.tensa.facecheck.activation.impl.ComposeActivationImpl;
 import org.tensa.facecheck.activation.impl.IsMaxActivationImpl;
 import org.tensa.facecheck.activation.impl.IsMinActivationImpl;
+import org.tensa.facecheck.activation.impl.LeakyReluActivationImpl;
 import org.tensa.facecheck.activation.impl.LinealActivationImpl;
+import org.tensa.facecheck.activation.impl.NormalActivationImpl;
 import org.tensa.facecheck.activation.impl.ReluActivationImpl;
 import org.tensa.facecheck.activation.impl.SigmoidActivationImpl;
 import org.tensa.facecheck.activation.impl.SoftMaxActivationImpl;
@@ -1060,8 +1062,28 @@ public class VisLoad extends javax.swing.JFrame {
         switch (afe) {
             case LINEAL:
                 return new LinealActivationImpl<>();
+            case NORMAL:
+                return new NormalActivationImpl<>();
             case RELU:
                 return new ReluActivationImpl<>();
+            case LEAKYRELU_00_800:
+                return new LeakyReluActivationImpl<>(.8f);
+            case LEAKYRELU_00_500:
+                return new LeakyReluActivationImpl<>(.5f);
+            case LEAKYRELU_00_100:
+                return new LeakyReluActivationImpl<>(.1f);
+            case LEAKYRELU_00_080:
+                return new LeakyReluActivationImpl<>(.08f);
+            case LEAKYRELU_00_050:
+                return new LeakyReluActivationImpl<>(.05f);
+            case LEAKYRELU_00_010:
+                return new LeakyReluActivationImpl<>(.01f);
+            case LEAKYRELU_00_008:
+                return new LeakyReluActivationImpl<>(.008f);
+            case LEAKYRELU_00_005:
+                return new LeakyReluActivationImpl<>(.005f);
+            case LEAKYRELU_00_001:
+                return new LeakyReluActivationImpl<>(.001f);
             case SIGMOIDE_00_1:
                 return new SigmoidActivationImpl<>(.1f);
             case SIGMOIDE_00_5:
