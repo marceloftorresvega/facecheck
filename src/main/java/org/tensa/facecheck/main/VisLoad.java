@@ -19,13 +19,24 @@ import java.awt.image.ConvolveOp;
 import java.awt.image.IndexColorModel;
 import java.awt.image.Kernel;
 import java.awt.image.WritableRaster;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.OptionalDouble;
+import java.util.Vector;
 import java.util.function.UnaryOperator;
 import java.util.stream.IntStream;
 import javax.imageio.ImageIO;
@@ -45,6 +56,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.activation.Activation;
@@ -95,6 +108,7 @@ public class VisLoad extends javax.swing.JFrame {
     private Rectangle learnArea;
     private SeletionStatus areaStatus = SeletionStatus.MODIFY;
     private final FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("Pesos Neuronas", "da3");
+    private final FileNameExtensionFilter fileNameNetworkExtensionFilter = new FileNameExtensionFilter("Red Neuronas", "nn3");
     private final FileNameExtensionFilter fileNameExtensionFilterImage = new FileNameExtensionFilter("JPEG", "jpg");
     private final Rectangle leftTopPoint;
     private final Rectangle widthHwightpoint;
@@ -185,6 +199,8 @@ public class VisLoad extends javax.swing.JFrame {
         jFileChooserLoadImagenResult = new javax.swing.JFileChooser();
         jFileChooserLoadImagen = new javax.swing.JFileChooser();
         selectionTypeButtonGroup = new javax.swing.ButtonGroup();
+        jFileChooserSaveNet = new javax.swing.JFileChooser();
+        jFileChooserLoadNet = new javax.swing.JFileChooser();
         jPanelTop = new javax.swing.JPanel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
@@ -216,6 +232,8 @@ public class VisLoad extends javax.swing.JFrame {
         jLabelNumInPixels = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabelNumOutPixels = new javax.swing.JLabel();
+        jButtonSalvaRed = new javax.swing.JButton();
+        jButtonCargaRed = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         procesar = new javax.swing.JButton();
         entrenar = new javax.swing.JCheckBox();
@@ -263,6 +281,13 @@ public class VisLoad extends javax.swing.JFrame {
         jFileChooserLoadImagen.setCurrentDirectory(new File(System.getProperty("user.dir")));
         jFileChooserLoadImagen.setDialogTitle("Carga Imagen Inicial");
         jFileChooserLoadImagen.setFileFilter(getFileNameExtensionFilterImage());
+
+        jFileChooserSaveNet.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
+        jFileChooserSaveNet.setDialogTitle("Salva Red");
+        jFileChooserSaveNet.setFileFilter(getFileNameNetworkExtensionFilter());
+
+        jFileChooserLoadNet.setDialogTitle("Carga Red");
+        jFileChooserLoadNet.setFileFilter(getFileNameNetworkExtensionFilter());
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Vista de carga");
@@ -489,6 +514,20 @@ public class VisLoad extends javax.swing.JFrame {
 
         jLabelNumOutPixels.setText("0/3");
 
+        jButtonSalvaRed.setText("Salva Red");
+        jButtonSalvaRed.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSalvaRedActionPerformed(evt);
+            }
+        });
+
+        jButtonCargaRed.setText("Carga Red");
+        jButtonCargaRed.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCargaRedActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -512,7 +551,11 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabelNumOutPixels)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 246, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 67, Short.MAX_VALUE)
+                .addComponent(jButtonCargaRed)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonSalvaRed)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonAddRow)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonRemoveRow)
@@ -533,7 +576,9 @@ public class VisLoad extends javax.swing.JFrame {
                         .addComponent(jButtonAddRow)
                         .addComponent(jButtonRemoveRow)
                         .addComponent(jLabel3)
-                        .addComponent(jLabelNumOutPixels)))
+                        .addComponent(jLabelNumOutPixels)
+                        .addComponent(jButtonSalvaRed)
+                        .addComponent(jButtonCargaRed)))
                 .addGap(0, 2, Short.MAX_VALUE))
         );
 
@@ -1564,6 +1609,71 @@ public class VisLoad extends javax.swing.JFrame {
         });
     }//GEN-LAST:event_duplicaSelectionButtonActionPerformed
 
+    private void jButtonSalvaRedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalvaRedActionPerformed
+        log.info("salvando red...");
+        int showSaveDialog = jFileChooserSaveNet.showSaveDialog(null);
+        if (showSaveDialog == javax.swing.JFileChooser.APPROVE_OPTION) {
+            if (jFileChooserSaveNet.getSelectedFile().getPath().endsWith("nn3")) {
+                DefaultTableModel dtm = (DefaultTableModel)jTableWeight.getModel();
+
+                String archivo = jFileChooserSaveNet.getSelectedFile().getPath();
+                try (final OutputStream fos = Files.newOutputStream(Paths.get(archivo)); final BufferedOutputStream out = new BufferedOutputStream(fos); final GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(out); final ObjectOutputStream oos = new ObjectOutputStream(gzOut)) {
+                    int inStep = (int) inNeurs.getValue();
+                    oos.writeInt(inStep);
+                    oos.writeObject(dtm.getDataVector());
+                    oos.close();
+                } catch (FileNotFoundException ex) {
+                    log.error("error al guardar  red", ex);
+                } catch (IOException ex) {
+                    log.error("error al guardar  red", ex);
+                }
+            }
+
+        }
+    }//GEN-LAST:event_jButtonSalvaRedActionPerformed
+
+    private void jButtonCargaRedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCargaRedActionPerformed
+        log.info("Cargando red...");
+        int showSaveDialog = jFileChooserLoadNet.showOpenDialog(null);
+        if (showSaveDialog == javax.swing.JFileChooser.APPROVE_OPTION) {
+            if (jFileChooserLoadNet.getSelectedFile().getPath().endsWith("nn3")) {
+                DefaultTableModel dtm = (DefaultTableModel)jTableWeight.getModel();                
+
+                String archivo = jFileChooserLoadNet.getSelectedFile().getPath();
+                try (final InputStream fis = Files.newInputStream(Paths.get(archivo)); final BufferedInputStream bis = new BufferedInputStream(fis); final GzipCompressorInputStream gzIn = new GzipCompressorInputStream(bis); final ObjectInputStream ois = new ObjectInputStream(gzIn)) {
+                    int inStep = ois.readInt();
+                    Vector<Vector> dtm2 = (Vector<Vector>) ois.readObject();
+                    ois.close();
+                    inNeurs.setValue(inStep);
+                    
+                    dtm.setDataVector(dtm2, new Vector<String>(Arrays.asList("Neuronas", "Tendencia", "Creacion Pesos", "Estilo Pesos", "Func. Activacion", "Fact. Aprendisaje", "estratg. Aprendisaje")));
+                    
+                    if (jTableWeight.getColumnModel().getColumnCount() > 0) {
+                        jTableWeight.getColumnModel().getColumn(0).setResizable(false);
+                        jTableWeight.getColumnModel().getColumn(0).setCellEditor(getNeuronCellEditor());
+                        jTableWeight.getColumnModel().getColumn(1).setResizable(false);
+                        jTableWeight.getColumnModel().getColumn(2).setCellEditor(getNeuronCreationWeigth());
+                        jTableWeight.getColumnModel().getColumn(3).setResizable(false);
+                        jTableWeight.getColumnModel().getColumn(3).setCellEditor(getNeuronStyleWeigth());
+                        jTableWeight.getColumnModel().getColumn(4).setResizable(false);
+                        jTableWeight.getColumnModel().getColumn(4).setCellEditor(getActivationFunctionCellEditor());
+                        jTableWeight.getColumnModel().getColumn(5).setResizable(false);
+                        jTableWeight.getColumnModel().getColumn(5).setCellEditor(getLearningFactorCellEditor());
+                        jTableWeight.getColumnModel().getColumn(5).setCellRenderer(getLearningFactorCellRender());
+                        jTableWeight.getColumnModel().getColumn(6).setResizable(false);
+                        jTableWeight.getColumnModel().getColumn(6).setCellEditor(getLearningEstrategyCellEditor());
+                    }
+                    
+                } catch (FileNotFoundException ex) {
+                    log.error("error al cargar red", ex);
+                } catch (IOException | ClassNotFoundException ex) {
+                    log.error("error al cargar red", ex);
+                }
+            }
+
+        }
+    }//GEN-LAST:event_jButtonCargaRedActionPerformed
+
     private float calculaMatriz(int i, int j) {
         float retorno;
         float half = (float) kwidth / 2;
@@ -1751,6 +1861,10 @@ public class VisLoad extends javax.swing.JFrame {
         };
     }
 
+    public FileNameExtensionFilter getFileNameNetworkExtensionFilter() {
+        return fileNameNetworkExtensionFilter;
+    }
+
     private enum SeletionStatus {
         MODIFY, MODIFY_POSITION, MODIFY_SIZE, ADD, DELETE, DUPLICATE
     }
@@ -1819,15 +1933,19 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JSpinner inNeurs;
     private javax.swing.JSpinner iteraciones;
     private javax.swing.JButton jButtonAddRow;
+    private javax.swing.JButton jButtonCargaRed;
     private javax.swing.JButton jButtonRemoveRow;
     private javax.swing.JButton jButtonSalvaImagen;
+    private javax.swing.JButton jButtonSalvaRed;
     private javax.swing.JCheckBox jCheckBoxScale1neg1;
     private javax.swing.JPanel jErrorGraf;
     private javax.swing.JFileChooser jFileChooserImagenSalva;
     private javax.swing.JFileChooser jFileChooserLoadImagen;
     private javax.swing.JFileChooser jFileChooserLoadImagenResult;
+    private javax.swing.JFileChooser jFileChooserLoadNet;
     private javax.swing.JFileChooser jFileChooserPesosLoad;
     private javax.swing.JFileChooser jFileChooserPesosSave;
+    private javax.swing.JFileChooser jFileChooserSaveNet;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
