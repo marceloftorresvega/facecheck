@@ -72,6 +72,9 @@
     <Component class="javax.swing.JFileChooser" name="jFileChooserSaveNet">
       <Properties>
         <Property name="dialogType" type="int" value="1"/>
+        <Property name="currentDirectory" type="java.io.File" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="new File(System.getProperty(&quot;user.dir&quot;))" type="code"/>
+        </Property>
         <Property name="dialogTitle" type="java.lang.String" value="Salva Red"/>
         <Property name="fileFilter" type="javax.swing.filechooser.FileFilter" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
           <Connection code="getFileNameNetworkExtensionFilter()" type="code"/>
@@ -80,6 +83,9 @@
     </Component>
     <Component class="javax.swing.JFileChooser" name="jFileChooserLoadNet">
       <Properties>
+        <Property name="currentDirectory" type="java.io.File" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="new File(System.getProperty(&quot;user.dir&quot;))" type="code"/>
+        </Property>
         <Property name="dialogTitle" type="java.lang.String" value="Carga Red"/>
         <Property name="fileFilter" type="javax.swing.filechooser.FileFilter" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
           <Connection code="getFileNameNetworkExtensionFilter()" type="code"/>

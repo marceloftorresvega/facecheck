@@ -283,9 +283,11 @@ public class VisLoad extends javax.swing.JFrame {
         jFileChooserLoadImagen.setFileFilter(getFileNameExtensionFilterImage());
 
         jFileChooserSaveNet.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
+        jFileChooserSaveNet.setCurrentDirectory(new File(System.getProperty("user.dir")));
         jFileChooserSaveNet.setDialogTitle("Salva Red");
         jFileChooserSaveNet.setFileFilter(getFileNameNetworkExtensionFilter());
 
+        jFileChooserLoadNet.setCurrentDirectory(new File(System.getProperty("user.dir")));
         jFileChooserLoadNet.setDialogTitle("Carga Red");
         jFileChooserLoadNet.setFileFilter(getFileNameNetworkExtensionFilter());
 
