@@ -53,6 +53,7 @@ import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -832,7 +833,8 @@ public class VisLoad extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
-        jTableWeight.setColumnSelectionAllowed(true);
+        jTableWeight.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jTableWeight.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jTableWeight.getTableHeader().setReorderingAllowed(false);
         jTableWeight.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
@@ -845,6 +847,7 @@ public class VisLoad extends javax.swing.JFrame {
             jTableWeight.getColumnModel().getColumn(0).setResizable(false);
             jTableWeight.getColumnModel().getColumn(0).setCellEditor(getNeuronCellEditor());
             jTableWeight.getColumnModel().getColumn(1).setResizable(false);
+            jTableWeight.getColumnModel().getColumn(2).setResizable(false);
             jTableWeight.getColumnModel().getColumn(2).setCellEditor(getNeuronCreationWeigth());
             jTableWeight.getColumnModel().getColumn(3).setResizable(false);
             jTableWeight.getColumnModel().getColumn(3).setCellEditor(getNeuronStyleWeigth());
@@ -1423,6 +1426,8 @@ public class VisLoad extends javax.swing.JFrame {
                     model.addRow(new Object[]{neuronas, Boolean.FALSE,WeightCreationEnum.RANDOM, WeightModelingEnum.SIMPLE, ActivationFunctionEnum.LINEAL, learningRate, BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE});
 
                 });
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(null, "Archivo no corresponde al compendio de pesos de la red", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
             }
         }
     }//GEN-LAST:event_cargarActionPerformed
@@ -1615,22 +1620,25 @@ public class VisLoad extends javax.swing.JFrame {
         log.info("salvando red...");
         int showSaveDialog = jFileChooserSaveNet.showSaveDialog(null);
         if (showSaveDialog == javax.swing.JFileChooser.APPROVE_OPTION) {
-            if (jFileChooserSaveNet.getSelectedFile().getPath().endsWith("nn3")) {
-                DefaultTableModel dtm = (DefaultTableModel)jTableWeight.getModel();
-
-                String archivo = jFileChooserSaveNet.getSelectedFile().getPath();
-                try (final OutputStream fos = Files.newOutputStream(Paths.get(archivo)); final BufferedOutputStream out = new BufferedOutputStream(fos); final GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(out); final ObjectOutputStream oos = new ObjectOutputStream(gzOut)) {
-                    int inStep = (int) inNeurs.getValue();
-                    oos.writeInt(inStep);
-                    oos.writeObject(dtm.getDataVector());
-                    oos.close();
-                } catch (FileNotFoundException ex) {
-                    log.error("error al guardar  red", ex);
-                } catch (IOException ex) {
-                    log.error("error al guardar  red", ex);
-                }
+            
+            String archivo = jFileChooserSaveNet.getSelectedFile().getPath();
+            
+            if (!archivo.endsWith(".nn3")) {
+                archivo = archivo + ".nn3";
             }
+            DefaultTableModel dtm = (DefaultTableModel)jTableWeight.getModel();
 
+            try (final OutputStream fos = Files.newOutputStream(Paths.get(archivo)); final BufferedOutputStream out = new BufferedOutputStream(fos); final GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(out); final ObjectOutputStream oos = new ObjectOutputStream(gzOut)) {
+                int inStep = (int) inNeurs.getValue();
+                oos.writeInt(inStep);
+                oos.writeObject(dtm.getDataVector());
+                oos.writeObject(networkManager.getWeights());
+                oos.close();
+            } catch (FileNotFoundException ex) {
+                log.error("error al guardar  red", ex);
+            } catch (IOException ex) {
+                log.error("error al guardar  red", ex);
+            }
         }
     }//GEN-LAST:event_jButtonSalvaRedActionPerformed
 
@@ -1638,15 +1646,17 @@ public class VisLoad extends javax.swing.JFrame {
         log.info("Cargando red...");
         int showSaveDialog = jFileChooserLoadNet.showOpenDialog(null);
         if (showSaveDialog == javax.swing.JFileChooser.APPROVE_OPTION) {
-            if (jFileChooserLoadNet.getSelectedFile().getPath().endsWith("nn3")) {
+            String archivo = jFileChooserLoadNet.getSelectedFile().getPath();
+            if (archivo.endsWith("nn3")) {
                 DefaultTableModel dtm = (DefaultTableModel)jTableWeight.getModel();                
 
-                String archivo = jFileChooserLoadNet.getSelectedFile().getPath();
                 try (final InputStream fis = Files.newInputStream(Paths.get(archivo)); final BufferedInputStream bis = new BufferedInputStream(fis); final GzipCompressorInputStream gzIn = new GzipCompressorInputStream(bis); final ObjectInputStream ois = new ObjectInputStream(gzIn)) {
                     int inStep = ois.readInt();
                     Vector<Vector> dtm2 = (Vector<Vector>) ois.readObject();
+                    NumericMatriz<Float>[] weights = (NumericMatriz<Float>[])ois.readObject();
                     ois.close();
                     inNeurs.setValue(inStep);
+                    networkManager.setWeights(weights);
                     
                     dtm.setDataVector(dtm2, new Vector<String>(Arrays.asList("Neuronas", "Tendencia", "Creacion Pesos", "Estilo Pesos", "Func. Activacion", "Fact. Aprendisaje", "estratg. Aprendisaje")));
                     
@@ -1671,6 +1681,8 @@ public class VisLoad extends javax.swing.JFrame {
                 } catch (IOException | ClassNotFoundException ex) {
                     log.error("error al cargar red", ex);
                 }
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(null, "Archivo no corresponde a una red neuronal", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
             }
 
         }
