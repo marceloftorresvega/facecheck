@@ -53,7 +53,6 @@ import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -818,7 +817,7 @@ public class VisLoad extends javax.swing.JFrame {
 
         jTableWeight.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                { new Integer(15), null, null, null, null,  new Float(5.0E-5), null},
+                { new Integer(15), null, "", "", "",  new Float(5.0E-5), ""},
                 { new Integer(27), null, null, null, null,  new Float(5.0E-5), null}
             },
             new String [] {
@@ -833,6 +832,7 @@ public class VisLoad extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
+        jTableWeight.setColumnSelectionAllowed(true);
         jTableWeight.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jTableWeight.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jTableWeight.getTableHeader().setReorderingAllowed(false);
@@ -970,6 +970,8 @@ public class VisLoad extends javax.swing.JFrame {
         networkManager.setIterateTo((int) iteraciones.getValue());
         networkManager.setUseSelection(seleccion.isSelected());
 
+//        adaptInputButtonGroup.getSelection().getActionCommand()
+//        normalizeJRadioButton.setActionCommand("");
         networkManager.setPixelMapper(PixelMappings.defaultMapping());
         if (!jCheckBoxScale1neg1.isSelected()) {
 
@@ -1656,7 +1658,10 @@ public class VisLoad extends javax.swing.JFrame {
                     NumericMatriz<Float>[] weights = (NumericMatriz<Float>[])ois.readObject();
                     ois.close();
                     inNeurs.setValue(inStep);
+                    networkManager.setInStep(inStep);
                     networkManager.setWeights(weights);
+                    int[] hiddenStep = Arrays.stream(weights).map(NumericMatriz::getDominio).mapToInt(Dominio::getFila).peek(hid -> log.info("neuronas <{}>", hid)).toArray();
+                    networkManager.setHiddenStep(hiddenStep);
                     
                     dtm.setDataVector(dtm2, new Vector<String>(Arrays.asList("Neuronas", "Tendencia", "Creacion Pesos", "Estilo Pesos", "Func. Activacion", "Fact. Aprendisaje", "estratg. Aprendisaje")));
                     
@@ -1675,7 +1680,7 @@ public class VisLoad extends javax.swing.JFrame {
                         jTableWeight.getColumnModel().getColumn(6).setResizable(false);
                         jTableWeight.getColumnModel().getColumn(6).setCellEditor(getLearningEstrategyCellEditor());
                     }
-                    
+
                 } catch (FileNotFoundException ex) {
                     log.error("error al cargar red", ex);
                 } catch (IOException | ClassNotFoundException ex) {

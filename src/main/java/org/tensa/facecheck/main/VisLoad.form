@@ -921,14 +921,26 @@
                       <Data value="27"/>
                     </Column>
                     <Column editable="true" title="Tendencia" type="java.lang.Boolean"/>
-                    <Column editable="true" title="Creacion Pesos" type="java.lang.Object"/>
-                    <Column editable="true" title="Estilo Pesos" type="java.lang.Object"/>
-                    <Column editable="true" title="Func. Activacion" type="java.lang.Object"/>
+                    <Column editable="true" title="Creacion Pesos" type="java.lang.Object">
+                      <Data value=""/>
+                      <Data value="null"/>
+                    </Column>
+                    <Column editable="true" title="Estilo Pesos" type="java.lang.Object">
+                      <Data value=""/>
+                      <Data value="null"/>
+                    </Column>
+                    <Column editable="true" title="Func. Activacion" type="java.lang.Object">
+                      <Data value=""/>
+                      <Data value="null"/>
+                    </Column>
                     <Column editable="true" title="Fact. Aprendisaje" type="java.lang.Float">
                       <Data value="5.0E-5"/>
                       <Data value="5.0E-5"/>
                     </Column>
-                    <Column editable="true" title="estratg. Aprendisaje" type="java.lang.Object"/>
+                    <Column editable="true" title="estratg. Aprendisaje" type="java.lang.Object">
+                      <Data value=""/>
+                      <Data value="null"/>
+                    </Column>
                   </Table>
                 </Property>
                 <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -984,6 +996,7 @@
                     </Column>
                   </TableColumnModel>
                 </Property>
+                <Property name="columnSelectionAllowed" type="boolean" value="true"/>
                 <Property name="selectionMode" type="int" value="0"/>
                 <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
                   <JTableSelectionModel selectionMode="0"/>
