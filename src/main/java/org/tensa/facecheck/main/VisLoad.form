@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+<Form version="1.6" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
     <Component class="javax.swing.ButtonGroup" name="adaptInputButtonGroup">
     </Component>
@@ -68,6 +68,29 @@
       </Properties>
     </Component>
     <Component class="javax.swing.ButtonGroup" name="selectionTypeButtonGroup">
+    </Component>
+    <Component class="javax.swing.JFileChooser" name="jFileChooserSaveNet">
+      <Properties>
+        <Property name="dialogType" type="int" value="1"/>
+        <Property name="currentDirectory" type="java.io.File" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="new File(System.getProperty(&quot;user.dir&quot;))" type="code"/>
+        </Property>
+        <Property name="dialogTitle" type="java.lang.String" value="Salva Red"/>
+        <Property name="fileFilter" type="javax.swing.filechooser.FileFilter" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="getFileNameNetworkExtensionFilter()" type="code"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JFileChooser" name="jFileChooserLoadNet">
+      <Properties>
+        <Property name="currentDirectory" type="java.io.File" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="new File(System.getProperty(&quot;user.dir&quot;))" type="code"/>
+        </Property>
+        <Property name="dialogTitle" type="java.lang.String" value="Carga Red"/>
+        <Property name="fileFilter" type="javax.swing.filechooser.FileFilter" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="getFileNameNetworkExtensionFilter()" type="code"/>
+        </Property>
+      </Properties>
     </Component>
   </NonVisualComponents>
   <Properties>
@@ -414,12 +437,16 @@
                           <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
                           <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jLabelNumInPixels" min="-2" pref="59" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="jLabelNumInPixels" min="-2" pref="76" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jLabelNumOutPixels" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="264" max="32767" attributes="0"/>
+                          <EmptySpace pref="67" max="32767" attributes="0"/>
+                          <Component id="jButtonCargaRed" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="jButtonSalvaRed" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="jButtonAddRow" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jButtonRemoveRow" min="-2" max="-2" attributes="0"/>
@@ -430,20 +457,24 @@
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="clean" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="cargar" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="salva" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="inNeurs" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jButtonAddRow" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jButtonRemoveRow" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabelNumInPixels" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabelNumOutPixels" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Component id="jLabelNumInPixels" alignment="1" min="-2" pref="22" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="clean" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="cargar" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="salva" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="inNeurs" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jButtonAddRow" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jButtonRemoveRow" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabelNumOutPixels" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jButtonSalvaRed" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jButtonCargaRed" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="2" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -492,7 +523,7 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel2">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Pixcels"/>
+                    <Property name="text" type="java.lang.String" value="Pixels"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JButton" name="jButtonAddRow">
@@ -522,6 +553,22 @@
                   <Properties>
                     <Property name="text" type="java.lang.String" value="0/3"/>
                   </Properties>
+                </Component>
+                <Component class="javax.swing.JButton" name="jButtonSalvaRed">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Salva Red"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonSalvaRedActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="jButtonCargaRed">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Carga Red"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonCargaRedActionPerformed"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>
@@ -874,14 +921,26 @@
                       <Data value="27"/>
                     </Column>
                     <Column editable="true" title="Tendencia" type="java.lang.Boolean"/>
-                    <Column editable="true" title="Creacion Pesos" type="java.lang.Object"/>
-                    <Column editable="true" title="Estilo Pesos" type="java.lang.Object"/>
-                    <Column editable="true" title="Func. Activacion" type="java.lang.Object"/>
+                    <Column editable="true" title="Creacion Pesos" type="java.lang.Object">
+                      <Data value=""/>
+                      <Data value="null"/>
+                    </Column>
+                    <Column editable="true" title="Estilo Pesos" type="java.lang.Object">
+                      <Data value=""/>
+                      <Data value="null"/>
+                    </Column>
+                    <Column editable="true" title="Func. Activacion" type="java.lang.Object">
+                      <Data value=""/>
+                      <Data value="null"/>
+                    </Column>
                     <Column editable="true" title="Fact. Aprendisaje" type="java.lang.Float">
                       <Data value="5.0E-5"/>
                       <Data value="5.0E-5"/>
                     </Column>
-                    <Column editable="true" title="estratg. Aprendisaje" type="java.lang.Object"/>
+                    <Column editable="true" title="estratg. Aprendisaje" type="java.lang.Object">
+                      <Data value=""/>
+                      <Data value="null"/>
+                    </Column>
                   </Table>
                 </Property>
                 <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -938,6 +997,10 @@
                   </TableColumnModel>
                 </Property>
                 <Property name="columnSelectionAllowed" type="boolean" value="true"/>
+                <Property name="selectionMode" type="int" value="0"/>
+                <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
+                  <JTableSelectionModel selectionMode="0"/>
+                </Property>
                 <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                   <TableHeader reorderingAllowed="false" resizingAllowed="true"/>
                 </Property>
