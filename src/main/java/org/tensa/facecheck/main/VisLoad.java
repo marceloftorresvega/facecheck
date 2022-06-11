@@ -32,6 +32,7 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -1631,6 +1632,13 @@ public class VisLoad extends javax.swing.JFrame {
             DefaultTableModel dtm = (DefaultTableModel)jTableWeight.getModel();
 
             try (final OutputStream fos = Files.newOutputStream(Paths.get(archivo)); final BufferedOutputStream out = new BufferedOutputStream(fos); final GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(out); final ObjectOutputStream oos = new ObjectOutputStream(gzOut)) {
+                
+                oos.writeBoolean(jCheckBoxScale1neg1.isSelected());
+                String buttonText = Collections.list(adaptInputButtonGroup.getElements()).stream()
+                        .filter(e -> adaptInputButtonGroup.isSelected(e.getModel()))
+                        .map(e -> e.getText())
+                        .findFirst().orElseThrow();
+                oos.writeUTF(buttonText);
                 int inStep = (int) inNeurs.getValue();
                 oos.writeInt(inStep);
                 oos.writeObject(dtm.getDataVector());
@@ -1653,15 +1661,28 @@ public class VisLoad extends javax.swing.JFrame {
                 DefaultTableModel dtm = (DefaultTableModel)jTableWeight.getModel();                
 
                 try (final InputStream fis = Files.newInputStream(Paths.get(archivo)); final BufferedInputStream bis = new BufferedInputStream(fis); final GzipCompressorInputStream gzIn = new GzipCompressorInputStream(bis); final ObjectInputStream ois = new ObjectInputStream(gzIn)) {
+                    boolean scale1neg1 = ois.readBoolean();
+                    String buttonText = ois.readUTF();
                     int inStep = ois.readInt();
                     Vector<Vector> dtm2 = (Vector<Vector>) ois.readObject();
                     NumericMatriz<Float>[] weights = (NumericMatriz<Float>[])ois.readObject();
                     ois.close();
+                    jCheckBoxScale1neg1.setSelected(scale1neg1);
+                    Collections.list(adaptInputButtonGroup.getElements()).stream()
+                            .filter(e -> e.getText().equals(buttonText))
+                            .findFirst().ifPresent( e -> { 
+                                e.setSelected(true);
+                            });
                     inNeurs.setValue(inStep);
                     networkManager.setInStep(inStep);
                     networkManager.setWeights(weights);
-                    int[] hiddenStep = Arrays.stream(weights).map(NumericMatriz::getDominio).mapToInt(Dominio::getFila).peek(hid -> log.info("neuronas <{}>", hid)).toArray();
-                    networkManager.setHiddenStep(hiddenStep);
+                        
+                    if (Objects.nonNull(weights)) {
+                        int[] hiddenStep = Arrays.stream(weights).map(NumericMatriz::getDominio).mapToInt(Dominio::getFila).peek(hid -> log.info("neuronas <{}>", hid)).toArray();
+                        networkManager.setHiddenStep(hiddenStep);
+                    } else {
+                        networkManager.setHiddenStep(null);
+                    }
                     
                     dtm.setDataVector(dtm2, new Vector<String>(Arrays.asList("Neuronas", "Tendencia", "Creacion Pesos", "Estilo Pesos", "Func. Activacion", "Fact. Aprendisaje", "estratg. Aprendisaje")));
                     
