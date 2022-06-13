@@ -1643,6 +1643,7 @@ public class VisLoad extends javax.swing.JFrame {
                 oos.writeInt(inStep);
                 oos.writeObject(dtm.getDataVector());
                 oos.writeObject(networkManager.getWeights());
+                oos.writeObject(networkManager.getAreaQeue());
                 oos.close();
             } catch (FileNotFoundException ex) {
                 log.error("error al guardar  red", ex);
@@ -1666,6 +1667,7 @@ public class VisLoad extends javax.swing.JFrame {
                     int inStep = ois.readInt();
                     Vector<Vector> dtm2 = (Vector<Vector>) ois.readObject();
                     NumericMatriz<Float>[] weights = (NumericMatriz<Float>[])ois.readObject();
+                    List<Rectangle> areaQeue = (List<Rectangle>)ois.readObject();
                     ois.close();
                     jCheckBoxScale1neg1.setSelected(scale1neg1);
                     Collections.list(adaptInputButtonGroup.getElements()).stream()
@@ -1676,6 +1678,8 @@ public class VisLoad extends javax.swing.JFrame {
                     inNeurs.setValue(inStep);
                     networkManager.setInStep(inStep);
                     networkManager.setWeights(weights);
+                    networkManager.getAreaQeue().clear();
+                    networkManager.getAreaQeue().addAll(areaQeue);
                         
                     if (Objects.nonNull(weights)) {
                         int[] hiddenStep = Arrays.stream(weights).map(NumericMatriz::getDominio).mapToInt(Dominio::getFila).peek(hid -> log.info("neuronas <{}>", hid)).toArray();
