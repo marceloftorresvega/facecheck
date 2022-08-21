@@ -1650,9 +1650,11 @@ public class VisLoad extends javax.swing.JFrame {
             } catch (IOException ex) {
                 log.error("error al guardar  red", ex);
             }
+            log.info("red guardada.");
         }
     }//GEN-LAST:event_jButtonSalvaRedActionPerformed
-
+    
+    @SuppressWarnings("unchecked")
     private void jButtonCargaRedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCargaRedActionPerformed
         log.info("Cargando red...");
         int showSaveDialog = jFileChooserLoadNet.showOpenDialog(null);
