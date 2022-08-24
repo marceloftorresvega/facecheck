@@ -591,15 +591,17 @@
                           <Component id="freno" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                           <Component id="entrenar" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="116" max="-2" attributes="0"/>
-                          <Component id="iteraciones" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="jCheckBoxParalell" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
+                          <Component id="iteraciones" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="96" max="-2" attributes="0"/>
                           <Component id="seleccionCopy" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="cleanCopy" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="actualizacion" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="151" max="32767" attributes="0"/>
+                          <EmptySpace pref="44" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -614,8 +616,9 @@
                               <Component id="cleanCopy" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="freno" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="actualizacion" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jCheckBoxParalell" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="2" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -673,6 +676,15 @@
                     <Property name="text" type="java.lang.String" value="Actualizaci&#xf3;n"/>
                     <Property name="toolTipText" type="java.lang.String" value="actualizacion de pantalla cada 30 segundos"/>
                   </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="jCheckBoxParalell">
+                  <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" value="proceso paralelo"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBoxParalellActionPerformed"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>

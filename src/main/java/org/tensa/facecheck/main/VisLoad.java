@@ -243,6 +243,7 @@ public class VisLoad extends javax.swing.JFrame {
         cleanCopy = new javax.swing.JButton();
         freno = new javax.swing.JToggleButton();
         actualizacion = new javax.swing.JCheckBox();
+        jCheckBoxParalell = new javax.swing.JCheckBox();
         jPanel5 = new javax.swing.JPanel();
         seleccion = new javax.swing.JCheckBox();
         addSelectionButton = new javax.swing.JButton();
@@ -626,6 +627,14 @@ public class VisLoad extends javax.swing.JFrame {
         actualizacion.setText("Actualización");
         actualizacion.setToolTipText("actualizacion de pantalla cada 30 segundos");
 
+        jCheckBoxParalell.setSelected(true);
+        jCheckBoxParalell.setText("proceso paralelo");
+        jCheckBoxParalell.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBoxParalellActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -637,15 +646,17 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(freno)
                 .addGap(12, 12, 12)
                 .addComponent(entrenar)
-                .addGap(116, 116, 116)
-                .addComponent(iteraciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
+                .addComponent(jCheckBoxParalell)
+                .addGap(14, 14, 14)
+                .addComponent(iteraciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(96, 96, 96)
                 .addComponent(seleccionCopy)
                 .addGap(18, 18, 18)
                 .addComponent(cleanCopy)
                 .addGap(18, 18, 18)
                 .addComponent(actualizacion)
-                .addContainerGap(151, Short.MAX_VALUE))
+                .addContainerGap(44, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -657,8 +668,9 @@ public class VisLoad extends javax.swing.JFrame {
                     .addComponent(seleccionCopy)
                     .addComponent(cleanCopy)
                     .addComponent(freno)
-                    .addComponent(actualizacion))
-                .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(actualizacion)
+                    .addComponent(jCheckBoxParalell))
+                .addGap(0, 2, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Entrenamiento", jPanel4);
@@ -948,12 +960,16 @@ public class VisLoad extends javax.swing.JFrame {
         procesar.setEnabled(false);
         cleanCopy.setEnabled(false);
         clean.setEnabled(false);
+        entrenar.setEnabled(false);
+        jCheckBoxParalell.setEnabled(false);
+        
         bufferImageFiltered = createCompatibleDestImage(buffImage, null);
 
         networkManager.setInputImage(buffImage);
         networkManager.setOutputImage(bufferImageFiltered);
         networkManager.setCompareImage(destBuffImage);
         networkManager.setTrainingMode(entrenar.isSelected());
+        networkManager.setBaseParallel(jCheckBoxParalell.isSelected());
 
         networkManager.setLearningRate(IntStream.range(0, jTableWeight.getRowCount())
                 .mapToObj(i -> (Float) jTableWeight.getValueAt(i, 5)).toArray(Float[]::new));
@@ -979,6 +995,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .peek(c -> log.info("use bias <{}>", c))
                 .toArray(Boolean[]::new);
         networkManager.setUseBias(useBias);
+        networkManager.setBaseParallel(jCheckBoxParalell.isSelected());
 
         networkManager.setIterateTo((int) iteraciones.getValue());
         networkManager.setUseSelection(seleccion.isSelected());
@@ -1026,6 +1043,8 @@ public class VisLoad extends javax.swing.JFrame {
             procesar.setEnabled(true);
             cleanCopy.setEnabled(true);
             clean.setEnabled(true);
+            entrenar.setEnabled(true);
+            jCheckBoxParalell.setEnabled(true);
             freno.setSelected(false);
 
             java.awt.EventQueue.invokeLater(() -> {
@@ -1039,7 +1058,7 @@ public class VisLoad extends javax.swing.JFrame {
                 try {
                     Thread.sleep(5000);
 
-                    networkManager.setTrainingMode(entrenar.isSelected());
+//                    networkManager.setTrainingMode(entrenar.isSelected());
                     networkManager.setEmergencyBreak(freno.isSelected());
 
                     if (jProgressBar1.getValue() == networkManager.getIterateCurrent()) {
@@ -1746,6 +1765,10 @@ public class VisLoad extends javax.swing.JFrame {
         });
     }//GEN-LAST:event_limpiajButtonActionPerformed
 
+    private void jCheckBoxParalellActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxParalellActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jCheckBoxParalellActionPerformed
+
     private float calculaMatriz(int i, int j) {
         float retorno;
         float half = (float) kwidth / 2;
@@ -2009,6 +2032,7 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JButton jButtonRemoveRow;
     private javax.swing.JButton jButtonSalvaImagen;
     private javax.swing.JButton jButtonSalvaRed;
+    private javax.swing.JCheckBox jCheckBoxParalell;
     private javax.swing.JCheckBox jCheckBoxScale1neg1;
     private javax.swing.JPanel jErrorGraf;
     private javax.swing.JFileChooser jFileChooserImagenSalva;
