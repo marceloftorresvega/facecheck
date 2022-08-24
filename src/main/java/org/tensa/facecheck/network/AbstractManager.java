@@ -89,6 +89,7 @@ public abstract class AbstractManager<N extends Number> {
     protected Activation<N>[] activationFunction;
     
     protected Boolean[] useBias;
+    protected boolean baseParallel = true;
 
     /**
      * Get the value of useBias
@@ -551,4 +552,12 @@ public abstract class AbstractManager<N extends Number> {
      * procesamiento de la red neuronal
      */
     public abstract void process();
+
+    public boolean isBaseParallel() {
+        return baseParallel;
+    }
+
+    public void setBaseParallel(boolean baseParallel) {
+        this.baseParallel = baseParallel;
+    }
 }
