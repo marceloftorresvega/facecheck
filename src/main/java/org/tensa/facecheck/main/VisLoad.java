@@ -250,6 +250,7 @@ public class VisLoad extends javax.swing.JFrame {
         duplicaSelectionButton = new javax.swing.JButton();
         asSampleToggleButton = new javax.swing.JToggleButton();
         asPartToggleButton = new javax.swing.JToggleButton();
+        limpiajButton = new javax.swing.JButton();
         jErrorGraf = getNuevaErrorGram();
         jPanelCard = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
@@ -705,6 +706,14 @@ public class VisLoad extends javax.swing.JFrame {
         asPartToggleButton.setToolTipText("La imajen completa es una muestra");
         asPartToggleButton.setEnabled(seleccion.isSelected());
 
+        limpiajButton.setText("Limpia");
+        limpiajButton.setEnabled(seleccion.isSelected());
+        limpiajButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                limpiajButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -718,11 +727,13 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(duplicaSelectionButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(deleteSelectionButton)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(limpiajButton)
+                .addGap(28, 28, 28)
                 .addComponent(asSampleToggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(asPartToggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(141, Short.MAX_VALUE))
+                .addContainerGap(53, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -733,7 +744,8 @@ public class VisLoad extends javax.swing.JFrame {
                     .addComponent(deleteSelectionButton)
                     .addComponent(duplicaSelectionButton)
                     .addComponent(asSampleToggleButton)
-                    .addComponent(asPartToggleButton))
+                    .addComponent(asPartToggleButton)
+                    .addComponent(limpiajButton))
                 .addGap(0, 2, Short.MAX_VALUE))
         );
 
@@ -1362,6 +1374,7 @@ public class VisLoad extends javax.swing.JFrame {
         deleteSelectionButton.setEnabled(seleccion.isSelected());
         asSampleToggleButton.setEnabled(seleccion.isSelected());
         asPartToggleButton.setEnabled(seleccion.isSelected());
+        limpiajButton.setEnabled(seleccion.isSelected());
         
         java.awt.EventQueue.invokeLater(() -> {
             vista.repaint();
@@ -1650,9 +1663,11 @@ public class VisLoad extends javax.swing.JFrame {
             } catch (IOException ex) {
                 log.error("error al guardar  red", ex);
             }
+            log.info("red guardada.");
         }
     }//GEN-LAST:event_jButtonSalvaRedActionPerformed
-
+    
+    @SuppressWarnings("unchecked")
     private void jButtonCargaRedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCargaRedActionPerformed
         log.info("Cargando red...");
         int showSaveDialog = jFileChooserLoadNet.showOpenDialog(null);
@@ -1717,6 +1732,19 @@ public class VisLoad extends javax.swing.JFrame {
 
         }
     }//GEN-LAST:event_jButtonCargaRedActionPerformed
+
+    private void limpiajButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limpiajButtonActionPerformed
+       
+        LinkedList<Rectangle> areaQeue = networkManager.getAreaQeue();
+        areaQeue.clear();
+        learnArea = new Rectangle();
+        learnArea.setSize(100, 100);
+        learnArea.setLocation(10, 10);
+        areaQeue.add(learnArea);
+        java.awt.EventQueue.invokeLater(() -> {
+            vista.repaint();
+        });
+    }//GEN-LAST:event_limpiajButtonActionPerformed
 
     private float calculaMatriz(int i, int j) {
         float retorno;
@@ -2010,6 +2038,7 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTableWeight;
     private javax.swing.JRadioButton libreJRadioButton;
+    private javax.swing.JButton limpiajButton;
     private javax.swing.JRadioButton normaExtJRadioButton;
     private javax.swing.JRadioButton normalizeJRadioButton;
     private javax.swing.JRadioButton preventJRadioButton;

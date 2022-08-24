@@ -127,6 +127,12 @@ public class HiddenLayer<N extends Number> implements LayerConsumer<N>, LayerLea
             for (LayerConsumer<N> lc : consumers) {
                 lc.layerComplete(LayerConsumer.SUCCESS_STATUS);
             }
+            
+        } else {
+            
+            for (LayerConsumer<N> lc : consumers) {
+                lc.layerComplete(LayerConsumer.ERROR_STATUS);
+            }
         }
     }
 

@@ -697,11 +697,13 @@
                           <Component id="duplicaSelectionButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="deleteSelectionButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="limpiajButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
                           <Component id="asSampleToggleButton" min="-2" pref="111" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="asPartToggleButton" min="-2" pref="111" max="-2" attributes="0"/>
-                          <EmptySpace pref="141" max="32767" attributes="0"/>
+                          <EmptySpace pref="53" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -715,6 +717,7 @@
                               <Component id="duplicaSelectionButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="asSampleToggleButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="asPartToggleButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="limpiajButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="0" pref="2" max="32767" attributes="0"/>
                       </Group>
@@ -788,6 +791,17 @@
                       <Connection component="seleccion" name="selected" type="property"/>
                     </Property>
                   </Properties>
+                </Component>
+                <Component class="javax.swing.JButton" name="limpiajButton">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Limpia"/>
+                    <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection component="seleccion" name="isSelected" type="method"/>
+                    </Property>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="limpiajButtonActionPerformed"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>
