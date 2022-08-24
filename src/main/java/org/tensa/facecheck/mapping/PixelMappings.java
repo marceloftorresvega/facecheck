@@ -49,6 +49,16 @@ public final class PixelMappings {
     public static PixelMapper defaultMapping() {
         return new PixelMapper() {
             @Override
+            public Dominio getDominioBuffer(int length, int buffer) {
+                return new Dominio(length, buffer);
+            }
+
+            @Override
+            public Indice getIndice(int i, int slot) {
+                return new Indice(i + 1, slot);
+            }
+
+            @Override
             public Dominio getDominio(int largo) {
                 return new Dominio(largo, 1);
             }
@@ -75,6 +85,11 @@ public final class PixelMappings {
     public static PixelMapper plus1Mapping() {
         return new PixelMapper() {
             @Override
+            public Dominio getDominioBuffer(int length, int buffer) {
+                return new Dominio(length + 1, buffer);
+            }
+
+            @Override
             public Dominio getDominio(int largo) {
                 return new Dominio(largo + 1, 1);
             }
@@ -82,6 +97,11 @@ public final class PixelMappings {
             @Override
             public Indice getIndice(int i) {
                 return new Indice(i + 1, 1);
+            }
+
+            @Override
+            public Indice getIndice(int i, int slot) {
+                return new Indice(i + 1, slot);
             }
 
             @Override
@@ -103,6 +123,11 @@ public final class PixelMappings {
     public static PixelMapper byComponentMapping() {
         return new PixelMapper() {
             @Override
+            public Dominio getDominioBuffer(int length, int buffer) {
+                return new Dominio(length, buffer * 3);
+            }
+
+            @Override
             public Dominio getDominio(int largo) {
                 return new Dominio(largo / 3, 3);
             }
@@ -110,6 +135,11 @@ public final class PixelMappings {
             @Override
             public Indice getIndice(int i) {
                 return new Indice(i / 3 + 1, i % 3 + 1);
+            }
+
+            @Override
+            public Indice getIndice(int i, int slot) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
 
             @Override
@@ -134,6 +164,11 @@ public final class PixelMappings {
             private Dominio dominioLocal;
 
             @Override
+            public Dominio getDominioBuffer(int length, int buffer) {
+                return this.dominioLocal = new Dominio(length, 3 * buffer);
+            }
+
+            @Override
             public Dominio getDominio(int largo) {
                 return this.dominioLocal = new Dominio(largo, 3);
             }
@@ -141,6 +176,11 @@ public final class PixelMappings {
             @Override
             public Indice getIndice(int i) {
                 return new Indice((i % 3) * dominioLocal.getFila() + i / 3 + 1, i % 3 + 1);
+            }
+
+            @Override
+            public Indice getIndice(int i, int slot) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
 
             @Override
@@ -163,6 +203,11 @@ public final class PixelMappings {
     public static PixelMapper bySampleMapping() {
         return new PixelMapper() {
             @Override
+            public Dominio getDominioBuffer(int length, int buffer) {
+                return new Dominio(3 * buffer, length / 3);
+            }
+
+            @Override
             public Dominio getDominio(int largo) {
                 return new Dominio(3, largo / 3);
             }
@@ -170,6 +215,11 @@ public final class PixelMappings {
             @Override
             public Indice getIndice(int i) {
                 return new Indice(i % 3 + 1, i / 3 + 1);
+            }
+
+            @Override
+            public Indice getIndice(int i, int slot) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
 
             @Override

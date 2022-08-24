@@ -42,16 +42,20 @@ import org.tensa.tensada.matrix.NumericMatriz;
  * @param <N>
  */
 public class PixelInputLayer<N extends Number> implements LayerProducer<N> {
+
     protected BufferedImage src;
     protected NumericMatriz<N> outputLayer;
+    protected final List<BufferedImage> srcList;
     protected final List<LayerConsumer<N>> consumers;
-    protected final Function<Dominio,NumericMatriz<N>> supplier;
+    protected final Function<Dominio, NumericMatriz<N>> supplier;
     protected final UnaryOperator<NumericMatriz<N>> responceEscale;
     protected final PixelMapper pixelMapper;
 
     public PixelInputLayer(BufferedImage src, Function<Dominio, NumericMatriz<N>> supplier, UnaryOperator<NumericMatriz<N>> responceEscale, PixelMapper pixelMapper) {
         this.src = src;
         this.consumers = new ArrayList<>();
+        this.srcList = new ArrayList<>();
+        this.srcList.add(src);
         this.supplier = supplier;
         this.responceEscale = responceEscale;
         this.pixelMapper = pixelMapper;
@@ -59,6 +63,7 @@ public class PixelInputLayer<N extends Number> implements LayerProducer<N> {
 
     public PixelInputLayer(Function<Dominio, NumericMatriz<N>> supplier, PixelMapper pixelMapper, UnaryOperator<NumericMatriz<N>> responceEscale) {
         this.src = null;
+        this.srcList = new ArrayList<>();
         this.consumers = new ArrayList<>();
         this.supplier = supplier;
         this.responceEscale = responceEscale;
@@ -69,18 +74,25 @@ public class PixelInputLayer<N extends Number> implements LayerProducer<N> {
         if (src == null) {
             throw new NullPointerException("src image is null");
         }
-        
+
         int width = src.getWidth();
         int height = src.getHeight();
-        
-        double[] pixels = src.getRaster().getPixels(0, 0, width, height, (double[])null);
-        NumericMatriz<N> dm = supplier.compose(pixelMapper::getDominio).apply(pixels.length);
-                
-        for(int k=0;k<pixels.length;k++){
-            Indice key = pixelMapper.getIndice(k);
-            dm.put(key, dm.mapper(pixels[k]));
+        int buffersize = 12;
+
+        NumericMatriz<N> dm = supplier.compose(size -> pixelMapper.getDominioBuffer(buffersize, 12)).apply(width * height);
+
+        int slot = 0;
+        for (BufferedImage srcItem : srcList) {
+            slot++;
+            double[] pixels = srcItem.getRaster().getPixels(0, 0, width, height, (double[]) null);
+
+            for (int k = 0; k < pixels.length; k++) {
+                Indice key = pixelMapper.getIndice(k, slot);
+                dm.put(key, dm.mapper(pixels[k]));
+            }
+
         }
-                
+
         if (Objects.nonNull(responceEscale)) {
             dm = responceEscale.apply(dm);
         }
@@ -109,5 +121,5 @@ public class PixelInputLayer<N extends Number> implements LayerProducer<N> {
     public void setSrc(BufferedImage src) {
         this.src = src;
     }
-    
+
 }
