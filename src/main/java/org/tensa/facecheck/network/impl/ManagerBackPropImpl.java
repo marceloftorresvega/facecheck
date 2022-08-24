@@ -94,9 +94,14 @@ public class ManagerBackPropImpl<N extends Number> extends AbstractManager<N> {
                     .filter(idx -> (!useSelection) || (areaQeue.stream().anyMatch(a -> a.contains(idx.getFila(), idx.getColumna()))))
                     .collect(Collectors.toList());
             errorGraph = supplier.apply(dominio);
-            proccesDomain.stream()
-                    .sorted((idx1, idx2) -> (int) (2.0 * Math.random() - 1.0))
-                    .parallel()
+            
+            Stream<ParOrdenado> processStream = proccesDomain.stream()
+                    .sorted((idx1, idx2) -> (int) (2.0 * Math.random() - 1.0));
+            if (this.isBaseParallel()) {
+                processStream = processStream.parallel();
+            }
+            
+            processStream
                     .filter(idx -> !emergencyBreak)
                     .forEach((ParOrdenado idx) -> {
                         int i = idx.getFila();
