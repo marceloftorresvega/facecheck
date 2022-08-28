@@ -90,6 +90,7 @@ public abstract class AbstractManager<N extends Number> {
     
     protected Boolean[] useBias;
     protected boolean baseParallel = true;
+    protected int slotBuffer;
 
     /**
      * Get the value of useBias
@@ -409,6 +410,22 @@ public abstract class AbstractManager<N extends Number> {
     }
 
     /**
+     * funcion de presentacion de error
+     * @param learning valor delta transferido
+     * @param idxList listado epoc
+     */
+    protected void errorBiConsumer(LayerLearning<N> learning, List<ParOrdenado> idxList) {
+        synchronized (errorGraph) {
+            int i = 0;
+            for (ParOrdenado idx : idxList) {
+                N errorVal = learning.getError().get(i++);
+                errorGraph.put(idx, errorGraph.mapper(errorVal.doubleValue()));
+                log.info("diferencia <{}>", errorVal);
+            }
+        }
+    }
+
+    /**
      * generador de matrices
      * @param supplier procedimiento de generacion de matrices
      */
@@ -559,5 +576,13 @@ public abstract class AbstractManager<N extends Number> {
 
     public void setBaseParallel(boolean baseParallel) {
         this.baseParallel = baseParallel;
+    }
+
+    public int getSlotBuffer() {
+        return slotBuffer;
+    }
+
+    public void setSlotBuffer(int slotBuffer) {
+        this.slotBuffer = slotBuffer;
     }
 }
