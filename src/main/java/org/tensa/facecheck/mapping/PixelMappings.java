@@ -48,9 +48,15 @@ public final class PixelMappings {
      */
     public static PixelMapper defaultMapping() {
         return new PixelMapper() {
+
+            /**
+             *
+             * @param length the value of length
+             * @param slot the value of slot
+             */
             @Override
-            public Dominio getDominioBuffer(int length, int buffer) {
-                return new Dominio(length, buffer);
+            public Dominio getDominioBuffer(int length, int slot) {
+                return new Dominio(length, slot);
             }
 
             @Override
@@ -84,9 +90,15 @@ public final class PixelMappings {
      */
     public static PixelMapper plus1Mapping() {
         return new PixelMapper() {
+
+            /**
+             *
+             * @param length the value of length
+             * @param slot the value of slot
+             */
             @Override
-            public Dominio getDominioBuffer(int length, int buffer) {
-                return new Dominio(length + 1, buffer);
+            public Dominio getDominioBuffer(int length, int slot) {
+                return new Dominio(length + 1, slot);
             }
 
             @Override
@@ -122,9 +134,15 @@ public final class PixelMappings {
      */
     public static PixelMapper byComponentMapping() {
         return new PixelMapper() {
+
+            /**
+             *
+             * @param length the value of length
+             * @param slot the value of slot
+             */
             @Override
-            public Dominio getDominioBuffer(int length, int buffer) {
-                return new Dominio(length, buffer * 3);
+            public Dominio getDominioBuffer(int length, int slot) {
+                return new Dominio(length, slot * 3);
             }
 
             @Override
@@ -163,9 +181,14 @@ public final class PixelMappings {
         return new PixelMapper() {
             private Dominio dominioLocal;
 
+            /**
+             *
+             * @param length the value of length
+             * @param slot the value of slot
+             */
             @Override
-            public Dominio getDominioBuffer(int length, int buffer) {
-                return this.dominioLocal = new Dominio(length, 3 * buffer);
+            public Dominio getDominioBuffer(int length, int slot) {
+                return this.dominioLocal = new Dominio(length, 3 * slot);
             }
 
             @Override
@@ -202,9 +225,15 @@ public final class PixelMappings {
      */
     public static PixelMapper bySampleMapping() {
         return new PixelMapper() {
+
+            /**
+             *
+             * @param length the value of length
+             * @param slot the value of slot
+             */
             @Override
-            public Dominio getDominioBuffer(int length, int buffer) {
-                return new Dominio(3 * buffer, length / 3);
+            public Dominio getDominioBuffer(int length, int slot) {
+                return new Dominio(3 * slot, length / 3);
             }
 
             @Override
