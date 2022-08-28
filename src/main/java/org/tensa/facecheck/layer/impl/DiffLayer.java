@@ -52,7 +52,7 @@ public class DiffLayer<N extends Number> implements LayerLearning<N> {
     /**
      * en caso de error se usa para dejar registro
      */
-    protected final Logger log = LoggerFactory.getLogger(HiddenLayer.class);
+    protected final Logger log = LoggerFactory.getLogger(DiffLayer.class);
 
     /**
      * instancia capa diff con capa de comparacion (valor deseado) y adjunta un
