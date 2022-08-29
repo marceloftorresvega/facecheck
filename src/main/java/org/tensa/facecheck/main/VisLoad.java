@@ -123,6 +123,10 @@ public class VisLoad extends javax.swing.JFrame {
     public SpinnerModel getCuadradoSpinnerModel() {
         return NeuronTableCellEditorImpl.getCuadradoSpinnerModel();
     }
+    
+    public ComboBoxModel getBufferComboboxModel() {
+        return new DefaultComboBoxModel(new Integer[]{ 1, 3, 6, 12, 15 });
+    }
 
     /**
      * Get the value of sufxType
@@ -244,6 +248,7 @@ public class VisLoad extends javax.swing.JFrame {
         freno = new javax.swing.JToggleButton();
         actualizacion = new javax.swing.JCheckBox();
         jCheckBoxParalell = new javax.swing.JCheckBox();
+        jComboBoxBufferSize = new javax.swing.JComboBox<>();
         jPanel5 = new javax.swing.JPanel();
         seleccion = new javax.swing.JCheckBox();
         addSelectionButton = new javax.swing.JButton();
@@ -635,6 +640,11 @@ public class VisLoad extends javax.swing.JFrame {
             }
         });
 
+        jComboBoxBufferSize.setModel(getBufferComboboxModel());
+        jComboBoxBufferSize.setSelectedIndex(0);
+        jComboBoxBufferSize.setSelectedItem(0);
+        jComboBoxBufferSize.setToolTipText("tamaño buffer");
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -648,15 +658,17 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(entrenar)
                 .addGap(18, 18, 18)
                 .addComponent(jCheckBoxParalell)
-                .addGap(14, 14, 14)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jComboBoxBufferSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(iteraciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(96, 96, 96)
+                .addGap(30, 30, 30)
                 .addComponent(seleccionCopy)
                 .addGap(18, 18, 18)
                 .addComponent(cleanCopy)
                 .addGap(18, 18, 18)
                 .addComponent(actualizacion)
-                .addContainerGap(44, Short.MAX_VALUE))
+                .addContainerGap(57, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -669,7 +681,8 @@ public class VisLoad extends javax.swing.JFrame {
                     .addComponent(cleanCopy)
                     .addComponent(freno)
                     .addComponent(actualizacion)
-                    .addComponent(jCheckBoxParalell))
+                    .addComponent(jCheckBoxParalell)
+                    .addComponent(jComboBoxBufferSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 2, Short.MAX_VALUE))
         );
 
@@ -970,6 +983,7 @@ public class VisLoad extends javax.swing.JFrame {
         networkManager.setCompareImage(destBuffImage);
         networkManager.setTrainingMode(entrenar.isSelected());
         networkManager.setBaseParallel(jCheckBoxParalell.isSelected());
+        networkManager.setSlotBuffer((Integer)jComboBoxBufferSize.getSelectedItem());
 
         networkManager.setLearningRate(IntStream.range(0, jTableWeight.getRowCount())
                 .mapToObj(i -> (Float) jTableWeight.getValueAt(i, 5)).toArray(Float[]::new));
@@ -2034,6 +2048,7 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JButton jButtonSalvaRed;
     private javax.swing.JCheckBox jCheckBoxParalell;
     private javax.swing.JCheckBox jCheckBoxScale1neg1;
+    private javax.swing.JComboBox<String> jComboBoxBufferSize;
     private javax.swing.JPanel jErrorGraf;
     private javax.swing.JFileChooser jFileChooserImagenSalva;
     private javax.swing.JFileChooser jFileChooserLoadImagen;
