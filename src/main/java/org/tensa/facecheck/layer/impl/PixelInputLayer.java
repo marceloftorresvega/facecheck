@@ -45,13 +45,14 @@ public class PixelInputLayer<N extends Number> implements LayerProducer<N> {
 
     protected BufferedImage src;
     protected NumericMatriz<N> outputLayer;
-    protected final List<BufferedImage> srcList;
+    private final List<BufferedImage> srcList;
     protected final List<LayerConsumer<N>> consumers;
     protected final Function<Dominio, NumericMatriz<N>> supplier;
     protected final UnaryOperator<NumericMatriz<N>> responceEscale;
     protected final PixelMapper pixelMapper;
+    private final int slotBuffer;
 
-    public PixelInputLayer(BufferedImage src, Function<Dominio, NumericMatriz<N>> supplier, UnaryOperator<NumericMatriz<N>> responceEscale, PixelMapper pixelMapper) {
+    public PixelInputLayer(BufferedImage src, Function<Dominio, NumericMatriz<N>> supplier, UnaryOperator<NumericMatriz<N>> responceEscale, PixelMapper pixelMapper, int slotBuffer) {
         this.src = src;
         this.consumers = new ArrayList<>();
         this.srcList = new ArrayList<>();
@@ -59,27 +60,32 @@ public class PixelInputLayer<N extends Number> implements LayerProducer<N> {
         this.supplier = supplier;
         this.responceEscale = responceEscale;
         this.pixelMapper = pixelMapper;
+        this.slotBuffer = slotBuffer;
     }
 
-    public PixelInputLayer(Function<Dominio, NumericMatriz<N>> supplier, PixelMapper pixelMapper, UnaryOperator<NumericMatriz<N>> responceEscale) {
+    public PixelInputLayer(Function<Dominio, NumericMatriz<N>> supplier, UnaryOperator<NumericMatriz<N>> responceEscale, PixelMapper pixelMapper, int slotBuffer) {
         this.src = null;
         this.srcList = new ArrayList<>();
         this.consumers = new ArrayList<>();
         this.supplier = supplier;
         this.responceEscale = responceEscale;
         this.pixelMapper = pixelMapper;
+        this.slotBuffer = slotBuffer;
     }
 
     protected NumericMatriz<N> scanInput() {
-        if (src == null) {
+        if (src == null && srcList.isEmpty()) {
             throw new NullPointerException("src image is null");
+        }
+            
+        if ( src == null) {
+            src = srcList.get(0);
         }
 
         int width = src.getWidth();
         int height = src.getHeight();
-        int buffersize = 12;
 
-        NumericMatriz<N> dm = supplier.compose(size -> pixelMapper.getDominioBuffer(buffersize, 12)).apply(width * height);
+        NumericMatriz<N> dm = supplier.compose(size -> pixelMapper.getDominioBuffer((int)size, slotBuffer)).apply(width * height * 3);
 
         int slot = 0;
         for (BufferedImage srcItem : srcList) {
@@ -120,6 +126,14 @@ public class PixelInputLayer<N extends Number> implements LayerProducer<N> {
 
     public void setSrc(BufferedImage src) {
         this.src = src;
+    }
+
+    public List<BufferedImage> getSrcList() {
+        return srcList;
+    }
+
+    public int getSlotBuffer() {
+        return slotBuffer;
     }
 
 }
