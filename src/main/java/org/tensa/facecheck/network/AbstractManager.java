@@ -416,11 +416,14 @@ public abstract class AbstractManager<N extends Number> {
      */
     protected void errorBiConsumer(LayerLearning<N> learning, List<ParOrdenado> idxList) {
         synchronized (errorGraph) {
-            int i = 0;
+            int i = 1;
             for (ParOrdenado idx : idxList) {
-                N errorVal = learning.getError().get(i++);
+                NumericMatriz<N> error = learning.getError();
+                N errorVal = error.get(new Indice(i,i));
+                i++;
                 errorGraph.put(idx, errorGraph.mapper(errorVal.doubleValue()));
-                log.info("diferencia <{}>", errorVal);
+                log.info("diferencia <[{}, {}]={}>",idx.getFila(), idx.getColumna(), errorVal);
+//                log.info("error <{}>", error);
             }
         }
     }
