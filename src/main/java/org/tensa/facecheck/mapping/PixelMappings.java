@@ -48,6 +48,22 @@ public final class PixelMappings {
      */
     public static PixelMapper defaultMapping() {
         return new PixelMapper() {
+
+            /**
+             *
+             * @param length the value of length
+             * @param slot the value of slot
+             */
+            @Override
+            public Dominio getDominioBuffer(int length, int slot) {
+                return new Dominio(length, slot);
+            }
+
+            @Override
+            public Indice getIndice(int i, int slot) {
+                return new Indice(i + 1, slot);
+            }
+
             @Override
             public Dominio getDominio(int largo) {
                 return new Dominio(largo, 1);
@@ -74,6 +90,17 @@ public final class PixelMappings {
      */
     public static PixelMapper plus1Mapping() {
         return new PixelMapper() {
+
+            /**
+             *
+             * @param length the value of length
+             * @param slot the value of slot
+             */
+            @Override
+            public Dominio getDominioBuffer(int length, int slot) {
+                return new Dominio(length + 1, slot);
+            }
+
             @Override
             public Dominio getDominio(int largo) {
                 return new Dominio(largo + 1, 1);
@@ -82,6 +109,11 @@ public final class PixelMappings {
             @Override
             public Indice getIndice(int i) {
                 return new Indice(i + 1, 1);
+            }
+
+            @Override
+            public Indice getIndice(int i, int slot) {
+                return new Indice(i + 1, slot);
             }
 
             @Override
@@ -102,6 +134,17 @@ public final class PixelMappings {
      */
     public static PixelMapper byComponentMapping() {
         return new PixelMapper() {
+
+            /**
+             *
+             * @param length the value of length
+             * @param slot the value of slot
+             */
+            @Override
+            public Dominio getDominioBuffer(int length, int slot) {
+                return new Dominio(length, slot * 3);
+            }
+
             @Override
             public Dominio getDominio(int largo) {
                 return new Dominio(largo / 3, 3);
@@ -110,6 +153,11 @@ public final class PixelMappings {
             @Override
             public Indice getIndice(int i) {
                 return new Indice(i / 3 + 1, i % 3 + 1);
+            }
+
+            @Override
+            public Indice getIndice(int i, int slot) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
 
             @Override
@@ -133,6 +181,16 @@ public final class PixelMappings {
         return new PixelMapper() {
             private Dominio dominioLocal;
 
+            /**
+             *
+             * @param length the value of length
+             * @param slot the value of slot
+             */
+            @Override
+            public Dominio getDominioBuffer(int length, int slot) {
+                return this.dominioLocal = new Dominio(length, 3 * slot);
+            }
+
             @Override
             public Dominio getDominio(int largo) {
                 return this.dominioLocal = new Dominio(largo, 3);
@@ -141,6 +199,11 @@ public final class PixelMappings {
             @Override
             public Indice getIndice(int i) {
                 return new Indice((i % 3) * dominioLocal.getFila() + i / 3 + 1, i % 3 + 1);
+            }
+
+            @Override
+            public Indice getIndice(int i, int slot) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
 
             @Override
@@ -162,6 +225,17 @@ public final class PixelMappings {
      */
     public static PixelMapper bySampleMapping() {
         return new PixelMapper() {
+
+            /**
+             *
+             * @param length the value of length
+             * @param slot the value of slot
+             */
+            @Override
+            public Dominio getDominioBuffer(int length, int slot) {
+                return new Dominio(3 * slot, length / 3);
+            }
+
             @Override
             public Dominio getDominio(int largo) {
                 return new Dominio(3, largo / 3);
@@ -170,6 +244,11 @@ public final class PixelMappings {
             @Override
             public Indice getIndice(int i) {
                 return new Indice(i % 3 + 1, i / 3 + 1);
+            }
+
+            @Override
+            public Indice getIndice(int i, int slot) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
 
             @Override

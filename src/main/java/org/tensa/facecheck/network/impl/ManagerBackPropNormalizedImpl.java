@@ -104,14 +104,14 @@ public class ManagerBackPropNormalizedImpl<N extends Number> extends AbstractMan
                         int i = idx.getFila();
                         int j = idx.getColumna();
 
-                        PixelInputLayer<N> simplePixelsInputLayer = new PixelInputLayer<>(supplier, pixelMapper, inputScale);
+                        PixelInputLayer<N> simplePixelsInputLayer = new PixelInputLayer<>(supplier, inputScale, pixelMapper, slotBuffer);
                         HiddenLayer<N>[] hiddenLayers = new HiddenLayer[weights.length];
                         for (int k = 0; k < weights.length; k++) {
                             hiddenLayers[k] = new HiddenLayer<>(weights[k], learningRate[k], activationFunction[k], useBias[k]);
                         }
                         NormalizeLayer<N> normaLayer = new NormalizeLayer<>();
 
-                        PixelInputLayer<N> simplePixelsCompareLayer = new PixelInputLayer<>(supplier, pixelMapper, OutputScale::scale);
+                        PixelInputLayer<N> simplePixelsCompareLayer = new PixelInputLayer<>(supplier, OutputScale::scale, pixelMapper, slotBuffer);
                         PixelOutputLayer<N> pixelsOutputLayer = new PixelOutputLayer<>(pixelMapper);
                         DiffLayer<N> diffLAyer = new DiffLayer<>(simplePixelsCompareLayer, (lL) -> {
                             errorBiConsumer(lL, idx);

@@ -42,45 +42,63 @@ import org.tensa.tensada.matrix.NumericMatriz;
  * @param <N>
  */
 public class PixelInputLayer<N extends Number> implements LayerProducer<N> {
+
     protected BufferedImage src;
     protected NumericMatriz<N> outputLayer;
+    private final List<BufferedImage> srcList;
     protected final List<LayerConsumer<N>> consumers;
-    protected final Function<Dominio,NumericMatriz<N>> supplier;
+    protected final Function<Dominio, NumericMatriz<N>> supplier;
     protected final UnaryOperator<NumericMatriz<N>> responceEscale;
     protected final PixelMapper pixelMapper;
+    private final int slotBuffer;
 
-    public PixelInputLayer(BufferedImage src, Function<Dominio, NumericMatriz<N>> supplier, UnaryOperator<NumericMatriz<N>> responceEscale, PixelMapper pixelMapper) {
+    public PixelInputLayer(BufferedImage src, Function<Dominio, NumericMatriz<N>> supplier, UnaryOperator<NumericMatriz<N>> responceEscale, PixelMapper pixelMapper, int slotBuffer) {
         this.src = src;
         this.consumers = new ArrayList<>();
+        this.srcList = new ArrayList<>();
+        this.srcList.add(src);
         this.supplier = supplier;
         this.responceEscale = responceEscale;
         this.pixelMapper = pixelMapper;
+        this.slotBuffer = slotBuffer;
     }
 
-    public PixelInputLayer(Function<Dominio, NumericMatriz<N>> supplier, PixelMapper pixelMapper, UnaryOperator<NumericMatriz<N>> responceEscale) {
+    public PixelInputLayer(Function<Dominio, NumericMatriz<N>> supplier, UnaryOperator<NumericMatriz<N>> responceEscale, PixelMapper pixelMapper, int slotBuffer) {
         this.src = null;
+        this.srcList = new ArrayList<>();
         this.consumers = new ArrayList<>();
         this.supplier = supplier;
         this.responceEscale = responceEscale;
         this.pixelMapper = pixelMapper;
+        this.slotBuffer = slotBuffer;
     }
 
     protected NumericMatriz<N> scanInput() {
-        if (src == null) {
+        if (src == null && srcList.isEmpty()) {
             throw new NullPointerException("src image is null");
         }
-        
+            
+        if ( src == null) {
+            src = srcList.get(0);
+        }
+
         int width = src.getWidth();
         int height = src.getHeight();
-        
-        double[] pixels = src.getRaster().getPixels(0, 0, width, height, (double[])null);
-        NumericMatriz<N> dm = supplier.compose(pixelMapper::getDominio).apply(pixels.length);
-                
-        for(int k=0;k<pixels.length;k++){
-            Indice key = pixelMapper.getIndice(k);
-            dm.put(key, dm.mapper(pixels[k]));
+
+        NumericMatriz<N> dm = supplier.compose(size -> pixelMapper.getDominioBuffer((int)size, slotBuffer)).apply(width * height * 3);
+
+        int slot = 0;
+        for (BufferedImage srcItem : srcList) {
+            slot++;
+            double[] pixels = srcItem.getRaster().getPixels(0, 0, width, height, (double[]) null);
+
+            for (int k = 0; k < pixels.length; k++) {
+                Indice key = pixelMapper.getIndice(k, slot);
+                dm.put(key, dm.mapper(pixels[k]));
+            }
+
         }
-                
+
         if (Objects.nonNull(responceEscale)) {
             dm = responceEscale.apply(dm);
         }
@@ -109,5 +127,13 @@ public class PixelInputLayer<N extends Number> implements LayerProducer<N> {
     public void setSrc(BufferedImage src) {
         this.src = src;
     }
-    
+
+    public List<BufferedImage> getSrcList() {
+        return srcList;
+    }
+
+    public int getSlotBuffer() {
+        return slotBuffer;
+    }
+
 }

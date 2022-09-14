@@ -25,7 +25,9 @@ package org.tensa.facecheck.network.impl;
 
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.LongAccumulator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -94,24 +96,34 @@ public class ManagerBackPropImpl<N extends Number> extends AbstractManager<N> {
                     .filter(idx -> (!useSelection) || (areaQeue.stream().anyMatch(a -> a.contains(idx.getFila(), idx.getColumna()))))
                     .collect(Collectors.toList());
             errorGraph = supplier.apply(dominio);
-            proccesDomain.stream()
+            
+            LongAccumulator la = new LongAccumulator((x,y) -> x+y , 1L);
+            
+            Stream<List<ParOrdenado>> processStream = proccesDomain.stream()
                     .sorted((idx1, idx2) -> (int) (2.0 * Math.random() - 1.0))
-                    .parallel()
+                    .collect(Collectors.groupingBy(i -> {
+                        la.accumulate(1L);
+                        return la.get() / this.slotBuffer;
+                    })).values().stream();
+            
+            if (this.isBaseParallel()) {
+                processStream = processStream.parallel();
+            }
+            
+            processStream
                     .filter(idx -> !emergencyBreak)
-                    .forEach((ParOrdenado idx) -> {
-                        int i = idx.getFila();
-                        int j = idx.getColumna();
+                    .forEach((List<ParOrdenado> idxList) -> {
 
-                        PixelInputLayer<N> simplePixelsInputLayer = new PixelInputLayer<>(supplier, pixelMapper, inputScale);
+                        PixelInputLayer<N> simplePixelsInputLayer = new PixelInputLayer<>(supplier, inputScale, pixelMapper, slotBuffer);
                         HiddenLayer<N>[] hiddenLayers = new HiddenLayer[weights.length];
                         for (int k = 0; k < weights.length; k++) {
                             hiddenLayers[k] = new HiddenLayer<>(weights[k], learningRate[k], activationFunction[k], useBias[k]);
                         }
 
-                        PixelInputLayer<N> simplePixelsCompareLayer = new PixelInputLayer<>(supplier, pixelMapper, OutputScale::scale);
+                        PixelInputLayer<N> simplePixelsCompareLayer = new PixelInputLayer<>(supplier, OutputScale::scale, pixelMapper, slotBuffer);
                         PixelOutputLayer<N> pixelsOutputLayer = new PixelOutputLayer<>(pixelMapper);
-                        DiffLayer<N> diffLAyer = new DiffLayer<>(simplePixelsCompareLayer, (lL) -> {
-                            errorBiConsumer(lL, idx);
+                        DiffLayer<N> diffLAyer = new DiffLayer<>(simplePixelsCompareLayer, (learningL) -> {
+                            errorBiConsumer(learningL, idxList);
                         });
 
                         relate(simplePixelsInputLayer, hiddenLayers[0]);
@@ -122,16 +134,21 @@ public class ManagerBackPropImpl<N extends Number> extends AbstractManager<N> {
                         relate(hiddenLayers[weights.length - 1], pixelsOutputLayer);
 
                         try {
-                            //                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
-                            BufferedImage dest = outputImage.getSubimage(i + rDeltaStep / 2, j + rDeltaStep / 2, rOutStep, rOutStep);
-                            pixelsOutputLayer.setDest(dest);
+                            for (ParOrdenado idx : idxList) {
+                                int i = idx.getFila();
+                                int j = idx.getColumna();
+                                //                    log.info("cargando bloque ejecucion <{}><{}>", i, j);
+                                BufferedImage dest = outputImage.getSubimage(i + rDeltaStep / 2, j + rDeltaStep / 2, rOutStep, rOutStep);
+                                pixelsOutputLayer.getDestList().add(dest);
 
-                            BufferedImage src = inputImage.getSubimage(i, j, rInStep, rInStep);
-                            simplePixelsInputLayer.setSrc(src);
+                                BufferedImage src = inputImage.getSubimage(i, j, rInStep, rInStep);
+                                simplePixelsInputLayer.getSrcList().add(src);
 
-                            //                        log.info("cargando bloque comparacion <{}><{}>", i, j);
-                            BufferedImage comp = compareImage.getSubimage(i + rDeltaStep / 2, j + rDeltaStep / 2, rOutStep, rOutStep);
-                            simplePixelsCompareLayer.setSrc(comp);
+                                //                        log.info("cargando bloque comparacion <{}><{}>", i, j);
+                                BufferedImage comp = compareImage.getSubimage(i + rDeltaStep / 2, j + rDeltaStep / 2, rOutStep, rOutStep);
+                                simplePixelsCompareLayer.getSrcList().add(comp);
+                                
+                            }
                         } catch (java.awt.image.RasterFormatException ex) {
                             emergencyBreak = true;
                             ex.printStackTrace();

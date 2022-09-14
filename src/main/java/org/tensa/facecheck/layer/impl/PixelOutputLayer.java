@@ -24,6 +24,8 @@
 package org.tensa.facecheck.layer.impl;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 import org.tensa.facecheck.layer.LayerConsumer;
 import org.tensa.facecheck.mapping.PixelMapper;
 import org.tensa.facecheck.mapping.PixelMappings;
@@ -38,14 +40,17 @@ public class PixelOutputLayer<N extends Number> implements LayerConsumer<N> {
     protected int status;
     protected NumericMatriz<N> inputLayer;
     protected BufferedImage dest;
+    private List<BufferedImage> destList;
     protected final PixelMapper pixelMapper;
 
     public PixelOutputLayer() {
         pixelMapper = PixelMappings.defaultMapping();
+        destList = new ArrayList<>();
     }
 
     public PixelOutputLayer(PixelMapper pixelMapper) {
         this.pixelMapper = pixelMapper;
+        destList = new ArrayList<>();
     }
 
     @Override
@@ -60,13 +65,18 @@ public class PixelOutputLayer<N extends Number> implements LayerConsumer<N> {
         this.status = status;
         if (status == LayerConsumer.SUCCESS_STATUS) {
             
-            double[] pixels = new double[pixelMapper.getLargo(inputLayer.getDominio())];
-            for( int i =0; i< pixels.length; i++) {
-                pixels[i] = 255 * inputLayer.get(pixelMapper.getIndice(i)).doubleValue();
+            int slot =0;
+            for (BufferedImage myDest : destList) {
+                slot++;
+
+                double[] pixels = new double[pixelMapper.getLargo(inputLayer.getDominio())];
+                for( int i =0; i< pixels.length; i++) {
+                    pixels[i] = 255 * inputLayer.get(pixelMapper.getIndice(i, slot)).doubleValue();
+                }
+                int width = myDest.getWidth();
+                int height = myDest.getHeight();
+                myDest.getRaster().setPixels(0, 0, width, height, pixels);
             }
-            int width = dest.getWidth();
-            int height = dest.getHeight();
-            dest.getRaster().setPixels(0, 0, width, height, pixels);
             
         }
     }
@@ -77,6 +87,15 @@ public class PixelOutputLayer<N extends Number> implements LayerConsumer<N> {
 
     public void setDest(BufferedImage dest) {
         this.dest = dest;
+        this.destList.add(dest);
+    }
+
+    public List<BufferedImage> getDestList() {
+        return destList;
+    }
+
+    public void setDestList(List<BufferedImage> destList) {
+        this.destList = destList;
     }
     
 }

@@ -35,7 +35,13 @@ import org.tensa.tensada.matrix.Indice;
 public interface PixelMapper {
     
     /**
-     * genera dominio en base a largo d dataset
+     * @param length the value of length
+     * @param slot the value of slot
+     */
+    Dominio getDominioBuffer(int length, int slot);
+    
+    /**
+     * genera dominio columna en base a largo d dataset
      * @param largo
      * @return dominio para matriz
      */
@@ -47,6 +53,14 @@ public interface PixelMapper {
      * @return indice para la matriz
      */
     Indice getIndice(int i);
+    
+    /**
+     * mapea un pixel o componente en base a su posicion en el dataset y el slot correspondiente
+     * @param i
+     * @param slot
+     * @return indice para la matriz
+     */
+    Indice getIndice(int i, int slot);
     
     /**
      * retorna el largo de un data set en base al dominio de la matriz
