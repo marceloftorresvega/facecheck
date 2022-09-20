@@ -1490,6 +1490,7 @@ public class VisLoad extends javax.swing.JFrame {
                 ImageIO.write(bufferImageFiltered, "JPEG", jFileChooserImagenSalva.getSelectedFile());
             } catch (IOException ex) {
                 log.info("file error", ex);
+                javax.swing.JOptionPane.showMessageDialog(null, "Error al guardar imagen", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
             }
 
         }
@@ -1508,6 +1509,7 @@ public class VisLoad extends javax.swing.JFrame {
                 });
             } catch (IOException ex) {
                 log.error("error de archivo ", ex);
+                javax.swing.JOptionPane.showMessageDialog(null, "Error al leer imagen", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
             }
         }
     }//GEN-LAST:event_cargaPreparadaActionPerformed
@@ -1527,6 +1529,7 @@ public class VisLoad extends javax.swing.JFrame {
                 });
             } catch (IOException ex) {
                 log.error("error de archivo ", ex);
+                javax.swing.JOptionPane.showMessageDialog(null, "Error al leer imagen", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
             }
         }
 
@@ -1694,6 +1697,7 @@ public class VisLoad extends javax.swing.JFrame {
             } catch (FileNotFoundException ex) {
                 log.error("error al guardar  red", ex);
             } catch (IOException ex) {
+                javax.swing.JOptionPane.showMessageDialog(null, "Modelo de red neuronal corrupto", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
                 log.error("error al guardar  red", ex);
             }
             log.info("red guardada.");
@@ -1756,8 +1760,10 @@ public class VisLoad extends javax.swing.JFrame {
 
                 } catch (FileNotFoundException ex) {
                     log.error("error al cargar red", ex);
+                    javax.swing.JOptionPane.showMessageDialog(null, "Archivo de red neuronal no encontrado", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
                 } catch (IOException | ClassNotFoundException ex) {
                     log.error("error al cargar red", ex);
+                    javax.swing.JOptionPane.showMessageDialog(null, "Archivo de red neuronal corrupto", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
                 }
             } else {
                 javax.swing.JOptionPane.showMessageDialog(null, "Archivo no corresponde a una red neuronal", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);

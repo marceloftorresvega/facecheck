@@ -286,8 +286,10 @@ public abstract class AbstractManager<N extends Number> {
             hiddenStep = Arrays.stream(weights).map(NumericMatriz::getDominio).mapToInt(Dominio::getFila).peek(hid -> log.info("neuronas <{}>", hid)).toArray();
         } catch (FileNotFoundException ex) {
             log.error("error al cargar pesos", ex);
+            javax.swing.JOptionPane.showMessageDialog(null, "El archivo de pesos no existe", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
         } catch (IOException | ClassNotFoundException ex) {
             log.error("error al cargar pesos", ex);
+            javax.swing.JOptionPane.showMessageDialog(null, "El archivo de pesos esta corrupto", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -303,6 +305,7 @@ public abstract class AbstractManager<N extends Number> {
             log.error("error al guardar  pesos", ex);
         } catch (IOException ex) {
             log.error("error al guardar  pesos", ex);
+            javax.swing.JOptionPane.showMessageDialog(null, "El archivo de pesos esta corrupto", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
         }
     }
 
