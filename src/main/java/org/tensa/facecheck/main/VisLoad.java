@@ -103,8 +103,6 @@ public class VisLoad extends javax.swing.JFrame {
     private final String sufxType = ".jpg";
     private BufferedImage buffImage;
     private BufferedImage destBuffImage;
-    private final int kwidth = 27;
-    private float[] data;
     private BufferedImage bufferImageFiltered;
     private Rectangle learnArea;
     private SeletionStatus areaStatus = SeletionStatus.MODIFY;
@@ -157,18 +155,6 @@ public class VisLoad extends javax.swing.JFrame {
      */
     public VisLoad() {
         initComponents();
-        data = new float[kwidth * kwidth];
-        float total = 0;
-
-        for (int i = 0; i < kwidth * kwidth; i++) {
-            data[i] = calculaMatriz(i % kwidth, i / kwidth);
-            total += data[i];
-
-        }
-
-        for (int i = 0; i < kwidth * kwidth; i++) {
-            data[i] /= total / 1.5;
-        }
         learnArea = new Rectangle();
         learnArea.setSize(100, 100);
         learnArea.setLocation(10, 10);
@@ -931,7 +917,20 @@ public class VisLoad extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void suavizaResultadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_suavizaResultadoActionPerformed
+        final int kwidth = 27;
+        float[] data = new float[kwidth * kwidth];
+        float total = 0;
 
+        for (int i = 0; i < kwidth * kwidth; i++) {
+            data[i] = calculaMatriz(i % kwidth, i / kwidth, kwidth);
+            total += data[i];
+
+        }
+
+        for (int i = 0; i < kwidth * kwidth; i++) {
+            data[i] /= total / 1.5;
+        }
+        
         ConvolveOp conv = new ConvolveOp(new Kernel(kwidth, kwidth, data));
         if (Objects.nonNull(bufferImageFiltered)) {
             bufferImageFiltered.flush();
@@ -1771,7 +1770,7 @@ public class VisLoad extends javax.swing.JFrame {
         });
     }//GEN-LAST:event_limpiajButtonActionPerformed
 
-    private float calculaMatriz(int i, int j) {
+    private float calculaMatriz(int i, int j, int kwidth) {
         float retorno;
         float half = (float) kwidth / 2;
         float di = (float) i - half;
@@ -1940,7 +1939,6 @@ public class VisLoad extends javax.swing.JFrame {
                         double tol = maxError.orElse(0.0001);
                         double lcWidth = ((double)jErrorGraf.getWidth()) / size;
                         double lclHeight = ((double)jErrorGraf.getHeight()) / tol;
-//                    gr2.translate(0, -1/ lclHeight);
                         gr2.translate(0, 0);
                         gr2.scale(lcWidth, lclHeight);
                         int adv = 0;
