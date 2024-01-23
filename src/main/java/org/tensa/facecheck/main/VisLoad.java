@@ -125,7 +125,7 @@ public class VisLoad extends javax.swing.JFrame {
     }
     
     public ComboBoxModel getBufferComboboxModel() {
-        return new DefaultComboBoxModel(new Integer[]{ 1, 3, 6, 12, 15 });
+        return new DefaultComboBoxModel(new Integer[]{ 1, 3, 6, 12, 15, 18, 21});
     }
 
     /**
@@ -589,7 +589,7 @@ public class VisLoad extends javax.swing.JFrame {
                         .addComponent(jLabelNumOutPixels)
                         .addComponent(jButtonSalvaRed)
                         .addComponent(jButtonCargaRed)))
-                .addGap(0, 2, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Capas/Pesos", null, jPanel3, "administracion de pesos");
@@ -634,11 +634,6 @@ public class VisLoad extends javax.swing.JFrame {
 
         jCheckBoxParalell.setSelected(true);
         jCheckBoxParalell.setText("proceso paralelo");
-        jCheckBoxParalell.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBoxParalellActionPerformed(evt);
-            }
-        });
 
         jComboBoxBufferSize.setModel(getBufferComboboxModel());
         jComboBoxBufferSize.setSelectedIndex(0);
@@ -683,7 +678,7 @@ public class VisLoad extends javax.swing.JFrame {
                     .addComponent(actualizacion)
                     .addComponent(jCheckBoxParalell)
                     .addComponent(jComboBoxBufferSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 2, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Entrenamiento", jPanel4);
@@ -771,7 +766,7 @@ public class VisLoad extends javax.swing.JFrame {
                     .addComponent(asSampleToggleButton)
                     .addComponent(asPartToggleButton)
                     .addComponent(limpiajButton))
-                .addGap(0, 2, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Seleccion", jPanel5);
@@ -855,8 +850,8 @@ public class VisLoad extends javax.swing.JFrame {
 
         jTableWeight.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                { new Integer(15), null, "", "", "",  new Float(5.0E-5), ""},
-                { new Integer(27), null, null, null, null,  new Float(5.0E-5), null}
+                { new Integer(15), null, "RANDOM", "NORMALIZED", "LINEAL",  new Float(5.0E-5), "ONE_ADV_ONE_TREE_BACK_ONE"},
+                { new Integer(27), null, "RANDOM", "NORMALIZED", "LINEAL",  new Float(5.0E-5), "ONE_ADV_ONE_TREE_BACK_ONE"}
             },
             new String [] {
                 "Neuronas", "Tendencia", "Creacion Pesos", "Estilo Pesos", "Func. Activacion", "Fact. Aprendisaje", "estratg. Aprendisaje"
@@ -970,11 +965,7 @@ public class VisLoad extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     private void procesarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_procesarActionPerformed
 
-        procesar.setEnabled(false);
-        cleanCopy.setEnabled(false);
-        clean.setEnabled(false);
-        entrenar.setEnabled(false);
-        jCheckBoxParalell.setEnabled(false);
+        disableConsole();
         
         bufferImageFiltered = createCompatibleDestImage(buffImage, null);
 
@@ -1054,12 +1045,7 @@ public class VisLoad extends javax.swing.JFrame {
 
             bufferImageFiltered = networkManager.getOutputImage();
 
-            procesar.setEnabled(true);
-            cleanCopy.setEnabled(true);
-            clean.setEnabled(true);
-            entrenar.setEnabled(true);
-            jCheckBoxParalell.setEnabled(true);
-            freno.setSelected(false);
+            enableConsole();
 
             java.awt.EventQueue.invokeLater(() -> {
                 jProgressBar1.setValue(jProgressBar1.getMaximum());
@@ -1075,11 +1061,11 @@ public class VisLoad extends javax.swing.JFrame {
 //                    networkManager.setTrainingMode(entrenar.isSelected());
                     networkManager.setEmergencyBreak(freno.isSelected());
 
-                    if (jProgressBar1.getValue() == networkManager.getIterateCurrent()) {
-                        networkManager.setLearningRate(IntStream.range(0, jTableWeight.getRowCount())
-                                .mapToObj(i -> (Float) jTableWeight.getValueAt(i, 5)).toArray(Float[]::new));
-
-                    }
+//                    if (jProgressBar1.getValue() == networkManager.getIterateCurrent()) {
+//                        networkManager.setLearningRate(IntStream.range(0, jTableWeight.getRowCount())
+//                                .mapToObj(i -> (Float) jTableWeight.getValueAt(i, 5)).toArray(Float[]::new));
+//
+//                    }
 
                     IntStream.range(0, jTableWeight.getRowCount()).forEach(i -> {
                         Float o = networkManager.getLearningRate(i);
@@ -1624,7 +1610,7 @@ public class VisLoad extends javax.swing.JFrame {
 
     private void jButtonAddRowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddRowActionPerformed
         DefaultTableModel model = (DefaultTableModel) jTableWeight.getModel();
-        Object[] fila = new Object[]{new Integer(12), Boolean.FALSE, WeightCreationEnum.RANDOM, WeightModelingEnum.NORMALIZED, ActivationFunctionEnum.LINEAL, new Float(5.0E-5), BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE};
+        Object[] fila = new Object[]{Integer.valueOf(12), Boolean.FALSE, WeightCreationEnum.RANDOM, WeightModelingEnum.NORMALIZED, ActivationFunctionEnum.LINEAL,  Float.valueOf(5.0E-5F), BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE};
         int selectedRow = jTableWeight.getSelectedRow();
         if (selectedRow == -1) {
             model.addRow(fila);
@@ -1784,10 +1770,6 @@ public class VisLoad extends javax.swing.JFrame {
             vista.repaint();
         });
     }//GEN-LAST:event_limpiajButtonActionPerformed
-
-    private void jCheckBoxParalellActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxParalellActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBoxParalellActionPerformed
 
     private float calculaMatriz(int i, int j) {
         float retorno;
@@ -1949,15 +1931,15 @@ public class VisLoad extends javax.swing.JFrame {
 
                 if (Objects.nonNull(errorGraph)) {
                     synchronized (errorGraph) {
-                        OptionalDouble maxError = errorGraph.values().stream().mapToDouble((i) -> i.doubleValue()).max();
+                        OptionalDouble maxError = errorGraph.values().stream().mapToDouble((i) -> i.doubleValue()).average();
                         List<ParOrdenado> proccesDomain = networkManager.getProccesDomain();
                         double size = (double) proccesDomain.size();
 
                         Graphics2D gr2 = (Graphics2D) grphcs;
                         gr2.setColor(Color.RED);
-                        double tol = maxError.orElse(1.0);
-                        double lcWidth = jErrorGraf.getWidth() / size;
-                        double lclHeight = jErrorGraf.getHeight() / tol;
+                        double tol = maxError.orElse(0.0001);
+                        double lcWidth = ((double)jErrorGraf.getWidth()) / size;
+                        double lclHeight = ((double)jErrorGraf.getHeight()) / tol;
 //                    gr2.translate(0, -1/ lclHeight);
                         gr2.translate(0, 0);
                         gr2.scale(lcWidth, lclHeight);
@@ -1978,6 +1960,28 @@ public class VisLoad extends javax.swing.JFrame {
 
     public FileNameExtensionFilter getFileNameNetworkExtensionFilter() {
         return fileNameNetworkExtensionFilter;
+    }
+
+    private void enableConsole() {
+        procesar.setEnabled(true);
+        cleanCopy.setEnabled(true);
+        clean.setEnabled(true);
+        entrenar.setEnabled(true);
+        jCheckBoxParalell.setEnabled(true);
+        freno.setSelected(false);
+        jComboBoxBufferSize.setEnabled(true);
+        jTableWeight.setEnabled(true);
+    }
+
+    private void disableConsole() {
+       
+        procesar.setEnabled(false);
+        cleanCopy.setEnabled(false);
+        clean.setEnabled(false);
+        entrenar.setEnabled(false);
+        jCheckBoxParalell.setEnabled(false);
+        jComboBoxBufferSize.setEnabled(false);
+        jTableWeight.setEnabled(false);
     }
 
     private enum SeletionStatus {

@@ -474,7 +474,7 @@
                                   <Component id="jButtonCargaRed" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace min="0" pref="2" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -621,7 +621,7 @@
                               <Component id="jCheckBoxParalell" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jComboBoxBufferSize" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="0" pref="2" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -685,9 +685,6 @@
                     <Property name="selected" type="boolean" value="true"/>
                     <Property name="text" type="java.lang.String" value="proceso paralelo"/>
                   </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBoxParalellActionPerformed"/>
-                  </Events>
                 </Component>
                 <Component class="javax.swing.JComboBox" name="jComboBoxBufferSize">
                   <Properties>
@@ -751,7 +748,7 @@
                               <Component id="asPartToggleButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="limpiajButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="0" pref="2" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -968,24 +965,24 @@
                     </Column>
                     <Column editable="true" title="Tendencia" type="java.lang.Boolean"/>
                     <Column editable="true" title="Creacion Pesos" type="java.lang.Object">
-                      <Data value=""/>
-                      <Data value="null"/>
+                      <Data value="RANDOM"/>
+                      <Data value="RANDOM"/>
                     </Column>
                     <Column editable="true" title="Estilo Pesos" type="java.lang.Object">
-                      <Data value=""/>
-                      <Data value="null"/>
+                      <Data value="NORMALIZED"/>
+                      <Data value="NORMALIZED"/>
                     </Column>
                     <Column editable="true" title="Func. Activacion" type="java.lang.Object">
-                      <Data value=""/>
-                      <Data value="null"/>
+                      <Data value="LINEAL"/>
+                      <Data value="LINEAL"/>
                     </Column>
                     <Column editable="true" title="Fact. Aprendisaje" type="java.lang.Float">
                       <Data value="5.0E-5"/>
                       <Data value="5.0E-5"/>
                     </Column>
                     <Column editable="true" title="estratg. Aprendisaje" type="java.lang.Object">
-                      <Data value=""/>
-                      <Data value="null"/>
+                      <Data value="ONE_ADV_ONE_TREE_BACK_ONE"/>
+                      <Data value="ONE_ADV_ONE_TREE_BACK_ONE"/>
                     </Column>
                   </Table>
                 </Property>
