@@ -949,8 +949,6 @@ public class VisLoad extends javax.swing.JFrame {
         networkManager.setIterateTo((int) iteraciones.getValue());
         networkManager.setUseSelection(seleccion.isSelected());
 
-//        adaptInputButtonGroup.getSelection().getActionCommand()
-//        normalizeJRadioButton.setActionCommand("");
         networkManager.setPixelMapper(PixelMappings.defaultMapping());
         if (!jCheckBoxScale1neg1.isSelected()) {
 
@@ -984,10 +982,15 @@ public class VisLoad extends javax.swing.JFrame {
         }
 
         new Thread(() -> {
-//            do stuff
-            networkManager.process();
+            try {
+                networkManager.process();
+                bufferImageFiltered = networkManager.getOutputImage();
 
-            bufferImageFiltered = networkManager.getOutputImage();
+            } catch (NullPointerException ex) {
+                log.error("error al ejecutar red", ex);
+                javax.swing.JOptionPane.showMessageDialog(null, "Matriz con parametros nulos", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);                
+
+            }
 
             enableConsole();
 
@@ -1002,14 +1005,7 @@ public class VisLoad extends javax.swing.JFrame {
                 try {
                     Thread.sleep(5000);
 
-//                    networkManager.setTrainingMode(entrenar.isSelected());
                     networkManager.setEmergencyBreak(freno.isSelected());
-
-//                    if (jProgressBar1.getValue() == networkManager.getIterateCurrent()) {
-//                        networkManager.setLearningRate(IntStream.range(0, jTableWeight.getRowCount())
-//                                .mapToObj(i -> (Float) jTableWeight.getValueAt(i, 5)).toArray(Float[]::new));
-//
-//                    }
 
                     IntStream.range(0, jTableWeight.getRowCount()).forEach(i -> {
                         Float o = networkManager.getLearningRate(i);
@@ -1021,15 +1017,11 @@ public class VisLoad extends javax.swing.JFrame {
 
                     jProgressBar1.setValue(networkManager.getIterateCurrent());
                     if (actualizacion.isSelected()) {
-//                        synchronized(this){
-//                        java.awt.EventQueue.invokeLater(() -> {
 
                         bufferImageFiltered = networkManager.getOutputImage();
                         respuesta.repaint();
                         jErrorGraf.repaint();
                         log.info("realiza actualizacion");
-//                        });
-//                        }
 
                     } else {
                         log.info("no realiza actualizacion");
