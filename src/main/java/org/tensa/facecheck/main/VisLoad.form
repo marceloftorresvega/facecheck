@@ -4,35 +4,6 @@
   <NonVisualComponents>
     <Component class="javax.swing.ButtonGroup" name="adaptInputButtonGroup">
     </Component>
-    <Component class="javax.swing.JFileChooser" name="jFileChooserPesosSave">
-      <Properties>
-        <Property name="dialogType" type="int" value="1"/>
-        <Property name="currentDirectory" type="java.io.File" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="new File(System.getProperty(&quot;user.dir&quot;))" type="code"/>
-        </Property>
-        <Property name="dialogTitle" type="java.lang.String" value="Guardar pesos"/>
-        <Property name="fileFilter" type="javax.swing.filechooser.FileFilter" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="getFileNameExtensionFilter()" type="code"/>
-        </Property>
-      </Properties>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="addFileNameExtensionFilter(jFileChooserPesosSave);&#xa;"/>
-      </AuxValues>
-    </Component>
-    <Component class="javax.swing.JFileChooser" name="jFileChooserPesosLoad">
-      <Properties>
-        <Property name="currentDirectory" type="java.io.File" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="new File(System.getProperty(&quot;user.dir&quot;))" type="code"/>
-        </Property>
-        <Property name="dialogTitle" type="java.lang.String" value="Carga Pesos"/>
-        <Property name="fileFilter" type="javax.swing.filechooser.FileFilter" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="getFileNameExtensionFilter()" type="code"/>
-        </Property>
-      </Properties>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="addFileNameExtensionFilter(jFileChooserPesosLoad);"/>
-      </AuxValues>
-    </Component>
     <Component class="javax.swing.JFileChooser" name="jFileChooserImagenSalva">
       <Properties>
         <Property name="dialogType" type="int" value="1"/>
@@ -66,8 +37,6 @@
           <Connection code="getFileNameExtensionFilterImage()" type="code"/>
         </Property>
       </Properties>
-    </Component>
-    <Component class="javax.swing.ButtonGroup" name="selectionTypeButtonGroup">
     </Component>
     <Component class="javax.swing.JFileChooser" name="jFileChooserSaveNet">
       <Properties>
@@ -426,10 +395,6 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="clean" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="cargar" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="salva" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
@@ -442,7 +407,7 @@
                           <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jLabelNumOutPixels" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="67" max="32767" attributes="0"/>
+                          <EmptySpace pref="246" max="32767" attributes="0"/>
                           <Component id="jButtonCargaRed" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jButtonSalvaRed" min="-2" max="-2" attributes="0"/>
@@ -461,8 +426,6 @@
                               <Component id="jLabelNumInPixels" alignment="1" min="-2" pref="22" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="clean" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="cargar" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="salva" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="inNeurs" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -480,28 +443,12 @@
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JButton" name="cargar">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Carga..."/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cargarActionPerformed"/>
-                  </Events>
-                </Component>
                 <Component class="javax.swing.JButton" name="clean">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Limpiar"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cleanActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JButton" name="salva">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Salva..."/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="salvaActionPerformed1"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel1">
@@ -728,11 +675,7 @@
                           <Component id="deleteSelectionButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="limpiajButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
-                          <Component id="asSampleToggleButton" min="-2" pref="111" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="asPartToggleButton" min="-2" pref="111" max="-2" attributes="0"/>
-                          <EmptySpace pref="53" max="32767" attributes="0"/>
+                          <EmptySpace pref="336" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -744,8 +687,6 @@
                               <Component id="addSelectionButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="deleteSelectionButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="duplicaSelectionButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="asSampleToggleButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="asPartToggleButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="limpiajButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -795,31 +736,6 @@
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="duplicaSelectionButtonActionPerformed"/>
                   </Events>
-                </Component>
-                <Component class="javax.swing.JToggleButton" name="asSampleToggleButton">
-                  <Properties>
-                    <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-                      <ComponentRef name="selectionTypeButtonGroup"/>
-                    </Property>
-                    <Property name="selected" type="boolean" value="true"/>
-                    <Property name="text" type="java.lang.String" value="Muestra"/>
-                    <Property name="toolTipText" type="java.lang.String" value="Cada selecci&#xf3;n es una muestra"/>
-                    <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection component="seleccion" name="selected" type="property"/>
-                    </Property>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JToggleButton" name="asPartToggleButton">
-                  <Properties>
-                    <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-                      <ComponentRef name="selectionTypeButtonGroup"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="Porci&#xf3;n"/>
-                    <Property name="toolTipText" type="java.lang.String" value="La imajen completa es una muestra"/>
-                    <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection component="seleccion" name="selected" type="property"/>
-                    </Property>
-                  </Properties>
                 </Component>
                 <Component class="javax.swing.JButton" name="limpiajButton">
                   <Properties>
