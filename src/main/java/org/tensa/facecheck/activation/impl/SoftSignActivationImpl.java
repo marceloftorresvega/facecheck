@@ -52,7 +52,7 @@ public class SoftSignActivationImpl<N extends Number> implements Activation<N> {
                                 m.inversoMultiplicativo(
                                         m.sumaDirecta(
                                                 m.getUnoValue(),
-                                                m.mapper(Math.abs(e.getValue().doubleValue()))
+                                                m.abs(e.getValue())
                                         ))
                         )));
     }
@@ -69,7 +69,7 @@ public class SoftSignActivationImpl<N extends Number> implements Activation<N> {
                                             learning.productoDirecto(
                                                     semiSuma = learning.sumaDirecta(
                                                             learning.getUnoValue(),
-                                                            learning.mapper(Math.abs(neta.get(e.getKey()).doubleValue()))
+                                                            learning.abs(neta.get(e.getKey()))
                                                     ),
                                                     semiSuma))
                             );

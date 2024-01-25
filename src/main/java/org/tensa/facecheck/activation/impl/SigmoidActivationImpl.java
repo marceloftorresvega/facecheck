@@ -56,7 +56,7 @@ public class SigmoidActivationImpl<N extends Number> implements Activation<N> {
                         m,
                         (e) -> m.inversoMultiplicativo(m.sumaDirecta(
                                 m.getUnoValue(),
-                                m.mapper(Math.exp(-m.productoDirecto(e.getValue(), gain).doubleValue()))
+                                m.exp(m.inversoAditivo(m.productoDirecto(e.getValue(), gain)))
                         ))
                 ));
     }
