@@ -42,12 +42,12 @@ public class SoftPlusActivationImpl<N extends Number> implements Activation<N> {
     public Function<NumericMatriz<N>, NumericMatriz<N>> getActivation() {
         return (neta) -> neta.entrySet().stream()
                 .collect(ActivationUtils.entryToMatriz(neta, (e)
-                        -> neta.mapper(Math.log(
+                        -> neta.ln(
                         neta.sumaDirecta(
                                 neta.getUnoValue(),
-                                neta.mapper(Math.exp(e.getValue().doubleValue()))
-                        ).doubleValue()
-                ))
+                                neta.exp(e.getValue())
+                        )
+                )
                 ));
     }
 
@@ -60,7 +60,7 @@ public class SoftPlusActivationImpl<N extends Number> implements Activation<N> {
                         learning.inversoMultiplicativo(
                                 learning.sumaDirecta(
                                         learning.getUnoValue(),
-                                        learning.mapper(Math.exp(learning.inversoAditivo(neta.get(e.getKey())).doubleValue())))
+                                        learning.exp(learning.inversoAditivo(neta.get(e.getKey()))))
                         ))
                 ));
     }

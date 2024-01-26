@@ -48,7 +48,7 @@ public class TanHyperActivationImpl<N extends Number> implements Activation<N> {
         return (m) -> m.entrySet().stream()
                 .collect(ActivationUtils.entryToMatriz(
                         m,
-                        (e) -> m.mapper(Math.tanh(e.getValue().doubleValue()))));
+                        (e) -> m.tanh(e.getValue())));
     }
 
     @Override
