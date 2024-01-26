@@ -1873,6 +1873,7 @@ public class VisLoad extends javax.swing.JFrame {
         jButtonAddRow.setEnabled(true);
         jButtonRemoveRow.setEnabled(true);
         inNeurs.setEnabled(true);
+        normaExtJRadioButton.setEnabled(true);
     }
 
     private void disableConsole() {
@@ -1889,6 +1890,7 @@ public class VisLoad extends javax.swing.JFrame {
         jButtonAddRow.setEnabled(false);
         jButtonRemoveRow.setEnabled(false);
         inNeurs.setEnabled(false);
+        normaExtJRadioButton.setEnabled(false);
     }
 
     private enum SeletionStatus {
