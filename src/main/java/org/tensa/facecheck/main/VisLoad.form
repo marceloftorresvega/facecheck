@@ -422,20 +422,18 @@
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="jLabelNumInPixels" alignment="1" min="-2" pref="22" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="clean" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="inNeurs" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jButtonAddRow" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jButtonRemoveRow" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabelNumOutPixels" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jButtonSalvaRed" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jButtonCargaRed" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="clean" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="inNeurs" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jButtonAddRow" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jButtonRemoveRow" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabelNumOutPixels" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jButtonSalvaRed" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jButtonCargaRed" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabelNumInPixels" alignment="3" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
@@ -490,6 +488,9 @@
                   </Events>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabelNumInPixels">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="0/3"/>
+                  </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel3">
                   <Properties>

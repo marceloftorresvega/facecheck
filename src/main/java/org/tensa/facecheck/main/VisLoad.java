@@ -474,6 +474,8 @@ public class VisLoad extends javax.swing.JFrame {
             }
         });
 
+        jLabelNumInPixels.setText("0/3");
+
         jLabel3.setText("Salida");
 
         jLabelNumOutPixels.setText("0/3");
@@ -524,19 +526,18 @@ public class VisLoad extends javax.swing.JFrame {
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabelNumInPixels, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(clean)
-                        .addComponent(jLabel1)
-                        .addComponent(inNeurs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel2)
-                        .addComponent(jButtonAddRow)
-                        .addComponent(jButtonRemoveRow)
-                        .addComponent(jLabel3)
-                        .addComponent(jLabelNumOutPixels)
-                        .addComponent(jButtonSalvaRed)
-                        .addComponent(jButtonCargaRed)))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(clean)
+                    .addComponent(jLabel1)
+                    .addComponent(inNeurs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2)
+                    .addComponent(jButtonAddRow)
+                    .addComponent(jButtonRemoveRow)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabelNumOutPixels)
+                    .addComponent(jButtonSalvaRed)
+                    .addComponent(jButtonCargaRed)
+                    .addComponent(jLabelNumInPixels, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
