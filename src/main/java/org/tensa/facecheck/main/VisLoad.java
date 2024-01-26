@@ -1874,6 +1874,10 @@ public class VisLoad extends javax.swing.JFrame {
         jButtonRemoveRow.setEnabled(true);
         inNeurs.setEnabled(true);
         normaExtJRadioButton.setEnabled(true);
+        cargaOriginal.setEnabled(true);
+        cargaPreparada.setEnabled(true);
+        suavizaResultado.setEnabled(true);
+        enmascaraResultado.setEnabled(true);
     }
 
     private void disableConsole() {
@@ -1891,6 +1895,10 @@ public class VisLoad extends javax.swing.JFrame {
         jButtonRemoveRow.setEnabled(false);
         inNeurs.setEnabled(false);
         normaExtJRadioButton.setEnabled(false);
+        cargaOriginal.setEnabled(false);
+        cargaPreparada.setEnabled(false);
+        suavizaResultado.setEnabled(false);
+        enmascaraResultado.setEnabled(false);
     }
 
     private enum SeletionStatus {
