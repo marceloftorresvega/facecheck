@@ -103,8 +103,6 @@ public class VisLoad extends javax.swing.JFrame {
     private final String sufxType = ".jpg";
     private BufferedImage buffImage;
     private BufferedImage destBuffImage;
-    private final int kwidth = 27;
-    private float[] data;
     private BufferedImage bufferImageFiltered;
     private Rectangle learnArea;
     private SeletionStatus areaStatus = SeletionStatus.MODIFY;
@@ -125,7 +123,7 @@ public class VisLoad extends javax.swing.JFrame {
     }
     
     public ComboBoxModel getBufferComboboxModel() {
-        return new DefaultComboBoxModel(new Integer[]{ 1, 3, 6, 12, 15 });
+        return new DefaultComboBoxModel(new Integer[]{ 1, 3, 6, 12, 15, 18, 21});
     }
 
     /**
@@ -157,18 +155,6 @@ public class VisLoad extends javax.swing.JFrame {
      */
     public VisLoad() {
         initComponents();
-        data = new float[kwidth * kwidth];
-        float total = 0;
-
-        for (int i = 0; i < kwidth * kwidth; i++) {
-            data[i] = calculaMatriz(i % kwidth, i / kwidth);
-            total += data[i];
-
-        }
-
-        for (int i = 0; i < kwidth * kwidth; i++) {
-            data[i] /= total / 1.5;
-        }
         learnArea = new Rectangle();
         learnArea.setSize(100, 100);
         learnArea.setLocation(10, 10);
@@ -198,12 +184,9 @@ public class VisLoad extends javax.swing.JFrame {
     private void initComponents() {
 
         adaptInputButtonGroup = new javax.swing.ButtonGroup();
-        jFileChooserPesosSave = new javax.swing.JFileChooser();
-        jFileChooserPesosLoad = new javax.swing.JFileChooser();
         jFileChooserImagenSalva = new javax.swing.JFileChooser();
         jFileChooserLoadImagenResult = new javax.swing.JFileChooser();
         jFileChooserLoadImagen = new javax.swing.JFileChooser();
-        selectionTypeButtonGroup = new javax.swing.ButtonGroup();
         jFileChooserSaveNet = new javax.swing.JFileChooser();
         jFileChooserLoadNet = new javax.swing.JFileChooser();
         jPanelTop = new javax.swing.JPanel();
@@ -226,9 +209,7 @@ public class VisLoad extends javax.swing.JFrame {
         jSeparator2 = new javax.swing.JSeparator();
         jButtonSalvaImagen = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
-        cargar = new javax.swing.JButton();
         clean = new javax.swing.JButton();
-        salva = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         inNeurs = new javax.swing.JSpinner();
         jLabel2 = new javax.swing.JLabel();
@@ -254,8 +235,6 @@ public class VisLoad extends javax.swing.JFrame {
         addSelectionButton = new javax.swing.JButton();
         deleteSelectionButton = new javax.swing.JButton();
         duplicaSelectionButton = new javax.swing.JButton();
-        asSampleToggleButton = new javax.swing.JToggleButton();
-        asPartToggleButton = new javax.swing.JToggleButton();
         limpiajButton = new javax.swing.JButton();
         jErrorGraf = getNuevaErrorGram();
         jPanelCard = new javax.swing.JPanel();
@@ -265,17 +244,6 @@ public class VisLoad extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTableWeight = new javax.swing.JTable();
         jProgressBar1 = new javax.swing.JProgressBar();
-
-        jFileChooserPesosSave.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
-        jFileChooserPesosSave.setCurrentDirectory(new File(System.getProperty("user.dir")));
-        jFileChooserPesosSave.setDialogTitle("Guardar pesos");
-        jFileChooserPesosSave.setFileFilter(getFileNameExtensionFilter());
-        addFileNameExtensionFilter(jFileChooserPesosSave);
-
-        jFileChooserPesosLoad.setCurrentDirectory(new File(System.getProperty("user.dir")));
-        jFileChooserPesosLoad.setDialogTitle("Carga Pesos");
-        jFileChooserPesosLoad.setFileFilter(getFileNameExtensionFilter());
-        addFileNameExtensionFilter(jFileChooserPesosLoad);
 
         jFileChooserImagenSalva.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
         jFileChooserImagenSalva.setCurrentDirectory(new File(System.getProperty("user.dir")));
@@ -468,24 +436,10 @@ public class VisLoad extends javax.swing.JFrame {
             }
         });
 
-        cargar.setText("Carga...");
-        cargar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cargarActionPerformed(evt);
-            }
-        });
-
         clean.setText("Limpiar");
         clean.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cleanActionPerformed(evt);
-            }
-        });
-
-        salva.setText("Salva...");
-        salva.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                salvaActionPerformed1(evt);
             }
         });
 
@@ -520,6 +474,8 @@ public class VisLoad extends javax.swing.JFrame {
             }
         });
 
+        jLabelNumInPixels.setText("0/3");
+
         jLabel3.setText("Salida");
 
         jLabelNumOutPixels.setText("0/3");
@@ -545,10 +501,6 @@ public class VisLoad extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(clean)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cargar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(salva)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -561,7 +513,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabelNumOutPixels)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 67, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 246, Short.MAX_VALUE)
                 .addComponent(jButtonCargaRed)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonSalvaRed)
@@ -574,22 +526,19 @@ public class VisLoad extends javax.swing.JFrame {
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabelNumInPixels, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(clean)
-                        .addComponent(cargar)
-                        .addComponent(salva)
-                        .addComponent(jLabel1)
-                        .addComponent(inNeurs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel2)
-                        .addComponent(jButtonAddRow)
-                        .addComponent(jButtonRemoveRow)
-                        .addComponent(jLabel3)
-                        .addComponent(jLabelNumOutPixels)
-                        .addComponent(jButtonSalvaRed)
-                        .addComponent(jButtonCargaRed)))
-                .addGap(0, 2, Short.MAX_VALUE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(clean)
+                    .addComponent(jLabel1)
+                    .addComponent(inNeurs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2)
+                    .addComponent(jButtonAddRow)
+                    .addComponent(jButtonRemoveRow)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabelNumOutPixels)
+                    .addComponent(jButtonSalvaRed)
+                    .addComponent(jButtonCargaRed)
+                    .addComponent(jLabelNumInPixels, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Capas/Pesos", null, jPanel3, "administracion de pesos");
@@ -634,11 +583,6 @@ public class VisLoad extends javax.swing.JFrame {
 
         jCheckBoxParalell.setSelected(true);
         jCheckBoxParalell.setText("proceso paralelo");
-        jCheckBoxParalell.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBoxParalellActionPerformed(evt);
-            }
-        });
 
         jComboBoxBufferSize.setModel(getBufferComboboxModel());
         jComboBoxBufferSize.setSelectedIndex(0);
@@ -683,7 +627,7 @@ public class VisLoad extends javax.swing.JFrame {
                     .addComponent(actualizacion)
                     .addComponent(jCheckBoxParalell)
                     .addComponent(jComboBoxBufferSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 2, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Entrenamiento", jPanel4);
@@ -720,17 +664,6 @@ public class VisLoad extends javax.swing.JFrame {
             }
         });
 
-        selectionTypeButtonGroup.add(asSampleToggleButton);
-        asSampleToggleButton.setSelected(true);
-        asSampleToggleButton.setText("Muestra");
-        asSampleToggleButton.setToolTipText("Cada selección es una muestra");
-        asSampleToggleButton.setEnabled(seleccion.isSelected());
-
-        selectionTypeButtonGroup.add(asPartToggleButton);
-        asPartToggleButton.setText("Porción");
-        asPartToggleButton.setToolTipText("La imajen completa es una muestra");
-        asPartToggleButton.setEnabled(seleccion.isSelected());
-
         limpiajButton.setText("Limpia");
         limpiajButton.setEnabled(seleccion.isSelected());
         limpiajButton.addActionListener(new java.awt.event.ActionListener() {
@@ -754,11 +687,7 @@ public class VisLoad extends javax.swing.JFrame {
                 .addComponent(deleteSelectionButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(limpiajButton)
-                .addGap(28, 28, 28)
-                .addComponent(asSampleToggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(asPartToggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(53, Short.MAX_VALUE))
+                .addContainerGap(336, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -768,10 +697,8 @@ public class VisLoad extends javax.swing.JFrame {
                     .addComponent(addSelectionButton)
                     .addComponent(deleteSelectionButton)
                     .addComponent(duplicaSelectionButton)
-                    .addComponent(asSampleToggleButton)
-                    .addComponent(asPartToggleButton)
                     .addComponent(limpiajButton))
-                .addGap(0, 2, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Seleccion", jPanel5);
@@ -855,8 +782,8 @@ public class VisLoad extends javax.swing.JFrame {
 
         jTableWeight.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                { new Integer(15), null, "", "", "",  new Float(5.0E-5), ""},
-                { new Integer(27), null, null, null, null,  new Float(5.0E-5), null}
+                { new Integer(15), null, "RANDOM", "NORMALIZED", "LINEAL",  new Float(5.0E-5), "ONE_ADV_ONE_TREE_BACK_ONE"},
+                { new Integer(27), null, "RANDOM", "NORMALIZED", "LINEAL",  new Float(5.0E-5), "ONE_ADV_ONE_TREE_BACK_ONE"}
             },
             new String [] {
                 "Neuronas", "Tendencia", "Creacion Pesos", "Estilo Pesos", "Func. Activacion", "Fact. Aprendisaje", "estratg. Aprendisaje"
@@ -936,7 +863,20 @@ public class VisLoad extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void suavizaResultadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_suavizaResultadoActionPerformed
+        final int kwidth = 27;
+        float[] data = new float[kwidth * kwidth];
+        float total = 0;
 
+        for (int i = 0; i < kwidth * kwidth; i++) {
+            data[i] = calculaMatriz(i % kwidth, i / kwidth, kwidth);
+            total += data[i];
+
+        }
+
+        for (int i = 0; i < kwidth * kwidth; i++) {
+            data[i] /= total / 1.5;
+        }
+        
         ConvolveOp conv = new ConvolveOp(new Kernel(kwidth, kwidth, data));
         if (Objects.nonNull(bufferImageFiltered)) {
             bufferImageFiltered.flush();
@@ -970,11 +910,7 @@ public class VisLoad extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     private void procesarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_procesarActionPerformed
 
-        procesar.setEnabled(false);
-        cleanCopy.setEnabled(false);
-        clean.setEnabled(false);
-        entrenar.setEnabled(false);
-        jCheckBoxParalell.setEnabled(false);
+        disableConsole();
         
         bufferImageFiltered = createCompatibleDestImage(buffImage, null);
 
@@ -1014,8 +950,6 @@ public class VisLoad extends javax.swing.JFrame {
         networkManager.setIterateTo((int) iteraciones.getValue());
         networkManager.setUseSelection(seleccion.isSelected());
 
-//        adaptInputButtonGroup.getSelection().getActionCommand()
-//        normalizeJRadioButton.setActionCommand("");
         networkManager.setPixelMapper(PixelMappings.defaultMapping());
         if (!jCheckBoxScale1neg1.isSelected()) {
 
@@ -1049,17 +983,17 @@ public class VisLoad extends javax.swing.JFrame {
         }
 
         new Thread(() -> {
-//            do stuff
-            networkManager.process();
+            try {
+                networkManager.process();
+                bufferImageFiltered = networkManager.getOutputImage();
 
-            bufferImageFiltered = networkManager.getOutputImage();
+            } catch (NullPointerException ex) {
+                log.error("error al ejecutar red", ex);
+                javax.swing.JOptionPane.showMessageDialog(null, "Matriz con parametros nulos", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);                
 
-            procesar.setEnabled(true);
-            cleanCopy.setEnabled(true);
-            clean.setEnabled(true);
-            entrenar.setEnabled(true);
-            jCheckBoxParalell.setEnabled(true);
-            freno.setSelected(false);
+            }
+
+            enableConsole();
 
             java.awt.EventQueue.invokeLater(() -> {
                 jProgressBar1.setValue(jProgressBar1.getMaximum());
@@ -1072,14 +1006,7 @@ public class VisLoad extends javax.swing.JFrame {
                 try {
                     Thread.sleep(5000);
 
-//                    networkManager.setTrainingMode(entrenar.isSelected());
                     networkManager.setEmergencyBreak(freno.isSelected());
-
-                    if (jProgressBar1.getValue() == networkManager.getIterateCurrent()) {
-                        networkManager.setLearningRate(IntStream.range(0, jTableWeight.getRowCount())
-                                .mapToObj(i -> (Float) jTableWeight.getValueAt(i, 5)).toArray(Float[]::new));
-
-                    }
 
                     IntStream.range(0, jTableWeight.getRowCount()).forEach(i -> {
                         Float o = networkManager.getLearningRate(i);
@@ -1091,15 +1018,11 @@ public class VisLoad extends javax.swing.JFrame {
 
                     jProgressBar1.setValue(networkManager.getIterateCurrent());
                     if (actualizacion.isSelected()) {
-//                        synchronized(this){
-//                        java.awt.EventQueue.invokeLater(() -> {
 
                         bufferImageFiltered = networkManager.getOutputImage();
                         respuesta.repaint();
                         jErrorGraf.repaint();
                         log.info("realiza actualizacion");
-//                        });
-//                        }
 
                     } else {
                         log.info("no realiza actualizacion");
@@ -1392,8 +1315,6 @@ public class VisLoad extends javax.swing.JFrame {
         addSelectionButton.setEnabled(seleccion.isSelected());
         duplicaSelectionButton.setEnabled(seleccion.isSelected());
         deleteSelectionButton.setEnabled(seleccion.isSelected());
-        asSampleToggleButton.setEnabled(seleccion.isSelected());
-        asPartToggleButton.setEnabled(seleccion.isSelected());
         
         java.awt.EventQueue.invokeLater(() -> {
             vista.repaint();
@@ -1405,8 +1326,6 @@ public class VisLoad extends javax.swing.JFrame {
         addSelectionButton.setEnabled(seleccion.isSelected());
         duplicaSelectionButton.setEnabled(seleccion.isSelected());
         deleteSelectionButton.setEnabled(seleccion.isSelected());
-        asSampleToggleButton.setEnabled(seleccion.isSelected());
-        asPartToggleButton.setEnabled(seleccion.isSelected());
         limpiajButton.setEnabled(seleccion.isSelected());
         
         java.awt.EventQueue.invokeLater(() -> {
@@ -1445,41 +1364,6 @@ public class VisLoad extends javax.swing.JFrame {
         });
 
     }//GEN-LAST:event_cargaOriginalActionPerformed
-
-    private void salvaActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salvaActionPerformed1
-        int showSaveDialog = jFileChooserPesosSave.showSaveDialog(null);
-        if (showSaveDialog == javax.swing.JFileChooser.APPROVE_OPTION) {
-            if (jFileChooserPesosSave.getSelectedFile().getPath().endsWith("da3")) {
-
-                networkManager.salvaPesos(jFileChooserPesosSave.getSelectedFile().getPath());
-            }
-
-        }
-    }//GEN-LAST:event_salvaActionPerformed1
-
-    private void cargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargarActionPerformed
-        int showOpenDialog = jFileChooserPesosLoad.showOpenDialog(null);
-        if (showOpenDialog == javax.swing.JFileChooser.APPROVE_OPTION) {
-            log.info("jFileChooserPesosLoad");
-            if (jFileChooserPesosLoad.getSelectedFile().getPath().endsWith("da3")) {
-
-                networkManager.cargaPesos(jFileChooserPesosLoad.getSelectedFile().getPath());
-                inNeurs.setValue(networkManager.getInStep());
-                DefaultTableModel model = (DefaultTableModel) jTableWeight.getModel();
-                model.setRowCount(0);
-
-                Float learningRate = 0.00005f;
-                IntStream.range(0, networkManager.getWeights().length).forEach(i -> {
-                    Integer neuronas = networkManager.getHiddenStep(i);
-                    log.info("lr <{}> neuronas<{}>", learningRate, neuronas);
-                    model.addRow(new Object[]{neuronas, Boolean.FALSE,WeightCreationEnum.RANDOM, WeightModelingEnum.SIMPLE, ActivationFunctionEnum.LINEAL, learningRate, BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE});
-
-                });
-            } else {
-                javax.swing.JOptionPane.showMessageDialog(null, "Archivo no corresponde al compendio de pesos de la red", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }//GEN-LAST:event_cargarActionPerformed
 
     private void jButtonSalvaImagenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalvaImagenActionPerformed
         int showSaveDialog = jFileChooserImagenSalva.showSaveDialog(null);
@@ -1624,7 +1508,7 @@ public class VisLoad extends javax.swing.JFrame {
 
     private void jButtonAddRowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddRowActionPerformed
         DefaultTableModel model = (DefaultTableModel) jTableWeight.getModel();
-        Object[] fila = new Object[]{new Integer(12), Boolean.FALSE, WeightCreationEnum.RANDOM, WeightModelingEnum.NORMALIZED, ActivationFunctionEnum.LINEAL, new Float(5.0E-5), BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE};
+        Object[] fila = new Object[]{Integer.valueOf(12), Boolean.FALSE, WeightCreationEnum.RANDOM, WeightModelingEnum.NORMALIZED, ActivationFunctionEnum.LINEAL,  Float.valueOf(5.0E-5F), BasicLearningEstrategyEnum.ONE_ADV_ONE_TREE_BACK_ONE};
         int selectedRow = jTableWeight.getSelectedRow();
         if (selectedRow == -1) {
             model.addRow(fila);
@@ -1785,11 +1669,7 @@ public class VisLoad extends javax.swing.JFrame {
         });
     }//GEN-LAST:event_limpiajButtonActionPerformed
 
-    private void jCheckBoxParalellActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxParalellActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBoxParalellActionPerformed
-
-    private float calculaMatriz(int i, int j) {
+    private float calculaMatriz(int i, int j, int kwidth) {
         float retorno;
         float half = (float) kwidth / 2;
         float di = (float) i - half;
@@ -1949,16 +1829,15 @@ public class VisLoad extends javax.swing.JFrame {
 
                 if (Objects.nonNull(errorGraph)) {
                     synchronized (errorGraph) {
-                        OptionalDouble maxError = errorGraph.values().stream().mapToDouble((i) -> i.doubleValue()).max();
+                        OptionalDouble maxError = errorGraph.values().stream().mapToDouble((i) -> i.doubleValue()).average();
                         List<ParOrdenado> proccesDomain = networkManager.getProccesDomain();
                         double size = (double) proccesDomain.size();
 
                         Graphics2D gr2 = (Graphics2D) grphcs;
                         gr2.setColor(Color.RED);
-                        double tol = maxError.orElse(1.0);
-                        double lcWidth = jErrorGraf.getWidth() / size;
-                        double lclHeight = jErrorGraf.getHeight() / tol;
-//                    gr2.translate(0, -1/ lclHeight);
+                        double tol = maxError.orElse(0.0001);
+                        double lcWidth = ((double)jErrorGraf.getWidth()) / size;
+                        double lclHeight = ((double)jErrorGraf.getHeight()) / tol;
                         gr2.translate(0, 0);
                         gr2.scale(lcWidth, lclHeight);
                         int adv = 0;
@@ -1978,6 +1857,48 @@ public class VisLoad extends javax.swing.JFrame {
 
     public FileNameExtensionFilter getFileNameNetworkExtensionFilter() {
         return fileNameNetworkExtensionFilter;
+    }
+
+    private void enableConsole() {
+        procesar.setEnabled(true);
+        cleanCopy.setEnabled(true);
+        clean.setEnabled(true);
+        entrenar.setEnabled(true);
+        jCheckBoxParalell.setEnabled(true);
+        freno.setSelected(false);
+        jComboBoxBufferSize.setEnabled(true);
+        jTableWeight.setEnabled(true);
+        jButtonCargaRed.setEnabled(true);
+        jButtonSalvaRed.setEnabled(true);
+        jButtonAddRow.setEnabled(true);
+        jButtonRemoveRow.setEnabled(true);
+        inNeurs.setEnabled(true);
+        normaExtJRadioButton.setEnabled(true);
+        cargaOriginal.setEnabled(true);
+        cargaPreparada.setEnabled(true);
+        suavizaResultado.setEnabled(true);
+        enmascaraResultado.setEnabled(true);
+    }
+
+    private void disableConsole() {
+       
+        procesar.setEnabled(false);
+        cleanCopy.setEnabled(false);
+        clean.setEnabled(false);
+        entrenar.setEnabled(false);
+        jCheckBoxParalell.setEnabled(false);
+        jComboBoxBufferSize.setEnabled(false);
+        jTableWeight.setEnabled(false);
+        jButtonCargaRed.setEnabled(false);
+        jButtonSalvaRed.setEnabled(false);
+        jButtonAddRow.setEnabled(false);
+        jButtonRemoveRow.setEnabled(false);
+        inNeurs.setEnabled(false);
+        normaExtJRadioButton.setEnabled(false);
+        cargaOriginal.setEnabled(false);
+        cargaPreparada.setEnabled(false);
+        suavizaResultado.setEnabled(false);
+        enmascaraResultado.setEnabled(false);
     }
 
     private enum SeletionStatus {
@@ -2032,12 +1953,9 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JCheckBox actualizacion;
     private javax.swing.ButtonGroup adaptInputButtonGroup;
     private javax.swing.JButton addSelectionButton;
-    private javax.swing.JToggleButton asPartToggleButton;
-    private javax.swing.JToggleButton asSampleToggleButton;
     private javax.swing.JButton cargaImagen;
     private javax.swing.JButton cargaOriginal;
     private javax.swing.JButton cargaPreparada;
-    private javax.swing.JButton cargar;
     private javax.swing.JButton clean;
     private javax.swing.JButton cleanCopy;
     private javax.swing.JButton deleteSelectionButton;
@@ -2060,8 +1978,6 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JFileChooser jFileChooserLoadImagen;
     private javax.swing.JFileChooser jFileChooserLoadImagenResult;
     private javax.swing.JFileChooser jFileChooserLoadNet;
-    private javax.swing.JFileChooser jFileChooserPesosLoad;
-    private javax.swing.JFileChooser jFileChooserPesosSave;
     private javax.swing.JFileChooser jFileChooserSaveNet;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -2090,11 +2006,9 @@ public class VisLoad extends javax.swing.JFrame {
     private javax.swing.JButton procesar;
     private javax.swing.JRadioButton reflectJRadioButton;
     private javax.swing.JPanel respuesta;
-    private javax.swing.JButton salva;
     private javax.swing.JRadioButton scaleJRadioButton;
     private javax.swing.JCheckBox seleccion;
     private javax.swing.JCheckBox seleccionCopy;
-    private javax.swing.ButtonGroup selectionTypeButtonGroup;
     private javax.swing.JButton suavizaResultado;
     private javax.swing.JPanel vista;
     // End of variables declaration//GEN-END:variables
