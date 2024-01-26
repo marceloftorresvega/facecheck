@@ -1867,6 +1867,11 @@ public class VisLoad extends javax.swing.JFrame {
         freno.setSelected(false);
         jComboBoxBufferSize.setEnabled(true);
         jTableWeight.setEnabled(true);
+        jButtonCargaRed.setEnabled(true);
+        jButtonSalvaRed.setEnabled(true);
+        jButtonAddRow.setEnabled(true);
+        jButtonRemoveRow.setEnabled(true);
+        inNeurs.setEnabled(true);
     }
 
     private void disableConsole() {
@@ -1878,6 +1883,11 @@ public class VisLoad extends javax.swing.JFrame {
         jCheckBoxParalell.setEnabled(false);
         jComboBoxBufferSize.setEnabled(false);
         jTableWeight.setEnabled(false);
+        jButtonCargaRed.setEnabled(false);
+        jButtonSalvaRed.setEnabled(false);
+        jButtonAddRow.setEnabled(false);
+        jButtonRemoveRow.setEnabled(false);
+        inNeurs.setEnabled(false);
     }
 
     private enum SeletionStatus {
