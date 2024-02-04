@@ -53,7 +53,7 @@ public class LeakyReluActivationImpl<N extends Number> implements Activation<N> 
                                 if (e.getValue().doubleValue() > 0.0) {
                                     return e.getValue();
                                 } else {
-                                    return m.productoDirecto(gain, e.getValue());
+                                    return m.multiplica(gain, e.getValue());
                                 }
                             }));
         };
@@ -65,7 +65,7 @@ public class LeakyReluActivationImpl<N extends Number> implements Activation<N> 
 
             return output.entrySet().stream()
                     .collect(ActivationUtils.entryToMatriz(output,
-                            (e) -> output.restaDirecta(
+                            (e) -> output.resta(
                                     learning.get(e.getKey()),
                                     e.getValue())));
         };

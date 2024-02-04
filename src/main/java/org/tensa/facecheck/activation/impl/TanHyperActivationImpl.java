@@ -62,9 +62,9 @@ public class TanHyperActivationImpl<N extends Number> implements Activation<N> {
                 return learning.entrySet().stream()
                         .collect(ActivationUtils.entryToMatriz(
                                 learning,
-                                (e) -> m1.productoDirecto(
+                                (e) -> m1.multiplica(
                                         e.getValue(),
-                                        m1.productoDirecto(
+                                        m1.multiplica(
                                                 semiSuma.get(e.getKey()),
                                                 semiResta.get(e.getKey())))));
 

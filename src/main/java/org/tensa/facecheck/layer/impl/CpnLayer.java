@@ -191,8 +191,8 @@ public class CpnLayer<N extends Number> implements LayerConsumer<N>, LayerLearni
                                     return IntStream.rangeClosed(1, barrida).mapToObj(j -> {
                                         Indice ka = new Indice(k.getFila(), j);
                                         Indice kb = new Indice(j, k.getColumna());
-                                        N resta = weights.restaDirecta(inputLayer.get(kb), weights.get(ka));
-                                        return weights.productoDirecto(resta, resta);
+                                        N resta = weights.resta(inputLayer.get(kb), weights.get(ka));
+                                        return weights.multiplica(resta, resta);
                                     }).collect(
                                             Collectors.collectingAndThen(
                                                             Collectors.summingDouble(N::doubleValue),
