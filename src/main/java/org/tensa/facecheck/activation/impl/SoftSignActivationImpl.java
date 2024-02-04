@@ -47,13 +47,12 @@ public class SoftSignActivationImpl<N extends Number> implements Activation<N> {
 
         return (m) -> m.entrySet().stream()
                 .collect(ActivationUtils.entryToMatriz(m,
-                        (e) -> m.productoDirecto(
+                        (e) -> m.divide(
                                 e.getValue(),
-                                m.inversoMultiplicativo(
-                                        m.sumaDirecta(
-                                                m.getUnoValue(),
-                                                m.abs(e.getValue())
-                                        ))
+                                m.suma(
+                                        m.getUnoValue(),
+                                        m.abs(e.getValue())
+                                )
                         )));
     }
 
@@ -63,15 +62,14 @@ public class SoftSignActivationImpl<N extends Number> implements Activation<N> {
                 .collect(ActivationUtils.entryToMatriz(neta,
                         (e) -> {
                             N semiSuma;
-                            return learning.productoDirecto(
+                            return learning.divide(
                                     e.getValue(),
-                                    learning.inversoMultiplicativo(
-                                            learning.productoDirecto(
-                                                    semiSuma = learning.sumaDirecta(
-                                                            learning.getUnoValue(),
-                                                            learning.abs(neta.get(e.getKey()))
-                                                    ),
-                                                    semiSuma))
+                                    learning.multiplica(
+                                            semiSuma = learning.suma(
+                                                    learning.getUnoValue(),
+                                                    learning.abs(neta.get(e.getKey()))
+                                            ),
+                                            semiSuma)
                             );
                         }
                 ));

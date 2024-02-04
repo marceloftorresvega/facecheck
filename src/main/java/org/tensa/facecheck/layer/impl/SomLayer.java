@@ -233,11 +233,11 @@ public class SomLayer<N extends Number> implements LayerConsumer<N>, LayerLearni
                                 () -> inputLayer.instancia(d),
                                 (ParOrdenado k) -> IntStream.rangeClosed(1, weights.getDominio().getColumna())
                                         .mapToObj(j
-                                                -> weights.restaDirecta(
+                                                -> weights.resta(
                                                 inputLayer.get(new Indice(j, k.getColumna())),
                                                 weights.get(new Indice(k.getFila(), j))))
                                         .map(resta
-                                                -> weights.productoDirecto(resta, resta))
+                                                -> weights.multiplica(resta, resta))
                                         .collect(
                                                 Collectors.collectingAndThen(
                                                         Collectors.collectingAndThen(

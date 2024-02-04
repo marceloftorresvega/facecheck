@@ -43,7 +43,7 @@ public class SoftPlusActivationImpl<N extends Number> implements Activation<N> {
         return (neta) -> neta.entrySet().stream()
                 .collect(ActivationUtils.entryToMatriz(neta, (e)
                         -> neta.ln(
-                        neta.sumaDirecta(
+                        neta.suma(
                                 neta.getUnoValue(),
                                 neta.exp(e.getValue())
                         )
@@ -55,13 +55,12 @@ public class SoftPlusActivationImpl<N extends Number> implements Activation<N> {
     public BiFunction<NumericMatriz<N>, NumericMatriz<N>, NumericMatriz<N>> getError() {
         return (learning, neta) -> learning.entrySet().stream()
                 .collect(ActivationUtils.entryToMatriz(learning, (e)
-                        -> learning.productoDirecto(
-                        e.getValue(),
-                        learning.inversoMultiplicativo(
-                                learning.sumaDirecta(
-                                        learning.getUnoValue(),
-                                        learning.exp(learning.inversoAditivo(neta.get(e.getKey()))))
-                        ))
+                        -> learning.divide(
+                            e.getValue(),
+                            learning.suma(
+                                    learning.getUnoValue(),
+                                    learning.exp(learning.inversoAditivo(neta.get(e.getKey()))))
+                        )
                 ));
     }
 

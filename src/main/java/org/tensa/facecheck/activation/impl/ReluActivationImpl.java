@@ -62,7 +62,7 @@ public class ReluActivationImpl<N extends Number> implements Activation<N> {
             return output.entrySet().stream()
                     .filter((e) -> e.getValue().doubleValue() > 0.0)
                     .collect(ActivationUtils.entryToMatriz(output,
-                            (e) -> output.restaDirecta(
+                            (e) -> output.resta(
                                     learning.get(e.getKey()),
                                     e.getValue())));
         };

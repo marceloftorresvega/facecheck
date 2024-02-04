@@ -52,17 +52,15 @@ public class NormalActivationImpl<N extends Number> implements Activation<N> {
         Map<Integer, N> sumas2 = m.entrySet().stream()
                 .collect(Collectors.toMap(
                         e -> e.getKey().getColumna(),
-                        e -> m.productoDirecto(e.getValue(), e.getValue()),
-                        m::sumaDirecta));
+                        e -> m.multiplica(e.getValue(), e.getValue()),
+                        m::suma));
 
         return m.entrySet().stream()
                 .collect(ActivationUtils.entryToMatriz(
                         m,
-                        e -> m.productoDirecto(
+                        e -> m.divide(
                                 e.getValue(),
-                                m.inversoMultiplicativo(
-                                        sumas2.get(e.getKey().getColumna())
-                                ))
+                                sumas2.get(e.getKey().getColumna()))
                 ));
     }
 
@@ -70,7 +68,7 @@ public class NormalActivationImpl<N extends Number> implements Activation<N> {
     public BiFunction<NumericMatriz<N>, NumericMatriz<N>, NumericMatriz<N>> getError() {
         return (leraning, neta) -> {
 
-            UnaryOperator<N> cuad = v -> neta.productoDirecto(v, v);
+            UnaryOperator<N> cuad = v -> neta.multiplica(v, v);
 
             NumericMatriz<N> cuadrados = neta.entrySet().stream()
                     .collect(ActivationUtils.entryToMatriz(
@@ -81,20 +79,20 @@ public class NormalActivationImpl<N extends Number> implements Activation<N> {
                     .collect(Collectors.toMap(
                             e -> e.getKey().getColumna(),
                             Map.Entry::getValue,
-                            neta::sumaDirecta));
+                            neta::suma));
 
             return cuadrados.entrySet().stream()
                     .collect(ActivationUtils.entryToMatriz(
                             neta,
-                            e -> neta.productoDirecto(
-                                    neta.restaDirecta(
+                            e -> neta.divide(
+                                    neta.resta(
                                             sumas2.get(e.getKey().getColumna()),
-                                            neta.productoDirecto(
+                                            neta.multiplica(
                                                     neta.mapper(2.0),
                                                     cuadrados.get(e.getKey()))),
-                                    cuad.andThen(neta::inversoMultiplicativo)
-                                            .compose(sumas2::get)
-                                            .apply(e.getKey().getColumna()))));
+                                    cuad.compose(sumas2::get)
+                                            .apply(e.getKey().getColumna())
+                            )));
         };
     }
 

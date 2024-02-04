@@ -49,15 +49,14 @@ public class SoftMaxActivationImpl<N extends Number> implements Activation<N> {
                 .collect(Collectors.toMap(
                         e -> e.getKey().getColumna(),
                         e -> e.getValue(),
-                        (a, b) -> m.sumaDirecta(a, b)));
+                        (a, b) -> m.suma(a, b)));
         return m.entrySet().stream()
                 .collect(ActivationUtils.entryToMatriz(
                         m,
-                        e -> m.productoDirecto(
+                        e -> m.divide(
                                 e.getValue(),
-                                m.inversoMultiplicativo(
-                                        sumas.get(e.getKey().getColumna())
-                                ))
+                                sumas.get(e.getKey().getColumna())
+                                )
                 ));
     }
 
@@ -68,24 +67,23 @@ public class SoftMaxActivationImpl<N extends Number> implements Activation<N> {
                     .collect(Collectors.toMap(
                             e -> e.getKey().getColumna(),
                             e -> e.getValue(),
-                            (a, b) -> neta.sumaDirecta(a, b)));
+                            (a, b) -> neta.suma(a, b)));
 
             Map<Integer, N> sumas2 = sumas.entrySet().stream()
                     .collect(Collectors.toMap(
                             e -> e.getKey(), 
-                            e -> neta.productoDirecto(
+                            e -> neta.multiplica(
                                     e.getValue(), e.getValue())));
 
             return neta.entrySet().stream()
                     .collect(ActivationUtils.entryToMatriz(
                             neta,
-                            e -> neta.productoDirecto(
+                            e -> neta.multiplica(
                                     leraning.get(e.getKey()),
-                                    neta.productoDirecto(
-                                            neta.restaDirecta(sumas.get(e.getKey().getColumna()), e.getValue()),
-                                            neta.inversoMultiplicativo(
-                                                    sumas2.get(e.getKey().getColumna())
-                                            )))
+                                    neta.divide(
+                                            neta.resta(sumas.get(e.getKey().getColumna()), e.getValue()),
+                                            sumas2.get(e.getKey().getColumna())
+                                            ))
                     ));
         };
     }

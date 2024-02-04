@@ -54,9 +54,9 @@ public class SigmoidActivationImpl<N extends Number> implements Activation<N> {
         return (m) -> m.entrySet().stream()
                 .collect(ActivationUtils.entryToMatriz(
                         m,
-                        (e) -> m.inversoMultiplicativo(m.sumaDirecta(
+                        (e) -> m.inversoMultiplicativo(m.suma(
                                 m.getUnoValue(),
-                                m.exp(m.inversoAditivo(m.productoDirecto(e.getValue(), gain)))
+                                m.exp(m.inversoAditivo(m.multiplica(e.getValue(), gain)))
                         ))
                 ));
     }
@@ -70,11 +70,11 @@ public class SigmoidActivationImpl<N extends Number> implements Activation<N> {
                 return learning.entrySet().stream()
                         .collect(ActivationUtils.entryToMatriz(
                                 m1,
-                                (e) -> m1.productoDirecto(
+                                (e) -> m1.multiplica(
                                         gain,
-                                        m1.productoDirecto(
+                                        m1.multiplica(
                                                 e.getValue(),
-                                                m1.productoDirecto(
+                                                m1.multiplica(
                                                         output.get(e.getKey()),
                                                         semiResta.get(e.getKey()))
                                         ))));
