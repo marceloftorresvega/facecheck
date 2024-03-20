@@ -123,7 +123,7 @@ public class VisLoad extends javax.swing.JFrame {
     }
     
     public ComboBoxModel getBufferComboboxModel() {
-        return new DefaultComboBoxModel(new Integer[]{ 1, 3, 6, 12, 15, 18, 21});
+        return new DefaultComboBoxModel<>(new Integer[]{ 1, 3, 6, 12, 15, 18, 21});
     }
 
     /**
@@ -2065,7 +2065,7 @@ public class VisLoad extends javax.swing.JFrame {
         private boolean isCuadrado = false;
 
         public static SpinnerModel getCuadradoSpinnerModel() {
-            return new SpinnerListModel(IntStream.range(2, 500).map(i -> i * i * 3).boxed().toArray(Integer[]::new));
+            return new SpinnerListModel(IntStream.range(1, 500).map(i -> i * i * 3).boxed().toArray(Integer[]::new));
         }
 
         public NeuronTableCellEditorImpl() {
