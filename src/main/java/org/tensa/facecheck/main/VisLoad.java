@@ -40,6 +40,8 @@ import java.util.OptionalDouble;
 import java.util.Vector;
 import java.util.function.UnaryOperator;
 import java.util.stream.IntStream;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractCellEditor;
 import javax.swing.ComboBoxModel;
@@ -57,8 +59,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.activation.Activation;
@@ -1564,7 +1564,7 @@ public class VisLoad extends javax.swing.JFrame {
             }
             DefaultTableModel dtm = (DefaultTableModel)jTableWeight.getModel();
 
-            try (final OutputStream fos = Files.newOutputStream(Paths.get(archivo)); final BufferedOutputStream out = new BufferedOutputStream(fos); final GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(out); final ObjectOutputStream oos = new ObjectOutputStream(gzOut)) {
+            try (final OutputStream fos = Files.newOutputStream(Paths.get(archivo)); final BufferedOutputStream out = new BufferedOutputStream(fos); final GZIPOutputStream gzOut = new GZIPOutputStream(out); final ObjectOutputStream oos = new ObjectOutputStream(gzOut)) {
                 
                 oos.writeBoolean(jCheckBoxScale1neg1.isSelected());
                 String buttonText = Collections.list(adaptInputButtonGroup.getElements()).stream()
@@ -1597,7 +1597,7 @@ public class VisLoad extends javax.swing.JFrame {
             if (archivo.endsWith("nn3")) {
                 DefaultTableModel dtm = (DefaultTableModel)jTableWeight.getModel();                
 
-                try (final InputStream fis = Files.newInputStream(Paths.get(archivo)); final BufferedInputStream bis = new BufferedInputStream(fis); final GzipCompressorInputStream gzIn = new GzipCompressorInputStream(bis); final ObjectInputStream ois = new ObjectInputStream(gzIn)) {
+                try (final InputStream fis = Files.newInputStream(Paths.get(archivo)); final BufferedInputStream bis = new BufferedInputStream(fis); final GZIPInputStream gzIn = new GZIPInputStream(bis); final ObjectInputStream ois = new ObjectInputStream(gzIn)) {
                     boolean scale1neg1 = ois.readBoolean();
                     String buttonText = ois.readUTF();
                     int inStep = ois.readInt();
