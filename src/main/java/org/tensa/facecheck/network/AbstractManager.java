@@ -40,8 +40,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tensa.facecheck.activation.Activation;
@@ -278,7 +278,7 @@ public abstract class AbstractManager<N extends Number> {
     @SuppressWarnings("unchecked")
     public void cargaPesos(String archivo) {
         log.info("cargaPesos <{}>", archivo);
-        try (final InputStream fis = Files.newInputStream(Paths.get(archivo)); final BufferedInputStream bis = new BufferedInputStream(fis); final GzipCompressorInputStream gzIn = new GzipCompressorInputStream(bis); final ObjectInputStream ois = new ObjectInputStream(gzIn)) {
+        try (final InputStream fis = Files.newInputStream(Paths.get(archivo)); final BufferedInputStream bis = new BufferedInputStream(fis); final GZIPInputStream gzIn = new GZIPInputStream(bis); final ObjectInputStream ois = new ObjectInputStream(gzIn)) {
             weights = (NumericMatriz<N>[]) ois.readObject();
 
             inStep = weights[0].getDominio().getColumna();
@@ -299,7 +299,7 @@ public abstract class AbstractManager<N extends Number> {
      */
     public void salvaPesos(String archivo) {
         log.info("salvaPesos <{}>", archivo);
-        try (final OutputStream fos = Files.newOutputStream(Paths.get(archivo)); final BufferedOutputStream out = new BufferedOutputStream(fos); final GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(out); final ObjectOutputStream oos = new ObjectOutputStream(gzOut)) {
+        try (final OutputStream fos = Files.newOutputStream(Paths.get(archivo)); final BufferedOutputStream out = new BufferedOutputStream(fos); final GZIPOutputStream gzOut = new GZIPOutputStream(out); final ObjectOutputStream oos = new ObjectOutputStream(gzOut)) {
             oos.writeObject(weights);
         } catch (FileNotFoundException ex) {
             log.error("error al guardar  pesos", ex);
